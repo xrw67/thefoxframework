@@ -13,21 +13,32 @@ extern "C" {
 
 class TFString
 {
-	THString() :m_string() {}
-	THString(const char c) : m_string(c) {}
-	THString(const std::string &s) : m_string(s) {}
-	THString(const char *s) : m_string(s) {}
-#ifdef USE_MFC
-	THString(const CString *s) : 
+	TFString() :m_string() 
+	{
+	}
+	TFString(const char c) : m_string(c)
+	{
+	}
+	TFString(const std::string &s) : m_string(s)
+	{
+	}
+	TFString(const char *s) : m_string(s)
+	{
+	}
+	TFString(const TFString &s) :m_string(s.CStr())
+	{
+	}
+	TFString(const CString *s)
 	{
 		m_string = s.GetBuffer();
 		s.ReleaseBuffer();
 	}
-#endif
-	~THString()
+	~TFString()
 	{
 		m_string.clear();
 	}
+	
+	/// @brief convert string to int
 	const int ToInt() const
 	{
 		if (0 == GetLength())
@@ -36,6 +47,8 @@ class TFString
 		}
 		return atoi(m_string.c_str());
 	}
+	
+	/// @brief convert string to unsigned int
 	const unsigned int ToUInt() const
 	{
 		if (0 == GetLength())
@@ -44,6 +57,9 @@ class TFString
 		}
 		return static_cast<unsigned int>(atoi(m_string.c_str()));
 	}
+	
+	/// @brief convert string to long
+	/// @return
 	const long ToLong() const
 	{
 		if (0 == GetLength())
@@ -52,6 +68,9 @@ class TFString
 		}
 		return atol(m_string.c_str());
 	}
+	
+	/// @brief convert string to float
+	/// @return
 	const float ToFloat() const
 	{
 		if (0 == GetLength())
@@ -60,6 +79,9 @@ class TFString
 		}
 		return static_cast<float>(atof(m_strnig.c_str()));
 	}
+	
+	/// @brief convert string to double
+	/// @return
 	const double ToDouble() const
 	{
 		if (0 == GetLength())
@@ -68,6 +90,9 @@ class TFString
 		}
 		return atof(m_strnig.c_str());
 	}
+	
+	/// @brief convert string to bool
+	/// @return
 	const ToBool() const
 	{
 		if (0 == GetLength())
@@ -80,15 +105,23 @@ class TFString
 		}
 		return true;
 	}
-	const size_t GetLength() const
+	
+	/// @brief return length of string
+	/// @return
+	const int GetLength() const
 	{
 		return m_string.length();
 	}
+	
+	/// @brief return string is empty;
+	/// @return
 	const bool IsEmpty() const
 	{
 		return m_string.empty();
 	}
 	
+	/// @brief Get string with format like "printf"
+	/// @return
 	bool Format(const char *foemat, ...)
 	{
 		bool bRet = false;
@@ -109,10 +142,18 @@ class TFString
 		va_end(ap);
 		return bRet;
 	}
+	
+	/// @brief clear string
+	/// @return
 	void Clear()
 	{
 		m_string.Clear();
 	}
+	
+	/// @brief return substring 
+	/// @param beginIndex [in] 
+	/// @param len[i] 
+	/// @return
 	TFString SubString(int beginIndex, int len = -1) const
 	{
 		TFString str;
@@ -360,7 +401,7 @@ public:
 	}
 	
 	/// Create a string with value type with int
-	static THString Create(const int i)
+	static TFString Create(const int i)
 	{
 		TFString str;
 		char buf[64] = {0};
