@@ -1,6 +1,10 @@
 #ifndef _TF_STRING_H_
 #define _TF_STRING_H_
 
+#pragma warning(disable:4996)
+
+#include <string>
+
 #ifdef USE_NAMESPACE
 namespace TheFox {
 #endif
@@ -16,7 +20,7 @@ class TFString
 	TFString() :m_string() 
 	{
 	}
-	TFString(const char c) : m_string(c)
+	TFString(const char c) : m_string(1, c)
 	{
 	}
 	TFString(const std::string &s) : m_string(s)
@@ -25,13 +29,8 @@ class TFString
 	TFString(const char *s) : m_string(s)
 	{
 	}
-	TFString(const TFString &s) :m_string(s.CStr())
+	TFString(const TFString &s) :m_string(s.m_string)
 	{
-	}
-	TFString(const CString *s)
-	{
-		m_string = s.GetBuffer();
-		s.ReleaseBuffer();
 	}
 	~TFString()
 	{
@@ -77,7 +76,7 @@ class TFString
 		{
 			return 0.0f;
 		}
-		return static_cast<float>(atof(m_strnig.c_str()));
+		return static_cast<float>(atof(m_string.c_str()));
 	}
 	
 	/// @brief convert string to double
@@ -88,12 +87,12 @@ class TFString
 		{
 			return 0.0;
 		}
-		return atof(m_strnig.c_str());
+		return atof(m_string.c_str());
 	}
 	
 	/// @brief convert string to bool
 	/// @return
-	const ToBool() const
+	const bool ToBool() const
 	{
 		if (0 == GetLength())
 		{
@@ -122,7 +121,7 @@ class TFString
 	
 	/// @brief Get string with format like "printf"
 	/// @return
-	bool Format(const char *foemat, ...)
+	bool Format(const char *format, ...)
 	{
 		bool bRet = false;
 		m_string.clear();
@@ -147,7 +146,7 @@ class TFString
 	/// @return
 	void Clear()
 	{
-		m_string.Clear();
+		m_string.clear();
 	}
 	
 	/// @brief return substring 
@@ -189,14 +188,16 @@ class TFString
 	}
 	TFString &Trim()
 	{
-		return TrimLeft(trimRight());
+		TrimRight();
+		TrimLeft();
+		return *this;
 	}
 	TFString &TrimLeft()
 	{
 		std::string::size_type index = m_string.find_first_not_of(" \n\r\t");
 		if (index != std::string::npos)
 		{
-			str = str.substr(index);
+			m_string = m_string.substr(index);
 		}
 		return *this;
 	}
@@ -211,7 +212,11 @@ class TFString
 	}
 	const char At(int index)
 	{
-		return m_string.at(i);
+		return m_string.at(index);
+	}
+	const char *CStr()
+	{
+		return m_string.c_str();
 	}
 	int Compare(TFString &s)
 	{
@@ -223,24 +228,19 @@ class TFString
 	}
 	TFString &Replace(const char oldChar, const char newChar)
 	{
-		for (int i = 0; i < m_string.GetLength(); ++i)
+		for (int i = 0; i < GetLength(); ++i)
 		{
 			if (oldChar == m_string[i])
 			{
 				m_string[i] = newChar;
 			}
 		}
-		return &this;
+		return *this;
 	}
-	TFString &Replace(const TFString &oldStr, const TFString &newStr)
-	{
-		
-		return &this;
-	}
-	const char operator[](const int index)
-	{
-		return m_string[index];
-	}
+	//const char operator[](const int index)
+	//{
+	//	return m_string[index];
+	//}
 	TFString &operator=(char c)
 	{
 		m_string = c;
@@ -256,74 +256,19 @@ class TFString
 		m_string  = s;
 		return *this;
 	}
-	TFString &operator=(const CString &s)
-	{
-		m_string = s.GetBuffer();
-		s.ReleaseBuffer();
-		return *this;
-	}
 	TFString &operator=(const TFString &s)
 	{
 		m_string = s.m_string;
 		return *this;
 	}
-	TFString operator+(const TFString &s1, const TFString &s2)
-	{
-		TFString str;
-		str = s1.m_string + s2.m_string;
-		return str;
-		
-	}
-	TFString operator+(const TFString &s1, char c)
-	{
-		TFString str;
-		str = s1.m_string + c;
-		return str;
-	}
-	TFString operator+(char c, const TFString &s2)
-	{
-		TFString str;
-		str = c + s2.m_string;
-		return str;
-	}
-	TFString operator+(const TFString &s1, const char *s2)
-	{
-		TFString str;
-		str = s1.m_string + s2;
-		return str;
-	}
-	TFString operator+(const char *s1, const TFString &s2)
-	{
-		TFString str;
-		str = s1 + s2.m_string;
-		return str;
-	}
-	TFString operator+(const TFString &s1, const std::string &s2)
-	{
-		TFString str;
-		str = s1.m_string + s2;
-		return str;
-	}
-	TFString operator+(const std::string &s1, const TFString &s2)
-	{
-		TFString str;
-		str = s1 + s2.m_string;
-		return str;
-	}
-	TFString operator+(const TFString &s1, const CString &s2)
-	{
-		TFString str;
-		str = s1.m_string + s2.GetBuffer();
-		s2.ReleaseBuffer();
-		return str;
-	}
-	TFString operator+(const CString &s1, const TFString &s2)
-	{
-		TFString str;
-		str = s1.GetBuffer() + s2.m_string;
-		s1.ReleaseBuffer();
-		return str;
-	}
+	friend TFString operator+(const TFString &s1, const TFString &s2);
+	friend TFString operator+(const TFString &s1, char c);
+	friend TFString operator+(char c, const TFString &s2);
+	friend TFString operator+(const TFString &s1, const char *s2);
+	friend TFString operator+(const char *s1, const TFString &s2);
+	friend TFString operator+(const TFString &s1, const std::string &s2);
+	friend TFString operator+(const std::string &s1, const TFString &s2);
+
 	TFString &operator+=(char c)
 	{
 		m_string += c;
@@ -339,52 +284,23 @@ class TFString
 		m_string  += s;
 		return *this;
 	}
-	TFString &operator+=(const CString &s)
-	{
-		m_string += s.GetBuffer();
-		s.ReleaseBuffer();
-		return *this;
-	}
 	TFString &operator+=(const TFString &s)
 	{
 		m_string += s.m_string;
 		return *this;
 	}
-	bool operator==(const TFString &s1, const TFString &s2) const
-	{
-		return s1.m_string == s2.m_string;
-	}
-	bool operator==(const TFString &s1, const char *s2) const
-	{
-		return s1.m_string == s2;
-	}
-	bool operator==(const char *s1, const TFString &s2) const
-	{
-		return s1 == s2.m_string;
-	}
-	bool operator==(const TFString &s1, const std::string &s2) const
-	{
-		return s1.m_string == s2;
-	}
-	bool operator==(const std::string &s1, const TFString &s2) const
-	{
-		return s1 == s2.m_string;
-	}
-	bool operator==(const TFString &s1, const CString &s2) const
-	{
-		return s2 == s1.m_string.c_str();
-	}
-	bool operator==(const CString &s1, const TFString &s2) const
-	{
-		return s1 == s2.m_string.c_str();
-	}
-	bool operator!=(const TFString &s1, const TFString &s2) const { return !(s1 == s2); }
-	bool operator!=(const TFString &s1, const char *s2) const { return !(s1 == s2); }
-	bool operator!=(const char *s1, const TFString &s2) const { return !(s1 == s2); }
-	bool operator!=(const TFString &s1, const std::string &s2) const { return !(s1 == s2); }
-	bool operator!=(const std::string &s1, const TFString &s2) const { return !(s1 == s2); }
-	bool operator!=(const TFString &s1, const CString &s2) const { return !(s1 == s2); }
-	bool operator!=(const CString &s1, const TFString &s2) const { return !(s1 == s2); }
+	friend bool operator==(const TFString &s1, const TFString &s2);
+	friend bool operator==(const TFString &s1, const char *s2);
+	friend bool operator==(const char *s1, const TFString &s2);
+	friend bool operator==(const TFString &s1, const std::string &s2);
+	friend bool operator==(const std::string &s1, const TFString &s2);
+
+	friend bool operator!=(const TFString &s1, const TFString &s2);
+	friend bool operator!=(const TFString &s1, const char *s2);
+	friend bool operator!=(const char *s1, const TFString &s2);
+	friend bool operator!=(const TFString &s1, const std::string &s2);
+	friend bool operator!=(const std::string &s1, const TFString &s2);
+
 public:
 	/// Create a string with value type with c string
 	static TFString Create(const char *s)
@@ -400,6 +316,12 @@ public:
 		return str;
 	}
 	
+	static TFString Create(CString &s)
+	{
+		TFString str(s.GetBuffer());
+		s.ReleaseBuffer();
+		return str;
+	}
 	/// Create a string with value type with int
 	static TFString Create(const int i)
 	{
@@ -451,6 +373,90 @@ private:
 	std::string m_string;
 };
 
+
+inline TFString operator+(const TFString &s1, const TFString &s2)
+{
+	TFString str;
+	str = s1.m_string + s2.m_string;
+	return str;
+		
+}
+inline TFString operator+(const TFString &s1, char c)
+{
+	TFString str;
+	str = s1.m_string + c;
+	return str;
+}
+inline TFString operator+(char c, const TFString &s2)
+{
+	TFString str;
+	str = c + s2.m_string;
+	return str;
+}
+inline TFString operator+(const TFString &s1, const char *s2)
+{
+	TFString str;
+	str = s1.m_string + s2;
+	return str;
+}
+inline TFString operator+(const char *s1, const TFString &s2)
+{
+	TFString str;
+	str = s1 + s2.m_string;
+	return str;
+}
+inline TFString operator+(const TFString &s1, const std::string &s2)
+{
+	TFString str;
+	str = s1.m_string + s2;
+	return str;
+}
+inline TFString operator+(const std::string &s1, const TFString &s2)
+{
+	TFString str;
+	str = s1 + s2.m_string;
+	return str;
+}
+inline bool operator==(const TFString &s1, const TFString &s2)
+{
+	return s1.m_string == s2.m_string;
+}
+inline bool operator==(const TFString &s1, const char *s2)
+{
+	return s1.m_string == s2;
+}
+inline bool operator==(const char *s1, const TFString &s2)
+{
+	return s1 == s2.m_string;
+}
+inline bool operator==(const TFString &s1, const std::string &s2)
+{
+	return s1.m_string == s2;
+}
+inline bool operator==(const std::string &s1, const TFString &s2)
+{
+	return s1 == s2.m_string;
+}
+inline bool operator!=(const TFString &s1, const TFString &s2)
+{ 
+	return !(s1 == s2); 
+}
+inline bool operator!=(const TFString &s1, const char *s2)
+{ 
+	return !(s1 == s2);
+}
+inline bool operator!=(const char *s1, const TFString &s2) 
+{ 
+	return !(s1 == s2);
+}
+inline bool operator!=(const TFString &s1, const std::string &s2) 
+{
+	return !(s1 == s2); 
+}
+inline bool operator!=(const std::string &s1, const TFString &s2) 
+{ 
+	return !(s1 == s2); 
+}
 #ifdef __cpluscpus
 };
 #endif
