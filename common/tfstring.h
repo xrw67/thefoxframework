@@ -32,7 +32,7 @@ class TFString
 	TFString(const TFString &s) :m_string(s.m_string)
 	{
 	}
-	~TFString()
+	virtual ~TFString()
 	{
 		m_string.clear();
 	}
@@ -369,6 +369,23 @@ public:
 		return str;
 	}
 
+	static TFString CreateWithFormat(const char *format, ...)
+	{
+		TFString str;
+		va_list ap;
+		va_start(ap, format);
+		
+		char *buf = (char *)malloc(kMaxStringLen);
+		if (buf)
+		{
+			vsnprintf(buf, kMaxStringLen, format, ap);
+			str = buf;
+			free(buf);
+		}
+		
+		va_end(ap);
+		return str;
+	}
 private:
 	std::string m_string;
 };
