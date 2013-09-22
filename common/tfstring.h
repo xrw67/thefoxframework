@@ -482,4 +482,4 @@ inline bool operator!=(const std::string &s1, const TFString &s2)
 };
 #endif
 
-#endif //_TF_STRING_H_
+#endif // _TF_STRING_H_
