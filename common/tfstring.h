@@ -364,7 +364,7 @@ public:
 	{
 		TFString str;
 		char buf[64] = {0};
-		_snprintf(buf, sizeof(buf), "%d", d);
+		_snprintf(buf, sizeof(buf), "%f", d);
 		str.m_string = buf;
 		return str;
 	}
