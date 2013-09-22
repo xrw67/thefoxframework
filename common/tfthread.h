@@ -1,6 +1,8 @@
 #ifndef _TF_THREAD_H_
 #define _TF_THREAD_H_
 
+#include "afxmt.h"
+
 #ifdef USE_NAMESPACE
 namespace TheFox {
 #endif
