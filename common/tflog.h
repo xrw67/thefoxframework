@@ -1,6 +1,7 @@
 #ifndef _TF_LOG_H_
 #define _TF_LOG_H_
 
+#include <direct.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
@@ -9,14 +10,12 @@
 class TFLog
 {
 public:
-
 	enum LogLevel
 	{
-		Debug,///< 指出细粒度信息事件对调试应用程序是非常有帮助的
-		info,///< 表明 消息在粗粒度级别上突出强调应用程序的运行过程
-		warning,///< 表明会出现潜在错误的情形
-		error,///< 指出虽然发生错误事件，但仍然不影响系统的继续运行
-		fatal///< 指出每个严重的错误事件将会导致应用程序的退出
+		LOG_DEBUG = 1,
+		LOG_INFO = 2,
+		LOG_WARNING = 3,
+		LOG_ERROR = 4
 	};
 
 	TFLog(const char *logDir, const char *prefix, unsigned int logLevel)
@@ -51,9 +50,9 @@ public:
 		time_t timeNow;
 		time(&timeNow);
 		
-		if (timeNow < m_timeLogBegin || timeNow < m_timeLogEnd)
+		if (timeNow < m_timeLogBegin || timeNow > m_timeLogEnd)
 		{
-			ClostLog();
+			CloseLog();
 			OpenLog(m_logDir.c_str(), m_prefix.c_str());
 			if (NULL == m_file)
 			{
@@ -64,7 +63,7 @@ public:
 		tm *pTm = localtime(&timeNow);
 		fprintf(m_file, "%02d:%02d:%02d > ", pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
 		va_list ap;
-		va_start(ap, fmt)
+		va_start(ap, fmt);
 		vfprintf(m_file , fmt, ap);
 		va_end(ap);
 		fflush(m_file);
@@ -86,7 +85,7 @@ public:
 		
 		if (timeNow < m_timeLogBegin || timeNow < m_timeLogEnd)
 		{
-			ClostLog();
+			CloseLog();
 			OpenLog(m_logDir.c_str(), m_prefix.c_str());
 			if (NULL == m_file)
 			{
@@ -94,14 +93,14 @@ public:
 			}
 		}
 		va_list ap;
-		va_start(ap, fmt)
+		va_start(ap, fmt);
 		vfprintf(m_file , fmt, ap);
 		va_end(ap);
 		fflush(m_file);
 	}
 	void SetLogLevel(unsigned int level)
 	{
-		m_logLevel = level
+		m_logLevel = level;
 	}
 	
 	unsigned int GetLogLevel() const
@@ -115,12 +114,38 @@ private:
 	{
 		if (NULL != m_file)
 		{
-			ClsoeLog();
+			CloseLog();
 		}
-		
-		
 
+		char filePath[512] = {0};
+		if (MakeFullPath(logDir, filePath, sizeof(filePath)))
+		{
+			time(&m_timeLogBegin);
+			tm *pTm = localtime(&m_timeLogBegin);
 
+			tm tmTemp;
+			tmTemp = *pTm;
+
+			pTm->tm_hour = 0;
+			pTm->tm_min = 0;
+			pTm->tm_sec = 0;
+			m_timeLogBegin = mktime(pTm);
+
+			m_timeLogEnd = m_timeLogBegin + 86400;
+
+			if (NULL != prefix && '\0' != *prefix)
+			{
+				sprintf(&filePath[strlen(filePath)], "%s", prefix);
+			}
+			sprintf(&filePath[strlen(filePath)], "%04d-%02d-%02d.log",
+				pTm->tm_year + 1900, pTm->tm_mon + 1, pTm->tm_yday);
+			m_file = fopen(filePath, "a+");
+			if (m_file)
+			{
+				fprintf(m_file, "Log begin at:%02d:%02d:%02d\r\n", tmTemp.tm_hour, tmTemp.tm_min, tmTemp.tm_sec);
+			}
+		}
+		return true;
 	}
 	
 	bool CloseLog()
@@ -137,15 +162,15 @@ private:
 		}
 		return true;;
 	}
-	/// @brief 
-	bool MakeFullPath(const char *dir, char *fullPath, int fullPathLen)
+	/// @brief 得到完整的路径，并且创建目录,末尾包含分隔符
+	bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen)
 	{
 		if (fullPathLen < 2)
 		{
 			return false;
 		}
 
-		int pathLen = 0;
+		size_t pathLen = 0;
 		char filePath[512] = {0};
 
 		if (NULL == dir)
@@ -181,7 +206,7 @@ private:
 				strncat(filePath, dir, sizeof(filePath) - pathLen);
 			}
 			//! 创建目录
-			char *curDir = filePath
+			char *curDir = filePath;
 			while ('\0' != *curDir)
 			{
 				if ('\\' == *curDir || '/' == *curDir)
@@ -222,6 +247,6 @@ private:
 
 #define tfImportLogLib extern TFLog g_log;
 
-#define tfLog g_Log.Log
+#define tfLog g_log.Log
 
 #endif // _TF_LOG_H_
