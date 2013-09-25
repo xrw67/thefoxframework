@@ -138,7 +138,7 @@ private:
 				sprintf(&filePath[strlen(filePath)], "%s", prefix);
 			}
 			sprintf(&filePath[strlen(filePath)], "%04d-%02d-%02d.log",
-				pTm->tm_year + 1900, pTm->tm_mon + 1, pTm->tm_yday);
+				pTm->tm_year + 1900, pTm->tm_mon + 1, pTm->tm_mday);
 			m_file = fopen(filePath, "a+");
 			if (m_file)
 			{
