@@ -3,6 +3,8 @@
 
 #pragma warning(disable:4996)
 
+#include <stdio.h>
+#include <stdarg.h>
 #include <string>
 
 #ifdef USE_NAMESPACE
@@ -17,6 +19,7 @@ extern "C" {
 
 class TFString
 {
+public:
 	TFString() :m_string() 
 	{
 	}
@@ -107,7 +110,7 @@ class TFString
 	
 	/// @brief return length of string
 	/// @return
-	const int GetLength() const
+	const size_t GetLength() const
 	{
 		return m_string.length();
 	}
@@ -316,12 +319,6 @@ public:
 		return str;
 	}
 	
-	static TFString Create(CString &s)
-	{
-		TFString str(s.GetBuffer());
-		s.ReleaseBuffer();
-		return str;
-	}
 	/// Create a string with value type with int
 	static TFString Create(const int i)
 	{
