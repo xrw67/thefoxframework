@@ -49,55 +49,35 @@ public:
 	/// @return a int value
 	const int ToInt() const
 	{
-		if (0 == GetLength())
-		{
-			return 0;
-		}
-		return atoi(m_string.c_str());
+		return (0 == GetLength()) ? 0 : atoi(m_string.c_str());
 	}
 	
 	/// @brief convert string to unsigned int
 	/// @return a unsigned int value
 	const unsigned int ToUInt() const
 	{
-		if (0 == GetLength())
-		{
-			return 0;
-		}
-		return static_cast<unsigned int>(atoi(m_string.c_str()));
+		return (0 == GetLength()) ? 0 : static_cast<unsigned int>(atoi(m_string.c_str()));
 	}
 	
 	/// @brief convert string to long
 	/// @return a log value
 	const long ToLong() const
 	{
-		if (0 == GetLength())
-		{
-			return 0L;
-		}
-		return atol(m_string.c_str());
+		return (0 == GetLength()) ? 0L : atol(m_string.c_str());
 	}
 	
 	/// @brief convert string to float
 	/// @return a float value
 	const float ToFloat() const
 	{
-		if (0 == GetLength())
-		{
-			return 0.0f;
-		}
-		return static_cast<float>(atof(m_string.c_str()));
+		return (0 == GetLength()) ? 0.0f : static_cast<float>(atof(m_string.c_str()));
 	}
 	
 	/// @brief convert string to double
 	/// @return a double value
 	const double ToDouble() const
 	{
-		if (0 == GetLength())
-		{
-			return 0.0;
-		}
-		return atof(m_string.c_str());
+		return (0 == GetLength()) ? 0.0 : atof(m_string.c_str());
 	}
 	
 	/// @brief convert string to bool
@@ -117,7 +97,7 @@ public:
 	
 	/// @brief return length of string
 	/// @return length of string
-	const size_t GetLength() const
+	const int GetLength() const
 	{
 		return m_string.length();
 	}
@@ -247,10 +227,70 @@ public:
 		}
 		return *this;
 	}
-	//const char operator[](const int index)
-	//{
-	//	return m_string[index];
-	//}
+	TFString &Replace(const char *oldStr, const char *newStr)
+	{
+		int oldStrLen = strlen(oldStr);
+		int newStrLen = strlen(newStr);
+		int pos = 0;
+		while ((pos = IndexOf(oldStr, pos)) != -1)
+		{
+			m_string.replace(pos, oldStrLen, newStr);
+			pos += newStrLen;
+		}
+
+		return *this;
+	}
+	const int IndexOf(const char c, const int pos = 0)
+	{
+		return static_cast<int>(m_string.find(c, pos));
+	}
+	const int IndexOf(const char *s, const int pos = 0)
+	{
+		return static_cast<int>(m_string.find(s, pos));
+	}
+	const int IndexOf(const TFString &s,const int pos = 0)
+	{
+		return static_cast<int>(m_string.find(s.m_string, pos));
+	}
+	const int LastIndexOf(const char c, const int pos = -1)
+	{
+		return static_cast<int>(m_string.rfind(c, pos));
+	}
+	const int LastIndexOf(const char *s, const int pos = -1)
+	{
+		return static_cast<int>(m_string.rfind(s, pos));
+	}
+	const int LastIndexOf(const TFString &s,const int pos = -1)
+	{
+		return static_cast<int>(m_string.rfind(s.m_string, pos));
+	}
+	const TFString &Insert(const char c, const int pos)
+	{
+		m_string.insert(pos, 1, c);
+		return *this;
+	}
+	const TFString &Insert(const char *s, const int pos)
+	{
+		m_string.insert(pos, s);
+		return *this;
+	}
+	const TFString &Insert(const TFString &s, const int pos)
+	{
+		m_string.insert(pos, s.m_string);
+		return *this;
+	}
+
+	const TFString Reverse() const
+	{
+		TFString s(m_string);
+		s.m_string.reserve();
+		return s;
+	}
+
+		const char operator[](const int index)
+	{
+		return m_string[index];
+	}
 	TFString &operator=(char c)
 	{
 		m_string = c;
@@ -271,7 +311,6 @@ public:
 		m_string = s.m_string;
 		return *this;
 	}
-	friend const char *ooperator=(const TFString &s
 
 	friend TFString operator+(const TFString &s1, const TFString &s2);
 	friend TFString operator+(const TFString &s1, char c);
