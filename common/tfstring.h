@@ -25,21 +25,11 @@ extern "C" {
 class TFString
 {
 public:
-	TFString() :m_string() 
-	{
-	}
-	TFString(const char c) : m_string(1, c)
-	{
-	}
-	TFString(const std::string &s) : m_string(s)
-	{
-	}
-	TFString(const char *s) : m_string(s)
-	{
-	}
-	TFString(const TFString &s) :m_string(s.m_string)
-	{
-	}
+	TFString() :m_string(){}
+	TFString(const char c) : m_string(1, c){}
+	TFString(const char *s) : m_string(s){}
+	TFString(const std::string &s) : m_string(s){}
+	TFString(const TFString &s) :m_string(s.m_string){}
 	virtual ~TFString()
 	{
 		m_string.clear();
@@ -49,42 +39,42 @@ public:
 	/// @return a int value
 	const int ToInt() const
 	{
-		return (0 == GetLength()) ? 0 : atoi(m_string.c_str());
+		return (0 == Length()) ? 0 : atoi(m_string.c_str());
 	}
 	
 	/// @brief convert string to unsigned int
 	/// @return a unsigned int value
 	const unsigned int ToUInt() const
 	{
-		return (0 == GetLength()) ? 0 : static_cast<unsigned int>(atoi(m_string.c_str()));
+		return (0 == Length()) ? 0 : static_cast<unsigned int>(atoi(m_string.c_str()));
 	}
 	
 	/// @brief convert string to long
 	/// @return a log value
 	const long ToLong() const
 	{
-		return (0 == GetLength()) ? 0L : atol(m_string.c_str());
+		return (0 == Length()) ? 0L : atol(m_string.c_str());
 	}
 	
 	/// @brief convert string to float
 	/// @return a float value
 	const float ToFloat() const
 	{
-		return (0 == GetLength()) ? 0.0f : static_cast<float>(atof(m_string.c_str()));
+		return (0 == Length()) ? 0.0f : static_cast<float>(atof(m_string.c_str()));
 	}
 	
 	/// @brief convert string to double
 	/// @return a double value
 	const double ToDouble() const
 	{
-		return (0 == GetLength()) ? 0.0 : atof(m_string.c_str());
+		return (0 == Length()) ? 0.0 : atof(m_string.c_str());
 	}
 	
 	/// @brief convert string to bool
 	/// @return a bool value
 	const bool ToBool() const
 	{
-		if (0 == GetLength())
+		if (0 == Length())
 		{
 			return false;
 		}
@@ -97,7 +87,7 @@ public:
 	
 	/// @brief return length of string
 	/// @return length of string
-	const int GetLength() const
+	const int Length() const
 	{
 		return m_string.length();
 	}
@@ -156,9 +146,11 @@ public:
 		}
 		return str;
 	}
+	/// @brief convert string to lower case
+	/// @return this string
 	TFString &ToLower()
 	{
-		for (int i = 0; i < GetLength(); i++)
+		for (int i = 0; i < Length(); i++)
 		{
 			if (m_string[i] >= 'A' && m_string[i] <= 'Z')
 			{
@@ -166,9 +158,11 @@ public:
 			}
 		}
 	}
+	/// @brief convert string to upper case
+	/// @return this string
 	TFString &ToUpper()
 	{
-		for (int i = 0; i < GetLength(); i++)
+		for (int i = 0; i < Length(); i++)
 		{
 			if (m_string[i] >= 'a' && m_string[i] <= 'z')
 			{
@@ -218,7 +212,7 @@ public:
 	}
 	TFString &Replace(const char oldChar, const char newChar)
 	{
-		for (int i = 0; i < GetLength(); ++i)
+		for (int i = 0; i < Length(); ++i)
 		{
 			if (oldChar == m_string[i])
 			{
@@ -287,7 +281,7 @@ public:
 		return s;
 	}
 
-		const char operator[](const int index)
+	const char operator[](const int index)
 	{
 		return m_string[index];
 	}
@@ -519,6 +513,7 @@ inline bool operator!=(const std::string &s1, const TFString &s2)
 { 
 	return !(s1 == s2); 
 }
+
 #ifdef __cpluscpus
 };
 #endif
