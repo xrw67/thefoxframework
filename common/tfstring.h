@@ -1,3 +1,8 @@
+/**
+* @file tfstring.h
+* @brief 字符串类
+* @autuor macwe@qq.com
+*/
 #ifndef _TF_STRING_H_
 #define _TF_STRING_H_
 
@@ -41,6 +46,7 @@ public:
 	}
 	
 	/// @brief convert string to int
+	/// @return a int value
 	const int ToInt() const
 	{
 		if (0 == GetLength())
@@ -51,6 +57,7 @@ public:
 	}
 	
 	/// @brief convert string to unsigned int
+	/// @return a unsigned int value
 	const unsigned int ToUInt() const
 	{
 		if (0 == GetLength())
@@ -61,7 +68,7 @@ public:
 	}
 	
 	/// @brief convert string to long
-	/// @return
+	/// @return a log value
 	const long ToLong() const
 	{
 		if (0 == GetLength())
@@ -72,7 +79,7 @@ public:
 	}
 	
 	/// @brief convert string to float
-	/// @return
+	/// @return a float value
 	const float ToFloat() const
 	{
 		if (0 == GetLength())
@@ -83,7 +90,7 @@ public:
 	}
 	
 	/// @brief convert string to double
-	/// @return
+	/// @return a double value
 	const double ToDouble() const
 	{
 		if (0 == GetLength())
@@ -94,7 +101,7 @@ public:
 	}
 	
 	/// @brief convert string to bool
-	/// @return
+	/// @return a bool value
 	const bool ToBool() const
 	{
 		if (0 == GetLength())
@@ -109,21 +116,21 @@ public:
 	}
 	
 	/// @brief return length of string
-	/// @return
+	/// @return length of string
 	const size_t GetLength() const
 	{
 		return m_string.length();
 	}
 	
 	/// @brief return string is empty;
-	/// @return
+	/// @return true is string is empty, otherwise return false
 	const bool IsEmpty() const
 	{
 		return m_string.empty();
 	}
 	
 	/// @brief Get string with format like "printf"
-	/// @return
+	/// @return true if format success, otherwise return false 
 	bool Format(const char *format, ...)
 	{
 		bool bRet = false;
@@ -146,16 +153,16 @@ public:
 	}
 	
 	/// @brief clear string
-	/// @return
+	/// @return void
 	void Clear()
 	{
 		m_string.clear();
 	}
 	
-	/// @brief return substring 
-	/// @param beginIndex [in] 
+	/// @brief Get substring 
+	/// @param beginIndex [in] first char index 
 	/// @param len[i] 
-	/// @return
+	/// @return a substring
 	TFString SubString(int beginIndex, int len = -1) const
 	{
 		TFString str;
@@ -264,6 +271,8 @@ public:
 		m_string = s.m_string;
 		return *this;
 	}
+	friend const char *ooperator=(const TFString &s
+
 	friend TFString operator+(const TFString &s1, const TFString &s2);
 	friend TFString operator+(const TFString &s1, char c);
 	friend TFString operator+(char c, const TFString &s2);
