@@ -274,11 +274,18 @@ public:
 		return *this;
 	}
 
-	const TFString Reverse() const
+	const TFString &Reverse()
 	{
-		TFString s(m_string);
-		s.m_string.reserve();
-		return s;
+		size_t kLength = Length();
+		char tmpChar = '\0';
+		
+		for (size_t i = 0; i < (kLength / 2); ++i)
+		{
+			tmpChar = m_string[i];
+			m_string[i] = m_string[kLength - i - 1];
+			m_string[kLength - i - 1] = tmpChar;
+		}
+		return *this;
 	}
 
 	const char operator[](const int index)

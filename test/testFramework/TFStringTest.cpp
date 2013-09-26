@@ -17,7 +17,6 @@ void TFStringTest::testGetLength()
 void TFStringTest::testReserve()
 {
 	TFString s(" qwertyuiop[]");
-	
+
 	CPPUNIT_ASSERT(s.Reverse() == "][poiuytrewq ");
-	CPPUNIT_ASSERT(s.Reverse() == " ][poiuytrewq");
 }
