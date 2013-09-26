@@ -11,5 +11,13 @@ void TFStringTest::testGetLength()
 {
 	TFString s("asdf123456   ~g \r\n\t ");
 	
-	CPPUNIT_ASSERT_EQUAL(strlen("asdf123456   ~g \r\n\t "),(size_t)s.GetLength());
+	CPPUNIT_ASSERT_EQUAL(strlen("asdf123456   ~g \r\n\t "),(size_t)s.Length());
+}
+
+void TFStringTest::testReserve()
+{
+	TFString s(" qwertyuiop[]");
+	
+	CPPUNIT_ASSERT(s.Reverse() == "][poiuytrewq ");
+	CPPUNIT_ASSERT(s.Reverse() == " ][poiuytrewq");
 }
