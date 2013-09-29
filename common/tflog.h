@@ -1,5 +1,20 @@
+/*
+* @file tflog.h
+* @brief 输出日志
+*
+* @ahthor macwe@qq.com
+*/
+
 #ifndef _TF_LOG_H_
 #define _TF_LOG_H_
+
+#ifdef USE_NAMESPACE
+namespace TheFox {
+#endif
+
+#ifdef __cpluscpus
+extern "C" {
+#endif
 
 #include <direct.h>
 #include <stdlib.h>
@@ -7,15 +22,17 @@
 #include <string>
 #include <time.h>
 
+
 class TFLog
 {
 public:
+	/// @brief 日志等级
 	enum LogLevel
 	{
-		LOG_DEBUG = 1,
-		LOG_INFO = 2,
-		LOG_WARNING = 3,
-		LOG_ERROR = 4
+		LOG_DEBUG = 1, //< 调试
+		LOG_INFO = 2, //< 提示
+		LOG_WARN = 3,//< 警告
+		LOG_ERROR = 4 //< 错误
 	};
 
 	TFLog(const char *logDir, const char *prefix, unsigned int logLevel)
@@ -36,6 +53,9 @@ public:
 		CloseLog();
 	}
 	
+	/// @brief 写入日志，带时间标记
+	/// @param [in] logLevel 日志级别
+	/// @param [in] fmt 日志的内容，格式与参见printf函数
 	void Log(unsigned int logLevel, const char *fmt, ...)
 	{
 		if (NULL == m_file)
@@ -61,7 +81,7 @@ public:
 		}
 		
 		tm *pTm = localtime(&timeNow);
-		fprintf(m_file, "%02d:%02d:%02d > ", pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
+		fprintf(m_file, "%s %02d:%02d:%02d > ", GetLogLevelDescript(logLevel), pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
 		va_list ap;
 		va_start(ap, fmt);
 		vfprintf(m_file , fmt, ap);
@@ -69,6 +89,9 @@ public:
 		fflush(m_file);
 	}
 	
+	/// @brief 写入日志，不带时间标记
+	/// @param [in] logLevel 日志级别
+	/// @param [in] fmt 日志的内容，格式与参见printf函数
 	void LogNoTimeTag(unsigned int logLevel, const char *fmt, ...)
 	{
 		if (NULL == m_file)
@@ -92,17 +115,22 @@ public:
 				return;
 			}
 		}
+		fprintf(m_file, "%s ", GetLogLevelDescript(logLevel));
 		va_list ap;
 		va_start(ap, fmt);
 		vfprintf(m_file , fmt, ap);
 		va_end(ap);
 		fflush(m_file);
 	}
+	
+	/// @brief 设置日志级别
+	/// @param [in] 日志级别
 	void SetLogLevel(unsigned int level)
 	{
 		m_logLevel = level;
 	}
 	
+	/// @brief 得到日志级别
 	unsigned int GetLogLevel() const
 	{
 		return m_logLevel;
@@ -110,6 +138,19 @@ public:
 
 	
 private:
+	// 得到日志级别的描述文字
+	const char *GetLogLevelDescript(const unsigned int logLevel) const
+	{
+		switch (logLevel)
+		{
+			case LOG_DEBUG: return "DEBUG";
+			case LOG_INFO: return "INFO";
+			case LOG_WARN: return "WARN";
+			case LOG_ERROR: return "ERROE";
+			default: return "";
+		}
+	}
+	// 打开日志文件
 	bool OpenLog(const char *logDir, const char *prefix)
 	{
 		if (NULL != m_file)
@@ -147,7 +188,7 @@ private:
 		}
 		return true;
 	}
-	
+	// 关闭日志文件
 	bool CloseLog()
 	{
 		if (m_file)
@@ -162,8 +203,8 @@ private:
 		}
 		return true;;
 	}
-	/// @brief 得到完整的路径，并且创建目录,末尾包含分隔符
-	bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen)
+	// 得到完整的路径，并且创建目录,末尾包含分隔符
+	bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen) const
 	{
 		if (fullPathLen < 2)
 		{
@@ -234,12 +275,13 @@ private:
 		return false;
 	}
 
-	FILE *m_file;
-	std::string m_logDir;
-	std::string m_prefix;
-	time_t m_timeLogBegin;
-	time_t m_timeLogEnd;
-	unsigned int m_logLevel;
+	FILE *m_file; // 日志文件指针
+	std::string m_logDir; // 日志文件路径，不含文件名
+	std::string m_prefix; // 日志文件前缀
+	// 这两个用来保证每天生成一个日志文件
+	time_t m_timeLogBegin;// 写日志文件开始时间戳
+	time_t m_timeLogEnd;// 写日志文件结束时间戳
+	unsigned int m_logLevel; // 日志级别
 };
 
 
@@ -248,5 +290,13 @@ private:
 #define tfImportLogLib extern TFLog g_log;
 
 #define tfLog g_log.Log
+
+#ifdef __cpluscpus
+};
+#endif
+
+#ifdef USE_NAMESPACE
+};
+#endif
 
 #endif // _TF_LOG_H_
