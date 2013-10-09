@@ -12,13 +12,8 @@
 #include <stdarg.h>
 #include <string>
 
-#ifdef USE_NAMESPACE
-namespace TheFox {
-#endif
-
-#ifdef __cpluscpus
-extern "C" {
-#endif
+namespace thefox
+{
 
 #define kMaxStringLen (1024*100)
 
@@ -521,12 +516,6 @@ inline bool operator!=(const std::string &s1, const TFString &s2)
 	return !(s1 == s2); 
 }
 
-#ifdef __cpluscpus
-};
-#endif
-
-#ifdef USE_NAMESPACE
-};
-#endif
+}
 
 #endif // _TF_STRING_H_

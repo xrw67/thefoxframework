@@ -8,33 +8,215 @@
 #ifndef _TF_LOG_H_
 #define _TF_LOG_H_
 
-#ifdef USE_NAMESPACE
-namespace TheFox {
-#endif
+namespace thefox
+{
 
-#ifdef __cpluscpus
-extern "C" {
-#endif
 
 #include <direct.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
 #include <time.h>
+#include "noncopyable.h"
+
+// Efficient Integer to String Conversions, by Matthew Wilson.
+const char digits[] = "9876543210123456789";
+const char* zero = digits + 9;
+ASSERT(sizeof(digits) == 20);
+
+const char digitsHex[] = "0123456789ABCDEF";
+ASSERT(sizeof digitsHex == 17);
+
+template<typename T>
+inline size_t convert(char buf[], T value)
+{
+  T i = value;
+  char* p = buf;
+
+  do
+  {
+    int lsd = static_cast<int>(i % 10);
+    i /= 10;
+    *p++ = zero[lsd];
+  } while (i != 0);
+
+  if (value < 0)
+  {
+    *p++ = '-';
+  }
+  *p = '\0';
+  std::reverse(buf, p);
+
+  return p - buf;
+}
+
+inline size_t convertHex(char buf[], uintptr_t value)
+{
+  uintptr_t i = value;
+  char* p = buf;
+
+  do
+  {
+    int lsd = i % 16;
+    i /= 16;
+    *p++ = digitsHex[lsd];
+  } while (i != 0);
+
+  *p = '\0';
+  std::reverse(buf, p);
+
+  return p - buf;
+}
+
+// 固定长度的缓冲区
+template<int SIZE>
+class TFFixBuffer : noncopyable
+{
+public:
+	TFFixBuffer()
+		:m_curPtr(m_data)
+	{}
+	~TFFixBuffer(){}
+	void Append(cosnt char *buf, size_t len)
+	{
+		if (static_cast<size_t>(Avail()) > len)
+		{
+			memcpy(m_curPtr, buf, len);
+			m_curPtr += len;
+		}
+	}
+	const char GetData() const { return m_data; }
+	int Length() const { return static_cast<int>(m_curPtr - m_data); }
+	void Add(size_t len) { m_curPtr += len; }
+	void reset() { m_curPtr = m_data; }
+private:
+	char m_data[SIZE];
+	char *m_curPtr;
+}
 
 
+// 日志内容
+class TFLogStream : noncopyable
+{
+	typedef TFLogStream self;
+	typedef TFFixedBuffer Buffer;
+
+public:
+	self &operator<<(bool v)
+	{
+		m_buffer.Append(v ? "1" : "0", 1);
+		return *this;
+	}
+	self& operator<<(short)
+	{
+		*this << static_cast<int>(v);
+		return *this;
+	}
+	self& operator<<(unsigned short v)
+	{
+		*this << static_cast<unsigned int>(v);
+		return *this;
+	}
+	self& operator<<(int v)
+	{
+		FormatInteger(v);
+		return *this;
+	}
+	self& operator<<(unsigned int v)
+	{
+		FormatInteger(v);
+		return *this;
+	}
+	self& operator<<(long v)
+	{
+		FormatInteger(v);
+		return *this;
+	}
+	self& operator<<(unsigned long v)
+	{
+		FormatInteger(v);
+		return *this;
+	}
+	self& operator<<(long long v)
+	{
+		FormatInteger(v);
+		return *this;
+	}
+	self& operator<<(unsigned long long v)
+	{
+		FormatInteger(v);
+		return *this;
+	}
+	self& operator<<(const void* p)
+	{
+		uintptr_t v = reinterpret_cast<unitptr_t>(p);
+		if (m_buffer.Avail() >= kMaxNumericSize)
+		{
+			char *buf = m_buffer.Current();
+			buf[0] = '0';
+			buf[1] = 'x';
+			size_t len  = convertHex(buf + 2, v);
+			m_buffer.Add(len + 2);
+		}
+		return *this;
+	}
+
+	self& operator<<(float v)
+	{
+		*this << static_cast<double>(v);
+		return *this;
+	}
+	self& operator<<(double);
+	{
+		if (m_buffer.Avail() >= kMaxNumericSize)
+		{
+			int len = snprintf(m_buffer.Current(), KMaxNumericSize, "%.12g", v);
+		}
+	}
+
+	self& operator<<(char v)
+	{
+		buffer_.append(&v, 1);
+		return *this;
+	}
+
+	self& operator<<(const char* v)
+	{
+		buffer_.append(v, strlen(v));
+		return *this;
+	}
+
+	void Append(const char *data, int len) { m_buffer.Append(data, len); }
+	const Buffer &GetBuffer() const { return m_buffer; }
+	const ResetBuffer() { m_buffer.Reset(); }
+
+private:
+	template<typename T>
+	void FormatInteger(T v)
+	{
+	
+	}
+
+	Buffer m_buffer;
+
+	static const int kMaxNumericSize = 32;
+}
+
+
+// 日志操作类
 class TFLog
 {
 public:
 	/// @brief 日志等级
 	enum LogLevel
 	{
-		LOG_TRACE = 0,
-		LOG_DEBUG = 1, //< 调试
-		LOG_INFO = 2, //< 提示
-		LOG_WARN = 3,//< 警告
-		LOG_ERROR = 4 //< 错误
-		LOG_FATAL = 5
+		LOG_TRACE,
+		LOG_DEBUG, //< 调试
+		LOG_INFO, //< 提示
+		LOG_WARN,//< 警告
+		LOG_ERROR //< 错误
+		LOG_FATAL
+		NUM_LOG_LEVELS
 	};
 
 	TFLog(const char *logDir, const char *prefix, unsigned int logLevel)
@@ -84,40 +266,6 @@ public:
 		
 		tm *pTm = localtime(&timeNow);
 		fprintf(m_file, "%s %02d:%02d:%02d > ", GetLogLevelDescript(logLevel), pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
-		va_list ap;
-		va_start(ap, fmt);
-		vfprintf(m_file , fmt, ap);
-		va_end(ap);
-		fflush(m_file);
-	}
-	
-	/// @brief 写入日志，不带时间标记
-	/// @param [in] logLevel 日志级别
-	/// @param [in] fmt 日志的内容，格式与参见printf函数
-	void LogNoTimeTag(unsigned int logLevel, const char *fmt, ...)
-	{
-		if (NULL == m_file)
-		{
-			return;
-		}
-		if (logLevel < m_logLevel)
-		{
-			return;
-		}
-		
-		time_t timeNow;
-		time(&timeNow);
-		
-		if (timeNow < m_timeLogBegin || timeNow < m_timeLogEnd)
-		{
-			CloseLog();
-			OpenLog(m_logDir.c_str(), m_prefix.c_str());
-			if (NULL == m_file)
-			{
-				return;
-			}
-		}
-		fprintf(m_file, "%s ", GetLogLevelDescript(logLevel));
 		va_list ap;
 		va_start(ap, fmt);
 		vfprintf(m_file , fmt, ap);
@@ -293,12 +441,15 @@ private:
 
 #define tfLog g_log.Log
 
-#ifdef __cpluscpus
-};
-#endif
+#define TFLOG_TRACE if (thefox
+#define TFLOG_DEBUG
+#define TFLOG_INFO
+#define TFLOG_WARN
+#define TFLOG_ERROR
+#define TFLOG_FATAL
 
-#ifdef USE_NAMESPACE
-};
-#endif
+
+
+}
 
 #endif // _TF_LOG_H_
