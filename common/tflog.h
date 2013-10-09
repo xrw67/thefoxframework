@@ -29,10 +29,12 @@ public:
 	/// @brief 日志等级
 	enum LogLevel
 	{
+		LOG_TRACE = 0,
 		LOG_DEBUG = 1, //< 调试
 		LOG_INFO = 2, //< 提示
 		LOG_WARN = 3,//< 警告
 		LOG_ERROR = 4 //< 错误
+		LOG_FATAL = 5
 	};
 
 	TFLog(const char *logDir, const char *prefix, unsigned int logLevel)
