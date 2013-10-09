@@ -11,42 +11,36 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string>
+#include <math.h>
 
 namespace thefox
 {
-
-#define kMaxStringLen (1024*100)
 
 class String
 {
 public:
 	String() : _data() {}
-	String(const char v) : _data(1, v) {}
-	String(const char *v) : _data(v) {}
-	String(const std::string &v) : _data(v) {}
-	String(const String &v) : _data(v._data) {}
+	String(const char c) : _data(1, c) {}
+	String(const char *s) : _data(s) {}
+	String(const std::string &s) : _data(s) {}
+	String(const String &s) : _data(s._data) {}
 	virtual ~String() { _data.clear(); }
 	
 	/// @brief convert string to int
 	/// @return a int value
 	const int toInt() const { return (0 == length()) ? 0 : atoi(_data.c_str()); }
-	
 	/// @brief convert string to unsigned int
 	/// @return a unsigned int value
 	const unsigned int toUInt() const { return (0 == length()) ? 0 : static_cast<unsigned int>(atoi(_data.c_str())); }
-	
 	/// @brief convert string to long
 	/// @return a log value
 	const long toLong() const { return (0 == length()) ? 0L : atol(_data.c_str()); }
-	
 	/// @brief convert string to float
 	/// @return a float value
 	const float toFloat() const { return (0 == length()) ? 0.0f : static_cast<float>(atof(_data.c_str())); }
-	
 	/// @brief convert string to double
 	/// @return a double value
 	const double toDouble() const { return (0 == Length()) ? 0.0 : atof(_data.c_str()); }
-	
 	/// @brief convert string to bool
 	/// @return a bool value
 	const bool toBool() const
@@ -154,22 +148,26 @@ public:
 		}
 		return *this;
 	}
-	const char at(int index)
-	{
-		return _data.at(index);
+	const char at(int index) const { return _data.at(index); }
+	const char *cStr() const { return _data.c_str(); }
+	int compare(String &s) const { return _data.compare(s._data); }
+	bool equalsIgnoreCase(String &s) 
+	{	
+		if (length() != s.length())
+		{
+			return false;
+		}
+		for (int i = 0; i < length(); ++i)
+		{
+			int diff = abs(at(i) - s.at(i));
+			if (0 != diff || 0x20 != diff)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
-	const char *cStr()
-	{
-		return _data.c_str();
-	}
-	int compare(String &s)
-	{
-		return _data.compare(s._data);
-	}
-	bool equalsIgnoreCase(String &s)
-	{
-		return this->ToLower() == s.ToLower();
-	}
+	
 	String &replace(const char oldChar, const char newChar)
 	{
 		for (int i = 0; i < Length(); ++i)
@@ -194,30 +192,14 @@ public:
 
 		return *this;
 	}
-	const int indexOf(const char c, const int pos = 0)
-	{
-		return static_cast<int>(_data.find(c, pos));
-	}
-	const int indexOf(const char *s, const int pos = 0)
-	{
-		return static_cast<int>(_data.find(s, pos));
-	}
-	const int indexOf(const String &s,const int pos = 0)
-	{
-		return static_cast<int>(_data.find(s._data, pos));
-	}
-	const int lastIndexOf(const char c, const int pos = -1)
-	{
-		return static_cast<int>(_data.rfind(c, pos));
-	}
-	const int lastIndexOf(const char *s, const int pos = -1)
-	{
-		return static_cast<int>(_data.rfind(s, pos));
-	}
-	const int lastIndexOf(const String &s,const int pos = -1)
-	{
-		return static_cast<int>(_data.rfind(s._data, pos));
-	}
+	
+	const int indexOf(const char c, const int pos = 0) const { return static_cast<int>(_data.find(c, pos)); }
+	const int indexOf(const char *s, const int pos = 0) const { return static_cast<int>(_data.find(s, pos)); }
+	const int indexOf(const String &s,const int pos = 0) const { return static_cast<int>(_data.find(s._data, pos)); }
+	const int lastIndexOf(const char c, const int pos = -1) const { return static_cast<int>(_data.rfind(c, pos)); }
+	const int lastIndexOf(const char *s, const int pos = -1) const { return static_cast<int>(_data.rfind(s, pos)); }
+	const int lastIndexOf(const String &s,const int pos = -1) const { return static_cast<int>(_data.rfind(s._data, pos)); }
+	
 	const String &insert(const char c, const int pos)
 	{
 		_data.insert(pos, 1, c);
@@ -248,10 +230,8 @@ public:
 		return *this;
 	}
 
-	const char operator[](const int index)
-	{
-		return _data[index];
-	}
+	const char operator[](const int index) const { return _data[index]; }
+	
 	String &operator=(char c)
 	{
 		_data = c;
@@ -273,14 +253,6 @@ public:
 		return *this;
 	}
 
-	friend String operator+(const String &s1, const String &s2);
-	friend String operator+(const String &s1, char c);
-	friend String operator+(char c, const String &s2);
-	friend String operator+(const String &s1, const char *s2);
-	friend String operator+(const char *s1, const String &s2);
-	friend String operator+(const String &s1, const std::string &s2);
-	friend String operator+(const std::string &s1, const String &s2);
-
 	String &operator+=(char c)
 	{
 		_data += c;
@@ -301,6 +273,15 @@ public:
 		_data += s._data;
 		return *this;
 	}
+
+	friend String operator+(const String &s1, const String &s2);
+	friend String operator+(const String &s1, char c);
+	friend String operator+(char c, const String &s2);
+	friend String operator+(const String &s1, const char *s2);
+	friend String operator+(const char *s1, const String &s2);
+	friend String operator+(const String &s1, const std::string &s2);
+	friend String operator+(const std::string &s1, const String &s2);
+
 	friend bool operator==(const String &s1, const String &s2);
 	friend bool operator==(const String &s1, const char *s2);
 	friend bool operator==(const char *s1, const String &s2);
@@ -394,6 +375,7 @@ public:
 	}
 private:
 	std::string _data;
+	static const int kMaxStringLen = 1024*100;
 };
 
 
