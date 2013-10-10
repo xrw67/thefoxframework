@@ -1,7 +1,7 @@
 #ifndef _THEFOX_LOGSTREAM_H_
 #define _THEFOX_LOGSTREAM_H_
 
-#include "noncopyable.h"
+#include <base/noncopyable.h>
 
 namespace thefox
 {
@@ -14,21 +14,22 @@ public:
 		:m_curPtr(m_data)
 	{}
 	~FixBuffer(){}
-	void Append(cosnt char *buf, size_t len)
+	void append(const char *buf, size_t len)
 	{
 		if (static_cast<size_t>(Avail()) > len)
 		{
-			memcpy(m_curPtr, buf, len);
-			m_curPtr += len;
+			memcpy(_curPtr, buf, len);
+			_curPtr += len;
 		}
 	}
-	const char GetData() const { return m_data; }
-	int Length() const { return static_cast<int>(m_curPtr - m_data); }
-	void Add(size_t len) { m_curPtr += len; }
-	void reset() { m_curPtr = m_data; }
+	char *current() {return _curPtr; }
+	const char *data() const { return _data; }
+	int length() const { return static_cast<int>(_curPtr - _data); }
+	void add(size_t len) { _curPtr += len; }
+	void reset() { _curPtr = _data; }
 private:
-	char m_data[SIZE];
-	char *m_curPtr;
+	char _data[SIZE];
+	char *_curPtr;
 };
 
 
@@ -38,102 +39,57 @@ class LogStream : noncopyable
 	typedef FixedBuffer Buffer;
 
 public:
+	self &operator<<(short);
+	self &operator<<(unsigned short v);
+	self &operator<<(int v);
+	self &operator<<(unsigned int v);
+	self &operator<<(long v);
+	self &operator<<(unsigned long v);
+	self &operator<<(long long v);
+	self &operator<<(unsigned long long v);
+	self &operator<<(const void* p);
+
 	self &operator<<(bool v)
 	{
 		m_buffer.Append(v ? "1" : "0", 1);
 		return *this;
 	}
-	self& operator<<(short)
-	{
-		*this << static_cast<int>(v);
-		return *this;
-	}
-	self& operator<<(unsigned short v)
-	{
-		*this << static_cast<unsigned int>(v);
-		return *this;
-	}
-	self& operator<<(int v)
-	{
-		FormatInteger(v);
-		return *this;
-	}
-	self& operator<<(unsigned int v)
-	{
-		FormatInteger(v);
-		return *this;
-	}
-	self& operator<<(long v)
-	{
-		FormatInteger(v);
-		return *this;
-	}
-	self& operator<<(unsigned long v)
-	{
-		FormatInteger(v);
-		return *this;
-	}
-	self& operator<<(long long v)
-	{
-		FormatInteger(v);
-		return *this;
-	}
-	self& operator<<(unsigned long long v)
-	{
-		FormatInteger(v);
-		return *this;
-	}
-	self& operator<<(const void* p)
-	{
-		uintptr_t v = reinterpret_cast<unitptr_t>(p);
-		if (m_buffer.Avail() >= kMaxNumericSize)
-		{
-			char *buf = m_buffer.Current();
-			buf[0] = '0';
-			buf[1] = 'x';
-			size_t len  = convertHex(buf + 2, v);
-			m_buffer.Add(len + 2);
-		}
-		return *this;
-	}
-
-	self& operator<<(float v)
+	
+	self &operator<<(float v)
 	{
 		*this << static_cast<double>(v);
 		return *this;
 	}
-	self& operator<<(double);
+	self &operator<<(double);
 	{
-		if (m_buffer.Avail() >= kMaxNumericSize)
+		if (_buffer.avail() >= kMaxNumericSize)
 		{
-			int len = snprintf(m_buffer.Current(), KMaxNumericSize, "%.12g", v);
+			int len = snprintf(_buffer.current(), kMaxNumericSize, "%.12g", v);
+			_buffer.add(len);
 		}
-	}
-
-	self& operator<<(char v)
-	{
-		buffer_.append(&v, 1);
 		return *this;
 	}
 
-	self& operator<<(const char* v)
+	self &operator<<(char v)
 	{
-		buffer_.append(v, strlen(v));
+		_buffer.append(&v, 1);
 		return *this;
 	}
 
-	void Append(const char *data, int len) { m_buffer.Append(data, len); }
-	const Buffer &GetBuffer() const { return m_buffer; }
-	const ResetBuffer() { m_buffer.Reset(); }
+	self &operator<<(const char* v)
+	{
+		_buffer.append(v, strlen(v));
+		return *this;
+	}
+	
+	void append(const char *data, int len) { _buffer.append(data, len); }
+	const Buffer &buffer() const { return _buffer; }
+	const resetBuffer() { _buffer.Reset(); }
 
 private:
 	template<typename T>
-	void FormatInteger(T v)
-	{
-	
-	}
-
-	Buffer m_buffer;
+	void FormatInteger(T v);
+	Buffer _buffer;
 
 	static const int kMaxNumericSize = 32;
 };

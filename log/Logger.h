@@ -59,7 +59,7 @@ public:
 	Logger(SourceFile file, int line, bool toAbort);
 	~Logger();
 
-	LogStream& stream() { return impl_.stream_; }
+	LogStream& stream() { return _lineImpl.stream_; }
 
 	static LogLevel logLevel();
 	static void setLogLevel(LogLevel level);
@@ -70,12 +70,11 @@ public:
 	static void setFlush(FlushFunc);
 
 private:
-	class Impl
+	class LineImpl
 	{
 	public:
 		typedef Logger::LogLevel LogLevel;
-		Impl(LogLevel level, int old_errno, const SourceFile& file, int line);
-		void formatTime();
+		LineImpl(LogLevel level, int old_errno, const SourceFile& file, int line);
 		void finish();
 
 		Timestamp _time;
@@ -85,7 +84,7 @@ private:
 		SourceFile _basename;
 	};
 
-  Impl _impl;
+  LineImpl _lineImpl;
 }
 
 extern Logger::LogLevel g_logLevel;
