@@ -21,13 +21,13 @@ class MutexLock
 		::DeleteCriticalSection(&_cs);
 	}
 	
-	void Lock()
+	void lock()
 	{
 		::EnterCriticalSection(&_cs);
 		_threadId = ::GetCurrentThreadId();
 	}
 	
-	void Unlock()
+	void unlock()
 	{
 		_threadId = 0;
 		::LeverCriticalSection(&_cs);
@@ -46,11 +46,11 @@ public:
 	MutexLockGuard(const MutexLock &mutex)
 		: _mutex(mutex)
 	{
-		_mutex.Lock();
+		_mutex.lock();
 	}
 	~MutexLockGuard()
 	{
-		_mutex.Unlock();
+		_mutex.unlock();
 	}
 private:
 	MutexLockGuard(const MutexLockGuard &);
