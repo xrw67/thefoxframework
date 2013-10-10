@@ -5,8 +5,8 @@
 * @ahthor macwe@qq.com
 */
 
-#ifndef _TF_LOG_H_
-#define _TF_LOG_H_
+#ifndef _THEFOX_LOGFILE_H_
+#define _THEFOX_LOGFILE_H_
 
 namespace thefox
 {
@@ -20,6 +20,40 @@ namespace thefox
 #include "noncopyable.h"
 
 
+class LogFile : boost::noncopyable
+{
+ public:
+  LogFile(const string& basename,
+          size_t rollSize,
+          bool threadSafe = true,
+          int flushInterval = 3);
+  ~LogFile();
+
+  void append(const char* logline, int len);
+  void flush();
+
+ private:
+  void append_unlocked(const char* logline, int len);
+
+  static string getLogFileName(const string& basename, time_t* now);
+  void rollFile();
+
+  const string _basename;
+  const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后写到文件里
+  const int _flushInterval;///< 每隔这个时间将文件缓冲区中的数据写到文件中
+
+  int _count;
+
+  MutexLock _mutex;
+  time_t _startOfPeriod;
+  time_t _lastRoll;
+  time_t _lastFlush;
+  class File;
+  File _file;
+
+  const static int kCheckTimeRoll_ = 1024; ///< 统计达到这么多行后写到文件
+  const static int kRollPerSeconds_ = 60*60*24;
+};
 
 
 
@@ -27,99 +61,7 @@ namespace thefox
 class TFLog
 {
 public:
-	/// @brief 日志等级
-	enum LogLevel
-	{
-		LOG_TRACE,
-		LOG_DEBUG, //< 调试
-		LOG_INFO, //< 提示
-		LOG_WARN,//< 警告
-		LOG_ERROR //< 错误
-		LOG_FATAL
-		NUM_LOG_LEVELS
-	};
 
-	TFLog(const char *logDir, const char *prefix, unsigned int logLevel)
-	: m_file(NULL)
-	, m_logDir(logDir)
-	, m_prefix(prefix)
-	, m_timeLogBegin(0)
-	, m_timeLogEnd(0)
-	, m_logLevel(logLevel)
-	{
-		ASSERT(logDir);
-		ASSERT(prefix);
-		
-		OpenLog(logDir, prefix);
-	}
-	~TFLog()
-	{
-		CloseLog();
-	}
-	
-	/// @brief 写入日志，带时间标记
-	/// @param [in] logLevel 日志级别
-	/// @param [in] fmt 日志的内容，格式与参见printf函数
-	void Log(unsigned int logLevel, const char *fmt, ...)
-	{
-		if (NULL == m_file)
-		{
-			return;
-		}
-		if (logLevel < m_logLevel)
-		{
-			return;
-		}
-		
-		time_t timeNow;
-		time(&timeNow);
-		
-		if (timeNow < m_timeLogBegin || timeNow > m_timeLogEnd)
-		{
-			CloseLog();
-			OpenLog(m_logDir.c_str(), m_prefix.c_str());
-			if (NULL == m_file)
-			{
-				return;
-			}
-		}
-		
-		tm *pTm = localtime(&timeNow);
-		fprintf(m_file, "%s %02d:%02d:%02d > ", GetLogLevelDescript(logLevel), pTm->tm_hour, pTm->tm_min, pTm->tm_sec);
-		va_list ap;
-		va_start(ap, fmt);
-		vfprintf(m_file , fmt, ap);
-		va_end(ap);
-		fflush(m_file);
-	}
-	
-	/// @brief 设置日志级别
-	/// @param [in] 日志级别
-	void SetLogLevel(unsigned int level)
-	{
-		m_logLevel = level;
-	}
-	
-	/// @brief 得到日志级别
-	unsigned int GetLogLevel() const
-	{
-		return m_logLevel;
-	}
-
-	
-private:
-	// 得到日志级别的描述文字
-	const char *GetLogLevelDescript(const unsigned int logLevel) const
-	{
-		switch (logLevel)
-		{
-			case LOG_DEBUG: return "DEBUG";
-			case LOG_INFO: return "INFO";
-			case LOG_WARN: return "WARN";
-			case LOG_ERROR: return "ERROE";
-			default: return "";
-		}
-	}
 	// 打开日志文件
 	bool OpenLog(const char *logDir, const char *prefix)
 	{
@@ -173,77 +115,7 @@ private:
 		}
 		return true;;
 	}
-	// 得到完整的路径，并且创建目录,末尾包含分隔符
-	bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen) const
-	{
-		if (fullPathLen < 2)
-		{
-			return false;
-		}
-
-		size_t pathLen = 0;
-		char filePath[512] = {0};
-
-		if (NULL == dir)
-		{
-			_getcwd(filePath, sizeof(filePath));
-		}
-		else
-		{
-			bool bAbsolutePath = true;
-
-			// 判断dir是绝对路径还是相对路径
-#ifdef WIN32
-			if (NULL == strchr(dir, ':'))
-			{
-				bAbsolutePath = false;
-			}
-#else
-			if (dir[0] != '/')
-			{
-				bAbsolutePath = false;
-			}
-#endif
-			_getcwd(filePath, sizeof(filePath));
-
-			if (!bAbsolutePath) // 如果是相对路径，生成绝对路径
-			{
-				pathLen = strlen(filePath);
-				if ('/' != filePath[pathLen] || '\\' != filePath[pathLen])
-				{
-					strcat(filePath, "/");
-					++pathLen;
-				}
-				strncat(filePath, dir, sizeof(filePath) - pathLen);
-			}
-			//! 创建目录
-			char *curDir = filePath;
-			while ('\0' != *curDir)
-			{
-				if ('\\' == *curDir || '/' == *curDir)
-				{
-					*curDir = '\0';
-					_mkdir(filePath);
-					*curDir = '/';
-				}
-				++curDir;
-			}
-			_mkdir(filePath);
-		}
-
-		pathLen = strlen(filePath);
-		if ('/' != filePath[pathLen])
-		{
-			strcat(filePath, "/");
-			++pathLen;
-		}
-		if (pathLen < fullPathLen)
-		{
-			strcpy(fullPath, filePath);
-			return true;
-		}
-		return false;
-	}
+	
 
 	FILE *m_file; // 日志文件指针
 	std::string m_logDir; // 日志文件路径，不含文件名
@@ -254,22 +126,6 @@ private:
 	unsigned int m_logLevel; // 日志级别
 };
 
-
-#define tfInitLogLib(dir, prefix, logLevel) TFLog g_log(dir, prefix, logLevel);
-
-#define tfImportLogLib extern TFLog g_log;
-
-#define tfLog g_log.Log
-
-#define TFLOG_TRACE if (thefox
-#define TFLOG_DEBUG
-#define TFLOG_INFO
-#define TFLOG_WARN
-#define TFLOG_ERROR
-#define TFLOG_FATAL
-
-
-
 }
 
-#endif // _TF_LOG_H_
+#endif // _THEFOX_LOGFILE_H_

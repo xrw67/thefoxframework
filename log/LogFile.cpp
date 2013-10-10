@@ -75,6 +75,7 @@ LogFile::LogFile(const string& basename, size_t rollSize, bool threadSafe, int f
 {
 	assert(basename.find('/') == string::npos);
 	rollFile();
+	append("", );
 }
 
 LogFile::~LogFile()
@@ -162,10 +163,10 @@ string LogFile::getLogFileName(const string& basename, time_t* now)
 
   char timebuf[32];
   char pidbuf[32];
-  struct tm tm;
+  
   *now = time(NULL);
-  gmtime_r(now, &tm); // FIXME: localtime_r ?
-  strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S.", &tm);
+  tm *tm_time = localtime(&now);
+  strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S.", tm_time);
   filename += timebuf;
   snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
   filename += pidbuf;
