@@ -3,8 +3,8 @@
 * @author macwe@qq.com
 */
 
-#ifndef _TF_MUTEX_LOCK_H_
-#define _TF_MUTEX_LOCK_H_
+#ifndef _THEFOX_MUTEXLOCK_H_
+#define _THEFOX_MUTEXLOCK_H_
 
 namespace thefox
 {
@@ -62,4 +62,4 @@ private:
 
 }
 
-#endif // _TF_MUTEX_LOCK_H_
+#endif // _THEFOX_MUTEXLOCK_H_
