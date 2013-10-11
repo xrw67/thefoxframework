@@ -1,5 +1,5 @@
 #include "TFStringTest.h"
-#include "../../common/tfstring.h"
+#include "../../base/String.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(TFStringTest);
 
@@ -9,14 +9,14 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TFStringTest);
 
 void TFStringTest::testGetLength()
 {
-	TFString s("asdf123456   ~g \r\n\t ");
+	thefox::String s("asdf123456   ~g \r\n\t ");
 	
-	CPPUNIT_ASSERT_EQUAL(strlen("asdf123456   ~g \r\n\t "),(size_t)s.Length());
+	CPPUNIT_ASSERT_EQUAL(strlen("asdf123456   ~g \r\n\t "),(size_t)s.length());
 }
 
 void TFStringTest::testReserve()
 {
-	TFString s(" qwertyuiop[]");
+	thefox::String s(" qwertyuiop[]");
 
-	CPPUNIT_ASSERT(s.Reverse() == "][poiuytrewq ");
+	CPPUNIT_ASSERT(s.reverse() == "][poiuytrewq ");
 }

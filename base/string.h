@@ -40,12 +40,12 @@ public:
 	const float toFloat() const { return (0 == length()) ? 0.0f : static_cast<float>(atof(_data.c_str())); }
 	/// @brief convert string to double
 	/// @return a double value
-	const double toDouble() const { return (0 == Length()) ? 0.0 : atof(_data.c_str()); }
+	const double toDouble() const { return (0 == length()) ? 0.0 : atof(_data.c_str()); }
 	/// @brief convert string to bool
 	/// @return a bool value
 	const bool toBool() const
 	{
-		if (0 == Length())
+		if (0 == length())
 		{
 			return false;
 		}
@@ -104,7 +104,7 @@ public:
 	/// @return this string
 	String &toLower()
 	{
-		for (int i = 0; i < Length(); i++)
+		for (int i = 0; i < length(); i++)
 		{
 			if (_data[i] >= 'A' && _data[i] <= 'Z')
 			{
@@ -116,7 +116,7 @@ public:
 	/// @return this string
 	String &toUpper()
 	{
-		for (int i = 0; i < Length(); i++)
+		for (int i = 0; i < length(); i++)
 		{
 			if (_data[i] >= 'a' && _data[i] <= 'z')
 			{
@@ -170,7 +170,7 @@ public:
 	
 	String &replace(const char oldChar, const char newChar)
 	{
-		for (int i = 0; i < Length(); ++i)
+		for (int i = 0; i < length(); ++i)
 		{
 			if (oldChar == _data[i])
 			{
@@ -184,7 +184,7 @@ public:
 		int oldStrLen = strlen(oldStr);
 		int newStrLen = strlen(newStr);
 		int pos = 0;
-		while ((pos = IndexOf(oldStr, pos)) != -1)
+		while ((pos = indexOf(oldStr, pos)) != -1)
 		{
 			_data.replace(pos, oldStrLen, newStr);
 			pos += newStrLen;
@@ -218,7 +218,7 @@ public:
 
 	const String &reverse()
 	{
-		size_t kLength = Length();
+		size_t kLength = length();
 		char tmpChar = '\0';
 		
 		for (size_t i = 0; i < (kLength / 2); ++i)
@@ -377,7 +377,6 @@ private:
 	std::string _data;
 	static const int kMaxStringLen = 1024*100;
 };
-
 
 inline String operator+(const String &s1, const String &s2)
 {
