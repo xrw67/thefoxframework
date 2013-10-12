@@ -30,7 +30,7 @@ class MutexLock
 	void unlock()
 	{
 		_threadId = 0;
-		::LeverCriticalSection(&_cs);
+		::LeaveCriticalSection(&_cs);
 	}
 	
 private:
