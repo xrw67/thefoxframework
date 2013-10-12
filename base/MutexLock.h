@@ -10,6 +10,7 @@ namespace thefox
 {
 class MutexLock
 {
+public:
 	MutexLock()
 	: _threadId(0)
 	{
@@ -43,7 +44,7 @@ private:
 class MutexLockGuard
 {
 public:
-	MutexLockGuard(const MutexLock &mutex)
+	MutexLockGuard(MutexLock &mutex)
 		: _mutex(mutex)
 	{
 		_mutex.lock();
