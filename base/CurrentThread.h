@@ -5,6 +5,7 @@
 
 namespace thefox
 {
+
 class CurrentThread : noncopyable
 {
 	static int tid() { return static_cast<int>(::GetCurrentThreadId()); }
@@ -16,6 +17,6 @@ class CurrentThread : noncopyable
 	}
 };
 
-}
+} // namespace thefox
 
-#endif
+#endif // _THEFOX_CURRENTTHREAD_H_

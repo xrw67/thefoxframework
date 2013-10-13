@@ -1,8 +1,9 @@
-#ifndef _TF_PROCESSINFO_H_
-#define _TF_PROCESSINFO_H_
+#ifndef _THEFOX_PROCESSINFO_H_
+#define _THEFOX_PROCESSINFO_H_
 
-namespace thefox
+namespace thefox 
 {
+
 class ProcessInfo : noncopyable
 {
 public:
@@ -13,6 +14,6 @@ public:
     
 };
 
-}
+} // namespace thefox
 
-#endif // _TF_PROCESSINFO_H_
+#endif // _THEFOX_PROCESSINFO_H_

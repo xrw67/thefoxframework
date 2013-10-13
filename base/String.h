@@ -1,7 +1,7 @@
 /**
-* @file string.h
+* @file String.h
 * @brief 字符串类
-* @autuor macwe@qq.com
+* @author macwe@qq.com
 */
 #ifndef _THEFOX_STRING_H_
 #define _THEFOX_STRING_H_
@@ -13,7 +13,7 @@
 #include <string>
 #include <math.h>
 
-namespace thefox
+namespace thefox 
 {
 
 class String
@@ -462,6 +462,6 @@ inline bool operator!=(const std::string &s1, const String &s2)
 	return !(s1 == s2); 
 }
 
-}
+} // namespace thefox
 
-#endif // _TF_STRING_H_
+#endif // _THEFOX_STRING_H_

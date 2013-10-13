@@ -6,8 +6,9 @@
 #ifndef _THEFOX_MUTEXLOCK_H_
 #define _THEFOX_MUTEXLOCK_H_
 
-namespace thefox
+namespace thefox 
 {
+
 class MutexLock
 {
 public:
@@ -61,6 +62,6 @@ private:
 
 #define MutexLockGuard(x) error "Missing guard object name"
 
-}
+} // namespace thefox
 
 #endif // _THEFOX_MUTEXLOCK_H_

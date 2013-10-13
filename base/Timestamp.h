@@ -1,5 +1,5 @@
 /*
-* 时间戳类，精确到1微妙
+* 时间戳，精确到1微妙
 * 格式：20131001 08:30:00.0000000
 */
 #ifndef _THEFOX_TIMESTAMP_H_
@@ -9,6 +9,7 @@
 
 namespace thefox
 {
+
 class Timestamp
 {
 public:
@@ -81,6 +82,6 @@ inline bool operator==(Timestamp lhs, Timestamp rhs)
   return lhs.timestamp() == rhs.timestamp();
 }
 
-}
+} // namespace thefox
 
 #endif // _THEFOX_TIMESTAMP_H_

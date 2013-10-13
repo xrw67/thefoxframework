@@ -4,7 +4,7 @@
 #include <functional>
 #include "afxmt.h"
 
-namespace TheFox
+namespace thefox
 {
 
 class Thread
@@ -46,6 +46,6 @@ priavte:
 	CEvent _endEvent;
 };
 
-}; // namespace thefox
+} // namespace thefox
 
 #endif // _THEFOX_THREAD_H_
