@@ -2,17 +2,18 @@
 #define _THEFOX_THREAD_H_
 
 #include <functional>
+#include <memory>
 #include "afxmt.h"
 
 namespace thefox
 {
 
-class Thread
+class Thread :noncopyable
 {
 public:
-    typedef std::function<void()> ThreadCallback;
+    typedef std::function<void()> ThreadFunc;
     
-	Thread(THreadCallback cb)
+	explicit Thread(const ThreadFunt &cb, const String &name)
         : _cb(cb)
 	{
 	}

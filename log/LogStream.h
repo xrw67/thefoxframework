@@ -1,22 +1,26 @@
 #ifndef _THEFOX_LOGSTREAM_H_
 #define _THEFOX_LOGSTREAM_H_
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <base/noncopyable.h>
 
 namespace thefox
 {
 
+const int kBufferSize = 4096;
+
 template<int SIZE>
-class FixBuffer : noncopyable
+class FixedBuffer : noncopyable
 {
 public:
-	FixBuffer()
+	FixedBuffer()
 		:m_curPtr(m_data)
 	{}
-	~FixBuffer(){}
+	~FixedBuffer(){}
 	void append(const char *buf, size_t len)
 	{
-		if (static_cast<size_t>(Avail()) > len)
+		if (static_cast<size_t>(avail()) > len)
 		{
 			memcpy(_curPtr, buf, len);
 			_curPtr += len;
@@ -27,7 +31,9 @@ public:
 	int length() const { return static_cast<int>(_curPtr - _data); }
 	void add(size_t len) { _curPtr += len; }
 	void reset() { _curPtr = _data; }
+	int avail() { return static_cast<int>(end() - _curPtr); }
 private:
+	const char* end() const { return _data + sizeof(_data); }
 	char _data[SIZE];
 	char *_curPtr;
 };
@@ -36,7 +42,7 @@ private:
 class LogStream : noncopyable
 {
 	typedef LogStream self;
-	typedef FixedBuffer Buffer;
+	typedef FixedBuffer<kBufferSize> Buffer;
 
 public:
 	self &operator<<(short);
@@ -51,7 +57,7 @@ public:
 
 	self &operator<<(bool v)
 	{
-		m_buffer.Append(v ? "1" : "0", 1);
+		_buffer.append(v ? "1" : "0", 1);
 		return *this;
 	}
 	
@@ -60,11 +66,11 @@ public:
 		*this << static_cast<double>(v);
 		return *this;
 	}
-	self &operator<<(double);
+	self &operator<<(double v)
 	{
 		if (_buffer.avail() >= kMaxNumericSize)
 		{
-			int len = snprintf(_buffer.current(), kMaxNumericSize, "%.12g", v);
+			int len = _snprintf(_buffer.current(), kMaxNumericSize, "%.12g", v);
 			_buffer.add(len);
 		}
 		return *this;
@@ -84,11 +90,11 @@ public:
 	
 	void append(const char *data, int len) { _buffer.append(data, len); }
 	const Buffer &buffer() const { return _buffer; }
-	const resetBuffer() { _buffer.Reset(); }
+	const void resetBuffer() { _buffer.reset(); }
 
 private:
 	template<typename T>
-	void FormatInteger(T v);
+	void formatInteger(T v);
 	Buffer _buffer;
 
 	static const int kMaxNumericSize = 32;

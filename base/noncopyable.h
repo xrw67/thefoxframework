@@ -17,7 +17,7 @@ private:  // emphasize the following members are private
 	const noncopyable& operator=( const noncopyable& );
 };
 
-typedef noncopyable_::noncopyable noncopyable;
+typedef thefox::noncopyable noncopyable;
 
 } // namespace thefox
 

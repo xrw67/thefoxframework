@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "LogStream.h"
 
 namespace thefox
@@ -5,10 +6,7 @@ namespace thefox
 // Efficient Integer to String Conversions, by Matthew Wilson.
 const char digits[] = "9876543210123456789";
 const char* zero = digits + 9;
-ASSERT(sizeof(digits) == 20);
-
 const char digitsHex[] = "0123456789ABCDEF";
-ASSERT(sizeof digitsHex == 17);
 
 template<typename T>
 inline size_t convert(char buf[], T value)
@@ -64,7 +62,7 @@ void LogStream::formatInteger(T v)
 	}
 }
 
-LogStream &LogStream::operator<<(short)
+LogStream &LogStream::operator<<(short v)
 {
 	*this << static_cast<int>(v);
 	return *this;
@@ -76,45 +74,45 @@ LogStream &LogStream::operator<<(unsigned short v)
 }
 LogStream &LogStream::operator<<(int v)
 {
-	FormatInteger(v);
+	formatInteger(v);
 	return *this;
 }
 LogStream &LogStream::operator<<(unsigned int v)
 {
-	FormatInteger(v);
+	formatInteger(v);
 	return *this;
 }
 LogStream &LogStream::operator<<(long v)
 {
-	FormatInteger(v);
+	formatInteger(v);
 	return *this;
 }
 LogStream &LogStream::operator<<(unsigned long v)
 {
-	FormatInteger(v);
+	formatInteger(v);
 	return *this;
 }
 LogStream &LogStream::operator<<(long long v)
 {
-	FormatInteger(v);
+	formatInteger(v);
 	return *this;
 }
 LogStream &LogStream::operator<<(unsigned long long v)
 {
-	FormatInteger(v);
+	formatInteger(v);
 	return *this;
 }
 
 LogStream &LogStream::operator<<(const void* p)
 {
-	uintptr_t v = reinterpret_cast<unitptr_t>(p);
-	if (m_buffer.Avail() >= kMaxNumericSize)
+	uintptr_t v = reinterpret_cast<uintptr_t>(p);
+	if (_buffer.avail() >= kMaxNumericSize)
 	{
 		char *buf = _buffer.current();
 		buf[0] = '0';
 		buf[1] = 'x';
 		size_t len  = convertHex(buf + 2, v);
-		_buffer.Add(len + 2);
+		_buffer.add(len + 2);
 	}
 	return *this;
 }
