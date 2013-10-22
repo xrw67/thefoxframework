@@ -5,7 +5,10 @@
 #ifndef _THEFOX_TIMESTAMP_H_
 #define _THEFOX_TIMESTAMP_H_
 
+#include <time.h>
+#include <stdint.h>
 #include <windows.h>
+#include <base/Types.h>
 
 namespace thefox
 {
@@ -22,19 +25,16 @@ public:
 	{
 	}
 	Timestamp(const Timestamp &ts)
-		: _usTimestamp(ts._microsecondsTimestamp)
+		: _usTimestamp(ts._usTimestamp)
 	{
 	}
-
-	~Timestamp()
-	{}
 
 	String toString()
 	{
 		char buf[32] = {0};
 		int64_t seconds = _usTimestamp / kMicroSecondsPerSecond;
 		int64_t microseconds = _usTimestamp % kMicroSecondsPerSecond;
-		snprintf(buf, sizeof(buf), "%I64u.%06I64u", seconds, microseconds);
+		_snprintf(buf, sizeof(buf), "%I64u.%06I64u", seconds, microseconds);
 		return buf;
 	}
 	String toFormatString()
@@ -44,9 +44,9 @@ public:
 		int microseconds = static_cast<int>(_usTimestamp % kMicroSecondsPerSecond);
 		tm *tm_time = localtime(&seconds);
 
-		snprintf(buf, sizeof(buf), "%4d%02d%02d %02d:%02d:%02d.%06d",
-		tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
-		tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec,
+		_snprintf(buf, sizeof(buf), "%4d%02d%02d %02d:%02d:%02d.%06d",
+		tm_time->tm_year + 1900, tm_time->tm_mon + 1, tm_time->tm_mday,
+		tm_time->tm_hour, tm_time->tm_min, tm_time->tm_sec,
 		microseconds);
 		return buf;
 	}
@@ -61,7 +61,7 @@ public:
 		GetSystemTimeAsFileTime(&ft); // ¾«È·µ½100ns
 		ui.LowPart = ft.dwLowDateTime;  
 		ui.HighPart = ft.dwHighDateTime;
-		return TimeStamp(static_cast<int64_t>(ui.QuadPart - 116444736000000000) / 10));
+		return Timestamp(static_cast<int64_t>(ui.QuadPart - 116444736000000000) / 10);
 	}
 
 	static Timestamp invalid() { return Timestamp(); }
@@ -70,16 +70,16 @@ public:
 
 private:
 	int64_t _usTimestamp;
-}£»
+};
 
 inline bool operator<(Timestamp lhs, Timestamp rhs)
 {
-  return lhs.timestamp() < rhs.timestamp();
+	return lhs.timestamp() < rhs.timestamp();
 }
 
 inline bool operator==(Timestamp lhs, Timestamp rhs)
 {
-  return lhs.timestamp() == rhs.timestamp();
+	return lhs.timestamp() == rhs.timestamp();
 }
 
 } // namespace thefox
