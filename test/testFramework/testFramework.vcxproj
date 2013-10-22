@@ -87,11 +87,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TestApp.h" />
+    <ClInclude Include="TimestampTest.h" />
     <ClInclude Include="TFLuaTest.h" />
     <ClInclude Include="TFStringTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestApp.cpp" />
+    <ClCompile Include="TimestampTest.cpp" />
     <ClCompile Include="TFLuaTest.cpp" />
     <ClCompile Include="TFStringTest.cpp" />
   </ItemGroup>

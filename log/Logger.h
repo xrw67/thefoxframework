@@ -16,9 +16,9 @@ public:
 		DEBUG,
 		INFO,
 		WARN,
-		ERROR,
+		ERR,
 		FATAL,
-		NUM_LOG_LEVELS,
+		NUM_LOG_LEVELS
 	};
 
 	// 在编译期计算原文件名
@@ -59,7 +59,7 @@ public:
 	Logger(SourceFile file, int line, bool toAbort);
 	~Logger();
 
-	LogStream& stream() { return _lineImpl.stream_; }
+	LogStream& stream() { return _lineImpl._stream; }
 
 	static LogLevel logLevel();
 	static void setLogLevel(LogLevel level);
@@ -85,13 +85,13 @@ private:
 	};
 
   LineImpl _lineImpl;
-}
+};
 
 extern Logger::LogLevel g_logLevel;
 
 inline Logger::LogLevel Logger::logLevel()
 {
-  return g_logLevel;
+	return g_logLevel;
 }
 
 #define LOG_TRACE if (thefox::Logger::logLevel() <= thefox::Logger::TRACE) \

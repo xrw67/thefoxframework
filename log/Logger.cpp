@@ -1,4 +1,5 @@
 #include <log/Logger.h>
+#include <base/CurrentThread.h>
 
 namespace thefox
 {
@@ -28,7 +29,7 @@ public:
 		: _str(str)
 		, _len(len)
 	{
-		assert(strlen(_str) == _len);
+		//assert(strlen(_str) == _len);
 	}
 
 	const char* _str;
@@ -64,15 +65,15 @@ Logger::FlushFunc g_flush = defaultFlush;
 
 using namespace thefox;
 
-Logger::LineImpl::Impl(LogLevel level, int savedErrno, const SourceFile& file, int line)
+Logger::LineImpl::LineImpl(LogLevel level, int savedErrno, const SourceFile& file, int line)
 	: _time(Timestamp::now())
 	, _stream()
 	, _level(level)
 	, _line(line)
 	, _basename(file)
 {
-  _stream << T(_time.toFormatString.cStr(), 26);
-  _stream << T(CurrentThread::tidString(), 6);
+  _stream << T(_time.toFormatString().c_str(), 26);
+  _stream << T(CurrentThread::tidString().c_str(), 6);
   _stream << T(LogLevelName[level], 6);
   if (savedErrno != 0)
   {
@@ -80,29 +81,29 @@ Logger::LineImpl::Impl(LogLevel level, int savedErrno, const SourceFile& file, i
   }
 }
 
-void Logger::Impl::finish()
+void Logger::LineImpl::finish()
 {
-	stream_ << " - " << basename_ << ':' << line_ << '\n';
+	_stream << " - " << _basename << ':' << _line << '\n';
 }
 
 Logger::Logger(SourceFile file, int line)
-  : impl_(INFO, 0, file, line)
+  : _lineImpl(INFO, 0, file, line)
 {
 }
 
 Logger::Logger(SourceFile file, int line, LogLevel level, const char* func)
-	: impl_(level, 0, file, line)
+	: _lineImpl(level, 0, file, line)
 {
-	impl_.stream_ << func << ' ';
+	_lineImpl._stream << func << ' ';
 }
 
 Logger::Logger(SourceFile file, int line, LogLevel level)
-	: impl_(level, 0, file, line)
+	: _lineImpl(level, 0, file, line)
 {
 }
 
 Logger::Logger(SourceFile file, int line, bool toAbort)
-	: impl_(toAbort ? FATAL : ERROR, errno, file, line)
+	: _lineImpl(toAbort ? FATAL : ERR, errno, file, line)
 {
 }
 

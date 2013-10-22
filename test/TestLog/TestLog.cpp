@@ -2,10 +2,11 @@
 //
 
 #include "stdafx.h"
-#include "log/LogFile.h"
+#include <log/LogFile.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
 	return 0;
 }
 

@@ -16,7 +16,7 @@ class FixedBuffer : noncopyable
 {
 public:
 	FixedBuffer()
-		:m_curPtr(m_data)
+		:_curPtr(_data)
 	{}
 	~FixedBuffer(){}
 	void append(const char *buf, size_t len)
@@ -42,10 +42,10 @@ private:
 
 class LogStream : noncopyable
 {
+public:
 	typedef LogStream self;
 	typedef FixedBuffer<kBufferSize> Buffer;
 
-public:
 	self &operator<<(short);
 	self &operator<<(unsigned short v);
 	self &operator<<(int v);

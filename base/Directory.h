@@ -2,7 +2,7 @@
 #define _THEFOX_DIRECTORY_H_
 
 // 得到完整的路径，并且创建目录,末尾包含分隔符
-inline bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen) const
+inline bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen)
 {
 	if (fullPathLen < 2)
 	{

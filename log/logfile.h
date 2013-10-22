@@ -8,51 +8,52 @@
 #ifndef _THEFOX_LOGFILE_H_
 #define _THEFOX_LOGFILE_H_
 
+#include <direct.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <base/Types.h>
+#include <base/noncopyable.h>
+#include <base/MutexLock.h>
+#include <base/Directory.h>
+#include <base/scoped_ptr.h>
 namespace thefox
 {
 
 
-#include <direct.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
-#include <time.h>
-#include "noncopyable.h"
-
-
-class LogFile : boost::noncopyable
+class LogFile : noncopyable
 {
- public:
-  LogFile(const string& basename,
-          size_t rollSize,
-          bool threadSafe = true,
-          int flushInterval = 3);
-  ~LogFile();
+public:
+	LogFile(const String& basename,
+	size_t rollSize,
+	bool threadSafe = true,
+	int flushInterval = 3);
+	~LogFile();
 
-  void append(const char* logline, int len);
-  void flush();
+	void append(const char* logline, int len);
+	void flush();
 
- private:
-  void append_unlocked(const char* logline, int len);
+private:
+	void append_unlocked(const char* logline, int len);
 
-  static string getLogFileName(const string& basename, time_t* now);
-  void rollFile();
+	static String getLogFileName(const String& basename, time_t* now);
+	void rollFile();
 
-  const string _basename;
-  const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后写到文件里
-  const int _flushInterval;///< 每隔这个时间将文件缓冲区中的数据写到文件中
+	const String _basename;
+	const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后写到文件里
+	const int _flushInterval;///< 每隔这个时间将文件缓冲区中的数据写到文件中
 
-  int _count;
+	int _count;
 
-  MutexLock _mutex;
-  time_t _startOfPeriod;
-  time_t _lastRoll;
-  time_t _lastFlush;
-  class File;
-  File _file;
+	scoped_ptr<MutexLock> _mutex;
+	time_t _startOfPeriod;
+	time_t _lastRoll;
+	time_t _lastFlush;
+	class File;
+	scoped_ptr<File> _file;
 
-  const static int kCheckTimeRoll_ = 1024; ///< 统计达到这么多行后写到文件
-  const static int kRollPerSeconds_ = 60*60*24;
+	const static int kCheckTimeRoll_ = 1024; ///< 统计达到这么多行后写到文件
+	const static int kRollPerSeconds_ = 60*60*24;
 };
 
 
@@ -61,7 +62,6 @@ class LogFile : boost::noncopyable
 class TFLog
 {
 public:
-
 	// 打开日志文件
 	bool OpenLog(const char *logDir, const char *prefix)
 	{

@@ -8,12 +8,12 @@ using namespace thefox;
 class LogFile::File : noncopyable
 {
 public:
-	explicit File(const string& filename)
+	explicit File(const String& filename)
 		: _fp(::fopen(filename.data(), "ae"))
 		, _writtenBytes(0)
 	{
-		assert(fp_);
-		::setbuffer(_fp, _buffer, sizeof(_buffer));
+		//assert(_fp);
+		setbuffer(_fp, _buffer, sizeof(_buffer));
 	}
 
 	~File()
@@ -33,7 +33,7 @@ public:
 				int err = ferror(_fp);
 				if (err)
 				{
-					TRACE("LogFile::File::append() failed \r\n");
+					//TRACE("LogFile::File::append() failed \r\n");
 				}
 				break;
 			}
@@ -63,17 +63,17 @@ private:
 };
 
 
-LogFile::LogFile(const string& basename, size_t rollSize, bool threadSafe, int flushInterval)
-	: basename_(basename)
-	, rollSize_(rollSize)
-	, flushInterval_(flushInterval)
-	, count_(0)
-	, mutex_(threadSafe ? new MutexLock : NULL)
-	, startOfPeriod_(0)
-	, lastRoll_(0)
-	, lastFlush_(0)
+LogFile::LogFile(const String& basename, size_t rollSize, bool threadSafe, int flushInterval)
+	: _basename(basename)
+	, _rollSize(rollSize)
+	, _flushInterval(flushInterval)
+	, _count(0)
+	, _mutex(threadSafe ? new MutexLock : NULL)
+	, _startOfPeriod(0)
+	, _lastRoll(0)
+	, _lastFlush(0)
 {
-	assert(basename.find('/') == string::npos);
+	//assert(basename.find('/') == string::npos);
 	rollFile();
 	append("", );
 }
@@ -143,7 +143,7 @@ void LogFile::append_unlocked(const char* logline, int len)
 void LogFile::rollFile()
 {
 	time_t now = 0;
-	string filename = getLogFileName(_basename, &now);
+	String filename = getLogFileName(_basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
 	if (now > _lastRoll)
@@ -151,13 +151,13 @@ void LogFile::rollFile()
 		_lastRoll = now;
 		_lastFlush = now;
 		_startOfPeriod = start;
-		file_.reset(new File(filename));
+		_file->reset(new File(filename));
 	}
 }
 
-string LogFile::getLogFileName(const string& basename, time_t* now)
+String LogFile::getLogFileName(const String& basename, time_t *now)
 {
-  string filename;
+  String filename;
   filename.reserve(basename.size() + 64);
   filename = basename;
 
@@ -165,10 +165,10 @@ string LogFile::getLogFileName(const string& basename, time_t* now)
   char pidbuf[32];
   
   *now = time(NULL);
-  tm *tm_time = localtime(&now);
+  tm *tm_time = localtime(now);
   strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S.", tm_time);
   filename += timebuf;
-  snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
+  _snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
   filename += pidbuf;
   filename += ".log";
 

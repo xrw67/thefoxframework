@@ -6,6 +6,8 @@
 #ifndef _THEFOX_MUTEXLOCK_H_
 #define _THEFOX_MUTEXLOCK_H_
 
+#include <Windows.h>
+
 namespace thefox 
 {
 
@@ -19,7 +21,7 @@ public:
 	}
 	~MutexLock()
 	{
-		ASSERT(0 == _threadId);
+		//assert(0 == _threadId);
 		::DeleteCriticalSection(&_cs);
 	}
 	
