@@ -26,11 +26,15 @@ public:
 	{
 	public:
 		template<int N>
-		inline SourceFile(const char (&arr)[N])
-			: data_(arr)
-			, size_(N-1)
+		inline SourceFile(char (&arr)[N])
+			: _data(arr)
+			, _size(N-1)
 		{
-			const char* slash = strrchr(_data, '/'); // builtin function
+			char* slash = strrchr(_data, '/'); // builtin function
+			if (0 == slash)
+			{
+				slash = strrchr(_data, '\\');
+			}
 			if (slash)
 			{
 				_data = slash + 1;
@@ -38,10 +42,14 @@ public:
 			}
 		}
 
-		explicit SourceFile(const char* filename)
+		explicit SourceFile(char* filename)
 			: _data(filename)
 		{
 			const char* slash = strrchr(filename, '/');
+			if (0 == slash)
+			{
+				slash = strrchr(_data, '\\');
+			}
 			if (slash)
 			{
 				_data = slash + 1;
@@ -95,13 +103,13 @@ inline Logger::LogLevel Logger::logLevel()
 }
 
 #define LOG_TRACE if (thefox::Logger::logLevel() <= thefox::Logger::TRACE) \
-  thefox::Logger(__FILE__, __LINE__, thefox::Logger::TRACE, __func__).stream()
+  thefox::Logger(__FILE__, __LINE__, thefox::Logger::TRACE, __FUNCTION__).stream()
 #define LOG_DEBUG if (thefox::Logger::logLevel() <= thefox::Logger::DEBUG) \
-  thefox::Logger(__FILE__, __LINE__, thefox::Logger::DEBUG, __func__).stream()
+  thefox::Logger(__FILE__, __LINE__, thefox::Logger::DEBUG, __FUNCTION__).stream()
 #define LOG_INFO if (thefox::Logger::logLevel() <= thefox::Logger::INFO) \
   thefox::Logger(__FILE__, __LINE__).stream()
 #define LOG_WARN thefox::Logger(__FILE__, __LINE__, thefox::Logger::WARN).stream()
-#define LOG_ERROR thefox::Logger(__FILE__, __LINE__, thefox::Logger::ERROR).stream()
+#define LOG_ERROR thefox::Logger(__FILE__, __LINE__, thefox::Logger::ERR).stream()
 #define LOG_FATAL thefox::Logger(__FILE__, __LINE__, thefox::Logger::FATAL).stream()
 #define LOG_SYSERR thefox::Logger(__FILE__, __LINE__, false).stream()
 #define LOG_SYSFATAL thefox::Logger(__FILE__, __LINE__, true).stream()

@@ -2,11 +2,13 @@
 //
 
 #include "stdafx.h"
-#include <log/LogFile.h>
+#include <log/log.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	thefox::initLog("ffffff");
 
+	LOG_TRACE <<"dddddddd";
 	return 0;
 }
 

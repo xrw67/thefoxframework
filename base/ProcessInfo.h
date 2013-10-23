@@ -9,7 +9,7 @@ namespace thefox
 class ProcessInfo : noncopyable
 {
 public:
-    static const int pid() const { return static_cast<int>(::GetCurrentProcessId()); }
+    static const int pid() { return static_cast<int>(::GetCurrentProcessId()); }
 };
 
 } // namespace thefox

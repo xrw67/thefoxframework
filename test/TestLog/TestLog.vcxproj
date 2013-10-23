@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\my_dev\TheFoxFramework.git;$(IncludePath)</IncludePath>
-    <SourcePath>C:\my_dev\TheFoxFramework.git;$(SourcePath)</SourcePath>
+    <IncludePath>F:\TheFoxFramework;$(IncludePath)</IncludePath>
+    <SourcePath>F:\TheFoxFramework;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

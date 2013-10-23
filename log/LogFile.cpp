@@ -9,11 +9,11 @@ class LogFile::File : noncopyable
 {
 public:
 	explicit File(const String& filename)
-		: _fp(::fopen(filename.data(), "ae"))
+		: _fp(::fopen(filename.data(), "a"))
 		, _writtenBytes(0)
 	{
 		//assert(_fp);
-		setbuffer(_fp, _buffer, sizeof(_buffer));
+		::setvbuf(_fp, _buffer, _IOFBF, sizeof(_buffer));
 	}
 
 	~File()
@@ -75,7 +75,7 @@ LogFile::LogFile(const String& basename, size_t rollSize, bool threadSafe, int f
 {
 	//assert(basename.find('/') == string::npos);
 	rollFile();
-	append("", );
+	//append("Log begin", sizeof("Log begin"));
 }
 
 LogFile::~LogFile()
@@ -112,7 +112,7 @@ void LogFile::append_unlocked(const char* logline, int len)
 {
 	_file->append(logline, len);
 
-	if (file_->writtenBytes() > _rollSize)
+	if (_file->writtenBytes() > _rollSize)
 	{
 		rollFile();
 	}
@@ -151,7 +151,7 @@ void LogFile::rollFile()
 		_lastRoll = now;
 		_lastFlush = now;
 		_startOfPeriod = start;
-		_file->reset(new File(filename));
+		_file.reset(new File(filename));
 	}
 }
 
