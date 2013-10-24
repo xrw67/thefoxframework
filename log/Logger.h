@@ -1,6 +1,8 @@
 #ifndef _THEFOX_LOGGER_H_
 #define _THEFOX_LOGGER_H_
 
+#pragma warning(disable:4996)
+
 #include <log/LogStream.h>
 #include <base/Timestamp.h>
 
@@ -26,7 +28,7 @@ public:
 	{
 	public:
 		template<int N>
-		inline SourceFile(char (&arr)[N])
+		SourceFile(char (&arr)[N])
 			: _data(arr)
 			, _size(N-1)
 		{
@@ -57,14 +59,13 @@ public:
 			_size = static_cast<int>(strlen(_data));
 		}
 
-		const char* _data;
+		const char *_data;
 		int _size;
 	};
 
 	Logger(SourceFile file, int line);
 	Logger(SourceFile file, int line, LogLevel level);
 	Logger(SourceFile file, int line, LogLevel level, const char* func);
-	Logger(SourceFile file, int line, bool toAbort);
 	~Logger();
 
 	LogStream& stream() { return _lineImpl._stream; }
@@ -82,7 +83,7 @@ private:
 	{
 	public:
 		typedef Logger::LogLevel LogLevel;
-		LineImpl(LogLevel level, int old_errno, const SourceFile& file, int line);
+		LineImpl(LogLevel level, const SourceFile& file, int line);
 		void finish();
 
 		Timestamp _time;
@@ -103,16 +104,15 @@ inline Logger::LogLevel Logger::logLevel()
 }
 
 #define LOG_TRACE if (thefox::Logger::logLevel() <= thefox::Logger::TRACE) \
-  thefox::Logger(__FILE__, __LINE__, thefox::Logger::TRACE, __FUNCTION__).stream()
+  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::TRACE, __FUNCTION__).stream()
 #define LOG_DEBUG if (thefox::Logger::logLevel() <= thefox::Logger::DEBUG) \
-  thefox::Logger(__FILE__, __LINE__, thefox::Logger::DEBUG, __FUNCTION__).stream()
+  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::DEBUG, __FUNCTION__).stream()
 #define LOG_INFO if (thefox::Logger::logLevel() <= thefox::Logger::INFO) \
-  thefox::Logger(__FILE__, __LINE__).stream()
-#define LOG_WARN thefox::Logger(__FILE__, __LINE__, thefox::Logger::WARN).stream()
-#define LOG_ERROR thefox::Logger(__FILE__, __LINE__, thefox::Logger::ERR).stream()
-#define LOG_FATAL thefox::Logger(__FILE__, __LINE__, thefox::Logger::FATAL).stream()
-#define LOG_SYSERR thefox::Logger(__FILE__, __LINE__, false).stream()
-#define LOG_SYSFATAL thefox::Logger(__FILE__, __LINE__, true).stream()
+  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__).stream()
+#define LOG_WARN thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::WARN).stream()
+#define LOG_ERROR thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::ERR).stream()
+#define LOG_FATAL thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::FATAL).stream()
+
 
 }
 

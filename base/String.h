@@ -149,7 +149,7 @@ public:
 		return *this;
 	}
 	const char at(int index) const { return _data.at(index); }
-	const char *cStr() const { return _data.c_str(); }
+	const char *c_str() const { return _data.c_str(); }
 	int compare(String &s) const { return _data.compare(s._data); }
 	bool equalsIgnoreCase(String &s) 
 	{	

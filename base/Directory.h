@@ -1,6 +1,8 @@
 #ifndef _THEFOX_DIRECTORY_H_
 #define _THEFOX_DIRECTORY_H_
 
+#pragma warning(disable:4996)
+
 // 得到完整的路径，并且创建目录,末尾包含分隔符
 inline bool MakeFullPath(const char *dir, char *fullPath, size_t fullPathLen)
 {

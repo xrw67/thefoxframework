@@ -65,20 +65,17 @@ Logger::FlushFunc g_flush = defaultFlush;
 
 using namespace thefox;
 
-Logger::LineImpl::LineImpl(LogLevel level, int savedErrno, const SourceFile& file, int line)
+Logger::LineImpl::LineImpl(LogLevel level, const SourceFile& file, int line)
 	: _time(Timestamp::now())
 	, _stream()
 	, _level(level)
 	, _line(line)
 	, _basename(file)
 {
-  _stream << T(_time.toFormatString().c_str(), 26);
-  _stream << T(CurrentThread::tidString().c_str(), 6);
+  _stream << T(_time.toFormatString().c_str(), 24) << ' ';
+  _stream << T(CurrentThread::tidString().c_str(), 6) << ' ';
   _stream << T(LogLevelName[level], 6);
-  if (savedErrno != 0)
-  {
-    _stream << strerror(savedErrno) << " (errno=" << savedErrno << ") ";
-  }
+
 }
 
 void Logger::LineImpl::finish()
@@ -87,25 +84,21 @@ void Logger::LineImpl::finish()
 }
 
 Logger::Logger(SourceFile file, int line)
-  : _lineImpl(INFO, 0, file, line)
+  : _lineImpl(INFO, file, line)
 {
 }
 
 Logger::Logger(SourceFile file, int line, LogLevel level, const char* func)
-	: _lineImpl(level, 0, file, line)
+	: _lineImpl(level, file, line)
 {
 	_lineImpl._stream << func << ' ';
 }
 
 Logger::Logger(SourceFile file, int line, LogLevel level)
-	: _lineImpl(level, 0, file, line)
+	: _lineImpl(level, file, line)
 {
 }
 
-Logger::Logger(SourceFile file, int line, bool toAbort)
-	: _lineImpl(toAbort ? FATAL : ERR, errno, file, line)
-{
-}
 
 Logger::~Logger()
 {

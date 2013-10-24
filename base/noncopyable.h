@@ -4,6 +4,7 @@
 #ifndef _THEFOX_NONCOPYABLE_H_
 #define _THEFOX_NONCOPYABLE_H_
 
+
 namespace thefox 
 {
 

@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <base/Types.h>
 #include <base/noncopyable.h>
 
 namespace thefox
@@ -88,7 +88,11 @@ public:
 		_buffer.append(v, strlen(v));
 		return *this;
 	}
-	
+	self &operator<<(const String& v)
+	{
+		_buffer.append(v.c_str(), v.size());
+		return *this;
+	}
 	void append(const char *data, int len) { _buffer.append(data, len); }
 	const Buffer &buffer() const { return _buffer; }
 	const void resetBuffer() { _buffer.reset(); }

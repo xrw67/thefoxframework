@@ -166,7 +166,7 @@ String LogFile::getLogFileName(const String& basename, time_t *now)
   
   *now = time(NULL);
   tm *tm_time = localtime(now);
-  strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S.", tm_time);
+  strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S", tm_time);
   filename += timebuf;
   _snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
   filename += pidbuf;

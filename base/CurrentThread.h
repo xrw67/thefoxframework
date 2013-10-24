@@ -14,7 +14,7 @@ public:
 	static String tidString()
 	{
 		char buf[32] = {0};
-		_snprintf(buf, buf[32], "%d", static_cast<int>(::GetCurrentThreadId()));
+		_snprintf(buf, buf[32], "%6d", static_cast<int>(::GetCurrentThreadId()));
 		return buf;
 	}
 };
