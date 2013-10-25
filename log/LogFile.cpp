@@ -2,6 +2,8 @@
 #include <base/noncopyable.h>
 #include <base/ProcessInfo.h>
 
+#pragma warning(disable:4996)
+
 using namespace thefox;
 
 // not thread safe

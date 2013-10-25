@@ -15,7 +15,6 @@
 #include <base/Types.h>
 #include <base/noncopyable.h>
 #include <base/MutexLock.h>
-#include <base/Directory.h>
 #include <base/scoped_ptr.h>
 namespace thefox
 {
