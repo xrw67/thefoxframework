@@ -45,6 +45,11 @@ void initLog(const String& basename)
 	Logger::setFlush(logFlushFunc);
 }
 
+void setLogLevel(Logger::LogLevel level)
+{
+	Logger::setLogLevel(level);
+}
+
 }
 
 #endif // _THEFOX_LOG_H_
