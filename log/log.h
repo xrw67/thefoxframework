@@ -38,9 +38,9 @@ void logFlushFunc()
 }
 
 /// @brief initialize log library
-void initLog(const String& basename)
+void initLog(const String &dir, const String& basename)
 {
-	g_logFile.reset(new LogFile(basename, 200*1000));
+	g_logFile.reset(new LogFile(dir, basename, 1024*1024));
 	Logger::setOutput(logOutputFunc);
 	Logger::setFlush(logFlushFunc);
 }

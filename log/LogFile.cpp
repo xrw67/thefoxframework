@@ -59,14 +59,15 @@ private:
 		return ::fwrite(logline, 1, len, _fp);
 	}
 
-  FILE* _fp;
-  char _buffer[64*1024];
-  size_t _writtenBytes;
+	FILE* _fp;
+	char _buffer[64*1024];
+	size_t _writtenBytes;
 };
 
 
-LogFile::LogFile(const String& basename, size_t rollSize, bool threadSafe, int flushInterval)
-	: _basename(basename)
+LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, bool threadSafe, int flushInterval)
+	: _dir(dir)
+	, _basename(basename)
 	, _rollSize(rollSize)
 	, _flushInterval(flushInterval)
 	, _count(0)
@@ -76,6 +77,7 @@ LogFile::LogFile(const String& basename, size_t rollSize, bool threadSafe, int f
 	, _lastFlush(0)
 {
 	//assert(basename.find('/') == string::npos);
+	makePath(_dir);
 	rollFile();
 	//append("Log begin", sizeof("Log begin"));
 }
@@ -145,7 +147,7 @@ void LogFile::append_unlocked(const char* logline, int len)
 void LogFile::rollFile()
 {
 	time_t now = 0;
-	String filename = getLogFileName(_basename, &now);
+	String filename = getLogFileName(_dir, _basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
 	if (now > _lastRoll)
@@ -157,23 +159,78 @@ void LogFile::rollFile()
 	}
 }
 
-String LogFile::getLogFileName(const String& basename, time_t *now)
+String LogFile::getLogFileName(const String &dir, const String& basename, time_t *now)
 {
-  String filename;
-  filename.reserve(basename.size() + 64);
-  filename = basename;
+    String filename;
+    
+    filename.reserve(dir.size() + basename.size() + 64);
+    filename = dir + basename;
 
-  char timebuf[32];
-  char pidbuf[32];
+    char timebuf[32];
+    char pidbuf[32];
   
-  *now = time(NULL);
-  tm *tm_time = localtime(now);
-  strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S", tm_time);
-  filename += timebuf;
-  _snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
-  filename += pidbuf;
-  filename += ".log";
+    *now = time(NULL);
+    tm *tm_time = localtime(now);
+    strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S", tm_time);
+    filename += timebuf;
+    _snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
+    filename += pidbuf;
+    filename += ".log";
 
-  return filename;
+    return filename;
 }
 
+void LogFile::makePath(String &dir)
+{   
+    char filePath[1000] = {0};
+    bool bAbsolutePath = true;
+
+#ifdef WIN32
+	if (String::npos == dir.find(':'))
+    {
+        bAbsolutePath = false;
+    }
+#else
+    if ('/' != dir[0])
+    {
+        bAbsolutePath = false;
+    }
+#endif
+    
+    _getcwd(filePath, sizeof(filePath));
+    
+    if (!bAbsolutePath)
+    {
+        char cSeparator = filePath[strlen(filePath)];
+        if (!(cSeparator == '/' || cSeparator == '\\'))
+        {
+            strcat(filePath, "/");
+        }
+        
+		strncat(filePath, dir.c_str(), sizeof(filePath) - strlen(filePath));
+    }
+    
+    char *curDir = filePath;
+    
+    while (*curDir != '\0')
+    {
+        if (*curDir == '\\' || *curDir == '/')
+        {
+            *curDir = '\0';
+            _mkdir(filePath);
+            *curDir = '/';
+        }
+        ++curDir;
+    }
+    _mkdir(filePath);
+    
+    int pathLen = strlen(filePath);
+    if ('/' != filePath[pathLen - 1])
+    {
+        strcat(filePath, "/");
+        ++pathLen;
+    }
+    
+    dir = filePath;
+    return;
+}

@@ -38,14 +38,14 @@ public:
 
 inline LogStream& operator<<(LogStream& s, T v)
 {
-  s.append(v._str, v._len);
-  return s;
+	s.append(v._str, v._len);
+	return s;
 }
 
 inline LogStream& operator<<(LogStream& s, const Logger::SourceFile& v)
 {
-  s.append(v._data, v._size);
-  return s;
+	s.append(v._data, v._size);
+	return s;
 }
 
 void defaultOutput(const char* msg, int len)
