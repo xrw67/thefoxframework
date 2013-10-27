@@ -197,10 +197,9 @@ void LogFile::makePath(String &dir)
     }
 #endif
     
-    _getcwd(filePath, sizeof(filePath));
-    
     if (!bAbsolutePath)
     {
+		_getcwd(filePath, sizeof(filePath));
         char cSeparator = filePath[strlen(filePath)];
         if (!(cSeparator == '/' || cSeparator == '\\'))
         {
@@ -209,6 +208,10 @@ void LogFile::makePath(String &dir)
         
 		strncat(filePath, dir.c_str(), sizeof(filePath) - strlen(filePath));
     }
+	else
+	{
+		strncpy(filePath, dir.c_str(), sizeof(filePath));
+	}
     
     char *curDir = filePath;
     
