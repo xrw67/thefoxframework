@@ -5,7 +5,7 @@
 * example:
 * {
 *   // step1:
-*   thefox::initLog("basename");
+*   thefox::initLog("logs", "basename");
 *   // step2:
 *   LOG_TRACE << "log text"<< 123 << ' ' << -3.14;
 *   LOG_DEBUG << "log text"<< 123 << ' ' << -3.14;
