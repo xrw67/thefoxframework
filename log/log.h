@@ -25,27 +25,27 @@
 namespace thefox
 {
 
-scoped_ptr<LogFile> g_logFile;
+static scoped_ptr<LogFile> g_logFile;
 
-void logOutputFunc(const char* msg, int len)
+inline void logOutputFunc(const char* msg, int len)
 {
 	g_logFile->append(msg, len);
 }
 
-void logFlushFunc()
+inline void logFlushFunc()
 {
 	g_logFile->flush();
 }
 
 /// @brief initialize log library
-void initLog(const String &dir, const String& basename)
+inline void initLog(const String &dir, const String& basename)
 {
 	g_logFile.reset(new LogFile(dir, basename, 1024*1024));
 	Logger::setOutput(logOutputFunc);
 	Logger::setFlush(logFlushFunc);
 }
 
-void setLogLevel(Logger::LogLevel level)
+inline void setLogLevel(Logger::LogLevel level)
 {
 	Logger::setLogLevel(level);
 }
