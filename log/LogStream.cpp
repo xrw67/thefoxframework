@@ -38,7 +38,7 @@ inline size_t convertHex(char buf[], uintptr_t value)
 
 	do
 	{
-		int lsd = i % 16;
+		int lsd = static_cast<int>(i % 16);
 		i /= 16;
 		*p++ = digitsHex[lsd];
 	} while (i != 0);

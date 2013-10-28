@@ -14,13 +14,13 @@ class Logger
 public:
 	enum LogLevel
 	{
-		TRACE,
-		DEBUG,
-		INFO,
-		WARN,
-		ERR,
-		FATAL,
-		NUM_LOG_LEVELS
+		LOGLEVEL_TRACE,
+		LOGLEVEL_DEBUG,
+		LOGLEVEL_INFO,
+		LOGLEVEL_WARN,
+		LOGLEVEL_ERROR,
+		LOGLEVEL_FATAL,
+		LOGLEVEL_NUM_LOG_LEVELS
 	};
 
 	// 在编译期计算原文件名
@@ -103,15 +103,15 @@ inline Logger::LogLevel Logger::logLevel()
 	return g_logLevel;
 }
 
-#define LOG_TRACE if (thefox::Logger::logLevel() <= thefox::Logger::TRACE) \
-  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::TRACE, __FUNCTION__).stream()
-#define LOG_DEBUG if (thefox::Logger::logLevel() <= thefox::Logger::DEBUG) \
-  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::DEBUG, __FUNCTION__).stream()
-#define LOG_INFO if (thefox::Logger::logLevel() <= thefox::Logger::INFO) \
+#define LOG_TRACE if (thefox::Logger::logLevel() <= thefox::Logger::LOGLEVEL_TRACE) \
+  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::LOGLEVEL_TRACE, __FUNCTION__).stream()
+#define LOG_DEBUG if (thefox::Logger::logLevel() <= thefox::Logger::LOGLEVEL_DEBUG) \
+  thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::LOGLEVEL_DEBUG, __FUNCTION__).stream()
+#define LOG_INFO if (thefox::Logger::logLevel() <= thefox::Logger::LOGLEVEL_INFO) \
   thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__).stream()
-#define LOG_WARN thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::WARN).stream()
-#define LOG_ERROR thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::ERR).stream()
-#define LOG_FATAL thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::FATAL).stream()
+#define LOG_WARN thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::LOGLEVEL_WARN).stream()
+#define LOG_ERROR thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::LOGLEVEL_ERROR).stream()
+#define LOG_FATAL thefox::Logger(thefox::Logger::SourceFile(__FILE__), __LINE__, thefox::Logger::LOGLEVEL_FATAL).stream()
 
 
 }

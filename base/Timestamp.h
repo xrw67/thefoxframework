@@ -6,7 +6,6 @@
 #define _THEFOX_TIMESTAMP_H_
 
 #include <time.h>
-#include <stdint.h>
 #include <windows.h>
 #include <base/Types.h>
 

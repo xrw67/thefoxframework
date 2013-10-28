@@ -6,12 +6,12 @@ namespace thefox
 
 Logger::LogLevel initLogLevel()
 {
-    return Logger::TRACE;
+    return Logger::LOGLEVEL_TRACE;
 }
 
 Logger::LogLevel g_logLevel = initLogLevel();
 
-const char* LogLevelName[Logger::NUM_LOG_LEVELS] =
+const char* LogLevelName[Logger::LOGLEVEL_NUM_LOG_LEVELS] =
 {
 	"TRACE ",
 	"DEBUG ",
@@ -84,7 +84,7 @@ void Logger::LineImpl::finish()
 }
 
 Logger::Logger(SourceFile file, int line)
-  : _lineImpl(INFO, file, line)
+  : _lineImpl(LOGLEVEL_INFO, file, line)
 {
 }
 
@@ -105,7 +105,7 @@ Logger::~Logger()
 	_lineImpl.finish();
 	const LogStream::Buffer& buf(stream().buffer());
 	g_output(buf.data(), buf.length());
-	if (_lineImpl._level == FATAL)
+	if (_lineImpl._level == LOGLEVEL_FATAL)
 	{
 		g_flush();
 		abort();

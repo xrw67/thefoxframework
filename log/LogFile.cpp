@@ -227,7 +227,7 @@ void LogFile::makePath(String &dir)
     }
     _mkdir(filePath);
     
-    int pathLen = strlen(filePath);
+    size_t pathLen = strlen(filePath);
     if ('/' != filePath[pathLen - 1])
     {
         strcat(filePath, "/");
