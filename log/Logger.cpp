@@ -1,5 +1,4 @@
 #include <log/Logger.h>
-#include <base/CurrentThread.h>
 
 namespace thefox
 {
@@ -73,7 +72,7 @@ Logger::LineImpl::LineImpl(LogLevel level, const SourceFile& file, int line)
 	, _basename(file)
 {
   _stream << T(_time.toFormatString().c_str(), 24) << ' ';
-  _stream << T(CurrentThread::tidString().c_str(), 6) << ' ';
+  _stream << ::GetCurrentThreadId() << ' ';
   _stream << T(LogLevelName[level], 6);
 
 }

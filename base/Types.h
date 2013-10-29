@@ -8,7 +8,7 @@ namespace thefox
 
 typedef long long int64_t;
 
-typedef std::string String;
+typedef std::string string;
 
 #define _CRT_SECURE_NO_DEPRECATE
 

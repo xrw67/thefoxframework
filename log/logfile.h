@@ -24,8 +24,8 @@ namespace thefox
 class LogFile : noncopyable
 {
 public:
-	LogFile(const String &dir,
-            const String &basename,
+	LogFile(const string &dir,
+            const string &basename,
 			size_t rollSize,
 			bool threadSafe = true,
 			int flushInterval = 3);
@@ -37,12 +37,12 @@ public:
 private:
 	void append_unlocked(const char* logline, int len);
 
-	static String getLogFileName(const String &dir, const String& basename, time_t* now);
+	static string getLogFileName(const string &dir, const string& basename, time_t* now);
 	void rollFile();
-    void makePath(String &dir);
+    void makePath(string &dir);
 
-	String _dir;
-	const String _basename;
+	string _dir;
+	const string _basename;
 	const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后写到文件里
 	const int _flushInterval;///< 每隔这个时间将文件缓冲区中的数据写到文件中
 

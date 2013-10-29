@@ -1,6 +1,5 @@
 #include <log/LogFile.h>
 #include <base/noncopyable.h>
-#include <base/ProcessInfo.h>
 
 #pragma warning(disable:4996)
 
@@ -10,7 +9,7 @@ using namespace thefox;
 class LogFile::File : noncopyable
 {
 public:
-	explicit File(const String& filename)
+	explicit File(const string& filename)
 		: _fp(::fopen(filename.data(), "a"))
 		, _writtenBytes(0)
 	{
@@ -65,7 +64,7 @@ private:
 };
 
 
-LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, bool threadSafe, int flushInterval)
+LogFile::LogFile(const string &dir, const string& basename, size_t rollSize, bool threadSafe, int flushInterval)
 	: _dir(dir)
 	, _basename(basename)
 	, _rollSize(rollSize)
@@ -147,7 +146,7 @@ void LogFile::append_unlocked(const char* logline, int len)
 void LogFile::rollFile()
 {
 	time_t now = 0;
-	String filename = getLogFileName(_dir, _basename, &now);
+	string filename = getLogFileName(_dir, _basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
 	if (now > _lastRoll)
@@ -159,9 +158,9 @@ void LogFile::rollFile()
 	}
 }
 
-String LogFile::getLogFileName(const String &dir, const String& basename, time_t *now)
+string LogFile::getLogFileName(const string &dir, const string& basename, time_t *now)
 {
-    String filename;
+    string filename;
     
     filename.reserve(dir.size() + basename.size() + 64);
     filename = dir + basename;
@@ -173,20 +172,20 @@ String LogFile::getLogFileName(const String &dir, const String& basename, time_t
     tm *tm_time = localtime(now);
     strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S", tm_time);
     filename += timebuf;
-    _snprintf(pidbuf, sizeof pidbuf, ".%d", ProcessInfo::pid());
+    _snprintf(pidbuf, sizeof pidbuf, ".%d", ::GetCurrentProcessId());
     filename += pidbuf;
     filename += ".log";
 
     return filename;
 }
 
-void LogFile::makePath(String &dir)
+void LogFile::makePath(string &dir)
 {   
     char filePath[1000] = {0};
     bool bAbsolutePath = true;
 
 #ifdef WIN32
-	if (String::npos == dir.find(':'))
+	if (string::npos == dir.find(':'))
     {
         bAbsolutePath = false;
     }
