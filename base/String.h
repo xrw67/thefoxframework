@@ -273,7 +273,14 @@ public:
 		_data += s._data;
 		return *this;
 	}
-
+	String &operator<<(const int value);
+	String &operator<<(const unsigned int value);
+	String &operator<<(const long value);
+	String &operator<<(const float value);
+	String &operator<<(const double value);
+	String &operator<<(const bool value);
+	
+	
 	friend String operator+(const String &s1, const String &s2);
 	friend String operator+(const String &s1, char c);
 	friend String operator+(char c, const String &s2);
@@ -293,86 +300,8 @@ public:
 	friend bool operator!=(const char *s1, const String &s2);
 	friend bool operator!=(const String &s1, const std::string &s2);
 	friend bool operator!=(const std::string &s1, const String &s2);
-
-public:
-	/// Create a string with value type with c string
-	static String create(const char *s)
-	{
-		String str(s);
-		return str;
-	}
 	
-	/// Create a string with value type with std::string
-	static String create(const std::string &s)
-	{
-		String str(s);
-		return str;
-	}
-	
-	/// Create a string with value type with int
-	static String create(const int i)
-	{
-		String str;
-		char buf[64] = {0};
-		str._data = _itoa(i, buf, 10);
-		return str;
-	}
-	
-	/// Create a string with value type with unsigned int
-	static String create(const unsigned int ui)
-	{
-		String str;
-		char buf[64] = {0};
-		_snprintf(buf, sizeof(buf), "%u", ui);
-		str._data = buf;
-		return str;
-	}
-	/// Create a string with value type with long
-	static String create(const long l)
-	{
-		String str;
-		char buf[64] = {0};
-		str._data = _ltoa(l, buf, 10);
-		return str;
-	}
-	
-	/// Create a string with value type with float
-	static String create(const float f)
-	{
-		String str;
-		char buf[64] = {0};
-		_snprintf(buf, sizeof(buf), "%f", f);
-		str._data = buf;
-		return str;
-	}
-	
-	/// Create a string with value type with double
-	static String create(const double d)
-	{
-		String str;
-		char buf[64] = {0};
-		_snprintf(buf, sizeof(buf), "%f", d);
-		str._data = buf;
-		return str;
-	}
-
-	static String createWithFormat(const char *format, ...)
-	{
-		String str;
-		va_list ap;
-		va_start(ap, format);
-		
-		char *buf = (char *)malloc(kMaxStringLen);
-		if (buf)
-		{
-			vsnprintf(buf, kMaxStringLen, format, ap);
-			str = buf;
-			free(buf);
-		}
-		
-		va_end(ap);
-		return str;
-	}
+	friend bool operator<(const String &ls, const String &rs);
 private:
 	std::string _data;
 	static const int kMaxStringLen = 1024*100;
@@ -460,6 +389,97 @@ inline bool operator!=(const String &s1, const std::string &s2)
 inline bool operator!=(const std::string &s1, const String &s2) 
 { 
 	return !(s1 == s2); 
+}
+
+inline bool operator<(const String &ls, const String &rs)
+{
+	return (ls.compare(rs) <= 0);
+}
+
+/// Create a string with value type with c string
+inline String toString(const char *s)
+{
+	String str(s);
+	return str;
+}
+
+/// Create a string with value type with std::string
+inline String toString(const std::string &s)
+{
+	String str(s);
+	return str;
+}
+
+/// Create a string with value type with int
+inline String toString(const int i)
+{
+	String str;
+	char buf[64] = {0};
+	str._data = _itoa(i, buf, 10);
+	return str;
+}
+
+/// Create a string with value type with unsigned int
+inline String toString(const unsigned int ui)
+{
+	String str;
+	char buf[64] = {0};
+	_snprintf(buf, sizeof(buf), "%u", ui);
+	str._data = buf;
+	return str;
+}
+/// Create a string with value type with long
+inline String toString(const long l)
+{
+	String str;
+	char buf[64] = {0};
+	str._data = _ltoa(l, buf, 10);
+	return str;
+}
+
+/// Create a string with value type with float
+inline String toString(const float f)
+{
+	String str;
+	char buf[64] = {0};
+	_snprintf(buf, sizeof(buf), "%f", f);
+	str._data = buf;
+	return str;
+}
+
+/// Create a string with value type with double
+inline String toString(const double d)
+{
+	String str;
+	char buf[64] = {0};
+	_snprintf(buf, sizeof(buf), "%f", d);
+	str._data = buf;
+	return str;
+}
+
+inline String toStringWithFormat(const char *format, ...)
+{
+	String str;
+	va_list ap;
+	va_start(ap, format);
+	
+	char *buf = (char *)malloc(kMaxStringLen);
+	if (buf)
+	{
+		vsnprintf(buf, kMaxStringLen, format, ap);
+		str = buf;
+		free(buf);
+	}
+	
+	va_end(ap);
+	return str;
+}
+
+inline void swap(String &ls, String &rs)
+{
+	String temp(ls);
+	ls = rs;
+	rs = temp;
 }
 
 } // namespace thefox
