@@ -90,7 +90,7 @@ public:
 		_buffer.append(v, strlen(v));
 		return *this;
 	}
-	self &operator<<(const string& v)
+	self &operator<<(const String& v)
 	{
 		_buffer.append(v.c_str(), v.size());
 		return *this;

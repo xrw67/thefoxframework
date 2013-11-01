@@ -20,7 +20,7 @@ const char* LogLevelName[Logger::LOGLEVEL_NUM_LOG_LEVELS] =
 	"FATAL ",
 };
 
-// helper class for known string length at compile time
+// helper class for known String length at compile time
 class T
 {
 public:

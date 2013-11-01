@@ -28,7 +28,7 @@ public:
 	{
 	}
 
-	string toString()
+	String toString()
 	{
 		char buf[32] = {0};
 		int64_t seconds = _usTimestamp / kMicroSecondsPerSecond;
@@ -36,7 +36,7 @@ public:
 		_snprintf(buf, sizeof(buf), "%I64u.%06I64u", seconds, microseconds);
 		return buf;
 	}
-	string toFormatString()
+	String toFormatString()
 	{
 		char buf[32] = {0};
 		time_t seconds = static_cast<time_t>(_usTimestamp / kMicroSecondsPerSecond);

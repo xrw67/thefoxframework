@@ -9,7 +9,7 @@ using namespace thefox;
 class LogFile::File : noncopyable
 {
 public:
-	explicit File(const string& filename)
+	explicit File(const String& filename)
 		: _fp(::fopen(filename.data(), "a"))
 		, _writtenBytes(0)
 	{
@@ -64,7 +64,7 @@ private:
 };
 
 
-LogFile::LogFile(const string &dir, const string& basename, size_t rollSize, bool threadSafe, int flushInterval)
+LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, bool threadSafe, int flushInterval)
 	: _dir(dir)
 	, _basename(basename)
 	, _rollSize(rollSize)
@@ -75,7 +75,7 @@ LogFile::LogFile(const string &dir, const string& basename, size_t rollSize, boo
 	, _lastRoll(0)
 	, _lastFlush(0)
 {
-	//assert(basename.find('/') == string::npos);
+	//assert(basename.find('/') == String::npos);
 	makePath(_dir);
 	rollFile();
 	//append("Log begin", sizeof("Log begin"));
@@ -146,7 +146,7 @@ void LogFile::append_unlocked(const char* logline, int len)
 void LogFile::rollFile()
 {
 	time_t now = 0;
-	string filename = getLogFileName(_dir, _basename, &now);
+	String filename = getLogFileName(_dir, _basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
 	if (now > _lastRoll)
@@ -158,9 +158,9 @@ void LogFile::rollFile()
 	}
 }
 
-string LogFile::getLogFileName(const string &dir, const string& basename, time_t *now)
+String LogFile::getLogFileName(const String &dir, const String& basename, time_t *now)
 {
-    string filename;
+    String filename;
     
     filename.reserve(dir.size() + basename.size() + 64);
     filename = dir + basename;
@@ -179,13 +179,13 @@ string LogFile::getLogFileName(const string &dir, const string& basename, time_t
     return filename;
 }
 
-void LogFile::makePath(string &dir)
+void LogFile::makePath(String &dir)
 {   
     char filePath[1000] = {0};
     bool bAbsolutePath = true;
 
 #ifdef WIN32
-	if (string::npos == dir.find(':'))
+	if (String::npos == dir.find(':'))
     {
         bAbsolutePath = false;
     }
