@@ -7,21 +7,21 @@ namespace thefox
 {
 
 static const int kMaxStringLen = 100 * 1024;
-inline int stoi(const string &str) { return (0 == str.length()) ? 0 : atoi(str.c_str()); }
-inline unsigned int stoui(const string &str) { return (0 == str.length()) ? 0 : static_cast<unsigned int>(atoi(str.c_str()));} 
-inline long stol(const string &str) { return (0 == str.length()) ? 0L : atol(str.c_str()); }
-inline float stof(const string &str){ return (0 == str.length()) ? 0.0f : static_cast<float>(atof(str.c_str())); }
-inline double stod(const string &str) { return (0 == str.length()) ? 0.0 : atof(str.c_str()); }
-inline bool stob(const string &str) { return (0 == str.length() || str == "0" || str == "false" || str == "FALSE") ? false : true; }
+inline int stoi(const String &str) { return (0 == str.length()) ? 0 : atoi(str.c_str()); }
+inline unsigned int stoui(const String &str) { return (0 == str.length()) ? 0 : static_cast<unsigned int>(atoi(str.c_str()));} 
+inline long stol(const String &str) { return (0 == str.length()) ? 0L : atol(str.c_str()); }
+inline float stof(const String &str){ return (0 == str.length()) ? 0.0f : static_cast<float>(atof(str.c_str())); }
+inline double stod(const String &str) { return (0 == str.length()) ? 0.0 : atof(str.c_str()); }
+inline bool stob(const String &str) { return (0 == str.length() || str == "0" || str == "false" || str == "FALSE") ? false : true; }
 
-inline string to_string(int val)
+inline String toString(int val)
 {
 	char buf[32] = {0};
 	sprintf(buf, "%d", val);
 	return buf;
 }
 
-inline string &sformat(string &str, const char *format, ...)
+inline String &format(String &str, const char *format, ...)
 {
 	va_list ap;
 	va_start(ap, format);
@@ -37,7 +37,42 @@ inline string &sformat(string &str, const char *format, ...)
 	return str;
 }
 
-stoupper
+inline String trimLeft(const String &str)
+{
+
+}
+inline String trimRight(const String &str)
+{
+
+}
+
+inline String trim(const String &str)
+{
+
+}
+
+inline String toLower(const String &str)
+{
+
+}
+
+inline String toUpper(const String &str)
+{
+
+}
+
+inline String replace(const String &str, const String &from, const String &to, int start = 0)
+{
+
+}
+
+inline void swap(String &ls, String &rs)
+{
+	String temp(ls);
+	ls = rs;
+	rs = temp;
+}
+
 }
 
 #endif // _THEFOX_STRING_UTIL_H_
