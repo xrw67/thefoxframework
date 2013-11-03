@@ -4,7 +4,7 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <base/noncopyable.h>
-#include <log/Logger.h>
+//#include <log/Logger.h>
 
 // Need to link with Ws2_32.lib
 #pragma comment(lib, "ws2_32.lib")
@@ -26,7 +26,7 @@ public:
 		err = ::WSAStartup(wVersionRequested, &wsaData);
 		if (err != 0) 
 		{
-			LOG_FATAL << "WSAStartup failed with error: " << err;
+		//	LOG_FATAL << "WSAStartup failed with error: " << err;
 		}
 	}
 	~SocketLibrary()

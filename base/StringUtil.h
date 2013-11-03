@@ -1,7 +1,10 @@
 #ifndef _THEFOX_STRING_UTIL_H_
 #define _THEFOX_STRING_UTIL_H_
 
+#include <stdarg.h>
 #include <base/Types.h>
+
+#pragma warning(disable:4996)
 
 namespace thefox
 {
@@ -17,7 +20,7 @@ inline bool stob(const String &str) { return (0 == str.length() || str == "0" ||
 inline String toString(int val)
 {
 	char buf[32] = {0};
-	sprintf(buf, "%d", val);
+	_snprintf(buf, sizeof(buf), "%d", val);
 	return buf;
 }
 

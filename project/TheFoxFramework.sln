@@ -1,9 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Log", "Log\Log.vcproj", "{A7BA90D5-ABD5-4D46-9CB9-3CD3F5001630}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Log", "Log\Log.vcxproj", "{A7BA90D5-ABD5-4D46-9CB9-3CD3F5001630}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLog", "TestLog\TestLog.vcproj", "{06038EFF-4A50-41DB-B39C-E350E58EAB43}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLog", "TestLog\TestLog.vcxproj", "{06038EFF-4A50-41DB-B39C-E350E58EAB43}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChatRoomServer", "ChatRoomServer\ChatRoomServer.vcxproj", "{AA3CE1DE-BAEA-4F55-8983-8B40C4966E08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +21,10 @@ Global
 		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Debug|Win32.Build.0 = Debug|Win32
 		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Release|Win32.ActiveCfg = Release|Win32
 		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Release|Win32.Build.0 = Release|Win32
+		{AA3CE1DE-BAEA-4F55-8983-8B40C4966E08}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA3CE1DE-BAEA-4F55-8983-8B40C4966E08}.Debug|Win32.Build.0 = Debug|Win32
+		{AA3CE1DE-BAEA-4F55-8983-8B40C4966E08}.Release|Win32.ActiveCfg = Release|Win32
+		{AA3CE1DE-BAEA-4F55-8983-8B40C4966E08}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

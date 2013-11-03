@@ -6,13 +6,13 @@
 namespace thefox 
 {
 
+typedef short int16_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
 typedef long long int64_t;
 
 typedef std::string String;
 
-#define _CRT_SECURE_NO_DEPRECATE
-
-#define assert(expression)
 
 } // namespace thefox
 
