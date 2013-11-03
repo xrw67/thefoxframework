@@ -76,11 +76,11 @@ private:
 	/// Not thread safe, but in loop
 	void removeConnectionInLoop(const TcpConnectionPtr& conn);
 
-	typedef std::map<string, TcpConnectionPtr> ConnectionMap;
+	typedef std::map<String, TcpConnectionPtr> ConnectionMap;
 
 	EventLoop* _loop;  // the acceptor loop
-	const string _hostport;
-	const string _name;
+	const String _hostport;
+	const String _name;
 	scoped_ptr<Acceptor> _acceptor; // avoid revealing Acceptor
 	scoped_ptr<EventLoopThreadPool> _threadPool;
 	ConnectionCallback _connectionCallback;
