@@ -12,10 +12,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <memory>
 #include <base/Types.h>
 #include <base/noncopyable.h>
 #include <base/MutexLock.h>
-#include <base/scoped_ptr.h>
 
 namespace thefox
 {
@@ -48,12 +48,12 @@ private:
 
 	int _count;
 
-	scoped_ptr<MutexLock> _mutex;
+	std::unique_ptr<MutexLock> _mutex;
 	time_t _startOfPeriod;
 	time_t _lastRoll;
 	time_t _lastFlush;
 	class File;
-	scoped_ptr<File> _file;
+	std::unique_ptr<File> _file;
 
 	const static int _kCheckTimeRoll = 1024; ///< 统计达到这么多行后写到文件
 	const static int _kRollPerSeconds = 60*60*24;
