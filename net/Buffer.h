@@ -166,164 +166,159 @@ public:
 
 	const char* beginWrite() const { return begin() + writerIndex_; }
 
-  void hasWritten(size_t len)
-  { writerIndex_ += len; }
+	void hasWritten(size_t len) { _writerIndex += len; }
 
-  ///
-  /// Append int32_t using network endian
-  ///
-  void appendInt32(int32_t x)
-  {
-    int32_t be32 = sockets::hostToNetwork32(x);
-    append(&be32, sizeof be32);
-  }
+	///
+	/// Append int32_t using network endian
+	///
+	void appendInt32(int32_t x)
+	{
+		int32_t be32 = sockets::hostToNetwork32(x);
+		append(&be32, sizeof be32);
+	}
 
-  void appendInt16(int16_t x)
-  {
-    int16_t be16 = sockets::hostToNetwork16(x);
-    append(&be16, sizeof be16);
-  }
+	void appendInt16(int16_t x)
+	{
+		int16_t be16 = sockets::hostToNetwork16(x);
+		append(&be16, sizeof be16);
+	}
 
-  void appendInt8(int8_t x)
-  {
-    append(&x, sizeof x);
-  }
+	void appendInt8(int8_t x)
+	{
+		append(&x, sizeof x);
+	}
 
-  ///
-  /// Read int32_t from network endian
-  ///
-  /// Require: buf->readableBytes() >= sizeof(int32_t)
-  int32_t readInt32()
-  {
-    int32_t result = peekInt32();
-    retrieveInt32();
-    return result;
-  }
+	///
+	/// Read int32_t from network endian
+	///
+	/// Require: buf->readableBytes() >= sizeof(int32_t)
+	int32_t readInt32()
+	{
+		int32_t result = peekInt32();
+		retrieveInt32();
+		return result;
+	}
 
-  int16_t readInt16()
-  {
-    int16_t result = peekInt16();
-    retrieveInt16();
-    return result;
-  }
+	int16_t readInt16()
+	{
+		int16_t result = peekInt16();
+		retrieveInt16();
+		return result;
+	}
 
-  int8_t readInt8()
-  {
-    int8_t result = peekInt8();
-    retrieveInt8();
-    return result;
-  }
+	int8_t readInt8()
+	{
+		int8_t result = peekInt8();
+		retrieveInt8();
+		return result;
+	}
 
-  ///
-  /// Peek int32_t from network endian
-  ///
-  /// Require: buf->readableBytes() >= sizeof(int32_t)
-  int32_t peekInt32() const
-  {
-    assert(readableBytes() >= sizeof(int32_t));
-    int32_t be32 = 0;
-    ::memcpy(&be32, peek(), sizeof be32);
-    return sockets::networkToHost32(be32);
-  }
+	///
+	/// Peek int32_t from network endian
+	///
+	/// Require: buf->readableBytes() >= sizeof(int32_t)
+	int32_t peekInt32() const
+	{
+		assert(readableBytes() >= sizeof(int32_t));
+		int32_t be32 = 0;
+		::memcpy(&be32, peek(), sizeof be32);
+		return sockets::networkToHost32(be32);
+	}
 
-  int16_t peekInt16() const
-  {
-    assert(readableBytes() >= sizeof(int16_t));
-    int16_t be16 = 0;
-    ::memcpy(&be16, peek(), sizeof be16);
-    return sockets::networkToHost16(be16);
-  }
+	int16_t peekInt16() const
+	{
+		assert(readableBytes() >= sizeof(int16_t));
+		int16_t be16 = 0;
+		::memcpy(&be16, peek(), sizeof be16);
+		return sockets::networkToHost16(be16);
+	}
 
-  int8_t peekInt8() const
-  {
-    assert(readableBytes() >= sizeof(int8_t));
-    int8_t x = *peek();
-    return x;
-  }
+	int8_t peekInt8() const
+	{
+		assert(readableBytes() >= sizeof(int8_t));
+		int8_t x = *peek();
+		return x;
+	}
 
-  ///
-  /// Prepend int32_t using network endian
-  ///
-  void prependInt32(int32_t x)
-  {
-    int32_t be32 = sockets::hostToNetwork32(x);
-    prepend(&be32, sizeof be32);
-  }
+	///
+	/// Prepend int32_t using network endian
+	///
+	void prependInt32(int32_t x)
+	{
+		int32_t be32 = sockets::hostToNetwork32(x);
+		prepend(&be32, sizeof be32);
+	}
 
-  void prependInt16(int16_t x)
-  {
-    int16_t be16 = sockets::hostToNetwork16(x);
-    prepend(&be16, sizeof be16);
-  }
+	void prependInt16(int16_t x)
+	{
+		int16_t be16 = sockets::hostToNetwork16(x);
+		prepend(&be16, sizeof be16);
+	}
 
-  void prependInt8(int8_t x)
-  {
-    prepend(&x, sizeof x);
-  }
+	void prependInt8(int8_t x)
+	{
+		prepend(&x, sizeof x);
+	}
 
-  void prepend(const void* /*restrict*/ data, size_t len)
-  {
-    assert(len <= prependableBytes());
-    readerIndex_ -= len;
-    const char* d = static_cast<const char*>(data);
-    std::copy(d, d+len, begin()+readerIndex_);
-  }
+	void prepend(const void* /*restrict*/ data, size_t len)
+	{
+		assert(len <= prependableBytes());
+		readerIndex_ -= len;
+		const char* d = static_cast<const char*>(data);
+		std::copy(d, d+len, begin()+readerIndex_);
+	}
 
-  void shrink(size_t reserve)
-  {
-    // FIXME: use vector::shrink_to_fit() in C++ 11 if possible.
-    Buffer other;
-    other.ensureWritableBytes(readableBytes()+reserve);
-    other.append(toStringPiece());
-    swap(other);
-  }
+	void shrink(size_t reserve)
+	{
+		// FIXME: use vector::shrink_to_fit() in C++ 11 if possible.
+		Buffer other;
+		other.ensureWritableBytes(readableBytes()+reserve);
+		other.append(toStringPiece());
+		swap(other);
+	}
 
-  size_t internalCapacity() const
-  {
-    return buffer_.capacity();
-  }
+	size_t internalCapacity() const
+	{
+		return buffer_.capacity();
+	}
 
-  /// Read data directly into buffer.
-  ///
-  /// It may implement with readv(2)
-  /// @return result of read(2), @c errno is saved
-  ssize_t readFd(int fd, int* savedErrno);
+	/// Read data directly into buffer.
+	///
+	/// It may implement with readv(2)
+	/// @return result of read(2), @c errno is saved
+	ssize_t readFd(int fd, int* savedErrno);
 
- private:
+private:
 
-  char* begin()
-  { return &*buffer_.begin(); }
+	char* begin() { return &*buffer_.begin(); }
 
-  const char* begin() const
-  { return &*buffer_.begin(); }
+	const char* begin() const { return &*buffer_.begin(); }
 
-  void makeSpace(size_t len)
-  {
-    if (writableBytes() + prependableBytes() < len + kCheapPrepend)
-    {
-      // FIXME: move readable data
-      buffer_.resize(writerIndex_+len);
-    }
-    else
-    {
-      // move readable data to the front, make space inside buffer
-      assert(kCheapPrepend < readerIndex_);
-      size_t readable = readableBytes();
-      std::copy(begin()+readerIndex_,
-                begin()+writerIndex_,
-                begin()+kCheapPrepend);
-      readerIndex_ = kCheapPrepend;
-      writerIndex_ = readerIndex_ + readable;
-      assert(readable == readableBytes());
-    }
-  }
+	void makeSpace(size_t len)
+	{
+		if (writableBytes() + prependableBytes() < len + kCheapPrepend)
+		{
+			// FIXME: move readable data
+			buffer_.resize(_writerIndex + len);
+		}
+		else
+		{
+			// move readable data to the front, make space inside buffer
+			assert(kCheapPrepend < readerIndex_);
+			size_t readable = readableBytes();
+			std::copy(begin() + _readerIndex, begin()+_writerIndex, begin() + kCheapPrepend);
+			_readerIndex = kCheapPrepend;
+			_writerIndex = _readerIndex + readable;
+			assert(readable == readableBytes());
+		}
+	}
 
- private:
-  std::vector<char> buffer_;
-  size_t readerIndex_;
-  size_t writerIndex_;
+private:
+	std::vector<char> buffer_;
+	size_t readerIndex_;
+	size_t writerIndex_;
 
-  static const char kCRLF[];
+	static const char kCRLF[];
 };
 
 }
