@@ -32,6 +32,13 @@ inline String toString(const long val)
 	char buf[32] = {0};
 	return _ltoa(val, buf, 10);
 }
+inline String toString(const long long val)
+{
+	char buf[32] = {0};
+	_snprintf(buf, sizeof(buf), "%I64u", val);
+	return buf;
+}
+
 inline String toString(const double val)
 {
 	char buf[32] = {0};
@@ -59,7 +66,7 @@ inline String &format(String &str, const char *format, ...)
 	return str;
 }
 
-inline String trimLeft(const String &str)
+inline String trimLeft(String &str)
 {
 	String::size_type index = str.find_first_not_of("\n\r\t");
 	if (index != String::npos)
@@ -69,7 +76,7 @@ inline String trimLeft(const String &str)
 	return str;
 }
 
-inline String trimRight(const String &str)
+inline String trimRight(String &str)
 {
 	String::size_type index = str.find_last_not_of("\n\r\t");
 	if (index != String::npos)
@@ -79,31 +86,33 @@ inline String trimRight(const String &str)
 	return str;
 }
 
-inline String trim(const String &str)
+inline String trim(String &str)
 {
 	return trimRight(trimLeft(str));
 }
 
-inline String toLower(const String &str)
+inline String toLower(String &str)
 {
-	for (int i = 0; i < str.length(); ++i)
+	for (String::size_type i = 0; i < str.length(); ++i)
 	{
 		if (str[i] >= 'A' && str[i] <= 'Z')
 		{
 			str[i] += 0x20;
 		}
 	}
+	return str;
 }
 
-inline String toUpper(const String &str)
+inline String toUpper(String &str)
 {
-	for (int i = 0; i < str.length(); ++i)
+	for (String::size_type i = 0; i < str.length(); ++i)
 	{
 		if (str[i] >= 'a' && str[i] <= 'z')
 		{
 			str[i] -= 0x20;
 		}
 	}
+	return str;
 }
 
 inline bool equalsIgnoreCase(const String &s1, const String &s2)
@@ -112,7 +121,7 @@ inline bool equalsIgnoreCase(const String &s1, const String &s2)
 	{
 		return false;
 	}
-	for (int i = 0; i < s1.length(); ++i)
+	for (String::size_type i = 0; i < s1.length(); ++i)
 	{
 		int diff = abs(s1[i] - s2[i]);
 		if (0 != diff || 0x20 != diff)
@@ -123,7 +132,7 @@ inline bool equalsIgnoreCase(const String &s1, const String &s2)
 	return true;
 }
 
-inline String replace(const String &str, const String &from, const String &to)
+inline String replace(String &str, const String &from, const String &to)
 {
 	String::size_type pos = 0;
 	while ((pos = str.find(from, pos)) != -1)
@@ -139,6 +148,13 @@ inline void swap(String &ls, String &rs)
 	String temp(ls);
 	ls = rs;
 	rs = temp;
+}
+
+inline String operator+(const char *ls, const String &rs)
+{
+	String buf(ls);
+	buf += rs;
+	return buf;
 }
 
 }
