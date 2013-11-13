@@ -8,7 +8,7 @@ class IocpSocket
 public:
 	bool InitIocp();
 	
-	HANDLE _ioCompletionPort;	
+	HANDLE _completionPort;	
 };
 
 }
