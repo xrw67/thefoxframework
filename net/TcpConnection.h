@@ -8,6 +8,8 @@
 #include <base/noncopyable.h>
 #include <base/Mutexlock.h>
 
+#include <net/IoContext>
+
 namespace thefox
 {
 
@@ -18,9 +20,36 @@ public:
 	~TcpConnection();
 	
 private:
-	SOCKET _sock;
-	MutexLock _lock;
+	typedef IoContext *IoContextPtr;
 	
+	IoContextPtr createNewIoContext()
+	{ 
+		MutexLockGuard lock(_lock);
+		IoContextPtr io = new IoContext;
+		_ioContexts.push_back(io);
+		return io;
+	}
+	
+	bool removeIoContext(IoContextPtr io)
+	{
+		MutexLockGuard lock(_lock);
+		for (std::list<IoContextPtr>::iterator it = _ioContexts.begin();
+				it != _ioContexts.end(); ++it) 
+		{
+			if (*it == io)
+			{
+				_ioContext.erase(it);
+				delete io;
+				io = nullptr;
+			}
+		}
+	}
+	
+	SOCKET _sock;
+	int _connId;
+	string name;
+	MutexLock _lock;
+	std::list<IoContextPtr> _ioConetxts;
 	Buffer _inBuffer;
 	Buffer _outBuffer
 

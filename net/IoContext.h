@@ -1,14 +1,14 @@
 /*
-* @file ioBuffer.h
+* @file IoContext.h
 * @brief 表示一个IO操作
 */
-#ifndef _THEFOX_NET_IOBUFFER_H_
-#define _THEFOX_NET_IOBUFFER_H_
+#ifndef _THEFOX_NET_IOCONTEXT_H_
+#define _THEFOX_NET_IOCONTEXT_H_
 
 namespace thefox
 {
 	
-class IoBuffer
+class IoContext
 {
 public:
 	OVERLAPPED _overlapped;
@@ -18,8 +18,8 @@ public:
 public:
 	enum IoType {Init,Read,ReadComplete,Write,WriteComplete};
 	
-	IoBuffer(void);
-	~IoBuffer(void);
+	IoContext(void);
+	~IoContext(void);
 private:
 	static const size_t kMaxBufLen = 8192;
 	IoType _ioType
@@ -27,4 +27,4 @@ private:
 
 }
 
-#endif // _THEFOX_NET_IOBUFFER_H_
+#endif // _THEFOX_NET_IOCONTEXT_H_
