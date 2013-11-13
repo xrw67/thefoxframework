@@ -23,7 +23,7 @@ public:
 private:
 	static const size_t kMaxBufLen = 8192;
 	IoType _ioType
-}
+};
 
 }
 
