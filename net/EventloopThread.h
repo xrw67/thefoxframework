@@ -9,12 +9,14 @@ namespace thefox
 class EventloopThread : noncopyable
 {
 public:
+	EventloopThread(TcpServer *server)
 	void stratLoop();
 private:
 	static DWORD WINAPI threadProc(LPVOID lpParameter);
 
 	Eventloop *_loop;
 	bool _exiting;
+	TcpServer *_server;
 };
 
 }

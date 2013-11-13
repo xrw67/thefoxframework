@@ -9,7 +9,7 @@ namespace thefox
 class Eventloop : noncopyable
 {
 public:
-	Eventloop(const HANDLE &completionPort);
+	Eventloop(const TcpServer *server);
 	~Eventloop();
 	
 	void loop();
@@ -19,7 +19,7 @@ private:
 	bool _looping;
 	bool _quit;
 	const DWORD _threadId;
-	const HANDLE _completionPort;
+	const TcpServer *_server;
 };
 
 }

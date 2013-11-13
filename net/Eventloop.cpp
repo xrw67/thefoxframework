@@ -2,14 +2,8 @@
 
 using namespace thefox;
 
-namespace
-{
-	const DWORD kPollTimeMs = 1000; // 轮询超时时间，单位:毫秒
-
-}
-
-Eventloop::Eventloop(const HANDLE &completionPort)
-	: _completionPort(completionPort)
+Eventloop::Eventloop(const TcpServer *server)
+	: _server(server)
 	, _threadId(::GetCurrentThreadId());
 	, _loop(false)
 	, _quit(false)
@@ -28,11 +22,11 @@ Eventloop::loop()
 	DWORD bytesTransfered = 0;
 	while (_quit) 
 	{
-		BOOL retCode = ::GetQueuedComplettionStatus(_completionPort,
+		BOOL retCode = ::GetQueuedComplettionStatus(_server->_completionPort,
 													&bytesTransfered,
 													&tcpConnection,
 													&overlapped,
-													kPollTimeMs);
+													INFINITE);
 		
 		// 收到退出标志，直接退出
 		if (EXIT_CODE == static_cast<DWORD>(tcpConnection))
@@ -43,7 +37,7 @@ Eventloop::loop()
 		if (!retCode) 
 		{
 			DWORD errCode = GetLastError();
-			if (!server->_errorCallback(conn, errCode))
+			if (!_server->_errorCallback(conn, errCode))
 				break;
 			
 			continue;
@@ -56,7 +50,7 @@ Eventloop::loop()
 			if ((0 == bytesTransfered) && 
 				(RECV == ioBuf->ioType() || WRITE == ioBuf->ioType())
 			{
-				server->removeConnection(&conn);
+				_server->removeConnection(&conn);
 				continue;
 			} 
 			else 
@@ -64,20 +58,21 @@ Eventloop::loop()
 				switch (ioBuf->ioType())
 				{
 				case ACCEPT:
-					server->_acceptCallback(conn, ioBuf->_sock);
+					_server->_acceptCallback(conn, ioBuf->_sock);
 					break;
 				case RECV:
-					conn->inBuffer.append(ioBuf->_wsaBuf.begin, ioBuf->_wsaBuf.len)
-					server->_messageCallback(conn, conn->_inBuffer);
+					_server->inBuffer.append(ioBuf->_wsaBuf.begin, ioBuf->_wsaBuf.len)
+					_server->_messageCallback(conn, conn->_inBuffer);
 					break;
 				case SEND:
+				_server->_writeCompleteCallback(conn);
+				case TIMER:
 				default:
 					break;
 					
 				}
 			}
 		}
-		//doPengingFunctors();
 	}
 	_looping = false;
 }
