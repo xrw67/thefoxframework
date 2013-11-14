@@ -3,6 +3,8 @@
 
 #include <base/noncopyable.h>
 
+class Acceptor;
+
 namespace thefox
 {
 
@@ -30,8 +32,10 @@ private:
 	
 	typedef std::map<string, TcpConnectionPtr> ConnectionMap;
 	
-	const int _hostport;
+	const string _hostport;
 	const string _name;
+	HANDLE _completionPort;
+	std::unique_ptr<Acceptor> _acceptor;
 	ConnectionCallback _connectionCallback;
 	MessageCallback _messageCallback;
 	WriteCompleteCallback _writeCompleteCallback;

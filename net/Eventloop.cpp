@@ -17,19 +17,19 @@ Eventloop::~Eventloop()
 
 Eventloop::loop()
 {
-	OVERLAPPED *overlapped = nullptr;
-	TcpConnection *tcpConnection = nullptr;
+	OVERLAPPED *overlapped = NULL;
+	PULONG_PTR completionKey = NULL;
 	DWORD bytesTransfered = 0;
 	while (_quit) 
 	{
 		BOOL retCode = ::GetQueuedComplettionStatus(_server->_completionPort,
 													&bytesTransfered,
-													&tcpConnection,
+													completionKey,
 													&overlapped,
 													INFINITE);
 		
 		// 收到退出标志，直接退出
-		if (EXIT_CODE == static_cast<DWORD>(tcpConnection))
+		if (EXIT_CODE == static_cast<DWORD>(completionKey))
 		{
 			break;
 		}	
@@ -58,8 +58,11 @@ Eventloop::loop()
 				switch (ioBuf->ioType())
 				{
 				case ACCEPT:
-					_server->_acceptCallback(conn, ioBuf->_sock);
+				{
+					InetAddress addr()
+					reinterpret_cast<Acceptor *>(*completionKey)->_newConnectionCallback(ioBuf->_sock);
 					break;
+				}
 				case RECV:
 					_server->inBuffer.append(ioBuf->_wsaBuf.begin, ioBuf->_wsaBuf.len)
 					_server->_messageCallback(conn, conn->_inBuffer);

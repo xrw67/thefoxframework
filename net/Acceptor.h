@@ -7,15 +7,22 @@ namespace thefox
 class Acceptor : noncopyable
 {
 public:
-	OVERLAPPED _overlapped;
-	
-	Acceptor();
+	typedef boost::function<void (SOCKET socket, const InetAddress&)> NewConnectionCallback;
+	Acceptor(const InetAddress &listenAddr);
 	~Acceptor();
 	
+	void setNewConnectionCallback(const NewConnectionCallback &cb)
+	 { _newConnectionCallback = cb; }
+	
+	void listen();
+	bool listening() const { return _listening; }
+	
 private:
-	LPFN_ACCEPTEX                m_lpfnAcceptEx;                // AcceptEx 和 GetAcceptExSockaddrs 的函数指针，用于调用这两个扩展函数
-	LPFN_GETACCEPTEXSOCKADDRS    m_lpfnGetAcceptExSockAddrs; 
-	SOCKET _sock;
+	LPFN_ACCEPTEX                _lpfnAcceptEx;
+	LPFN_GETACCEPTEXSOCKADDRS    _lpfnGetAcceptExSockAddrs; 
+	SOCKET _socket;
+	NewConnectionCallback _newConnectionCallback;
+	bool _listening;
 };
 
 }
