@@ -1,6 +1,8 @@
 #ifndef _THEFOX_NET_ACCEPTOR_H_
 #define _THEFOX_NET_ACCEPTOR_H_
 
+class IoContext;
+
 namespace thefox
 {
 
@@ -18,10 +20,15 @@ public:
 	bool listening() const { return _listening; }
 	
 private:
+	void handleRead();
+	
+	static const int kMaxPostAccept = 10;
+	
 	LPFN_ACCEPTEX                _lpfnAcceptEx;
 	LPFN_GETACCEPTEXSOCKADDRS    _lpfnGetAcceptExSockAddrs; 
 	SOCKET _socket;
 	NewConnectionCallback _newConnectionCallback;
+	std::vector<std::unique_ptr<IoContext >> _acceptIoContexts;
 	bool _listening;
 };
 

@@ -14,17 +14,24 @@ public:
 	OVERLAPPED _overlapped;
 	WSABUF _wsaBuf;
 	char _data[kMaxBufLen];
-	
+	SOCKET _socket;
 public:
-	enum IoType {Init,Accept,Read,ReadComplete,Write,WriteComplete};
+	enum IoType {Init, Accept, Read, Write};
 	
 	IoContext(IoType ioType)
 	: _ioType(ioType)
+	, _data({0})
+	, _socket(INVALID_SOCKET)
 	{
 		_wsaBuf.buf = _data;
 		_wsaBuf.len = kMaxBufLen;
 	}
-	~IoContext(void);
+	~IoContext(void)
+	{
+	}
+	
+	void resetBuffer()
+	{ memset(_data, kMaxBufLen); }
 private:
 	static const size_t kMaxBufLen = 8192;
 	IoType _ioType

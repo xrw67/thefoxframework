@@ -28,42 +28,73 @@ Acceptor::Acceptor(const InetAddress &listenAddr)
 		// failed
 	}
 	
-	// 填充地址信息
-	struct sockaddr_in serverAddress;
-	ZeroMemory((char *)&serverAddress, sizeof(serverAddress));
-	ServerAddress.sin_family = AF_INET;
-	// 这里可以绑定任何可用的IP地址，或者绑定一个指定的IP地址 
-	//ServerAddress.sin_addr.s_addr = htonl(INADDR_ANY);                      
-	ServerAddress.sin_addr.s_addr = inet_addr(m_strIP.GetString());         
-	ServerAddress.sin_port = htons(m_nPort);                          
-
-	// 绑定地址和端口
-	if (SOCKET_ERROR == ::bind(m_pListenContext->m_Socket, (struct sockaddr *) &ServerAddress, sizeof(ServerAddress))) 
+	if (SOCKET_ERROR == ::bind(
+								_socket, 
+								(struct sockaddr *)&listenAddr.getSockAddrInet(),
+								sizeof(listenAddr.getSockAddrInet())))
 	{
-		this->_ShowMessage("bind()函数执行错误.\n");
-		return false;
+		// failed;
 	}
 }
 
 Acceptor::~Acceptor()
 {
-	
+	closesocket(_socket);
+	_socket = INVALID_SOCKET;
 }
 
 Acceptor::listen()
 {
 	_listening = true;
 	
-	if (SOCKET_ERROR == listen(m_pListenContext->m_Socket,SOMAXCONN))
+	if (SOCKET_ERROR == listen(_socket, SOMAXCONN))
 	{
-		
+		// failed
 	}
 	
 	for (int i = 0; i < kMaxPostAccept; ++i)
 	{
-		IoContext *acceptIoContext = new;
-		
-		
-		
+		IoContext *acceptIoContext = new IoContext(IoContext::IoType::Accept);
+		if ((acceptIoContext->_socket = 
+				WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
+		{
+			// failed
+		}
+		if (FALSE == _lpfnAcceptEx(_socket,
+								acceptIoContext->_socket,
+								acceptIoContext->_wsaBuf.buf, 
+								acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN) + 16) * 2)
+		{
+			// failed
+		}
+		_acceptIoContexts.push_back(acceptIoContext);
 	}
+}
+
+void Acceptor::handleRead(IoContext *acceptIoContext)
+{
+	SOCKADDR_IN* ClientAddr = NULL;
+	SOCKADDR_IN* LocalAddr = NULL;
+	int remoteLen = sizeof(SOCKADDR_IN);
+	localLen = sizeof(SOCKADDR_IN);
+	localLen = sizeof(SOCKADDR_IN);
+	
+	_lpfnGetAcceptExSockAddrs(acceptIoContext->_wsaBuf.buf, acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2),  
+		sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, (LPSOCKADDR*)&LocalAddr, &localLen, (LPSOCKADDR*)&ClientAddr, &remoteLen);  
+
+	if (_newConnectionCallback)
+	{
+		InetAddress peerAddr(*ClientAddr);
+		_newConnectionCallback(acceptIoContext->_socket, peerAddr, acceptIoContext->_wsaBuf.buf, acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2);
+	}
+	else
+	{
+		closesocket(acceptIoContext->_socket);
+	}
+
+}
+
+void Acceptor::postAccept(IoContext *acceptIoContext)
+{
+
 }

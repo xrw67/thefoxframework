@@ -24,14 +24,14 @@ public:
 
 	// default copy/assignment are Okay
 
-	const struct sockaddr_in& getSockAddrInet() const { return _addr; }
+	const struct SOCKADDR_IN& getSockAddrInet() const { return _addr; }
 	void setSockAddrInet(const struct sockaddr_in& addr) { _addr = addr; }
 
 	uint32_t ipNetEndian() const { return _addr.sin_addr.s_addr; }
 	uint16_t portNetEndian() const { return _addr.sin_port; }
 
 private:
-	struct sockaddr_in _addr;
+	struct SOCKADDR_IN _addr;
 };
 
 }
