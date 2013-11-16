@@ -63,23 +63,23 @@ void TcpServer::start()
 
 void TcpServer::newConnection(SOCKET socket, const InetAddress& peerAddr)
 {
-  char buf[32];
-  snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
-  ++_nextConnId;
-  string connName = _name + buf;
+	char buf[32];
+	snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
+	++_nextConnId;
+	string connName = _name + buf;
 
-  InetAddress localAddr(sockets::getLocalAddr(socket));
+	InetAddress localAddr(sockets::getLocalAddr(socket));
   
-  TcpConnectionPtr conn(new TcpConnection(ioLoop,
-                                          connName,
-                                          socket,
-                                          localAddr,
-                                          peerAddr));
-  _connections[connName] = conn;
-  conn->setConnectionCallback(connectionCallback_);
-  conn->setMessageCallback(messageCallback_);
-  conn->setWriteCompleteCallback(writeCompleteCallback_);
-  conn->setCloseCallback(
-      boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
-  ioLoop->runInLoop(boost::bind(&TcpConnection::connectEstablished, conn));
+	TcpConnectionPtr conn(new TcpConnection(connName, socket, localAddr, peerAddr));
+	_connections[connName] = conn;
+	conn->setConnectionCallback(connectionCallback_);
+	conn->setMessageCallback(messageCallback_);
+	conn->setWriteCompleteCallback(writeCompleteCallback_);
+	conn->setCloseCallback(boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
+	ioLoop->runInLoop(boost::bind(&TcpConnection::connectEstablished, conn));
+  
+	if (NULL == CreateIoCompletionPort((HANDLE)socket, _completionPort, (DWORD)conn, 0))
+	{
+		// failed
+	}
 }

@@ -2,7 +2,8 @@
 
 using namespace thefox
 
-Acceptor::Acceptor(const InetAddress &listenAddr)
+Acceptor::Acceptor(const HANDLE completionPort, const InetAddress &listenAddr)
+	: _completionPort(compoetionPort)
 	: _socket(WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED))
 	, _listening(false)
 {
@@ -39,6 +40,7 @@ Acceptor::Acceptor(const InetAddress &listenAddr)
 
 Acceptor::~Acceptor()
 {
+	
 	closesocket(_socket);
 	_socket = INVALID_SOCKET;
 }
@@ -52,26 +54,21 @@ Acceptor::listen()
 		// failed
 	}
 	
-	for (int i = 0; i < kMaxPostAccept; ++i)
+	while (_acceptIoContexts.size() < kMaxPostAccept)
 	{
 		IoContext *acceptIoContext = new IoContext(IoContext::IoType::Accept);
-		if ((acceptIoContext->_socket = 
-				WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
+		if (postAccept(acceptIoContext))
 		{
-			// failed
+			_acceptIoContexts.push_back(acceptIoContext);
 		}
-		if (FALSE == _lpfnAcceptEx(_socket,
-								acceptIoContext->_socket,
-								acceptIoContext->_wsaBuf.buf, 
-								acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN) + 16) * 2)
+		else
 		{
-			// failed
+			delete acceptIoContext;
 		}
-		_acceptIoContexts.push_back(acceptIoContext);
 	}
 }
 
-void Acceptor::handleRead(IoContext *acceptIoContext)
+void Acceptor::handleAccept(IoContext *acceptIoContext)
 {
 	SOCKADDR_IN* ClientAddr = NULL;
 	SOCKADDR_IN* LocalAddr = NULL;
@@ -85,16 +82,33 @@ void Acceptor::handleRead(IoContext *acceptIoContext)
 	if (_newConnectionCallback)
 	{
 		InetAddress peerAddr(*ClientAddr);
-		_newConnectionCallback(acceptIoContext->_socket, peerAddr, acceptIoContext->_wsaBuf.buf, acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2);
+		_newConnectionCallback(acceptIoContext->_socket, peerAddr);
 	}
 	else
 	{
 		closesocket(acceptIoContext->_socket);
 	}
-
+	
+	acceptIoContext->resetBuffer();
+	postAccept(acceptIoContext);
 }
 
-void Acceptor::postAccept(IoContext *acceptIoContext)
+bool Acceptor::postAccept(IoContext *acceptIoContext)
 {
-
+	DWORD dwBytes = 0;
+	if ((acceptIoContext->_socket = 
+			WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
+	{
+		return false;
+	}
+	
+	if (FALSE == _lpfnAcceptEx(_socket, acceptIoContext->_socket, acceptIoContext->_wsaBuf.buf, 0, 
+				sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, _completionPort))
+	{
+		if (WSA_IO_PENDING != WSAGetLastError())
+		{
+			return false;
+		}
+	}
+	return true;
 }

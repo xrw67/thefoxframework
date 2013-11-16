@@ -44,7 +44,7 @@ Eventloop::loop()
 		}
 		else
 		{
-			IoBuffer *ioBuf = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
+			IoContext *ioContext = CONTAINING_RECORD(overlapped, IoContext, _overlapped);
 			
 			// 判断客户端是否断开连接
 			if ((0 == bytesTransfered) && 
@@ -59,8 +59,8 @@ Eventloop::loop()
 				{
 				case ACCEPT:
 				{
-					InetAddress addr()
-					reinterpret_cast<Acceptor *>(*completionKey)->_newConnectionCallback(ioBuf->_sock);
+					Acceptor *acceptor = reinterpret_cast<Acceptor *>(*completionKey);
+					acceptor->handleAccept(ioContext);
 					break;
 				}
 				case RECV:

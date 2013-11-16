@@ -37,6 +37,8 @@ private:
 	IoType _ioType
 };
 
+typedef IoContext *IoContextPtr;
+
 }
 
 #endif // _THEFOX_NET_IOCONTEXT_H_

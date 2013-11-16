@@ -16,7 +16,7 @@ namespace thefox
 class TcpConnection : noncopyable
 {
 public:
-	TcpConnection(const string &name, SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
+	TcpConnection(const String &name, SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
 	~TcpConnection();
 	
 private:
@@ -25,8 +25,8 @@ private:
 	void handleWrite();
 	void handleClose();
 	void handleError();
-	  
-	typedef IoContext *IoContextPtr;
+	
+	void postRecv(IoContext *ioContext);
 	
 	IoContextPtr createNewIoContext()
 	{ 
@@ -52,11 +52,11 @@ private:
 	}
 	
 	SOCKET _sock;
-	string name;
+	String _name;
 	MutexLock _lock;
 	InetAddress _localAddr;
 	InetAddress _peerAddr;
-	std::list<IoContextPtr> _ioConetxts;
+	std::vector<IoContextPtr> _ioConetxts;
 	ConnectionCallback connectionCallback_;
 	MessageCallback messageCallback_;
 	WriteCompleteCallback writeCompleteCallback_;
