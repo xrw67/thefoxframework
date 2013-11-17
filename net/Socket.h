@@ -91,19 +91,20 @@ public:
 		return true;
 	}
 	
-	void getAcceptExSockAddrs(IoContext *acceptIoContext, InetAddress &peerAddr)
+	void getAcceptExSockAddrs(IoContext *acceptIoContext, InetAddress &localAddr, InetAddress &peerAddr)
 	{
 		SOCKADDR_IN* clientAddr = NULL;
-		SOCKADDR_IN* localAddr = NULL;
+		SOCKADDR_IN* serverAddr = NULL;
 		int clientLen = sizeof(SOCKADDR_IN);
-		int localLen = sizeof(SOCKADDR_IN);
+		int serverLen = sizeof(SOCKADDR_IN);
 	
 		_lpfnGetAcceptExSockAddrs(acceptIoContext->_wsaBuf.buf, 
 			acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2),  
 			sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, 
-			(LPSOCKADDR*)&localAddr, &localLen, 
+			(LPSOCKADDR*)&serverAddr, &serverLen, 
 			(LPSOCKADDR*)&clientAddr, &clientLen);
 			
+			localAddr = serverAddr;
 			peerAddr = clientLen;
 	}
 	

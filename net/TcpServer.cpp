@@ -57,14 +57,12 @@ void TcpServer::start()
 	}
 }
 
-void TcpServer::newConnection(SOCKET socket, const InetAddress& peerAddr)
+void TcpServer::newConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr)
 {
 	char buf[32];
 	snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
 	++_nextConnId;
 	string connName = _name + buf;
-
-	InetAddress localAddr(sockets::getLocalAddr(socket));
   
 	TcpConnectionPtr conn(new TcpConnection(connName, socket, localAddr, peerAddr));
 	_connections[connName] = conn;

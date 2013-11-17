@@ -40,11 +40,12 @@ void Acceptor::listen()
 
 void Acceptor::handleAccept(IoContext *acceptIoContext)
 {
+	InetAddress localAddr;
 	InetAddress peerAddr;
-	_acceptSocket->getAcceptExSockAddr(acceptIoContext, peerAddr);
+	_acceptSocket->getAcceptExSockAddr(acceptIoContext, localAddr, peerAddr);
 	if (_newConnectionCallback)
 	{
-		_newConnectionCallback(acceptIoContext->_socket, peerAddr);
+		_newConnectionCallback(acceptIoContext->_socket, localAddr, peerAddr);
 	}
 	else
 	{
