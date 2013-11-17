@@ -1,10 +1,14 @@
 #include <net/Eventloop.h>
+#include <net/IoContext.h>
+#include <net/Acceptor.h>
+#include <net/TcpConnection.h>
+#include <net/IoCompletionPort.h>
 
 using namespace thefox;
 
-Eventloop::Eventloop(const TcpServer *server)
-	: _server(server)
-	, _threadId(::GetCurrentThreadId());
+Eventloop::Eventloop(IoCompletionPort *iocp)
+	: _iocp(iocp)
+	, _threadId(::GetCurrentThreadId())
 	, _loop(false)
 	, _quit(false)
 {
@@ -15,19 +19,15 @@ Eventloop::~Eventloop()
 
 }
 
-Eventloop::loop()
+void Eventloop::loop()
 {
 	OVERLAPPED *overlapped = NULL;
 	PULONG_PTR completionKey = NULL;
 	DWORD bytesTransfered = 0;
 	while (_quit) 
 	{
-		BOOL retCode = ::GetQueuedComplettionStatus(_server->_completionPort,
-													&bytesTransfered,
-													completionKey,
-													&overlapped,
-													INFINITE);
-		
+		BOOL retCode = _iocp->waitAndGet(&bytesTransfered,
+								completionKey, &overlapped, INFINITE);
 		// 收到退出标志，直接退出
 		if (EXIT_CODE == static_cast<DWORD>(completionKey))
 		{

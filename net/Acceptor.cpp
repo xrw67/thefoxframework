@@ -1,12 +1,16 @@
+#include <net/InetAddress.h>
+#include <net/Socket.h>
 #include <net/Acceptor.h>
+#include <net/IoContext.h>
 
-using namespace thefox
+using namespace thefox;
 
-Acceptor::Acceptor(const HANDLE completionPort, const InetAddress &listenAddr)
-	: _completionPort(compoetionPort)
-	: _socket(WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED))
+Acceptor::Acceptor(Socket *socket, const InetAddress &listenAddr)
+	: _acceptSocket(socket)
 	, _listening(false)
 {
+	_acceptSocket->addToIocp(this);
+
 	GUID guidAcceptEx = WSAID_ACCEPTEX;  
 	GUID guidGetAcceptExSockAddrs = WSAID_GETACCEPTEXSOCKADDRS; 
 	
@@ -28,31 +32,17 @@ Acceptor::Acceptor(const HANDLE completionPort, const InetAddress &listenAddr)
 	{  
 		// failed
 	}
-	
-	if (SOCKET_ERROR == ::bind(
-								_socket, 
-								(struct sockaddr *)&listenAddr.getSockAddrInet(),
-								sizeof(listenAddr.getSockAddrInet())))
-	{
-		// failed;
-	}
 }
 
 Acceptor::~Acceptor()
 {
-	
-	closesocket(_socket);
-	_socket = INVALID_SOCKET;
 }
 
-Acceptor::listen()
+void Acceptor::listen()
 {
 	_listening = true;
 	
-	if (SOCKET_ERROR == listen(_socket, SOMAXCONN))
-	{
-		// failed
-	}
+	_acceptSocket->listen();
 	
 	while (_acceptIoContexts.size() < kMaxPostAccept)
 	{
@@ -93,22 +83,4 @@ void Acceptor::handleAccept(IoContext *acceptIoContext)
 	postAccept(acceptIoContext);
 }
 
-bool Acceptor::postAccept(IoContext *acceptIoContext)
-{
-	DWORD dwBytes = 0;
-	if ((acceptIoContext->_socket = 
-			WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
-	{
-		return false;
-	}
-	
-	if (FALSE == _lpfnAcceptEx(_socket, acceptIoContext->_socket, acceptIoContext->_wsaBuf.buf, 0, 
-				sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, _completionPort))
-	{
-		if (WSA_IO_PENDING != WSAGetLastError())
-		{
-			return false;
-		}
-	}
-	return true;
-}
+

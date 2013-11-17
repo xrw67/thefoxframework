@@ -10,7 +10,7 @@ InetAddress::InetAddress(uint16_t port)
 	_addr.sin_port = htons(port);
 }
 
-InetAddress::InetAddress(const string &ip, uint16_t port)
+InetAddress::InetAddress(const String &ip, uint16_t port)
 {
 	memset(&_addr, 0, sizeof(_addr));
 	_addr->sin_family = AF_INET;
@@ -18,14 +18,14 @@ InetAddress::InetAddress(const string &ip, uint16_t port)
 	_addr->sin_port = htons(port);
 }
 
-string InetAddress::toIpPort() const
+String InetAddress::toIpPort() const
 {
 	char buf[32];
-	snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));
+	_snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));
 	return buf;
 }
 
-string InetAddress::toIp() const
+String InetAddress::toIp() const
 {
 	char *host = inet_ntoa(_addr.sin_addr);
 	if (NULL != host)

@@ -1,17 +1,21 @@
+#include <net/Socket.h>
 #include <net/TcpServer.h>
+#include <net/Acceptor.h>
+#include <net/TcpConnection.h>
+#include <net/IoCompletionPort.h>
 
 using namespace thefox;
 
-TcpServer::TcpServer(const int port,
-					const string &nameArg,
-					Option option)
-	: _hostport(port)
+TcpServer::TcpServer(const InetAddress &listenAddr, const String &nameArg)
+	: _hostport(listenAddr.toIpPort())
 	, _name(nameArg)
-	, _acceptor(new Acceptor())
+	, _iocp(new IoCompletionPort())
 	, _connectionCallback(defaultConnectionCallback)
 	, _messageCallback(defaultMessageCallback)
 	, _nextConnId(1)
 {
+	Socket *listenSocket = new Socket(_iocp);
+	_acceptor = new Acceptor(listenSocket, listenAddr);
 	_acceptor->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, _1, _2));
 }
 
@@ -36,7 +40,7 @@ void TcpServer::start()
 		_started = TRUE;
 		
 		
-		if ((_completionPort = CreateIoCompletePort(INVALID_HANDLE_VALUE, NULL, 0, 0)) == NULL)
+		if ((_completionPort = ) == NULL)
 			return;
 		
 		SYSTEM_INFO si;

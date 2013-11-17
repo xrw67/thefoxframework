@@ -1,9 +1,8 @@
 #include <net/TcpConnection.h>
-#include <net/IoContext.h>
 
 using namespace thefox;
 
-TcpConnection::TcpConnection(const string &name, 
+TcpConnection::TcpConnection(const String &name, 
 							SOCKET socket, 
 							const InetAddress &localAddr, 
 							const InetAddress &peerAddr)

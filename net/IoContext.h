@@ -11,6 +11,8 @@ namespace thefox
 class IoContext
 {
 public:
+	static const size_t kMaxBufLen = 8192;
+
 	OVERLAPPED _overlapped;
 	WSABUF _wsaBuf;
 	char _data[kMaxBufLen];
@@ -20,9 +22,9 @@ public:
 	
 	IoContext(IoType ioType)
 	: _ioType(ioType)
-	, _data({0})
 	, _socket(INVALID_SOCKET)
 	{
+		resetBuffer();
 		_wsaBuf.buf = _data;
 		_wsaBuf.len = kMaxBufLen;
 	}
@@ -31,13 +33,10 @@ public:
 	}
 	
 	void resetBuffer()
-	{ memset(_data, kMaxBufLen); }
+	{ memset(_data, 0, kMaxBufLen); }
 private:
-	static const size_t kMaxBufLen = 8192;
-	IoType _ioType
+	IoType _ioType;
 };
-
-typedef IoContext *IoContextPtr;
 
 }
 

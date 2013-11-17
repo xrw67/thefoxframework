@@ -7,8 +7,10 @@
 
 #include <base/noncopyable.h>
 #include <base/Mutexlock.h>
-
-#include <net/IoContext>
+#include <net/inc.h>
+#include <net/Buffer.h>
+#include <net/IoContext.h>
+#include <net/InetAddress.h>
 
 namespace thefox
 {
@@ -28,43 +30,21 @@ private:
 	
 	void postRecv(IoContext *ioContext);
 	
-	IoContextPtr createNewIoContext()
-	{ 
-		MutexLockGuard lock(_lock);
-		IoContextPtr io = new IoContext;
-		_ioContexts.push_back(io);
-		return io;
-	}
-	
-	bool removeIoContext(IoContextPtr io)
-	{
-		MutexLockGuard lock(_lock);
-		for (std::list<IoContextPtr>::iterator it = _ioContexts.begin();
-				it != _ioContexts.end(); ++it) 
-		{
-			if (*it == io)
-			{
-				_ioContext.erase(it);
-				delete io;
-				io = nullptr;
-			}
-		}
-	}
-	
 	SOCKET _sock;
 	String _name;
 	MutexLock _lock;
 	InetAddress _localAddr;
 	InetAddress _peerAddr;
-	std::vector<IoContextPtr> _ioConetxts;
+	std::vector<IoContext *> _ioConetxts;
 	ConnectionCallback connectionCallback_;
 	MessageCallback messageCallback_;
 	WriteCompleteCallback writeCompleteCallback_;
 	CloseCallback closeCallback_;
 	Buffer _inBuffer;
-	Buffer _outBuffer
+	Buffer _outBuffer;
 
 };
+
 }
 
 #endif // _THEFOX_NET_TCPCONNECTION_H_

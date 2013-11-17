@@ -1,3 +1,11 @@
+#ifndef _THEFOX_NET_INITSOCKET_H_
+#define _THEFOX_NET_INITSOCKET_H_
+
+#include <net/inc.h>
+
+namespace thefox
+{
+
 class InitSocket
 {
 public:
@@ -16,9 +24,13 @@ public:
 			::WSACleanup();
 	}
 
-	int	GetResult() {return m_iResult;}
-	BOOL IsValid() {return m_iResult == 0;}
+	int	GetResult() {return _result;}
+	BOOL IsValid() {return _result == 0;}
 
 private:
 	int _result;
 };
+
+}
+
+#endif // _THEFOX_NET_INITSOCKET_H_

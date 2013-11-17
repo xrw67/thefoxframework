@@ -1,54 +1,26 @@
-// Copyright 2010, Shuo Chen.  All rights reserved.
-// http://code.google.com/p/muduo/
-//
-// Use of this source code is governed by a BSD-style license
-// that can be found in the License file.
+#ifndef _THEFOX_NET_CALLBACKS_H_
+#define _THEFOX_NET_CALLBACKS_H_
 
-// Author: Shuo Chen (chenshuo at chenshuo dot com)
-//
-// This is a public header file, it must only include public header files.
+#include <functional>
+#include <memory>
+#include <base/Timestamp.h>
 
-#ifndef MUDUO_NET_CALLBACKS_H
-#define MUDUO_NET_CALLBACKS_H
-
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-
-#include <muduo/base/Timestamp.h>
-
-namespace muduo
-{
-
-// Adapted from google-protobuf stubs/common.h
-// see License in muduo/base/Types.h
-template<typename To, typename From>
-inline ::boost::shared_ptr<To> down_pointer_cast(const ::boost::shared_ptr<From>& f) {
-  if (false) {
-    implicit_cast<From*, To*>(0);
-  }
-
-#ifndef NDEBUG
-  assert(f == NULL || dynamic_cast<To*>(get_pointer(f)) != NULL);
-#endif
-  return ::boost::static_pointer_cast<To>(f);
-}
-
-namespace net
+namespace thefox
 {
 
 // All client visible callbacks go here.
 
 class Buffer;
 class TcpConnection;
-typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;
-typedef boost::function<void()> TimerCallback;
-typedef boost::function<void (const TcpConnectionPtr&)> ConnectionCallback;
-typedef boost::function<void (const TcpConnectionPtr&)> CloseCallback;
-typedef boost::function<void (const TcpConnectionPtr&)> WriteCompleteCallback;
-typedef boost::function<void (const TcpConnectionPtr&, size_t)> HighWaterMarkCallback;
+typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+typedef std::function<void()> TimerCallback;
+typedef std::function<void (const TcpConnectionPtr&)> ConnectionCallback;
+typedef std::function<void (const TcpConnectionPtr&)> CloseCallback;
+typedef std::function<void (const TcpConnectionPtr&)> WriteCompleteCallback;
+typedef std::function<void (const TcpConnectionPtr&, size_t)> HighWaterMarkCallback;
 
 // the data has been read to (buf, len)
-typedef boost::function<void (const TcpConnectionPtr&,
+typedef std::function<void (const TcpConnectionPtr&,
                               Buffer*,
                               Timestamp)> MessageCallback;
 
@@ -58,6 +30,5 @@ void defaultMessageCallback(const TcpConnectionPtr& conn,
                             Timestamp receiveTime);
 
 }
-}
 
-#endif  // MUDUO_NET_CALLBACKS_H
+#endif  // _THEFOX_NET_CALLBACKS_H_
