@@ -3,6 +3,7 @@
 
 #include <base/Types.h>
 #include <base/noncopyable.h>
+#include <base/scoped_ptr.h>
 #include <net/inc.h>
 #include <net/InetAddress.h>
 
@@ -49,10 +50,11 @@ private:
 	
 	typedef std::map<String, TcpConnectionPtr> ConnectionMap;
 	
+	scoped_ptr<IoCompletionPort>_iocp;
+	scoped_ptr<Acceptor> _acceptor;
+
 	const String _hostport;
 	const String _name;
-	std::unique_ptr<IoCompletionPort> _iocp;
-	std::unique_ptr<Acceptor> _acceptor;
 	ConnectionCallback _connectionCallback;
 	MessageCallback _messageCallback;
 	WriteCompleteCallback _writeCompleteCallback;

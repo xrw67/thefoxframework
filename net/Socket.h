@@ -5,9 +5,7 @@
 #include <net/inc.h>
 #include <net/IoCompletionPort.h>
 #include <net/InetAddress.h>
-
-class IoContext;
-class IoCompletionPort;
+#include <net/IoContext.h>
 
 namespace thefox
 {
@@ -15,20 +13,21 @@ namespace thefox
 class Socket : noncopyable
 {
 public:
-	Socket(IoCompletionPort *iocp);
-	~Socket();
-	bool create();
-	bool addToIocp(ULONG_PTR completionKey);
-	void listen()
-	{ ::listen(_socket, SOMAXCONN); }
+	Socket(const SOCKET socket)
+		: _socket(socket)
+	~Socket()
+	{}
+	void create();
 	bool bind(const InetAddress &listenAddr);
+	bool listen();
+	bool connect(const InetAddress &addr);
+
 	bool postAccpt(IoContext *acceptIoContext);
 	bool postSend();
 	bool postRecv();
 	void close();
 private:
-	SOCKET _socket;
-	IoCompletionPort *_iocp;
+	const SOCKET _socket;
 };
 
 }

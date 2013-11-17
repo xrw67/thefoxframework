@@ -7,10 +7,14 @@
 
 #include <base/noncopyable.h>
 #include <base/Mutexlock.h>
+#include <base/scoped_ptr.h>
 #include <net/inc.h>
 #include <net/Buffer.h>
 #include <net/IoContext.h>
 #include <net/InetAddress.h>
+
+class IoCompletionPort;
+class Socket;
 
 namespace thefox
 {
@@ -30,7 +34,8 @@ private:
 	
 	void postRecv(IoContext *ioContext);
 	
-	SOCKET _sock;
+	scoped_ptr<Socket> _socket;
+	IoCompletionPort * const _iocpPtr;
 	String _name;
 	MutexLock _lock;
 	InetAddress _localAddr;

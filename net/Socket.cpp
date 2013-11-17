@@ -20,11 +20,6 @@ void Socket::create()
 	_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 }
 
-bool Socket::addToIocp(ULONG_PTR completionKey)
-{
-	_iocp->addHandle((HANDLE)_socket, completionKey);
-}
-
 bool Socket::bind(const InetAddress &listenAddr)
 {
 	if (SOCKET_ERROR == bind(_socket, 

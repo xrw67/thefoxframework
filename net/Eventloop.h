@@ -11,17 +11,18 @@ namespace thefox
 class Eventloop : noncopyable
 {
 public:
-	Eventloop(IoCompletionPort *iocp);
+	Eventloop(IoCompletionPort *iocpPtr);
 	~Eventloop();
 	
 	void loop();
 	void quit();
 	
 private:
+	IoCompletionPort * const _iocpPtr;
+
 	bool _looping;
 	bool _quit;
 	const DWORD _threadId;
-	IoCompletionPort *_iocp;
 };
 
 }
