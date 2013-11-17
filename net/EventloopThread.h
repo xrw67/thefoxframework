@@ -3,20 +3,21 @@
 
 #include <base/noncopyable.h>
 
+class IoCompletionPort;
+
 namespace thefox
 {
 
 class EventloopThread : noncopyable
 {
 public:
-	EventloopThread(TcpServer *server)
-	void stratLoop();
+	EventloopThread()
+	void stratLoop(IoCompletionPort * const iocpPtr);
 private:
-	static DWORD WINAPI threadProc(LPVOID lpParameter);
+	static DWORD WINAPI threadProc(LPVOID);
 
 	Eventloop *_loop;
 	bool _exiting;
-	TcpServer *_server;
 };
 
 }

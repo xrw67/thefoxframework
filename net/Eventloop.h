@@ -11,7 +11,7 @@ namespace thefox
 class Eventloop : noncopyable
 {
 public:
-	Eventloop(IoCompletionPort *iocpPtr);
+	Eventloop(IoCompletionPort * const iocpPtr);
 	~Eventloop();
 	
 	void loop();

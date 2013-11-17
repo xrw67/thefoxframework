@@ -1,4 +1,3 @@
-#include <net/Socket.h>
 #include <net/TcpServer.h>
 #include <net/Acceptor.h>
 #include <net/TcpConnection.h>
@@ -6,16 +5,24 @@
 
 using namespace thefox;
 
+void defaultConnectionCallback(const TcpConnectionPtr& conn)
+{
+}
+
+void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer* buffer,Timestamp receiveTime)
+{
+	buffer->retrieveAll;
+}
+
 TcpServer::TcpServer(const InetAddress &listenAddr, const String &nameArg)
 	: _hostport(listenAddr.toIpPort())
 	, _name(nameArg)
 	, _iocp(new IoCompletionPort())
+	, _acceptor(new Acceptor(_iocp, listenAddr))
 	, _connectionCallback(defaultConnectionCallback)
 	, _messageCallback(defaultMessageCallback)
 	, _nextConnId(1)
 {
-	Socket *listenSocket = new Socket(_iocp);
-	_acceptor = new Acceptor(listenSocket, listenAddr);
 	_acceptor->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, _1, _2));
 }
 
@@ -37,31 +44,16 @@ void TcpServer::start()
 		return;
 	}
 	
-		_started = TRUE;
+	_started = true;
 		
-		
-		if ((_completionPort = ) == NULL)
-			return;
-		
-		SYSTEM_INFO si;
-		GetSystemInfo(&si);
-		int threads = 2 * si.dwNumberOfProcessors;
-		
-		for (int i = 0; i < threads; ++i)
-		{
-			EventloopThread *loop = new EventloopThread(this);
-			loop->strarLoop();
-		}
-
-		if (NULL == CreateIoCompletionPort(_acceptor->_socket, _completionPort, (DWORD)_acceptor, 0))  
-		{  
-			RELEASE_SOCKET( m_pListenContext->m_Socket );
-			return;
-		}
-
-		
-
-		
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	int threads = 2 * si.dwNumberOfProcessors;
+	
+	for (int i = 0; i < threads; ++i)
+	{
+		EventloopThread *loop = new EventloopThread();
+		loop->strarLoop(_iocp);
 	}
 }
 
@@ -80,10 +72,5 @@ void TcpServer::newConnection(SOCKET socket, const InetAddress& peerAddr)
 	conn->setMessageCallback(messageCallback_);
 	conn->setWriteCompleteCallback(writeCompleteCallback_);
 	conn->setCloseCallback(boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
-	ioLoop->runInLoop(boost::bind(&TcpConnection::connectEstablished, conn));
-  
-	if (NULL == CreateIoCompletionPort((HANDLE)socket, _completionPort, (DWORD)conn, 0))
-	{
-		// failed
-	}
+	_iocp->assocHandle(socket, conn);
 }

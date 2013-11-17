@@ -6,7 +6,7 @@
 
 using namespace thefox;
 
-Eventloop::Eventloop(IoCompletionPort *iocp)
+Eventloop::Eventloop(IoCompletionPort * const iocp)
 	: _iocp(iocp)
 	, _threadId(::GetCurrentThreadId())
 	, _loop(false)
@@ -24,22 +24,23 @@ void Eventloop::loop()
 	OVERLAPPED *overlapped = NULL;
 	PULONG_PTR completionKey = NULL;
 	DWORD bytesTransfered = 0;
+	
 	while (_quit) 
 	{
 		BOOL retCode = _iocp->waitAndGet(&bytesTransfered,
 								completionKey, &overlapped, INFINITE);
 		// 收到退出标志，直接退出
 		if (EXIT_CODE == static_cast<DWORD>(completionKey))
-		{
+		{s
 			break;
 		}	
 		
 		if (!retCode) 
 		{
-			DWORD errCode = GetLastError();
-			if (!_server->_errorCallback(conn, errCode))
-				break;
-			
+			// if (!_errorCallback(conn, ::GetLastError()))
+// 			{
+// 				break;
+// 			}
 			continue;
 		}
 		else
@@ -55,21 +56,20 @@ void Eventloop::loop()
 			} 
 			else 
 			{
-				switch (ioBuf->ioType())
+				switch (ioBuf->getIoType())
 				{
-				case ACCEPT:
+				case IoContext::IoType::Accept:
 				{
 					Acceptor *acceptor = reinterpret_cast<Acceptor *>(*completionKey);
 					acceptor->handleAccept(ioContext);
 					break;
 				}
-				case RECV:
+				case IoContext::IoType::Recv:
 					_server->inBuffer.append(ioBuf->_wsaBuf.begin, ioBuf->_wsaBuf.len)
 					_server->_messageCallback(conn, conn->_inBuffer);
 					break;
-				case SEND:
+				case IoContext::IoType::Send:
 				_server->_writeCompleteCallback(conn);
-				case TIMER:
 				default:
 					break;
 					

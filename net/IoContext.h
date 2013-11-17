@@ -36,8 +36,10 @@ public:
 	void SetIoType(IoType type)
 	{ _ioType = type; }
 	
-	void resetBuffer()
-	{ memset(_data, 0, kMaxBufLen); }
+	IoType getIoType() const {return _ioType; }
+	
+	void resetBuffer() { memset(_data, 0, kMaxBufLen); }
+	
 private:
 	IoType _ioType;
 };

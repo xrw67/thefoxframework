@@ -1,5 +1,5 @@
 #include <net/TcpConnection.h>
-
+#include <net/Socket.h>
 using namespace thefox;
 
 TcpConnection::TcpConnection(const String &name, 
@@ -7,12 +7,13 @@ TcpConnection::TcpConnection(const String &name,
 							const InetAddress &localAddr, 
 							const InetAddress &peerAddr)
 	: _name(name)
-	, _socket(socket)
+	, _socket(new Socket(socket))
 	, _localAddr(localAddr)
 	, _peerAddr(peerAddr)
 {
+	_socket->setKeepAlive(true);
 	IoContext *ioContext = new IoContext(IoContext::IoType::Recv);
-	if (postRecv(ioContext))
+	if (_socket->postRecv(ioContext))
 	{
 		_ioConetxts.puch_back(ioContext);
 	}
@@ -22,19 +23,45 @@ TcpConnection::TcpConnection(const String &name,
 	}
 }
 
-bool TcpConnection::postRecv(IoContext *ioContext)
+void TcpConnection::send(const void* data, size_t len)
 {
-	DWORD dwFlags = 0;
-	DWORD dwBytes = 0;
-
-	ioContext->ResetBuffer();
-	ioContext->setIoType(IoContext::IoType::recv);
-
-	int nBytesRecv = WSARecv(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &ioContext->_overlapped, NULL );
-
-	if ((SOCKET_ERROR == nBytesRecv) && (WSA_IO_PENDING != WSAGetLastError()))
+	if (_state == kConnected)
 	{
-		return false;
+		size_t remainDataLen = len;
+		while (remanDataLen)
+		{
+			IoContext * ioContext = getEmptyIoContext();
+			////////
+		}
 	}
-	return true;	
+}
+
+void TcpConnection::shutdown()
+{
+
+}
+
+void TcpConnection::setTcpNoDelay(bool on)
+{
+  socket_->setTcpNoDelay(on);
+}
+
+void TcpConnection::handleRead(Timestamp receiveTime)
+{
+
+}
+
+void TcpConnection::handleWrite()
+{
+
+}
+
+void TcpConnection::handleClose()
+{
+
+}
+
+void TcpConnection::handleError()
+{
+	
 }

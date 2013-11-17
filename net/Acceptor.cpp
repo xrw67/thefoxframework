@@ -27,7 +27,7 @@ void Acceptor::listen()
 	while (_acceptIoContexts.size() < kMaxPostAccept)
 	{
 		IoContext *acceptIoContext = new IoContext(IoContext::IoType::Accept);
-		if (postAccept(acceptIoContext))
+		if (_acceptSocket->postAccept(_iocpPtr, acceptIoContext))
 		{
 			_acceptIoContexts.push_back(acceptIoContext);
 		}
@@ -40,18 +40,10 @@ void Acceptor::listen()
 
 void Acceptor::handleAccept(IoContext *acceptIoContext)
 {
-	SOCKADDR_IN* ClientAddr = NULL;
-	SOCKADDR_IN* LocalAddr = NULL;
-	int remoteLen = sizeof(SOCKADDR_IN);
-	localLen = sizeof(SOCKADDR_IN);
-	localLen = sizeof(SOCKADDR_IN);
-	
-	_lpfnGetAcceptExSockAddrs(acceptIoContext->_wsaBuf.buf, acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2),  
-		sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, (LPSOCKADDR*)&LocalAddr, &localLen, (LPSOCKADDR*)&ClientAddr, &remoteLen);  
-
+	InetAddress peerAddr;
+	_acceptSocket->getAcceptExSockAddr(acceptIoContext, peerAddr);
 	if (_newConnectionCallback)
 	{
-		InetAddress peerAddr(*ClientAddr);
 		_newConnectionCallback(acceptIoContext->_socket, peerAddr);
 	}
 	else
@@ -60,7 +52,7 @@ void Acceptor::handleAccept(IoContext *acceptIoContext)
 	}
 	
 	acceptIoContext->resetBuffer();
-	postAccept(acceptIoContext);
+	_acceptSocket->postAccept(acceptIoContext);
 }
 
 

@@ -11,18 +11,45 @@ namespace thefox
 class InetAddress : public copyable
 {
 public:
-	explicit InetAddress(uint16_t port);
+	explicit InetAddress(uint16_t port)
+	{
+		memset(&_addr, 0, sizeof(_addr);
+		_addr.sin_family = AF_INET;
+		_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		_addr.sin_port = htons(port);
+	}
 
-	InetAddress(const String &ip, uint16_t port);
+	InetAddress(const String &ip, uint16_t port)
+	{
+		memset(&_addr, 0, sizeof(_addr));
+		_addr->sin_family = AF_INET;
+		_addr->sin_addr.s_addr = inet_addr(ip.c_str());
+		_addr->sin_port = htons(port);
+	}
 
 	InetAddress(const struct sockaddr_in &addr)
 	: _addr(addr)
 	{}
 
-	String toIp() const;
-	String toIpPort() const;
-	String toHostPort() const
-	{ return toIpPort(); }
+	String toIp() const
+	{
+		char *host = inet_ntoa(_addr.sin_addr);
+		if (NULL != host)
+		{
+			return host;
+		}
+		else
+		{
+			return "INVALID";
+		}
+	}
+	
+	String toIpPort() const
+	{
+		char buf[32];
+		_snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));
+		return buf;
+	}
 
 	// default copy/assignment are Okay
 

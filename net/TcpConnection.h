@@ -22,7 +22,10 @@ namespace thefox
 class TcpConnection : noncopyable
 {
 public:
-	TcpConnection(const String &name, SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
+	TcpConnection(const String &name,
+	 			SOCKET socket, 
+				const InetAddress &localAddr,
+				const InetAddress &peerAddr);
 	~TcpConnection();
 	
 private:

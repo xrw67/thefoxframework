@@ -91,6 +91,22 @@ public:
 		return true;
 	}
 	
+	void getAcceptExSockAddrs(IoContext *acceptIoContext, InetAddress &peerAddr)
+	{
+		SOCKADDR_IN* clientAddr = NULL;
+		SOCKADDR_IN* localAddr = NULL;
+		int clientLen = sizeof(SOCKADDR_IN);
+		int localLen = sizeof(SOCKADDR_IN);
+	
+		_lpfnGetAcceptExSockAddrs(acceptIoContext->_wsaBuf.buf, 
+			acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2),  
+			sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, 
+			(LPSOCKADDR*)&localAddr, &localLen, 
+			(LPSOCKADDR*)&clientAddr, &clientLen);
+			
+			peerAddr = clientLen;
+	}
+	
 	void close()
 	{
 		if (INVALID_SOCKET != _socket)
@@ -98,6 +114,18 @@ public:
 			closesocket(_socket);
 			_socket = INVALID_SOCKET;
 		}
+	}
+	
+	void setTcpNoDelay(bool on)
+	{
+		int optval = on ? 1 : 0;
+		::setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, &optval, static_cast<socklen_t>(sizeof(optval)));
+	}
+	
+	void setKeepAlive(bool on)
+	{
+		int optval = on ? 1 : 0;
+		::setsockopt(_socket, SOL_SOCKET, SO_KEEPALIVE, &optval, static_cast<socklen_t>(sizeof(optval)));
 	}
 	
 	const SOCKET getSocketHandle() const 

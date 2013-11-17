@@ -3,32 +3,31 @@
 
 using namespace thefox;
 
-EventloopThread::EventloopThread(TcpServer *server)
-	: _loop(nullptr)
+EventloopThread::EventloopThread()
+	: _loop(NULL)
 	, _exiting(false)
-	, _server(server)
 {
 }
 
 EventloopThread::~EventloopThread()
 {
 	_exiting = true;
-	if (nullptr != _loop)
+	if (NULL != _loop)
 	{
 		_loop->quit();
 	}
 }
 
-void EventloopThread::startLoop()
+void EventloopThread::startLoop(IoCompletionPort * const iocpPtr)
 {
-	::CreateThread(NULL, 0, threadProc, _server, 0, 0);
+	::CreateThread(NULL, 0, threadProc, iocpPtr, 0, 0);
 }
 
-DWORD WINAPI EventloopThread::threadProc(LPVOID lpParameter)
+DWORD WINAPI EventloopThread::threadProc(LPVOID iocpPtr)
 {
-	Eventloop loop(repreinter_cast<TcpServer *>(lpParameter));
+	Eventloop loop(repreinter_cast<IoCompletionPort *>(iocpPtr));
 	_loop = &loop;
 	
 	loop.loop();
-	_loop = nullptr;	
+	_loop = NULL;	
 }

@@ -13,7 +13,7 @@ public:
 	{
 		LPWSADATA temp = lpWSAData;
 		if(!temp)
-			temp = (LPWSADATA)_alloca(sizeof(WSADATA));
+			temp = (LPWSADATA)::_alloca(sizeof(WSADATA));
 
 		_result = ::WSAStartup(MAKEWORD(minorVersion, majorVersion), temp);
 	}

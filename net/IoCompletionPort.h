@@ -13,31 +13,31 @@ public:
 	IoCompletionPort()
 		: _iocp(INVALID_HANDLE_VALUE)
 	{
-		_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+		_iocp = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 	}
 
 	~IoCompletionPort()
 	{
 		if (INVALID_HANDLE_VALUE != _iocp)
 		{
-			CloseHandle(_iocp);
+			::CloseHandle(_iocp);
 		}
 	}
 
-	BOOL addHandle(HANDLE handle, ULONG_PTR completionKey)
+	BOOL assocHandle(HANDLE handle, ULONG_PTR completionKey)
 	{
-		CreateIoCompletionPort(_iocp, handle, completionKey, 0);
+		::CreateIoCompletionPort(_iocp, handle, completionKey, 0);
 	}
 
 	BOOL waitAndGet(DWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped, DWORD timeout = INFINITE)
 	{
-		return GetQueuedCompletionStatus(_iocp, 
+		return ::GetQueuedCompletionStatus(_iocp, 
 			&lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, timeout);
 	}
 
 	BOOL post(DWORD dwCompletlonKey, LPOVERLAPPED lpoverlapped)
 	{
-		return PostQueuedCompletionStatus(_iocp, 0, dwCompletlonKey, lpoverlapped); 
+		return ::PostQueuedCompletionStatus(_iocp, 0, dwCompletlonKey, lpoverlapped); 
 	}
 
 	HANDLE getHandle() const { return _iocp; }
