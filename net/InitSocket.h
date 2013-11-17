@@ -1,7 +1,7 @@
 #ifndef _THEFOX_NET_INITSOCKET_H_
 #define _THEFOX_NET_INITSOCKET_H_
 
-#include <net/inc.h>
+#include <net/winapi.h>
 
 namespace thefox
 {

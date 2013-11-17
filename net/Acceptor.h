@@ -4,11 +4,11 @@
 #include <base/noncopyable.h>
 #include <base/scoped_ptr.h>
 #include <base/MutexLock.h>
-#include <net/inc.h>
+#include <net/winapi.h>
 
-class IoCompletionPort;
 class Socket;
 class IoContext;
+class IoCompletionPort;
 
 namespace thefox
 {
@@ -19,7 +19,8 @@ public:
 	static const int kMaxPostAccept = 10;
 
 	typedef std::function<void (SOCKET socket, const InetAddress&)> NewConnectionCallback;
-	Acceptor(Socket *socket, const InetAddress &listenAddr);
+	
+	Acceptor(IoCompletionPort * const iocpPtr, const InetAddress &listenAddr);
 	~Acceptor();
 	
 	void setNewConnectionCallback(const NewConnectionCallback &cb)
@@ -31,13 +32,11 @@ public:
 private:
 	void handleAccept();
 
-	LPFN_ACCEPTEX _lpfnAcceptEx;
-	LPFN_GETACCEPTEXSOCKADDRS _lpfnGetAcceptExSockAddrs; 
-	NewConnectionCallback _newConnectionCallback;
+	bool _listening;
 	IoCompletionPort * const _iocpPtr;
 	scoped_ptr<Socket> _acceptSocket;
-	bool _listening;
-	std::vector<IoContext *> _acceptIoContexts;
+	std::vector<scoped_ptr<IoContext>> _acceptIoContexts;
+	NewConnectionCallback _newConnectionCallback;
 };
 
 }

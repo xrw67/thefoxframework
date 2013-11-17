@@ -5,37 +5,17 @@
 
 using namespace thefox;
 
-Acceptor::Acceptor(Socket *socket, const InetAddress &listenAddr)
-	: _acceptSocket(socket)
+Acceptor::Acceptor(const InetAddress &listenAddr)
+	: _acceptSocket(Socket::create())
 	, _listening(false)
 {
-	_acceptSocket->addToIocp(this);
-
-	GUID guidAcceptEx = WSAID_ACCEPTEX;  
-	GUID guidGetAcceptExSockAddrs = WSAID_GETACCEPTEXSOCKADDRS; 
-	
-	// 获取AcceptEx函数指针
-	DWORD dwBytes = 0;  
-	if (SOCKET_ERROR == WSAIoctl(_socket, SIO_GET_EXTENSION_FUNCTION_POINTER, 
-			&guidAcceptEx, sizeof(guidAcceptEx), 
-			&_lpfnAcceptEx, sizeof(_lpfnAcceptEx), 
-			&dwBytes, NULL, NULL))  
-	{  
-		// failed
-	}  
-	
-	// 获取GetAcceptExSockAddrs函数指针，也是同理
-	if (SOCKET_ERROR == WSAIoctl(_socket, SIO_GET_EXTENSION_FUNCTION_POINTER, 
-			&guidGetAcceptExSockAddrs, sizeof(guidGetAcceptExSockAddrs), 
-			&_lpfnGetAcceptExSockAddrs, sizeof(_lpfnGetAcceptExSockAddrs),   
-			&dwBytes, NULL, NULL))  
-	{  
-		// failed
-	}
+	_iocpPtr->assocHandle(_acceptSocket->getSocket(), this);
+	_acceptSocket->bindAddress(listenAddr);
 }
 
 Acceptor::~Acceptor()
 {
+	_acceptIoContexts.clear();
 }
 
 void Acceptor::listen()

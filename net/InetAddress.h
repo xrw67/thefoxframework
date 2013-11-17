@@ -3,7 +3,7 @@
 
 #include <base/Types.h>
 #include <base/copyable.h>
-#include <net/inc.h>
+#include <net/winapi.h>
 
 namespace thefox
 {

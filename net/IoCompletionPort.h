@@ -2,7 +2,7 @@
 #define _THEFOX_NET_IO_COMPLETIONPORT_H_
 
 #include <base/noncopyable.h>
-#include <net/inc.h>
+#include <net/winapi.h>
 
 namespace thefox
 {

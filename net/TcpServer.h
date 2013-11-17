@@ -4,7 +4,7 @@
 #include <base/Types.h>
 #include <base/noncopyable.h>
 #include <base/scoped_ptr.h>
-#include <net/inc.h>
+#include <net/winapi.h>
 #include <net/InetAddress.h>
 
 class Buffer;

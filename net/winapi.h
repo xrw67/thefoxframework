@@ -6,6 +6,7 @@
 #include <memory>
 #include <functional>
 
+// winsock2 和 windows的顺序不能颠倒
 #include <WinSock2.h>
 #include <MSWSock.h>
 #include <Windows.h>

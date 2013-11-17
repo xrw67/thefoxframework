@@ -28,9 +28,13 @@ public:
 		_wsaBuf.buf = _data;
 		_wsaBuf.len = kMaxBufLen;
 	}
+	
 	~IoContext(void)
 	{
 	}
+	
+	void SetIoType(IoType type)
+	{ _ioType = type; }
 	
 	void resetBuffer()
 	{ memset(_data, 0, kMaxBufLen); }
