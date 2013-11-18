@@ -11,6 +11,7 @@
 #include <net/winapi.h>
 #include <net/Buffer.h>
 #include <net/IoContext.h>
+#include <net/Callbacks.h>
 #include <net/InetAddress.h>
 
 class IoCompletionPort;
@@ -30,27 +31,42 @@ public:
 	
 private:
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
-	void handleRead(Timestamp receiveTime);
+	void handleRead(IoContext *ioContext, Timestamp receiveTime);
 	void handleWrite();
 	void handleClose();
 	void handleError();
 	
-	void postRecv(IoContext *ioContext);
-	
+    IoContext *getFreeIoContext()
+    {
+        IoContext *ioContext = NULL;
+        if (!_freeIoConetxts.empty())
+        {
+            ioContext = _freeIoConetxts.front();
+            _freeIoConetxts.pop_front();
+        }
+        if (NULL == ioContext)
+        {
+            ioContext = new IoContext();
+        }
+        return ioContext;
+    }
+	void addToIoContextList(IoContext *ioContext)
+    {
+        _freeIoConetxts.push_back(ioContext);
+    }
+    
 	scoped_ptr<Socket> _socket;
 	IoCompletionPort * const _iocpPtr;
 	String _name;
 	MutexLock _lock;
 	InetAddress _localAddr;
 	InetAddress _peerAddr;
-	std::vector<IoContext *> _ioConetxts;
-	ConnectionCallback connectionCallback_;
-	MessageCallback messageCallback_;
-	WriteCompleteCallback writeCompleteCallback_;
-	CloseCallback closeCallback_;
+	ConnectionCallback _connectionCallback;
+	MessageCallback _messageCallback;
+	WriteCompleteCallback _writeCompleteCallback;
+	CloseCallback _closeCallback;
+    std::list<scoped_ptr<IoContext>> _freeIoConetxts;
 	Buffer _inBuffer;
-	Buffer _outBuffer;
-
 };
 
 }

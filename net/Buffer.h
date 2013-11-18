@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <base/copyable.h>
 #include <base/Types.h>
+#include <net/IoContext.h>
 
 namespace thefox
 {
@@ -251,7 +252,11 @@ public:
 	{
 		return _buffer.capacity();
 	}
-
+    
+    size_t readIoContext(const IoContext &ioContext)
+    {
+        append(ioContext._wsaBuf.buf, ioContext._wsaBuf.len);
+    }
 private:
 
 	char* begin()

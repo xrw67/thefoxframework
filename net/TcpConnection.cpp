@@ -27,11 +27,15 @@ void TcpConnection::send(const void* data, size_t len)
 {
 	if (_state == kConnected)
 	{
-		size_t remainDataLen = len;
-		while (remanDataLen)
+		size_t remain = len;
+		while (remain)
 		{
-			IoContext * ioContext = getEmptyIoContext();
-			////////
+            size_t sendLen = (remain > IoContext::kMaxBufLen) ? IoContext::kMaxBufLen : remain;
+			IoContext * ioContext = getFreeIoContext();
+			ioContext->setIoType(IoContext::IoType::Send);
+            ioContext->setBuffer(data, sendLen);
+            remain -= sendLen;
+            data += sendLen;
 		}
 	}
 }
@@ -46,9 +50,13 @@ void TcpConnection::setTcpNoDelay(bool on)
   socket_->setTcpNoDelay(on);
 }
 
-void TcpConnection::handleRead(Timestamp receiveTime)
+void TcpConnection::handleRead(IoContext *ioContext, Timestamp receiveTime)
 {
-
+    _inBuffer.readIoContext(*ioContext);
+    _messageCallback(this, _inBuffer, receiveTime);
+    
+    ioContext->resetBuffer();
+    _socket->postRecv(ioContext)
 }
 
 void TcpConnection::handleWrite()
