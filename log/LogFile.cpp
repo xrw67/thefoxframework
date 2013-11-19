@@ -87,7 +87,7 @@ LogFile::~LogFile()
 
 void LogFile::append(const char* logline, int len)
 {
-	if (_mutex)
+	if (get_pointer(_mutex))
 	{
 		MutexLockGuard lock(*_mutex);
 		append_unlocked(logline, len);
@@ -100,7 +100,7 @@ void LogFile::append(const char* logline, int len)
 
 void LogFile::flush()
 {
-	if (_mutex)
+	if (get_pointer(_mutex))
 	{
 		MutexLockGuard lock(*_mutex);
 		_file->flush();

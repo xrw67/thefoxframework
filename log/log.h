@@ -19,13 +19,14 @@
 #define _THEFOX_LOG_H_
 
 #include <memory>
+#include <base/scoped_ptr.h>
 #include <log/logger.h>
 #include <log/logfile.h>
 
 namespace thefox
 {
 
-static std::unique_ptr<LogFile> g_logFile;
+static scoped_ptr<LogFile> g_logFile;
 
 inline void logOutputFunc(const char* msg, int len)
 {
