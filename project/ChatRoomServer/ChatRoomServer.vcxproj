@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\my_dev\TheFoxFramework;$(IncludePath)</IncludePath>
-    <SourcePath>C:\my_dev\TheFoxFramework;$(SourcePath)</SourcePath>
+    <IncludePath>C:\my_dev\TheFoxFramework;F:\TheFoxFramework;$(IncludePath)</IncludePath>
+    <SourcePath>C:\my_dev\TheFoxFramework;F:\TheFoxFramework;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -83,7 +83,6 @@
     <ClInclude Include="..\..\net\Buffer.h" />
     <ClInclude Include="..\..\net\Eventloop.h" />
     <ClInclude Include="..\..\net\EventloopThread.h" />
-    <ClInclude Include="..\..\net\inc.h" />
     <ClInclude Include="..\..\net\InetAddress.h" />
     <ClInclude Include="..\..\net\InitSocket.h" />
     <ClInclude Include="..\..\net\IoCompletionPort.h" />
@@ -94,10 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\Acceptor.cpp" />
+    <ClCompile Include="..\..\net\Buffer.cpp" />
     <ClCompile Include="..\..\net\Eventloop.cpp" />
     <ClCompile Include="..\..\net\EventloopThread.cpp" />
-    <ClCompile Include="..\..\net\InetAddress.cpp" />
-    <ClCompile Include="..\..\net\Socket.cpp" />
     <ClCompile Include="..\..\net\TcpConnection.cpp" />
     <ClCompile Include="..\..\net\TcpServer.cpp" />
     <ClCompile Include="ChatRoomServer.cpp" />

@@ -3,7 +3,9 @@
 
 #include <net/winapi.h>
 
+class Buffer;
 class TcpConnection;
+
 namespace thefox
 {
     typedef TcpConnection *TcpConnectionPtr;

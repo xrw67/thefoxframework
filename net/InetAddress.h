@@ -13,7 +13,7 @@ class InetAddress : public copyable
 public:
 	explicit InetAddress(uint16_t port)
 	{
-		memset(&_addr, 0, sizeof(_addr);
+		memset(&_addr, 0, sizeof(_addr));
 		_addr.sin_family = AF_INET;
 		_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 		_addr.sin_port = htons(port);
@@ -22,9 +22,9 @@ public:
 	InetAddress(const String &ip, uint16_t port)
 	{
 		memset(&_addr, 0, sizeof(_addr));
-		_addr->sin_family = AF_INET;
-		_addr->sin_addr.s_addr = inet_addr(ip.c_str());
-		_addr->sin_port = htons(port);
+		_addr.sin_family = AF_INET;
+		_addr.sin_addr.s_addr = inet_addr(ip.c_str());
+		_addr.sin_port = htons(port);
 	}
 
 	InetAddress(const struct sockaddr_in &addr)

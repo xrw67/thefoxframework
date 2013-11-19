@@ -54,9 +54,6 @@
     <ClInclude Include="..\..\net\InitSocket.h">
       <Filter>Net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\inc.h">
-      <Filter>Net</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatRoomServer.cpp">
@@ -77,10 +74,7 @@
     <ClCompile Include="..\..\net\EventloopThread.cpp">
       <Filter>Net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\InetAddress.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\Socket.cpp">
+    <ClCompile Include="..\..\net\Buffer.cpp">
       <Filter>Net</Filter>
     </ClCompile>
   </ItemGroup>

@@ -284,7 +284,7 @@ private:
 	size_t _readerIndex;
 	size_t _writerIndex;
 
-	static const char kCRLF[] = "\r\n";
+	static const char kCRLF[];
 };
 
 }
