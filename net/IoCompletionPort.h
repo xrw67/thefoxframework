@@ -29,7 +29,7 @@ public:
 		::CreateIoCompletionPort(_iocp, handle, completionKey, 0);
 	}
 
-	BOOL getStatus(DWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped, DWORD timeout = INFINITE)
+	BOOL getStatus(LPDWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped, DWORD timeout = INFINITE)
 	{
 		return ::GetQueuedCompletionStatus(_iocp, 
 			&lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, timeout);

@@ -11,6 +11,8 @@ TcpConnection::TcpConnection(const String &name,
 	, _localAddr(localAddr)
 	, _peerAddr(peerAddr)
 {
+	setContextType(ContextType::TcpConnection);
+	
 	_socket->setKeepAlive(true);
 	IoBuffer *ioContext = new IoBuffer(IoBuffer::IoType::Recv);
 	if (_socket->postRecv(ioContext))

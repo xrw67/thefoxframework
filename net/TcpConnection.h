@@ -12,6 +12,7 @@
 #include <net/IoBuffer.h>
 #include <net/Callbacks.h>
 #include <net/InetAddress.h>
+#include <net/SocketContext.h>
 
 namespace thefox
 {
@@ -19,7 +20,7 @@ namespace thefox
 class IoCompletionPort;
 class Socket;
 
-class TcpConnection : noncopyable
+class TcpConnection : SocketContext
 {
 public:
 	TcpConnection(const String &name,

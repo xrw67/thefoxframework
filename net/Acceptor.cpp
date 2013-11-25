@@ -9,6 +9,7 @@ Acceptor::Acceptor(const InetAddress &listenAddr)
 	: _acceptSocket(Socket::create())
 	, _listening(false)
 {
+	setContextType(ContextType::Acceptor);
 	_iocpPtr->assocHandle(_acceptSocket->getSocket(), this);
 	_acceptSocket->bindAddress(listenAddr);
 }

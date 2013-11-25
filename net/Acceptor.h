@@ -1,9 +1,9 @@
 #ifndef _THEFOX_NET_ACCEPTOR_H_
 #define _THEFOX_NET_ACCEPTOR_H_
 
-#include <base/noncopyable.h>
 #include <base/scoped_ptr.h>
 #include <net/winapi.h>
+#include <net/SocketContext.h>
 
 namespace thefox
 {
@@ -12,7 +12,7 @@ class Socket;
 class IoBuffer;
 class IoCompletionPort;
 
-class Acceptor : noncopyable
+class Acceptor : SocketContext
 {
 public:
 	static const int kMaxPostAccept = 10;
