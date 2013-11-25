@@ -15,26 +15,18 @@ class IoBuffer : public PerIoContext
 public:
 	enum IoType { None, Init, Read, Write };
 	
-	IoBuffer(IoType ioType = None)
-	: PerIoContext()
-	, _ioType(ioType)
-	{
-		
-	}
+	IoBuffer(IoType ioType = None) : _ioType(ioType) {}
+	virtual ~IoBuffer(void) {}
 	
-	~IoBuffer(void)
-	{
-	}
+	void setIoType(IoType type) { _ioType = type; }
+	const IoType getIoType() const {return _ioType; }
 	
-	void SetIoType(IoType type)
-	{ _ioType = type; }
-	
-	IoType getIoType() const {return _ioType; }
-	
-	void resetBuffer() { memset(_data, 0, kMaxBufLen); }
+	void setSequenceNumber(uint32_t num) { _sequenceNumber = num; }
+	const unit32_t getSequenceNumber() const { return _sequenceNumber; }
 	
 private:
 	IoType _ioType;
+	uint32_t _sequenceNumber;
 };
 
 }

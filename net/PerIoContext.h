@@ -10,34 +10,42 @@ class PerIoContext
 public:
 	enum { kMaxBufLen = 8192 };
 	
-	PerIoContext()
-		: _bytesUsed(0)
+	PerIoContext() : _bytesUsed(0)
 	{
 		_wsaBuf.buf = _data;
 		_wsaBuf.len = 0;
+		resetOverlapped();
 		resetBuffer();
 	}
 	
-	virtual ~IoBuffer(void)
-	{}
+	virtual ~IoBuffer(void) { _bytesOfUsed = 0; }
 	
-	void resetBuffer() { memset(_data, 0, kMaxBufLen); }
+	const char *getBuffer() const { return _data; }
+	void resetOverlapped() { ZeroMemory(_overlapped, sizeof(OVERLAPPED)); }
+	void resetBuffer() 
+	{
+		ZeroMemory(&_data, sizeof(_data));
+		_wsaBuf.len = 0;
+	}
 	
+	WSABUG *getWSABuffer() { return &_wsabuf; }
+
 	bool addData(const char *data, size_t len)
 	{
 		if ((kMaxBufLen - _bytesUsed) < len)
 			return false;
 		
 		memcpy(_data + _bytesUsed, data, len);
+		_bytesOfUsed += len;
+		_wsabuf.len = _bytesOfUsed;
 		return true;
 	}
 	
 private:
-	IoType _ioType;
 	OVERLAPPED _overlapped;
-	WSABUF _wsaBuf;
+	WSABUF _wsabuf;
 	char _data[kMaxBufLen];
-	size_t _bytesUsed;
+	size_t _bytesOfUsed;
 };
 
 }

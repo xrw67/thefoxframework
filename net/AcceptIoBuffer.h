@@ -8,6 +8,8 @@ namespace thefox
 class AcceptIoBuffer : public PerIoContext
 {
 public:
+	AcceptIoBuffer() {}
+	virual ~AcceptIoBuffer() {}
 	SOCKET _socket;
 };
 
