@@ -5,28 +5,21 @@
 #ifndef _THEFOX_NET_IOCONTEXT_H_
 #define _THEFOX_NET_IOCONTEXT_H_
 
+#include <net/PerIoContext.h>
+
 namespace thefox
 {
 	
-class IoBuffer
+class IoBuffer : public PerIoContext
 {
 public:
-	static const size_t kMaxBufLen = 8192;
-
-	OVERLAPPED _overlapped;
-	WSABUF _wsaBuf;
-	char _data[kMaxBufLen];
-	SOCKET _socket;
-public:
-	enum IoType {Init, Accept, Read, Write};
+	enum IoType { None, Init, Read, Write };
 	
-	IoBuffer(IoType ioType)
-	: _ioType(ioType)
-	, _socket(INVALID_SOCKET)
+	IoBuffer(IoType ioType = None)
+	: PerIoContext()
+	, _ioType(ioType)
 	{
-		resetBuffer();
-		_wsaBuf.buf = _data;
-		_wsaBuf.len = kMaxBufLen;
+		
 	}
 	
 	~IoBuffer(void)

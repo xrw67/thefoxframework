@@ -25,17 +25,12 @@ void Acceptor::listen()
 	
 	_acceptSocket->listen();
 	
-	while (_acceptIoContexts.size() < kMaxPostAccept)
-	{
+	while (_acceptIoContexts.size() < kMaxPostAccept) {
 		IoBuffer *acceptIoContext = new IoBuffer(IoBuffer::IoType::Accept);
 		if (_acceptSocket->postAccept(_iocpPtr, acceptIoContext))
-		{
 			_acceptIoContexts.push_back(acceptIoContext);
-		}
 		else
-		{
 			delete acceptIoContext;
-		}
 	}
 }
 
@@ -45,13 +40,9 @@ void Acceptor::handleAccept(IoBuffer *acceptIoContext)
 	InetAddress peerAddr;
 	_acceptSocket->getAcceptExSockAddr(acceptIoContext, localAddr, peerAddr);
 	if (_newConnectionCallback)
-	{
 		_newConnectionCallback(acceptIoContext->_socket, localAddr, peerAddr);
-	}
 	else
-	{
 		closesocket(acceptIoContext->_socket);
-	}
 	
 	acceptIoContext->resetBuffer();
 	_acceptSocket->postAccept(acceptIoContext);

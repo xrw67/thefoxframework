@@ -13,9 +13,7 @@ EventloopThread::~EventloopThread()
 {
 	_exiting = true;
 	if (NULL != _loop)
-	{
 		_loop->quit();
-	}
 }
 
 void EventloopThread::startLoop(IoCompletionPort * const iocpPtr)

@@ -20,7 +20,7 @@ namespace thefox
 class IoCompletionPort;
 class Socket;
 
-class TcpConnection : SocketContext
+class TcpConnection : public SocketContext
 {
 public:
 	TcpConnection(const String &name,

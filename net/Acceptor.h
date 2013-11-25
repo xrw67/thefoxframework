@@ -12,7 +12,7 @@ class Socket;
 class IoBuffer;
 class IoCompletionPort;
 
-class Acceptor : SocketContext
+class Acceptor : public SocketContext
 {
 public:
 	static const int kMaxPostAccept = 10;

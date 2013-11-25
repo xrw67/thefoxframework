@@ -19,9 +19,7 @@ public:
 	~IoCompletionPort()
 	{
 		if (INVALID_HANDLE_VALUE != _iocp)
-		{
 			::CloseHandle(_iocp);
-		}
 	}
 
 	BOOL registerHandle(HANDLE handle, ULONG_PTR completionKey)

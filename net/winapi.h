@@ -1,5 +1,5 @@
-﻿#ifndef _THEFOX_NET_INC_H_
-#define _THEFOX_NET_INC_H_
+﻿#ifndef _THEFOX_NET_WINAPI_H_
+#define _THEFOX_NET_WINAPI_H_
 
 #include <map>
 #include <list>
@@ -16,4 +16,4 @@
 #include <base/Timestamp.h>
 #include <base/MutexLock.h>
 
-#endif // _THEFOX_NET_INC_H_
+#endif // _THEFOX_NET_WINAPI_H_

@@ -79,13 +79,9 @@ public:
 	void retrieve(size_t len)
 	{
 		if (len < readableBytes())
-		{
 			_readerIndex += len;
-		}
 		else
-		{
 			retrieveAll();
-		}
 	}
 
 	void retrieveUntil(const char* end)
@@ -141,9 +137,7 @@ public:
 	void ensureWritableBytes(size_t len)
 	{
 		if (writableBytes() < len)
-		{
 			makeSpace(len);
-		}
 	}
 
 	char* beginWrite()
@@ -267,12 +261,9 @@ private:
 
 	void makeSpace(size_t len)
 	{
-		if (writableBytes() + prependableBytes() < len + kCheapPrepend)
-		{
+		if (writableBytes() + prependableBytes() < len + kCheapPrepend) {
 			_buffer.resize(_writerIndex+len);
-		}
-		else
-		{
+		} else {
 			size_t readable = readableBytes();
 			std::copy(begin()+_readerIndex, begin()+_writerIndex, begin()+kCheapPrepend);
 			_readerIndex = kCheapPrepend;

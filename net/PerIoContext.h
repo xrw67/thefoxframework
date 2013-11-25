@@ -3,41 +3,41 @@
 
 namespace thefox
 {
+	
 class PerIoContext
 {
+	
 public:
 	enum { kMaxBufLen = 8192 };
-
-	OVERLAPPED _overlapped;
-	WSABUF _wsaBuf;
-	char _data[kMaxBufLen];
-	SOCKET _socket;
-public:
-	enum IoType {Init, Accept, Read, Write};
 	
-	IoBuffer(IoType ioType)
-	: _ioType(ioType)
-	, _socket(INVALID_SOCKET)
+	PerIoContext()
+		: _bytesUsed(0)
 	{
-		resetBuffer();
 		_wsaBuf.buf = _data;
-		_wsaBuf.len = kMaxBufLen;
+		_wsaBuf.len = 0;
+		resetBuffer();
 	}
 	
-	~IoBuffer(void)
-	{
-	}
-	
-	void SetIoType(IoType type)
-	{ _ioType = type; }
-	
-	IoType getIoType() const {return _ioType; }
+	virtual ~IoBuffer(void)
+	{}
 	
 	void resetBuffer() { memset(_data, 0, kMaxBufLen); }
 	
+	bool addData(const char *data, size_t len)
+	{
+		if ((kMaxBufLen - _bytesUsed) < len)
+			return false;
+		
+		memcpy(_data + _bytesUsed, data, len);
+		return true;
+	}
+	
 private:
 	IoType _ioType;
-	
+	OVERLAPPED _overlapped;
+	WSABUF _wsaBuf;
+	char _data[kMaxBufLen];
+	size_t _bytesUsed;
 };
 
 }

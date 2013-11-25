@@ -35,13 +35,9 @@ public:
 	{
 		char *host = inet_ntoa(_addr.sin_addr);
 		if (NULL != host)
-		{
 			return host;
-		}
 		else
-		{
 			return "INVALID";
-		}
 	}
 	
 	String toIpPort() const

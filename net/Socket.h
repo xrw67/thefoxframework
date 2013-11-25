@@ -39,33 +39,28 @@ public:
 	bool connect(const InetAddress &addr)
 	{ ::connect(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(listenAddr.getSockAddrInet())); }
 	
-	bool postAccept(IoCompletionIocp * const iocpPtr, IoBuffer *acceptIoContext)
+	bool postAccept(IoCompletionPoer &iocp, IoBuffer *acceptIoContext)
 	{
 		DWORD dwBytes = 0;
 		if ((acceptIoContext->_socket = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
-		{
 			return false;
-		}
 	
 		if (FALSE == _lpfnAcceptEx(_socket, acceptIoContext->_socket, acceptIoContext->_wsaBuf.buf, 0, 
-					sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, _iocp.getHandle()))
-		{
+					sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, iocp.getHandle())) {
 			if (WSA_IO_PENDING != WSAGetLastError())
-			{
 				return false;
-			}
 		}
 		return true;
 	}
 	
-	bool postSend(IoCompletionIocp * const iocpPtr, IoBuffer *ioContext)
+	bool postSend(IoCompletionPort &iocp, IoBuffer *ioContext)
 	{
 		DWORD dwFlags = 0;
 		DWORD dwBytes = 0;
 
 		ioContext->setIoType(IoBuffer::IoType::Send);
 
-		int bytesRecv = ::WSASend(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocpPtr->getHandle(), NULL );
+		int bytesRecv = ::WSASend(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocp.getHandle(), NULL );
 
 		if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != ::WSAGetLastError()))
 		{
@@ -74,7 +69,7 @@ public:
 		return true;
 	}
 	
-	bool postRecv(IoCompletionIocp * const iocpPtr, IoBuffer *ioContext)
+	bool postRecv(IoCompletionPort &iocp, IoBuffer *ioContext)
 	{
 		DWORD dwFlags = 0;
 		DWORD dwBytes = 0;
@@ -82,7 +77,7 @@ public:
 		ioContext->ResetBuffer();
 		ioContext->setIoType(IoBuffer::IoType::Recv);
 
-		int bytesRecv = ::WSARecv(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocpPtr->getHandle(), NULL );
+		int bytesRecv = ::WSARecv(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocp.getHandle(), NULL );
 
 		if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != ::WSAGetLastError()))
 		{

@@ -28,21 +28,16 @@ TcpServer::TcpServer(const InetAddress &listenAddr, const String &nameArg)
 
 TcpServer::~TcpServer()
 {
-	for (ConnectionMap::iterator it(_connections.begin()));
-	it != _connections.end(); ++it)
-	{
+	for (ConnectionMap::iterator it(_connections.begin()); it != _connections.end(); ++it) {
 		TcpConnectionPtr conn = it->second;
 		it->second.reset();
-		
 	}
 }
 
 void TcpServer::start()
 {
 	if (_started)
-	{
 		return;
-	}
 	
 	_started = true;
 		
@@ -50,8 +45,7 @@ void TcpServer::start()
 	GetSystemInfo(&si);
 	int threads = 2 * si.dwNumberOfProcessors;
 	
-	for (int i = 0; i < threads; ++i)
-	{
+	for (int i = 0; i < threads; ++i) {
 		EventloopThread *loop = new EventloopThread();
 		loop->strarLoop(_iocp);
 	}

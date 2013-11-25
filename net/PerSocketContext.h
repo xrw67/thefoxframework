@@ -12,6 +12,11 @@ class PerSocketContext : noncopyable
 public:
 	enum ContextType { Acceptor, TcpConnection };
 	
+	PerSocketContext()
+	{}
+	virtual ~PerSocketContext()
+	{}
+	
 	void setContextType(ContextType type) { _contextType = type; }
 	const ContextType getContextType() const { return _contextType; }
 	void setSocketHandle(SOCKET socket) { _socket = socket; }
