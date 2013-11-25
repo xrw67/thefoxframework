@@ -1,5 +1,5 @@
 /*
-* @file IoContext.h
+* @file IoBuffer.h
 * @brief 表示一个IO操作
 */
 #ifndef _THEFOX_NET_IOCONTEXT_H_
@@ -8,7 +8,7 @@
 namespace thefox
 {
 	
-class IoContext
+class IoBuffer
 {
 public:
 	static const size_t kMaxBufLen = 8192;
@@ -20,7 +20,7 @@ public:
 public:
 	enum IoType {Init, Accept, Read, Write};
 	
-	IoContext(IoType ioType)
+	IoBuffer(IoType ioType)
 	: _ioType(ioType)
 	, _socket(INVALID_SOCKET)
 	{
@@ -29,7 +29,7 @@ public:
 		_wsaBuf.len = kMaxBufLen;
 	}
 	
-	~IoContext(void)
+	~IoBuffer(void)
 	{
 	}
 	

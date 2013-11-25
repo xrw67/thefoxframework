@@ -8,13 +8,15 @@
 #include <net/Callbacks.h>
 #include <net/InetAddress.h>
 
+
+
+namespace thefox
+{
+
 class Buffer;
 class Acceptor;
 class TcpConnection;
 class IoCompletionPort;
-
-namespace thefox
-{
 
 class TcpServer : noncopyable
 {

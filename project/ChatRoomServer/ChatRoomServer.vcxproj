@@ -81,12 +81,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\net\Acceptor.h" />
     <ClInclude Include="..\..\net\Buffer.h" />
+    <ClInclude Include="..\..\net\Callbacks.h" />
     <ClInclude Include="..\..\net\Eventloop.h" />
     <ClInclude Include="..\..\net\EventloopThread.h" />
     <ClInclude Include="..\..\net\InetAddress.h" />
     <ClInclude Include="..\..\net\InitSocket.h" />
     <ClInclude Include="..\..\net\IoCompletionPort.h" />
-    <ClInclude Include="..\..\net\IoContext.h" />
+    <ClInclude Include="..\..\net\IoBuffer.h" />
     <ClInclude Include="..\..\net\Socket.h" />
     <ClInclude Include="..\..\net\TcpConnection.h" />
     <ClInclude Include="..\..\net\TcpServer.h" />

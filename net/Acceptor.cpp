@@ -1,7 +1,7 @@
 #include <net/InetAddress.h>
 #include <net/Socket.h>
 #include <net/Acceptor.h>
-#include <net/IoContext.h>
+#include <net/IoBuffer.h>
 
 using namespace thefox;
 
@@ -26,7 +26,7 @@ void Acceptor::listen()
 	
 	while (_acceptIoContexts.size() < kMaxPostAccept)
 	{
-		IoContext *acceptIoContext = new IoContext(IoContext::IoType::Accept);
+		IoBuffer *acceptIoContext = new IoBuffer(IoBuffer::IoType::Accept);
 		if (_acceptSocket->postAccept(_iocpPtr, acceptIoContext))
 		{
 			_acceptIoContexts.push_back(acceptIoContext);
@@ -38,7 +38,7 @@ void Acceptor::listen()
 	}
 }
 
-void Acceptor::handleAccept(IoContext *acceptIoContext)
+void Acceptor::handleAccept(IoBuffer *acceptIoContext)
 {
 	InetAddress localAddr;
 	InetAddress peerAddr;

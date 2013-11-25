@@ -3,20 +3,20 @@
 
 #include <net/winapi.h>
 
+namespace thefox
+{
 class Buffer;
 class TcpConnection;
 
-namespace thefox
-{
-    typedef TcpConnection *TcpConnectionPtr;
-    typedef void (*ConnectionCallback)(const TcpConnectionPtr &);
-    typedef void (*CloseCallback)(const TcpConnectionPtr &);
-    typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &);
-    typedef void (*MessageCallback)(const TcpConnectionPtr &, Buffer *, Timestamp);
-    typedef void (*ConnectionCallback)(const TcpConnectionPtr &);
+typedef TcpConnection *TcpConnectionPtr;
+typedef void (*ConnectionCallback)(const TcpConnectionPtr &);
+typedef void (*CloseCallback)(const TcpConnectionPtr &);
+typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &);
+typedef void (*MessageCallback)(const TcpConnectionPtr &, Buffer *, Timestamp);
+typedef void (*ConnectionCallback)(const TcpConnectionPtr &);
     
-    void defaultConnectionCallback(const TcpConnectionPtr &conn);
-    void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer* buffer,Timestamp receiveTime);
+void defaultConnectionCallback(const TcpConnectionPtr &conn);
+void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer* buffer,Timestamp receiveTime);
     
 }
 

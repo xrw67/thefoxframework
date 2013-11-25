@@ -24,9 +24,6 @@
     <ClInclude Include="..\..\net\InetAddress.h">
       <Filter>Net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\IoContext.h">
-      <Filter>Net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\TcpConnection.h">
       <Filter>Net</Filter>
     </ClInclude>
@@ -52,6 +49,12 @@
       <Filter>Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\InitSocket.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\IoBuffer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Callbacks.h">
       <Filter>Net</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,15 +3,14 @@
 
 #include <base/noncopyable.h>
 #include <base/scoped_ptr.h>
-#include <base/MutexLock.h>
 #include <net/winapi.h>
-
-class Socket;
-class IoContext;
-class IoCompletionPort;
 
 namespace thefox
 {
+
+class Socket;
+class IoBuffer;
+class IoCompletionPort;
 
 class Acceptor : noncopyable
 {
@@ -35,7 +34,7 @@ private:
 	bool _listening;
 	IoCompletionPort * const _iocpPtr;
 	scoped_ptr<Socket> _acceptSocket;
-	std::vector<scoped_ptr<IoContext>> _acceptIoContexts;
+	std::vector<scoped_ptr<IoBuffer>> _acceptIoContexts;
 	NewConnectionCallback _newConnectionCallback;
 };
 

@@ -12,7 +12,7 @@ TcpConnection::TcpConnection(const String &name,
 	, _peerAddr(peerAddr)
 {
 	_socket->setKeepAlive(true);
-	IoContext *ioContext = new IoContext(IoContext::IoType::Recv);
+	IoBuffer *ioContext = new IoBuffer(IoBuffer::IoType::Recv);
 	if (_socket->postRecv(ioContext))
 	{
 		_ioConetxts.puch_back(ioContext);
@@ -30,9 +30,9 @@ void TcpConnection::send(const void* data, size_t len)
 		size_t remain = len;
 		while (remain)
 		{
-            size_t sendLen = (remain > IoContext::kMaxBufLen) ? IoContext::kMaxBufLen : remain;
-			IoContext * ioContext = getFreeIoContext();
-			ioContext->setIoType(IoContext::IoType::Send);
+            size_t sendLen = (remain > IoBuffer::kMaxBufLen) ? IoBuffer::kMaxBufLen : remain;
+			IoBuffer * ioContext = getFreeIoContext();
+			ioContext->setIoType(IoBuffer::IoType::Send);
             ioContext->setBuffer(data, sendLen);
             remain -= sendLen;
             data += sendLen;
@@ -50,7 +50,7 @@ void TcpConnection::setTcpNoDelay(bool on)
   socket_->setTcpNoDelay(on);
 }
 
-void TcpConnection::handleRead(IoContext *ioContext, Timestamp receiveTime)
+void TcpConnection::handleRead(IoBuffer *ioContext, Timestamp receiveTime)
 {
     _inBuffer.readIoContext(*ioContext);
     _messageCallback(this, _inBuffer, receiveTime);

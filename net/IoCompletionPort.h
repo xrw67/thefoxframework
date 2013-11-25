@@ -24,12 +24,12 @@ public:
 		}
 	}
 
-	BOOL assocHandle(HANDLE handle, ULONG_PTR completionKey)
+	BOOL registerHandle(HANDLE handle, ULONG_PTR completionKey)
 	{
 		::CreateIoCompletionPort(_iocp, handle, completionKey, 0);
 	}
 
-	BOOL waitAndGet(DWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped, DWORD timeout = INFINITE)
+	BOOL getStatus(DWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped, DWORD timeout = INFINITE)
 	{
 		return ::GetQueuedCompletionStatus(_iocp, 
 			&lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, timeout);

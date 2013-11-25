@@ -3,10 +3,11 @@
 
 #include <base/noncopyable.h>
 
-class IoCompletionPort;
 
 namespace thefox
 {
+
+class IoCompletionPort;
 
 class EventloopThread : noncopyable
 {

@@ -1,5 +1,5 @@
 #include <net/Eventloop.h>
-#include <net/IoContext.h>
+#include <net/IoBuffer.h>
 #include <net/Acceptor.h>
 #include <net/TcpConnection.h>
 #include <net/IoCompletionPort.h>
@@ -45,7 +45,7 @@ void Eventloop::loop()
 		}
 		else
 		{
-			IoContext *ioContext = CONTAINING_RECORD(overlapped, IoContext, _overlapped);
+			IoBuffer *ioContext = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
 			
 			// 判断客户端是否断开连接
 			if ((0 == bytesTransfered) && 
@@ -58,17 +58,17 @@ void Eventloop::loop()
 			{
 				switch (ioBuf->getIoType())
 				{
-				case IoContext::IoType::Accept:
+				case IoBuffer::IoType::Accept:
 				{
 					Acceptor *acceptor = reinterpret_cast<Acceptor *>(*completionKey);
 					acceptor->handleAccept(ioContext);
 					break;
 				}
-				case IoContext::IoType::Recv:
+				case IoBuffer::IoType::Recv:
 					_server->inBuffer.append(ioBuf->_wsaBuf.begin, ioBuf->_wsaBuf.len)
 					_server->_messageCallback(conn, conn->_inBuffer);
 					break;
-				case IoContext::IoType::Send:
+				case IoBuffer::IoType::Send:
 				_server->_writeCompleteCallback(conn);
 				default:
 					break;

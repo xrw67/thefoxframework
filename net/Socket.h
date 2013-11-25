@@ -5,7 +5,7 @@
 #include <net/winapi.h>
 #include <net/IoCompletionPort.h>
 #include <net/InetAddress.h>
-#include <net/IoContext.h>
+#include <net/IoBuffer.h>
 
 namespace thefox
 {
@@ -39,7 +39,7 @@ public:
 	bool connect(const InetAddress &addr)
 	{ ::connect(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(listenAddr.getSockAddrInet())); }
 	
-	bool postAccept(IoCompletionIocp * const iocpPtr, IoContext *acceptIoContext)
+	bool postAccept(IoCompletionIocp * const iocpPtr, IoBuffer *acceptIoContext)
 	{
 		DWORD dwBytes = 0;
 		if ((acceptIoContext->_socket = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
@@ -58,12 +58,12 @@ public:
 		return true;
 	}
 	
-	bool postSend(IoCompletionIocp * const iocpPtr, IoContext *ioContext)
+	bool postSend(IoCompletionIocp * const iocpPtr, IoBuffer *ioContext)
 	{
 		DWORD dwFlags = 0;
 		DWORD dwBytes = 0;
 
-		ioContext->setIoType(IoContext::IoType::Send);
+		ioContext->setIoType(IoBuffer::IoType::Send);
 
 		int bytesRecv = ::WSASend(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocpPtr->getHandle(), NULL );
 
@@ -74,13 +74,13 @@ public:
 		return true;
 	}
 	
-	bool postRecv(IoCompletionIocp * const iocpPtr, IoContext *ioContext)
+	bool postRecv(IoCompletionIocp * const iocpPtr, IoBuffer *ioContext)
 	{
 		DWORD dwFlags = 0;
 		DWORD dwBytes = 0;
 
 		ioContext->ResetBuffer();
-		ioContext->setIoType(IoContext::IoType::Recv);
+		ioContext->setIoType(IoBuffer::IoType::Recv);
 
 		int bytesRecv = ::WSARecv(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocpPtr->getHandle(), NULL );
 
@@ -91,7 +91,7 @@ public:
 		return true;
 	}
 	
-	void getAcceptExSockAddrs(IoContext *acceptIoContext, InetAddress &localAddr, InetAddress &peerAddr)
+	void getAcceptExSockAddrs(IoBuffer *acceptIoContext, InetAddress &localAddr, InetAddress &peerAddr)
 	{
 		SOCKADDR_IN* clientAddr = NULL;
 		SOCKADDR_IN* serverAddr = NULL;
