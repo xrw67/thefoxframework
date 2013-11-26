@@ -3,9 +3,9 @@
 
 #include <base/noncopyable.h>
 #include <net/winapi.h>
-#include <net/IoCompletionPort.h>
 #include <net/InetAddress.h>
 #include <net/IoBuffer.h>
+#include <net/AcceptIoBuffer.h>
 
 namespace thefox
 {
@@ -16,7 +16,7 @@ public:
 	static const SOCKET create()
 	{ return ::WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); }
 	
-	Socket(const SOCKET socket)
+	Socket(SOCKET socket)
 		: _socket(socket)
 	{
 		DWORD dwBytes = 0;  
@@ -31,36 +31,49 @@ public:
 	}
 	
 	bool bindAddress(const InetAddress &listenAddr)
-	{ ::bind(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(listenAddr.getSockAddrInet())); }
+	{ 
+		if (SOCKET_ERROR == ::bind(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(listenAddr.getSockAddrInet()))) {
+			return false;
+		}
+		return true;
+	}
 	
-	bool listen();
-	{ ::listen(_socket, SOMAXCONN); }
+	bool listen()
+	{ 
+		if (SOCKET_ERROR == ::listen(_socket, SOMAXCONN)) {
+			return false;
+		}
+		return true;
+	}
 	
 	bool connect(const InetAddress &addr)
-	{ ::connect(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(listenAddr.getSockAddrInet())); }
+	{ 
+		if (SOCKET_ERROR == ::connect(_socket, (struct sockaddr *)&addr.getSockAddrInet(), sizeof(addr.getSockAddrInet()))) {
+			return false;
+		}
+		return true;
+	}
 	
-	bool postAccept(IoCompletionPoer &iocp, IoBuffer *acceptIoContext)
+	bool postAccept(AcceptIoBuffer &acceptIoBuffer)
 	{
 		DWORD dwBytes = 0;
-		if ((acceptIoContext->_socket = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
+		if ((acceptIoBuffer._socket = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED)) == INVALID_SOCKET)
 			return false;
 	
-		if (FALSE == _lpfnAcceptEx(_socket, acceptIoContext->_socket, acceptIoContext->_wsaBuf.buf, 0, 
-					sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, iocp.getHandle())) {
+		if (FALSE == _lpfnAcceptEx(_socket, acceptIoBuffer._socket, acceptIoBuffer.getWSABuffer()->buf, 0, 
+					sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, &dwBytes, &acceptIoBuffer._overlapped)) {
 			if (WSA_IO_PENDING != WSAGetLastError())
 				return false;
 		}
 		return true;
 	}
 	
-	bool postSend(IoCompletionPort &iocp, IoBuffer *ioContext)
+	bool postSend(IoBuffer &ioBuffer)
 	{
 		DWORD dwFlags = 0;
 		DWORD dwBytes = 0;
 
-		ioContext->setIoType(IoBuffer::IoType::Send);
-
-		int bytesRecv = ::WSASend(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocp.getHandle(), NULL );
+		int bytesRecv = ::WSASend(_socket, ioBuffer.getWSABuffer(), 1, &dwBytes, dwFlags, &ioBuffer._overlapped, NULL );
 
 		if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != ::WSAGetLastError()))
 		{
@@ -69,15 +82,12 @@ public:
 		return true;
 	}
 	
-	bool postRecv(IoCompletionPort &iocp, IoBuffer *ioContext)
+	bool postRecv(IoBuffer &ioBuffer)
 	{
 		DWORD dwFlags = 0;
 		DWORD dwBytes = 0;
 
-		ioContext->ResetBuffer();
-		ioContext->setIoType(IoBuffer::IoType::Recv);
-
-		int bytesRecv = ::WSARecv(_socket, &ioContext->_wsaBuf, 1, &dwBytes, &dwFlags, &iocp.getHandle(), NULL );
+		int bytesRecv = ::WSARecv(_socket, ioBuffer.getWSABuffer(), 1, &dwBytes, &dwFlags, &ioBuffer._overlapped, NULL );
 
 		if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != ::WSAGetLastError()))
 		{
@@ -86,21 +96,21 @@ public:
 		return true;
 	}
 	
-	void getAcceptExSockAddrs(IoBuffer *acceptIoContext, InetAddress &localAddr, InetAddress &peerAddr)
+	void getAcceptExSockAddrs(AcceptIoBuffer &acceptIoBuffer, InetAddress &localAddr, InetAddress &peerAddr)
 	{
 		SOCKADDR_IN* clientAddr = NULL;
 		SOCKADDR_IN* serverAddr = NULL;
 		int clientLen = sizeof(SOCKADDR_IN);
 		int serverLen = sizeof(SOCKADDR_IN);
 	
-		_lpfnGetAcceptExSockAddrs(acceptIoContext->_wsaBuf.buf, 
-			acceptIoContext->_wsaBuf.len - ((sizeof(SOCKADDR_IN)+16)*2),  
+		_lpfnGetAcceptExSockAddrs(acceptIoBuffer.getWSABuffer()->buf, 
+			acceptIoBuffer.getWSABuffer()->len - ((sizeof(SOCKADDR_IN)+16)*2),  
 			sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, 
 			(LPSOCKADDR*)&serverAddr, &serverLen, 
 			(LPSOCKADDR*)&clientAddr, &clientLen);
 			
-			localAddr = serverAddr;
-			peerAddr = clientLen;
+			localAddr.setSockAddrInet(*serverAddr);
+			peerAddr.setSockAddrInet(*clientAddr);
 	}
 	
 	void close()
@@ -115,19 +125,19 @@ public:
 	void setTcpNoDelay(bool on)
 	{
 		int optval = on ? 1 : 0;
-		::setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, &optval, static_cast<socklen_t>(sizeof(optval)));
+		::setsockopt(_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char *>(&optval), sizeof(optval));
 	}
 	
 	void setKeepAlive(bool on)
 	{
 		int optval = on ? 1 : 0;
-		::setsockopt(_socket, SOL_SOCKET, SO_KEEPALIVE, &optval, static_cast<socklen_t>(sizeof(optval)));
+		::setsockopt(_socket, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<char *>(&optval), sizeof(optval));
 	}
 	
-	const SOCKET getSocketHandle() const 
+	SOCKET getSocketHandle() 
 	{ return _socket; }
 private:
-	const SOCKET _socket;
+	SOCKET _socket;
 	LPFN_ACCEPTEX _lpfnAcceptEx;
 	LPFN_GETACCEPTEXSOCKADDRS _lpfnGetAcceptExSockAddrs; 
 };

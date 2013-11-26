@@ -1,7 +1,6 @@
 #include <net/InetAddress.h>
-#include <net/Socket.h>
 #include <net/Acceptor.h>
-#include <net/IoBuffer.h>
+#include <net/AcceptIoBuffer.h>
 
 using namespace thefox;
 
@@ -10,42 +9,41 @@ Acceptor::Acceptor(const InetAddress &listenAddr)
 	, _listening(false)
 {
 	setContextType(ContextType::Acceptor);
-	_iocpPtr->assocHandle(_acceptSocket->getSocket(), this);
-	_acceptSocket->bindAddress(listenAddr);
+	_acceptSocket.bindAddress(listenAddr);
 }
 
 Acceptor::~Acceptor()
 {
-	_acceptIoContexts.clear();
+	_acceptIoBuffer.clear();
 }
 
 void Acceptor::listen()
 {
 	_listening = true;
 	
-	_acceptSocket->listen();
+	_acceptSocket.listen();
 	
-	while (_acceptIoContexts.size() < kMaxPostAccept) {
-		IoBuffer *acceptIoContext = new IoBuffer(IoBuffer::IoType::Accept);
-		if (_acceptSocket->postAccept(_iocpPtr, acceptIoContext))
-			_acceptIoContexts.push_back(acceptIoContext);
+	while (_acceptIoBuffer.size() < kMaxPostAccept) {
+		AcceptIoBuffer *acceptIoBuffer = new AcceptIoBuffer();
+		if (_acceptSocket.postAccept(*acceptIoBuffer))
+			_acceptIoBuffer.push_back(acceptIoBuffer);
 		else
-			delete acceptIoContext;
+			delete acceptIoBuffer;
 	}
 }
 
-void Acceptor::handleAccept(IoBuffer *acceptIoContext)
+void Acceptor::handleAccept(AcceptIoBuffer *acceptIoBuffer)
 {
 	InetAddress localAddr;
 	InetAddress peerAddr;
-	_acceptSocket->getAcceptExSockAddr(acceptIoContext, localAddr, peerAddr);
+	_acceptSocket.getAcceptExSockAddrs(*acceptIoBuffer, localAddr, peerAddr);
 	if (_newConnectionCallback)
-		_newConnectionCallback(acceptIoContext->_socket, localAddr, peerAddr);
+		_newConnectionCallback(acceptIoBuffer->_socket, localAddr, peerAddr);
 	else
-		closesocket(acceptIoContext->_socket);
+		closesocket(acceptIoBuffer->_socket);
 	
-	acceptIoContext->resetBuffer();
-	_acceptSocket->postAccept(acceptIoContext);
+	acceptIoBuffer->resetBuffer();
+	_acceptSocket.postAccept(*acceptIoBuffer);
 }
 
 

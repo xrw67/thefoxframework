@@ -14,11 +14,11 @@ TcpConnection::TcpConnection(const String &name,
 	setContextType(ContextType::TcpConnection);
 	
 	_socket->setKeepAlive(true);
-	IoBuffer *ioContext = new IoBuffer(IoBuffer::IoType::Recv);
-	if (_socket->postRecv(ioContext))
-		_ioConetxts.puch_back(ioContext);
+	IoBuffer *ioBuffer = new IoBuffer(IoBuffer::IoType::Recv);
+	if (_socket->postRecv(ioBuffer))
+		_ioConetxts.puch_back(ioBuffer);
 	else
-		delete ioContext;
+		delete ioBuffer;
 }
 
 void TcpConnection::send(const void* data, size_t len)
@@ -27,9 +27,9 @@ void TcpConnection::send(const void* data, size_t len)
 		size_t remain = len;
 		while (remain) {
             size_t sendLen = (remain > IoBuffer::kMaxBufLen) ? IoBuffer::kMaxBufLen : remain;
-			IoBuffer * ioContext = getFreeIoContext();
-			ioContext->setIoType(IoBuffer::IoType::Send);
-            ioContext->setBuffer(data, sendLen);
+			IoBuffer * ioBuffer = getFreeIoContext();
+			ioBuffer->setIoType(IoBuffer::IoType::Send);
+            ioBuffer->setBuffer(data, sendLen);
             remain -= sendLen;
             data += sendLen;
 		}
@@ -46,13 +46,13 @@ void TcpConnection::setTcpNoDelay(bool on)
   socket_->setTcpNoDelay(on);
 }
 
-void TcpConnection::handleRead(IoBuffer *ioContext, Timestamp receiveTime)
+void TcpConnection::handleRead(IoBuffer *ioBuffer, Timestamp receiveTime)
 {
-    _inBuffer.readIoContext(*ioContext);
+    _inBuffer.readIoContext(*ioBuffer);
     _messageCallback(this, _inBuffer, receiveTime);
     
-    ioContext->resetBuffer();
-    _socket->postRecv(ioContext)
+    ioBuffer->resetBuffer();
+    _socket->postRecv(ioBuffer)
 }
 
 void TcpConnection::handleWrite()

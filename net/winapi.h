@@ -4,8 +4,6 @@
 #include <map>
 #include <list>
 #include <vector>
-#include <memory>
-#include <functional>
 
 // winsock2 和 windows的顺序不能颠倒
 #pragma comment(lib,"ws2_32.lib")

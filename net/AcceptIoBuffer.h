@@ -9,7 +9,7 @@ class AcceptIoBuffer : public PerIoContext
 {
 public:
 	AcceptIoBuffer() {}
-	virual ~AcceptIoBuffer() {}
+	virtual ~AcceptIoBuffer() {}
 	SOCKET _socket;
 };
 

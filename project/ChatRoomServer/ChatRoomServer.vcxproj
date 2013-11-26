@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\my_dev\TheFoxFramework;F:\TheFoxFramework;$(IncludePath)</IncludePath>
-    <SourcePath>C:\my_dev\TheFoxFramework;F:\TheFoxFramework;$(SourcePath)</SourcePath>
+    <IncludePath>C:\my_dev\TheFoxFramework;F:\TheFoxFramework;D:\boost\boost;$(IncludePath)</IncludePath>
+    <SourcePath>C:\my_dev\TheFoxFramework;F:\TheFoxFramework;D:\boost\boost;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -79,6 +79,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\net\AcceptIoBuffer.h" />
     <ClInclude Include="..\..\net\Acceptor.h" />
     <ClInclude Include="..\..\net\Buffer.h" />
     <ClInclude Include="..\..\net\Callbacks.h" />
@@ -88,9 +89,12 @@
     <ClInclude Include="..\..\net\InitSocket.h" />
     <ClInclude Include="..\..\net\IoCompletionPort.h" />
     <ClInclude Include="..\..\net\IoBuffer.h" />
+    <ClInclude Include="..\..\net\PerIoContext.h" />
+    <ClInclude Include="..\..\net\PerSocketContext.h" />
     <ClInclude Include="..\..\net\Socket.h" />
     <ClInclude Include="..\..\net\TcpConnection.h" />
     <ClInclude Include="..\..\net\TcpServer.h" />
+    <ClInclude Include="..\..\net\winapi.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\Acceptor.cpp" />

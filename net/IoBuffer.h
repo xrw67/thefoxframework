@@ -13,7 +13,7 @@ namespace thefox
 class IoBuffer : public PerIoContext
 {
 public:
-	enum IoType { None, Init, Read, Write };
+	enum IoType { None, Init, Read, ReadCompleted, Write, WriteCompleted, ZeroByteRead, ZeroReadCompleted };
 	
 	IoBuffer(IoType ioType = None) : _ioType(ioType) {}
 	virtual ~IoBuffer(void) {}
@@ -22,7 +22,7 @@ public:
 	const IoType getIoType() const {return _ioType; }
 	
 	void setSequenceNumber(uint32_t num) { _sequenceNumber = num; }
-	const unit32_t getSequenceNumber() const { return _sequenceNumber; }
+	const uint32_t getSequenceNumber() const { return _sequenceNumber; }
 	
 private:
 	IoType _ioType;

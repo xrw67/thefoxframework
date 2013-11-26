@@ -12,7 +12,7 @@
 #include <net/IoBuffer.h>
 #include <net/Callbacks.h>
 #include <net/InetAddress.h>
-#include <net/SocketContext.h>
+#include <net/PerSocketContext.h>
 
 namespace thefox
 {
@@ -20,7 +20,7 @@ namespace thefox
 class IoCompletionPort;
 class Socket;
 
-class TcpConnection : public SocketContext
+class TcpConnection : public PerSocketContext
 {
 public:
 	TcpConnection(const String &name,
@@ -31,7 +31,7 @@ public:
 	
 private:
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
-	void handleRead(IoBuffer *ioContext, Timestamp receiveTime);
+	void handleRead(IoBuffer *ioBuffer, Timestamp receiveTime);
 	void handleWrite();
 	void handleClose();
 	void handleError();

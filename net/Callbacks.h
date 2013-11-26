@@ -1,7 +1,8 @@
 #ifndef _THEFOX_NET_CALLBACKS_H_
 #define _THEFOX_NET_CALLBACKS_H_
 
-#include <net/winapi.h>
+#include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace thefox
 {
@@ -9,16 +10,17 @@ namespace thefox
 class Buffer;
 class TcpConnection;
 
-typedef TcpConnection *TcpConnectionPtr;
-typedef void (*ConnectionCallback)(const TcpConnectionPtr &);
-typedef void (*CloseCallback)(const TcpConnectionPtr &);
-typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &);
-typedef void (*MessageCallback)(const TcpConnectionPtr &, Buffer *, Timestamp);
-typedef void (*ConnectionCallback)(const TcpConnectionPtr &);
-    
-void defaultConnectionCallback(const TcpConnectionPtr &conn);
-void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer* buffer,Timestamp receiveTime);
-    
+typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;
+
+typedef boost::function<void()> TimerCallback;
+typedef boost::function<void (const TcpConnectionPtr &)> ConnectionCallback;
+typedef boost::function<void (const TcpConnectionPtr &)> CloseCallback;
+typedef boost::function<void (const TcpConnectionPtr &)> WriteCompleteCallback;
+typedef boost::function<void (const TcpConnectionPtr&, Buffer*, Timestamp)> MessageCallback;
+
+void defaultConnectionCallback(const TcpConnectionPtr& conn);
+void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer* buffer, Timestamp receiveTime);
+
 }
 
 #endif // _THEFOX_NET_CALLBACKS_H_

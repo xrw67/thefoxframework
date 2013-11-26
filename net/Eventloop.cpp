@@ -40,7 +40,7 @@ void Eventloop::loop()
 		
 		if (retCode && completionKey && overlapped)
 		{
-			IoBuffer *ioContext = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
+			IoBuffer *ioBuffer = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
 			
 			// 判断客户端是否断开连接
 			if ((0 == bytesTransfered) && (RECV == ioBuf->ioType() || WRITE == ioBuf->ioType()) {
@@ -50,7 +50,7 @@ void Eventloop::loop()
 				switch (ioBuf->getIoType()) {
 					case IoBuffer::IoType::Accept: {
 						Acceptor *acceptor = reinterpret_cast<Acceptor *>(*completionKey);
-						acceptor->handleAccept(ioContext);
+						acceptor->handleAccept(ioBuffer);
 						break;
 					}
 					case IoBuffer::IoType::Recv: {

@@ -57,6 +57,18 @@
     <ClInclude Include="..\..\net\Callbacks.h">
       <Filter>Net</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\AcceptIoBuffer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\PerIoContext.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\PerSocketContext.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\winapi.h">
+      <Filter>Net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatRoomServer.cpp">

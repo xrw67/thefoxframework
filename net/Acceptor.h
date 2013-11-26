@@ -1,27 +1,28 @@
 #ifndef _THEFOX_NET_ACCEPTOR_H_
 #define _THEFOX_NET_ACCEPTOR_H_
 
+#include <boost/function.hpp>
 #include <base/scoped_ptr.h>
 #include <net/winapi.h>
-#include <net/SocketContext.h>
+#include <net/PerSocketContext.h>
+#include <net/Socket.h>
 
 namespace thefox
 {
 
-class Socket;
-class IoBuffer;
-class IoCompletionPort;
+class AcceptIoBuffer;
 
-class Acceptor : public SocketContext
+class Acceptor : public PerSocketContext
 {
 public:
 	static const int kMaxPostAccept = 10;
 
-	typedef std::function<void (SOCKET socket, const InetAddress&)> NewConnectionCallback;
+	typedef boost::function<void (SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr)> NewConnectionCallback;
 	
-	Acceptor(IoCompletionPort * const iocpPtr, const InetAddress &listenAddr);
+	Acceptor(const InetAddress &listenAddr);
 	~Acceptor();
 	
+	SOCKET getSocketHandle () { return _acceptSocket.getSocketHandle(); }
 	void setNewConnectionCallback(const NewConnectionCallback &cb)
 	 { _newConnectionCallback = cb; }
 	
@@ -29,12 +30,13 @@ public:
 	bool listening() const { return _listening; }
 	
 private:
-	void handleAccept();
+	typedef std::vector<AcceptIoBuffer *> AcceptIoBufferList;
+
+	void handleAccept(AcceptIoBuffer *acceptIoBuffer);
 
 	bool _listening;
-	IoCompletionPort * const _iocpPtr;
-	scoped_ptr<Socket> _acceptSocket;
-	std::vector<scoped_ptr<IoBuffer>> _acceptIoContexts;
+	Socket _acceptSocket;
+	AcceptIoBufferList _acceptIoBuffer;
 	NewConnectionCallback _newConnectionCallback;
 };
 

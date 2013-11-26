@@ -247,9 +247,9 @@ public:
 		return _buffer.capacity();
 	}
     
-    size_t readIoContext(const IoBuffer &ioContext)
+    size_t readIoContext(const IoBuffer &ioBuffer)
     {
-        append(ioContext._wsaBuf.buf, ioContext._wsaBuf.len);
+        append(ioBuffer._wsaBuf.buf, ioBuffer._wsaBuf.len);
     }
 private:
 

@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include <net/TcpServer.h>
 #include <net/Acceptor.h>
 #include <net/TcpConnection.h>
@@ -11,19 +12,19 @@ void defaultConnectionCallback(const TcpConnectionPtr& conn)
 
 void defaultMessageCallback(const TcpConnectionPtr& conn, Buffer* buffer,Timestamp receiveTime)
 {
-	buffer->retrieveAll;
+	buffer->retrieveAll();
 }
 
 TcpServer::TcpServer(const InetAddress &listenAddr, const String &nameArg)
 	: _hostport(listenAddr.toIpPort())
 	, _name(nameArg)
-	, _iocp(new IoCompletionPort())
-	, _acceptor(new Acceptor(_iocp, listenAddr))
+	, _acceptor(new Acceptor(listenAddr))
 	, _connectionCallback(defaultConnectionCallback)
 	, _messageCallback(defaultMessageCallback)
 	, _nextConnId(1)
 {
-	_acceptor->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, _1, _2));
+	_iocp.registerHandle(_acceptor.get()->getSocketHandle(), _acceptor.get());
+	_acceptor->setNewConnectionCallback(boost::bind(&TcpServer::newConnection, this, _1, _2));
 }
 
 TcpServer::~TcpServer()
@@ -54,9 +55,9 @@ void TcpServer::start()
 void TcpServer::newConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr)
 {
 	char buf[32];
-	snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
+	_snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
 	++_nextConnId;
-	string connName = _name + buf;
+	String connName = _name + buf;
   
 	TcpConnectionPtr conn(new TcpConnection(connName, socket, localAddr, peerAddr));
 	_connections[connName] = conn;
@@ -64,5 +65,5 @@ void TcpServer::newConnection(SOCKET socket, const InetAddress &localAddr, const
 	conn->setMessageCallback(messageCallback_);
 	conn->setWriteCompleteCallback(writeCompleteCallback_);
 	conn->setCloseCallback(boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
-	_iocp->assocHandle(socket, conn);
+	_iocp.registerHandle(socket, conn);
 }

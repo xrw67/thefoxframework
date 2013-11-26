@@ -11,7 +11,11 @@ namespace thefox
 class InetAddress : public copyable
 {
 public:
-	explicit InetAddress(uint16_t port)
+	InetAddress()
+	{
+		memset(&_addr, 0, sizeof(_addr));
+	}
+	InetAddress(uint16_t port)
 	{
 		memset(&_addr, 0, sizeof(_addr));
 		_addr.sin_family = AF_INET;

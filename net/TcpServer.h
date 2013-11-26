@@ -37,12 +37,12 @@ public:
     void setWriteCompleteCallback(const WriteCompleteCallback &cb)
     { _writeCompleteCallback = cb; }
 private:
-	void newConnection(SOCKET sock, const InetAddress &peerAddr);
+	void newConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
 	void removeConnection(const TcpConnection &conn);
 	
 	typedef std::map<String, TcpConnectionPtr> ConnectionMap;
 	
-	scoped_ptr<IoCompletionPort>_iocp;
+	IoCompletionPort _iocp;
 	scoped_ptr<Acceptor> _acceptor;
 
 	const String _hostport;

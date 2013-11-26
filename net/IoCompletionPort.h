@@ -30,7 +30,7 @@ public:
 	BOOL getStatus(LPDWORD lpNumberOfBytesTransferred, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped, DWORD timeout = INFINITE)
 	{
 		return ::GetQueuedCompletionStatus(_iocp, 
-			&lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, timeout);
+			lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, timeout);
 	}
 
 	BOOL post(DWORD dwCompletlonKey, LPOVERLAPPED lpoverlapped)
