@@ -27,27 +27,45 @@ public:
 				const InetAddress &peerAddr);
 	~TcpConnection();
 	
+	void setConnectionCallback(const ConnectionCallback &cb) { _connectionCallback = cb; }
+	void setMessageCallback(const MessageCallback &cb) { _messageCallback = cb; }
+	void setWriteCompleteCallback(const WriteCompleteCallback &cb) { _writeCompleteCallback = cb; }
+	void setCloseCallback(const CloseCallback &cb){ _closeCallback = cb; }
+	
+	void handleIoProcess();
 private:
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
-	void handleIo();
 	void handleRead(IoBuffer *ioBuffer, Timestamp receiveTime);
 	void handleWrite();
 	void handleClose();
 	void handleError();
     
+	typedef std::map<IoBuffer *> IoBufferMap;
+
 	scoped_ptr<Socket> _socket;
 	String _name;
 	MutexLock _lock;
 	InetAddress _localAddr;
 	InetAddress _peerAddr;
+
 	ConnectionCallback _connectionCallback;
 	MessageCallback _messageCallback;
 	WriteCompleteCallback _writeCompleteCallback;
 	CloseCallback _closeCallback;
 	
-	Buffer _inBuffer;
+	uint32_t _numberOfPendingIoBuffer;
 
-	static MutexLock freeIoBuffersLock;
+	Buffer _readBuffer;
+
+	uint32_t _readSequenceNumber;
+	uint32_t _currentReadSequenceNumber;
+	IoBufferMap _readBufferMap;
+
+	uint32_t _sendSequenceNumber;
+	uint32_t _currentSendSequenceNumber;
+	IoBufferMap _sendBufferMap;
+
+	static MutexLock freeIoBufferLock;
 	static std::list<IoBuffer *> freeIoBuffers;
 };
 

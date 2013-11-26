@@ -6,6 +6,7 @@
 #define _THEFOX_NET_IOCONTEXT_H_
 
 #include <base/Types.h>
+#include <net/winapi.h>
 
 namespace thefox
 {
