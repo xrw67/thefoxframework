@@ -1,5 +1,5 @@
-#ifndef _THEFOX_NET_PER_SOCKET_CONTEXT_H_
-#define _THEFOX_NET_PER_SOCKET_CONTEXT_H_
+#ifndef _THEFOX_NET_SOCKET_CONTEXT_H_
+#define _THEFOX_NET_SOCKET_CONTEXT_H_
 
 #include <base/noncopyable.h>
 #include <net/winapi.h>
@@ -7,10 +7,9 @@
 namespace thefox
 {
 
-class PerSocketContext : noncopyable
+class PSocketContext : noncopyable
 {
 public:
-	enum ContextType { Acceptor, TcpConnection };
 	
 	PerSocketContext()
 	{}
@@ -24,11 +23,10 @@ public:
 	MutexLock &getMutexLock() { return _mutex; }
 	
 private:
-	ContextType _contextType;
 	SOCKET _socket;
 	MutexLock _mutex;
 };
 
 }
 
-#endif // _THEFOX_NET_PER_SOCKET_CONTEXT_H_
+#endif // _THEFOX_NET_SOCKET_CONTEXT_H_

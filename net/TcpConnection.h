@@ -12,15 +12,13 @@
 #include <net/IoBuffer.h>
 #include <net/Callbacks.h>
 #include <net/InetAddress.h>
-#include <net/PerSocketContext.h>
 
 namespace thefox
 {
 
-class IoCompletionPort;
 class Socket;
 
-class TcpConnection : public PerSocketContext
+class TcpConnection
 {
 public:
 	TcpConnection(const String &name,

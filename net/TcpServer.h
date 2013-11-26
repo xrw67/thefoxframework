@@ -1,13 +1,13 @@
-#ifndef _THEFOX_NET_SERVER_TCPSERVER_H_
+﻿#ifndef _THEFOX_NET_SERVER_TCPSERVER_H_
 #define _THEFOX_NET_SERVER_TCPSERVER_H_
 
 #include <base/Types.h>
 #include <base/noncopyable.h>
 #include <base/scoped_ptr.h>
-#include <net/common/winapi.h>
-#include <net/common/Callbacks.h>
-#include <net/common/InetAddress.h>
-#include <net/common/IoCompletionPort.h>
+#include <net/winapi.h>
+#include <net/Callbacks.h>
+#include <net/InetAddress.h>
+#include <net/IoCompletionPort.h>
 
 namespace thefox
 {
@@ -33,6 +33,8 @@ public:
     void setWriteCompleteCallback(const WriteCompleteCallback &cb) { _writeCompleteCallback = cb; }
 	
 private:
+	static DWORD WINAPI IoWorkThread(LPVOID serverPtr);
+
 	void newConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
 	void removeConnection(const TcpConnection &conn);
 	

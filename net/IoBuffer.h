@@ -5,7 +5,7 @@
 #ifndef _THEFOX_NET_IOCONTEXT_H_
 #define _THEFOX_NET_IOCONTEXT_H_
 
-#include <net/PerIoContext.h>
+#include <base/Types.h>
 
 namespace thefox
 {
@@ -15,6 +15,7 @@ namespace thefox
 enum IoType{
 	None, 
 	Init, 
+	Accept,
 	Read, 
 	ReadCompleted, 
 	Write, 
@@ -27,10 +28,15 @@ struct IoBuffer
 {
 	OVERLAPPED _overlapped;
 	WSABUF _wsabuf;
+	SOCKET _socket; // 只有Accept类型使用
 	char _data[MAX_IO_BUFFER_SIZE];
 	size_t _bytesOfUsed;
-	
-	PerIoContext() : _bytesOfUsed(0)
+	IoType _ioType;
+	uint32_t _sequenceNumber;
+
+	IoBuffer(IoType ioType = None) 
+		: _ioType(ioType)
+		, _bytesOfUsed(0)
 	{
 		_wsabuf.buf = _data;
 		_wsabuf.len = 0;
@@ -38,7 +44,7 @@ struct IoBuffer
 		resetBuffer();
 	}
 	
-	~PerIoContext() { _bytesOfUsed = 0; }
+	~IoBuffer() { _bytesOfUsed = 0; }
 	
 	const char *getBuffer() const { return _data; }
 	void resetOverlapped() { ZeroMemory(&_overlapped, sizeof(OVERLAPPED)); }
@@ -52,7 +58,7 @@ struct IoBuffer
 
 	bool addData(const char *data, size_t len)
 	{
-		if ((kMaxBufLen - _bytesOfUsed) < len)
+		if ((MAX_IO_BUFFER_SIZE - _bytesOfUsed) < len)
 			return false;
 		
 		memcpy(_data + _bytesOfUsed, data, len);
@@ -60,9 +66,6 @@ struct IoBuffer
 		_wsabuf.len = _bytesOfUsed;
 		return true;
 	}
-
-	IoBuffer(IoType ioType = None) : _ioType(ioType) {}
-	virtual ~IoBuffer(void) {}
 	
 	void setIoType(IoType type) { _ioType = type; }
 	const IoType getIoType() const {return _ioType; }

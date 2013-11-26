@@ -3,6 +3,7 @@
 #include <net/Acceptor.h>
 #include <net/TcpConnection.h>
 #include <net/IoCompletionPort.h>
+#include <net/Eventloop.h>
 
 using namespace thefox;
 
@@ -23,7 +24,7 @@ TcpServer::TcpServer(const InetAddress &listenAddr, const String &nameArg)
 	, _messageCallback(defaultMessageCallback)
 	, _nextConnId(1)
 {
-	_iocp.registerHandle(_acceptor.get()->getSocketHandle(), _acceptor.get());
+	_iocp.registerHandle((HANDLE)_acceptor.get()->getSocketHandle(), 0);
 	_acceptor->setNewConnectionCallback(boost::bind(&TcpServer::newConnection, this, _1, _2));
 }
 
@@ -41,15 +42,19 @@ void TcpServer::start()
 		return;
 	
 	_started = true;
-		
+	
+	// 创建工作线程
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	int threads = 2 * si.dwNumberOfProcessors;
-	
-	for (int i = 0; i < threads; ++i) {
-		EventloopThread *loop = new EventloopThread();
-		loop->strarLoop(_iocp);
-	}
+	for (int i = 0; i < threads; ++i)
+		::CreateThread(NULL, 0, IoWorkThread, this, 0, 0);
+}
+
+DWORD WINAPI TcpServer::IoWorkThread(LPVOID serverPtr)
+{
+	Eventloop loop(reinterpret_cast<TcpServer *>(serverPtr));
+	loop.loop();
 }
 
 void TcpServer::newConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr)
@@ -61,9 +66,14 @@ void TcpServer::newConnection(SOCKET socket, const InetAddress &localAddr, const
   
 	TcpConnectionPtr conn(new TcpConnection(connName, socket, localAddr, peerAddr));
 	_connections[connName] = conn;
-	conn->setConnectionCallback(connectionCallback_);
-	conn->setMessageCallback(messageCallback_);
-	conn->setWriteCompleteCallback(writeCompleteCallback_);
+	conn->setConnectionCallback(_connectionCallback_);
+	conn->setMessageCallback(_messageCallback_);
+	conn->setWriteCompleteCallback(_writeCompleteCallback_);
 	conn->setCloseCallback(boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
-	_iocp.registerHandle(socket, conn);
+	_iocp.registerHandle(socket, conn.get());
+}
+
+void TcpServer::removeConnection(const TcpConnection &conn)
+{
+
 }

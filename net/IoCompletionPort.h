@@ -33,7 +33,7 @@ public:
 			lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, timeout);
 	}
 
-	BOOL post(DWORD dwCompletlonKey, LPOVERLAPPED lpoverlapped)
+	BOOL postStatus(DWORD dwCompletlonKey, LPOVERLAPPED lpoverlapped)
 	{
 		return ::PostQueuedCompletionStatus(_iocp, 0, dwCompletlonKey, lpoverlapped); 
 	}

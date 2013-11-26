@@ -1,14 +1,14 @@
 #include <net/Eventloop.h>
-#include <net/IoCompletionPort.h>
+#include <net/TcpServer.h>
 #include <net/Acceptor.h>
 #include <net/TcpConnection.h>
 #include <net/IoBuffer.h>
-#include <net/AcceptIoBuffer.h>
+
 
 using namespace thefox;
 
-Eventloop::Eventloop(IoCompletionPort &iocp)
-	: _iocp(iocp)
+Eventloop::Eventloop(TcpServer *server)
+	: _server(server)
 	, _threadId(::GetCurrentThreadId())
 	, _looping(false)
 	, _quit(false)
@@ -40,19 +40,7 @@ void Eventloop::loop()
 		}
 		
 		if (retCode && completionKey && overlapped) {
-			PerSocketContext *perSocketContext = reinterpret_cast<PerSocketContext *>(completionKey);
-			switch (perSocketContext->getContextType()) {
-				case PerSocketContext::ContextType::Acceptor: 
-					Acceptor *acceptor = reinterpret_cast<Acceptor *>(perSocketContext);
-					AcceptIoBuffer *buffer = CONTAINING_RECORD(overlapped, AcceptIoBuffer, _overlapped);
-					acceptor->handleAccept(reinterpret_cast<AcceptIoBuffer *>(buffer));
-					break;									  
-				case PerSocketContext::ContextType::TcpConnection:
-					TcpConnection *conn = reinterpret_cast<TcpConnection *>(perSocketContext);
-					IoBuffer *buffer = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
-					conn->handleIoProcess(buffer);
-					break;
-			}
+			
 			
 			
 		}

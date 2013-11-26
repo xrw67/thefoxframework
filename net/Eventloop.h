@@ -7,20 +7,19 @@
 namespace thefox
 {
 
-class IoCompletionPort;
+class TcpServer;
 
 class Eventloop : noncopyable
 {
 public:
-	Eventloop(IoCompletionPort &iocp);
+	Eventloop(TcpServer *server);
 	~Eventloop();
 	
 	void loop();
 	void quit() { _quit = true; }
 	
 private:
-	IoCompletionPort &_iocp;
-
+	TcpServer *_server;//·þÎñÆ÷¾ä±ú
 	bool _looping;
 	bool _quit;
 	const uint32_t _threadId;

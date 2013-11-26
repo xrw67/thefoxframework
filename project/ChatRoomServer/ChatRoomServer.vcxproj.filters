@@ -19,60 +19,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\net\InetAddress.h">
+    <None Include="..\..\net\README.md">
       <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\TcpConnection.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\TcpServer.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Acceptor.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Buffer.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Eventloop.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\EventloopThread.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\IoCompletionPort.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Socket.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\InitSocket.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\IoBuffer.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Callbacks.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\AcceptIoBuffer.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\PerIoContext.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\PerSocketContext.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\winapi.h">
-      <Filter>Net</Filter>
-    </ClInclude>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatRoomServer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\Eventloop.cpp">
+      <Filter>Net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\TcpConnection.cpp">
       <Filter>Net</Filter>
@@ -83,14 +39,49 @@
     <ClCompile Include="..\..\net\Acceptor.cpp">
       <Filter>Net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\Eventloop.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\EventloopThread.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\net\Buffer.cpp">
       <Filter>Net</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\net\Buffer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Callbacks.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Eventloop.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\InetAddress.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\InitSocket.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\IoBuffer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\IoCompletionPort.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Socket.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\SocketContext.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TcpConnection.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TcpServer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\winapi.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Acceptor.h">
+      <Filter>Net</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

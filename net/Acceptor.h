@@ -4,15 +4,12 @@
 #include <boost/function.hpp>
 #include <base/scoped_ptr.h>
 #include <net/winapi.h>
-#include <net/PerSocketContext.h>
 #include <net/Socket.h>
 
 namespace thefox
 {
 
-class AcceptIoBuffer;
-
-class Acceptor : public PerSocketContext
+class Acceptor
 {
 public:
 	static const int kMaxPostAccept = 10;
@@ -23,19 +20,21 @@ public:
 	~Acceptor();
 	
 	SOCKET getSocketHandle () { return _acceptSocket.getSocketHandle(); }
+
 	void setNewConnectionCallback(const NewConnectionCallback &cb)
 	 { _newConnectionCallback = cb; }
 	
 	void listen();
 	bool listening() const { return _listening; }
 	
-	void handleAccept(AcceptIoBuffer *acceptIoBuffer);
+	void handleAccept(IoBuffer *ioBuffer);
 private:
-	typedef std::vector<AcceptIoBuffer *> AcceptIoBufferList;
+	typedef std::list<IoBuffer *> AcceptIoBufferList;
 
 	bool _listening;
 	Socket _acceptSocket;
-	AcceptIoBufferList _acceptIoBuffer;
+	MutexLock _bufferLock;
+	AcceptIoBufferList _acceptIoBuffers;
 	NewConnectionCallback _newConnectionCallback;
 };
 
