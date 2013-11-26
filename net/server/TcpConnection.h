@@ -31,6 +31,7 @@ public:
 	
 private:
 	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
+	void handleIo();
 	void handleRead(IoBuffer *ioBuffer, Timestamp receiveTime);
 	void handleWrite();
 	void handleClose();

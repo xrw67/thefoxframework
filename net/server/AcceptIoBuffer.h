@@ -5,14 +5,16 @@
 
 namespace thefox
 {
-class AcceptIoBuffer : public PerIoContext
-{
-public:
-	AcceptIoBuffer() {}
-	virtual ~AcceptIoBuffer() {}
-	SOCKET _socket;
-};
 
+#define MAX_ACCEPT_IO_BUFFER_SIZE 512
+
+struct AcceptIoBuffer
+{
+	OVERLAPPED _overlapped;
+	SOCKET _socket;
+	char _buf[MAX_ACCEPT_IO_BUFFER_SIZE];
+};
+ 
 }
 
 #endif // _THEFOX_NET_ACCEPT_IOBUFFER_H_
