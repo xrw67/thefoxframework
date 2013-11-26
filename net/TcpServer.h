@@ -42,8 +42,9 @@ private:
 	
 	IoCompletionPort _iocp; // 完成端口的封装
 	scoped_ptr<Acceptor> _acceptor; // 接收客户端连接
+	MutexLock _connectionMapLock;
 	ConnectionMap _connections; //客户端连接列表
-	int _nextConnId;
+	uint32_t _nextConnId;
 	
 	bool _started;// 服务器是否启动
 	const String _hostport;// 服务器的地址

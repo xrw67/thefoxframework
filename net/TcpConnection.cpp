@@ -7,18 +7,11 @@ TcpConnection::TcpConnection(const String &name,
 							const InetAddress &localAddr, 
 							const InetAddress &peerAddr)
 	: _name(name)
-	, _socket(new Socket(socket))
+	, _socket(socket)
 	, _localAddr(localAddr)
 	, _peerAddr(peerAddr)
-{
-	setContextType(ContextType::TcpConnection);
-	
+{	
 	_socket->setKeepAlive(true);
-	IoBuffer *ioBuffer = new IoBuffer(IoBuffer::IoType::Recv);
-	if (_socket->postRecv(ioBuffer))
-		_ioConetxts.puch_back(ioBuffer);
-	else
-		delete ioBuffer;
 }
 
 void TcpConnection::send(const void* data, size_t len)
@@ -38,12 +31,71 @@ void TcpConnection::send(const void* data, size_t len)
 
 void TcpConnection::shutdown()
 {
-
+	if (_state == kConnected) {
+		setState(kDisconnecting);
+		....
+	}
+		
 }
 
 void TcpConnection::setTcpNoDelay(bool on)
 {
   socket_->setTcpNoDelay(on);
+}
+
+void TcpConnection::connectEstablished()
+{
+	setState(kConnected);
+ 
+	IoBuffer *ioBuffer = new IoBuffer(IoType::Recv);
+	if (_socket->postRecv(ioBuffer))
+		_ioConetxts.puch_back(ioBuffer);
+	else
+		delete ioBuffer;
+
+	connectionCallback_(this);
+}
+
+void TcpConnection::connectDestroyed()
+{
+	if (state_ == kConnected)
+	{
+		setState(kDisconnected);
+		
+		connectionCallback_(this);
+  }
+}
+
+void TcpConnection::handleIoProcess(IoBuffer *iobuf, DWORD bytesTransfered)
+{
+	if (NULL == iobuf)
+		return;
+	
+	switch (iobuf->getIoType()) {
+		case IoType::Init:
+			break;
+		case IoType::Read:
+			handleRead(iobuf);
+			break;
+		case IoType::ReadCompleted:
+			handleCompleted(iobuf);
+			break;
+		case IoType::Write:
+			handleWrite(iobuf);
+			break;
+		case IoType::WriteCompleted:
+			handleWriteCompleted(iobuf);
+			break;
+		case IoType::ZeroByteRead:
+			handleZeroByteRead(iobuf);
+			break;
+		case IoType::ZeroReadCompleted:
+			handleZeroByteReadCompleted(iobuf);
+			break;
+		default:
+			break;
+	}
+	
 }
 
 void TcpConnection::handleRead(IoBuffer *ioBuffer, Timestamp receiveTime)
@@ -62,7 +114,9 @@ void TcpConnection::handleWrite()
 
 void TcpConnection::handleClose()
 {
-
+	setState(kDisconnected);
+	connectionCallback_(this);
+	closeCallback_(this);
 }
 
 void TcpConnection::handleError()

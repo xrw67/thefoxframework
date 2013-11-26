@@ -12,10 +12,10 @@ namespace thefox
 class Socket : noncopyable
 {
 public:
-	static const SOCKET create()
+	static SOCKET create()
 	{ return ::WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED); }
 	
-	Socket(SOCKET socket)
+	explicit Socket(SOCKET socket)
 		: _socket(socket)
 	{
 		DWORD dwBytes = 0;  
@@ -130,8 +130,7 @@ public:
 		::setsockopt(_socket, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<char *>(&optval), sizeof(optval));
 	}
 	
-	SOCKET getSocketHandle() 
-	{ return _socket; }
+	SOCKET getSocketHandle() { return _socket; }
 private:
 	SOCKET _socket;
 	LPFN_ACCEPTEX _lpfnAcceptEx;

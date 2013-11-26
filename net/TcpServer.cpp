@@ -46,8 +46,9 @@ void TcpServer::start()
 	// 创建工作线程
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
-	int threads = 2 * si.dwNumberOfProcessors;
-	for (int i = 0; i < threads; ++i)
+	int threadNumber = 2 * si.dwNumberOfProcessors + 2;
+	
+	for (int i = 0; i < threadNumber; ++i)
 		::CreateThread(NULL, 0, IoWorkThread, this, 0, 0);
 }
 
@@ -60,17 +61,21 @@ DWORD WINAPI TcpServer::IoWorkThread(LPVOID serverPtr)
 void TcpServer::newConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr)
 {
 	char buf[32];
-	_snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
-	++_nextConnId;
-	String connName = _name + buf;
-  
-	TcpConnectionPtr conn(new TcpConnection(connName, socket, localAddr, peerAddr));
+	String connName;
+	{
+		MutexLockGuard lock(_connectionMapLock);
+		_snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
+		++_nextConnId;
+		connName = _name + buf;
+	}
+	
+	TcpConnectionPtr conn(new TcpConnection(this, connName, socket, localAddr, peerAddr));
 	_connections[connName] = conn;
 	conn->setConnectionCallback(_connectionCallback_);
 	conn->setMessageCallback(_messageCallback_);
 	conn->setWriteCompleteCallback(_writeCompleteCallback_);
-	conn->setCloseCallback(boost::bind(&TcpServer::removeConnection, this, _1)); // FIXME: unsafe
-	_iocp.registerHandle(socket, conn.get());
+	conn->setCloseCallback(boost::bind(&TcpServer::removeConnection, this, _1));
+	_iocp.registerHandle(socket, conn);
 }
 
 void TcpServer::removeConnection(const TcpConnection &conn)

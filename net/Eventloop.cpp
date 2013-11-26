@@ -21,55 +21,32 @@ Eventloop::~Eventloop()
 
 void Eventloop::loop()
 {
-	OVERLAPPED *overlapped = NULL;
-	ULONG_PTR completionKey = NULL;
+	LPOVERLAPPED lpOverlapped = NULL;
+	TcpConnectionPtr tcpConnection = NULL;
+	IoBuffer *ioBuffer = NULL;
 	DWORD bytesTransfered = 0;
 	
-	while (_quit) {
-		BOOL retCode = _iocp.getStatus(&bytesTransfered, &completionKey, &overlapped, INFINITE);
-		// 收到退出标志，直接退出
-		if (0 == completionKey)
-			break;
+	while (!_quit) {
+		lpOverlapped = NULL;
+		conn = NULL;
+		BOOL retCode = _iocp.getStatus(&bytesTransfered, &tcpConnection, &lpOverlapped, INFINITE);
 		
 		if (!retCode) {
-			// if (!_errorCallback(conn, ::GetLastError()))
-// 			{
-// 				break;
-// 			}
+			DWORD errCode = ::GetLastError();
+			if (WAIT_TIMEOUT != errCode && NULL != tcpConnection)
+				_server->removeConnection(tcpConnection);
 			continue;
 		}
 		
-		if (retCode && completionKey && overlapped) {
-			
-			
-			
+		if (retCode && tcpConnection && lpOverlapped) {
+			ioBuffer = CONTAINING_RECORD(lpOverlapped, IoBuffer, _overlapped);
+			if (ioBuffer)
+				tcpConnection->handleIoProcess(ioBuffer);
 		}
 			
-			
-						
-			// 判断客户端是否断开连接
-			if ((0 == bytesTransfered) && (RECV == ioBuf->ioType() || WRITE == ioBuf->ioType()) {
-				_server->removeConnection(&conn);
-				continue;
-			} else {
-				switch (ioBuf->getIoType()) {
-					case IoBuffer::IoType::Accept: {
-						Acceptor *acceptor = reinterpret_cast<Acceptor *>(*completionKey);
-						acceptor->handleAccept(ioBuffer);
-						break;
-					}
-					case IoBuffer::IoType::Recv: {
-						_server->inBuffer.append(ioBuf->_wsaBuf.begin, ioBuf->_wsaBuf.len)
-							_server->_messageCallback(conn, conn->_inBuffer);
-						break;
-					}
-					case IoBuffer::IoType::Send:
-						_server->_writeCompleteCallback(conn);
-						default:
-						break;
-					
-				}
-			}
+		// 收到退出标志，直接退出
+		if (NULL == completionKey &&  NULL == lpOverlapped)
+			_quit = true;
 	}
 	_looping = false;
 }
