@@ -37,7 +37,6 @@ private:
 	void handleError();
     
 	scoped_ptr<Socket> _socket;
-	IoCompletionPort * const _iocpPtr;
 	String _name;
 	MutexLock _lock;
 	InetAddress _localAddr;
@@ -46,8 +45,11 @@ private:
 	MessageCallback _messageCallback;
 	WriteCompleteCallback _writeCompleteCallback;
 	CloseCallback _closeCallback;
-    std::list<scoped_ptr<IoBuffer>> _freeIoConetxts;
+	
 	Buffer _inBuffer;
+
+	static MutexLock freeIoBuffersLock;
+	static std::list<IoBuffer *> freeIoBuffers;
 };
 
 }

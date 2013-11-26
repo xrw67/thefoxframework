@@ -1,15 +1,16 @@
 #include <net/Eventloop.h>
-#include <net/IoBuffer.h>
+#include <net/IoCompletionPort.h>
 #include <net/Acceptor.h>
 #include <net/TcpConnection.h>
-#include <net/IoCompletionPort.h>
+#include <net/IoBuffer.h>
+#include <net/AcceptIoBuffer.h>
 
 using namespace thefox;
 
-Eventloop::Eventloop(IoCompletionPort * const iocp)
+Eventloop::Eventloop(IoCompletionPort &iocp)
 	: _iocp(iocp)
 	, _threadId(::GetCurrentThreadId())
-	, _loop(false)
+	, _looping(false)
 	, _quit(false)
 {
 }
@@ -21,13 +22,13 @@ Eventloop::~Eventloop()
 void Eventloop::loop()
 {
 	OVERLAPPED *overlapped = NULL;
-	PULONG_PTR completionKey = NULL;
+	ULONG_PTR completionKey = NULL;
 	DWORD bytesTransfered = 0;
 	
 	while (_quit) {
-		BOOL retCode = _iocp->getStatus(&bytesTransfered, completionKey, &overlapped, INFINITE);
+		BOOL retCode = _iocp.getStatus(&bytesTransfered, &completionKey, &overlapped, INFINITE);
 		// 收到退出标志，直接退出
-		if (EXIT_CODE == static_cast<DWORD>(completionKey))
+		if (0 == completionKey)
 			break;
 		
 		if (!retCode) {
@@ -38,10 +39,26 @@ void Eventloop::loop()
 			continue;
 		}
 		
-		if (retCode && completionKey && overlapped)
-		{
-			IoBuffer *ioBuffer = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
+		if (retCode && completionKey && overlapped) {
+			PerSocketContext *perSocketContext = reinterpret_cast<PerSocketContext *>(completionKey);
+			switch (perSocketContext->getContextType()) {
+				case PerSocketContext::ContextType::Acceptor: 
+					Acceptor *acceptor = reinterpret_cast<Acceptor *>(perSocketContext);
+					AcceptIoBuffer *buffer = CONTAINING_RECORD(overlapped, AcceptIoBuffer, _overlapped);
+					acceptor->handleAccept(reinterpret_cast<AcceptIoBuffer *>(buffer));
+					break;									  
+				case PerSocketContext::ContextType::TcpConnection:
+					TcpConnection *conn = reinterpret_cast<TcpConnection *>(perSocketContext);
+					IoBuffer *buffer = CONTAINING_RECORD(overlapped, IoBuffer, _overlapped);
+					conn->handleIoProcess(buffer);
+					break;
+			}
 			
+			
+		}
+			
+			
+						
 			// 判断客户端是否断开连接
 			if ((0 == bytesTransfered) && (RECV == ioBuf->ioType() || WRITE == ioBuf->ioType()) {
 				_server->removeConnection(&conn);
@@ -65,7 +82,6 @@ void Eventloop::loop()
 					
 				}
 			}
-		}
 	}
 	_looping = false;
 }

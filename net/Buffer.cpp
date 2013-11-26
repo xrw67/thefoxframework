@@ -2,4 +2,4 @@
 
 using namespace thefox;
 
-char Buffer::kCRLF[] = "\r\n";
+const char Buffer::kCRLF[] = "\r\n";

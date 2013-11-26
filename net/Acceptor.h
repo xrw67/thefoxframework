@@ -29,10 +29,9 @@ public:
 	void listen();
 	bool listening() const { return _listening; }
 	
+	void handleAccept(AcceptIoBuffer *acceptIoBuffer);
 private:
 	typedef std::vector<AcceptIoBuffer *> AcceptIoBufferList;
-
-	void handleAccept(AcceptIoBuffer *acceptIoBuffer);
 
 	bool _listening;
 	Socket _acceptSocket;

@@ -1,6 +1,8 @@
 #ifndef _THEFOX_NET_PER_IO_CONTEXT_H_
 #define _THEFOX_NET_PER_IO_CONTEXT_H_
 
+#include <net/winapi.h>
+
 namespace thefox
 {
 	

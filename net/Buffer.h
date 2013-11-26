@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <base/copyable.h>
 #include <base/Types.h>
-#include <net/IoBuffer.h>
+#include <net/PerIoContext.h>
 
 namespace thefox
 {
@@ -247,9 +247,9 @@ public:
 		return _buffer.capacity();
 	}
     
-    size_t readIoContext(const IoBuffer &ioBuffer)
+    size_t readIoContext(PerIoContext &ioBuffer)
     {
-        append(ioBuffer._wsaBuf.buf, ioBuffer._wsaBuf.len);
+        append(ioBuffer.getWSABuffer()->buf, ioBuffer.getWSABuffer()->len);
     }
 private:
 
