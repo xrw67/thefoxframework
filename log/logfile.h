@@ -25,11 +25,13 @@ namespace thefox
 class LogFile : noncopyable
 {
 public:
+	class File;
+
 	LogFile(const String &dir,
             const String &basename,
 			size_t rollSize,
-			bool threadSafe = true,
-			int flushInterval = 3);
+			bool threadSafe = true
+			);
 	~LogFile();
 
 	void append(const char* logline, int len);
@@ -44,20 +46,14 @@ private:
 
 	String _dir;
 	const String _basename;
-	const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后写到文件里
-	const int _flushInterval;///< 每隔这个时间将文件缓冲区中的数据写到文件中
-
-	int _count;
+	const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后换一个文件
 
 	scoped_ptr<MutexLock> _mutex;
 	time_t _startOfPeriod;
 	time_t _lastRoll;
-	time_t _lastFlush;
-	class File;
 	scoped_ptr<File> _file;
 
-	const static int _kCheckTimeRoll = 1024; ///< 统计达到这么多行后写到文件
-	const static int _kRollPerSeconds = 60*60*24;
+	static const int _kRollPerSeconds = 86400;
 };
 
 }

@@ -157,6 +157,16 @@ inline String operator+(const char *ls, const String &rs)
 	return buf;
 }
 
+inline BOOL operator==(const char *ls, const String &rs)
+{
+	return !rs.compare(ls);
+}
+
+inline BOOL operator==(const String &ls, const char *rs)
+{
+	return !ls.compare(rs);
+}
+
 }
 
 #endif // _THEFOX_STRING_UTIL_H_

@@ -33,12 +33,10 @@ public:
 			, _size(N-1)
 		{
 			char* slash = strrchr(_data, '/'); // builtin function
-			if (0 == slash)
-			{
+			if (0 == slash) {
 				slash = strrchr(_data, '\\');
 			}
-			if (slash)
-			{
+			if (slash) {
 				_data = slash + 1;
 				_size -= static_cast<int>(_data - arr);
 			}
@@ -49,13 +47,9 @@ public:
 		{
 			const char* slash = strrchr(filename, '/');
 			if (0 == slash)
-			{
 				slash = strrchr(_data, '\\');
-			}
 			if (slash)
-			{
 				_data = slash + 1;
-			}
 			_size = static_cast<int>(strlen(_data));
 		}
 

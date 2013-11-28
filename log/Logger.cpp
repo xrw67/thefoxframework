@@ -27,9 +27,7 @@ public:
 	T(const char* str, unsigned len)
 		: _str(str)
 		, _len(len)
-	{
-		//assert(strlen(_str) == _len);
-	}
+	{}
 
 	const char* _str;
 	const unsigned _len;
@@ -104,8 +102,7 @@ Logger::~Logger()
 	_lineImpl.finish();
 	const LogStream::Buffer& buf(stream().buffer());
 	g_output(buf.data(), buf.length());
-	if (_lineImpl._level == LOGLEVEL_FATAL)
-	{
+	if (_lineImpl._level == LOGLEVEL_FATAL) {
 		g_flush();
 		abort();
 	}

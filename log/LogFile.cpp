@@ -10,31 +10,27 @@ class LogFile::File : noncopyable
 {
 public:
 	explicit File(const String& filename)
-		: _fp(::fopen(filename.data(), "a"))
+		: _fp(fopen(filename.data(), "a"))
 		, _writtenBytes(0)
 	{
-		//assert(_fp);
-		::setvbuf(_fp, _buffer, _IOFBF, sizeof(_buffer));
+		setvbuf(_fp, _buffer, _IOFBF, sizeof(_buffer));
 	}
 
 	~File()
 	{
-		::fclose(_fp);
+		fclose(_fp);
 	}
 
 	void append(const char* logline, const size_t len)
 	{
 		size_t n = write(logline, len);
 		size_t remain = len - n;
-		while (remain > 0)
-		{
+		while (remain > 0) {
 			size_t x = write(logline + n, remain);
-			if (x == 0)
-			{
+			if (x == 0) {
 				int err = ferror(_fp);
-				if (err)
-				{
-					//TRACE("LogFile::File::append() failed \r\n");
+				if (err) {
+					//TODO::´íÎó´¦Àí
 				}
 				break;
 			}
@@ -47,7 +43,7 @@ public:
 
 	void flush()
 	{
-		::fflush(_fp);
+		fflush(_fp);
 	}
 
 	size_t writtenBytes() const { return _writtenBytes; }
@@ -64,49 +60,39 @@ private:
 };
 
 
-LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, bool threadSafe, int flushInterval)
+LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, bool threadSafe)
 	: _dir(dir)
 	, _basename(basename)
 	, _rollSize(rollSize)
-	, _flushInterval(flushInterval)
-	, _count(0)
 	, _mutex(threadSafe ? new MutexLock : NULL)
 	, _startOfPeriod(0)
 	, _lastRoll(0)
-	, _lastFlush(0)
 {
-	//assert(basename.find('/') == String::npos);
 	makePath(_dir);
 	rollFile();
-	//append("Log begin", sizeof("Log begin"));
 }
 
 LogFile::~LogFile()
 {
+	
 }
 
 void LogFile::append(const char* logline, int len)
 {
-	if (get_pointer(_mutex))
-	{
+	if (get_pointer(_mutex)) {
 		MutexLockGuard lock(*_mutex);
 		append_unlocked(logline, len);
-	}
-	else
-	{
+	} else {
 		append_unlocked(logline, len);
 	}
 }
 
 void LogFile::flush()
 {
-	if (get_pointer(_mutex))
-	{
+	if (get_pointer(_mutex)) {
 		MutexLockGuard lock(*_mutex);
 		_file->flush();
-	}
-	else
-	{
+	} else {
 		_file->flush();
 	}
 }
@@ -115,31 +101,15 @@ void LogFile::append_unlocked(const char* logline, int len)
 {
 	_file->append(logline, len);
 
-	if (_file->writtenBytes() > _rollSize)
-	{
+	if (_file->writtenBytes() > _rollSize) {
 		rollFile();
-	}
-	else
-	{
-		if (_count > _kCheckTimeRoll)
-		{
-			_count = 0;
-			time_t now = ::time(NULL);
-			time_t _thisPeriod = now / _kRollPerSeconds * _kRollPerSeconds;
-			if (_thisPeriod != _startOfPeriod)
-			{
-				rollFile();
-			}
-			else if (now - _lastFlush > _flushInterval)
-			{
-				_lastFlush = now;
-				_file->flush();
-			}
-		}
-		else
-		{
-			++_count;
-		}
+	} else {
+		time_t now = ::time(NULL);
+		time_t _thisPeriod = now / _kRollPerSeconds * _kRollPerSeconds;
+		if (_thisPeriod != _startOfPeriod)
+			rollFile();
+		else 
+			_file->flush();
 	}
 }
 
@@ -149,10 +119,8 @@ void LogFile::rollFile()
 	String filename = getLogFileName(_dir, _basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
-	if (now > _lastRoll)
-	{
+	if (now > _lastRoll) {
 		_lastRoll = now;
-		_lastFlush = now;
 		_startOfPeriod = start;
 		_file.reset(new File(filename));
 	}
@@ -186,38 +154,27 @@ void LogFile::makePath(String &dir)
 
 #ifdef WIN32
 	if (String::npos == dir.find(':'))
-    {
         bAbsolutePath = false;
-    }
 #else
     if ('/' != dir[0])
-    {
         bAbsolutePath = false;
-    }
 #endif
     
-    if (!bAbsolutePath)
-    {
+    if (!bAbsolutePath) {
 		_getcwd(filePath, sizeof(filePath));
         char cSeparator = filePath[strlen(filePath)];
         if (!(cSeparator == '/' || cSeparator == '\\'))
-        {
             strcat(filePath, "/");
-        }
         
 		strncat(filePath, dir.c_str(), sizeof(filePath) - strlen(filePath));
-    }
-	else
-	{
+    } else {
 		strncpy(filePath, dir.c_str(), sizeof(filePath));
 	}
     
     char *curDir = filePath;
     
-    while (*curDir != '\0')
-    {
-        if (*curDir == '\\' || *curDir == '/')
-        {
+    while (*curDir != '\0') {
+        if (*curDir == '\\' || *curDir == '/') {
             *curDir = '\0';
             _mkdir(filePath);
             *curDir = '/';
@@ -227,8 +184,7 @@ void LogFile::makePath(String &dir)
     _mkdir(filePath);
     
     size_t pathLen = strlen(filePath);
-    if ('/' != filePath[pathLen - 1])
-    {
+    if ('/' != filePath[pathLen - 1]) {
         strcat(filePath, "/");
         ++pathLen;
     }
