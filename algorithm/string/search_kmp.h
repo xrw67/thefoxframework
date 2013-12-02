@@ -1,5 +1,5 @@
 /*
-* @brief KMPģʽƥ���㷨
+* @brief KMP模式匹配算法
 * @author macwe@qq.com
 */
 
@@ -10,8 +10,14 @@ void createNextArray(const String &str, int *next)
 	next[i] = j;
 	
 	while (str[i]) {
-		if (-1 == j || str[i] == str[j])
-			next[++i] = ++j;
+		if (-1 == j || str[i] == str[j]) {
+			++i;
+			++j;
+			if (str[i] != str[j])
+				next[i] = j;
+			else
+				next[i] = next[j];
+		}
 		else
 			j = next[j];
 	}
