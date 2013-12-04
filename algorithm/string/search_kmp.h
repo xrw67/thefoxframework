@@ -3,7 +3,7 @@
 * @author macwe@qq.com
 */
 
-void createNextArray(const String &str, int *next)
+inline void createNextArray(const String &str, int *next)
 {
 	int i = 0;
 	int j = -1;
@@ -24,7 +24,7 @@ void createNextArray(const String &str, int *next)
 }
 
 
-size_t indexKMP(const String &str, const String &patterns, int next[], size_t beginPos = 0)
+inline size_t indexKMP(const String &str, const String &patterns, int next[], size_t beginPos = 0)
 {
 	int i = beginPos;
 	int j = 0;
@@ -44,7 +44,7 @@ size_t indexKMP(const String &str, const String &patterns, int next[], size_t be
 		return -1;
 }
 
-size_t indexKMP(const String &str, const String &patterns, size_t beginPos = 0)
+inline size_t indexKMP(const String &str, const String &patterns, size_t beginPos = 0)
 {
 	size_t result = -1;
 	int *next = (int *)malloc(sizeof(int) * str.length());

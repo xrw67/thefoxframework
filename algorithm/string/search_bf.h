@@ -3,7 +3,7 @@
 * @author macwe@qq.com
 */
 
-size_t indexBF(const String &str, const String &patterns, size_t beginPos = 0)
+inline size_t indexBF(const String &str, const String &patterns, size_t beginPos = 0)
 {
 	if (str.length() < patterns.length() || str.empty())
 		return -1;
