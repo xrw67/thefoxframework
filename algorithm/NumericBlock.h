@@ -11,21 +11,21 @@
 namespace thefox
 {
 
-template<typename numeric_type> class NumericBlock
+template<typename NumericType> class NumericBlock
 {
 public:
 	/// 一个ip地址块数据结构
 	typedef struct Block *BlockPtr;
 	struct Block
 	{
-		numeric_type _begin;
-		numeric_type _end;
-		BlockPtr _next;
+		NumericType begin;
+		NumericType end;
+		BlockPtr next;
 		
-		Block(const numeric_type begin, const numeric_type end)
-			: _begin(begin)
-			, _end(end)
-			, _next(NULL);
+		Block(const NumericType begin, const NumericType end)
+			: begin(begin)
+			, end(end)
+			, next(NULL);
 		{}
 	};
 	
@@ -33,45 +33,44 @@ public:
 	struct Value
 	{
 		BlockPtr _block;
-		numeric_type _value;
+		NumericType _num;
 	};
 	
 	/// 迭代器
-	class Iterator
+	class Iterator : public std::iterator<std::input_iterator_tag, ValueType>
 	{	
 	public:
-		explicit Iterator(BlockPtr block,numeric_type curNum)
-			: _block(block)
-			, _curNum(curNum)
-		{}
-		
-		Iterator(const Iterator &it)
+		Iterator(const ValueType &v)
+		 :_value(v)
+		 {}
+		 
+		Iterator(BlockPtr block,NumericType num)
 		{
-			_block = it._block;
-			_curNum = it._curNum;
+			_value._block = block;
+			_value._num = num;
 		}
 		
-		void operator=(const Iterator &it)
+		NumericType &operator*()
 		{
-			_block = it._block;
-			_curNum = it._curNum;
+			return _value._num;
 		}
-		numeric_type operator->()
+		Iterator &operator++()
 		{
-			return _curNum;
-		}
-		void operator++()
-		{
-			if (_curNum < _block->_end) {
-				++curNum;
+			BlockPtr &block = _value._block;
+			NumericType &num = _value._num;
+			
+			if (num < block->_end) {
+				++num;
 			} else {
-				_block = _block->_next;
-				if (NULL != _block)
-					_curNum = _block->_begin;
+				block = block->_next;
+				if (NULL != block)
+					num = block->_begin;
 				else
-					_curNum = -1;
+					num = -1;
 			}
-		}		
+			return _value;
+		}
+
 	private:
 		ValueType _value;
 	};
@@ -85,7 +84,7 @@ public:
 		if (NULL != _head)
 			remove(_head);
 	}
-	void add(const numeric_type begin, const numeric_type end)
+	void add(const NumericType begin, const NumericType end)
 	{
 		// 还没有块
 		if (NULL == _head) {
@@ -93,10 +92,18 @@ public:
 			return;
 		}
 		
+		BlockPtr cur = _head;
 		
+		while (1) {
+			if (begin < cur->begin) {
+				cur = cur->next;
+				continue;
+			}
+		
+		}
 	}
 	
-	void remove(const numeric_type &begin, const numeric_type &end)
+	void remove(const NumericType &begin, const NumericType &end)
 	{
 		
 	
@@ -115,11 +122,11 @@ public:
 		return Iterator(NULL, -1);
 	}
 	
-	Iterator find(const numeric_type &ip)
+	Iterator find(const NumericType &ip)
 	{
 		
 	}
-	bool isExist(const numeric_type &ip)
+	bool isExist(const NumericType &ip)
 	{
 		Iterator it
 	}

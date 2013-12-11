@@ -14,15 +14,14 @@ namespace thefox
 #define MAX_IO_BUFFER_SIZE 8192
 
 enum IoOperation{
-	None, 
-	Init,
-	Accept,
-	Read, 
-	ReadCompleted, 
-	Write, 
-	WriteCompleted,
-	ZeroByteRead, 
-	ZeroReadCompleted
+	OpInit,
+	OpAccept,
+	OpRead, 
+	OpReadCompleted, 
+	OpWrite, 
+	OpWriteCompleted,
+	OpZeroByteRead,
+	OpZeroReadCompleted
 };
 
 class IoBuffer

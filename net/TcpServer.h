@@ -31,7 +31,6 @@ public:
 
 	void send(const TcpConnectionPtr &conn, const void *message, size_t len);
 	void shutdown(const TcpConnectionPtr &conn);
-	void setTcpNoDelay(const TcpConnectionPtr &conn, bool on);
 
 	virtual void OnNewConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
 	virtual void OnConnectionClose(const TcpConnectionPtr &conn);

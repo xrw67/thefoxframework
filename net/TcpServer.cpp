@@ -39,7 +39,7 @@ void TcpServer::start()
 	// 监听线程
 	int &defaultPostAcceptNum = threadNumber;
 	while (_acceptor._IoBuffers.size() < defaultPostAcceptNum) {
-		IoBuffer *buf = _ioBufferPool.getBuffer(IoOperation::Accept);
+		IoBuffer *buf = _ioBufferPool.getBuffer(OpAccept);
 		if (_acceptor.postAccept(buf))
 			_acceptor.insertPengingIoBuffer(buf);
 		else
@@ -60,10 +60,11 @@ void TcpServer::OnNewConnection(SOCKET socket, const InetAddress &localAddr, con
 		connName = _name + buf;
 	}
 	
+	setTcpNoDelay(socket, true); // 禁用nagle算法
 	TcpConnectionPtr conn(new TcpConnection(connName, socket, localAddr, peerAddr));
 	_connections[connName] = conn;
 	_iocp.registerHandle((HANDLE)socket, (ULONG_PTR)conn);
-	postRecv(conn->_socket, _ioBufferPool.getBuffer(IoOperation::Read));
+	postRecv(conn->_socket, _ioBufferPool.getBuffer(OpRead));
 }
 
 
@@ -95,7 +96,7 @@ void TcpServer::removeConnection(const TcpConnectionPtr &conn)
 void TcpServer::IoProcess(const TcpConnectionPtr &conn, IoBuffer *buf)
 {
 	switch (buf->getIoOperation()) {
-		case IoOperation::Accept: {
+		case OpAccept: {
 			InetAddress localAddr;
 			InetAddress peerAddr;
 			_acceptor.getAcceptExSockAddrs(buf, localAddr, peerAddr);
@@ -104,14 +105,14 @@ void TcpServer::IoProcess(const TcpConnectionPtr &conn, IoBuffer *buf)
 			_acceptor.postAccept(buf);
 			break;						  
 		}
-		case IoOperation::ReadCompleted: {
+		case OpReadCompleted: {
 			conn->_inBuffer.readIoBuffer(buf);
 			OnReadCompleted(conn, &conn->_inBuffer, Timestamp::now());
 			buf->resetBuffer();
 			postRecv(conn->_socket, buf);
 			break;
 		}
-		case IoOperation::WriteCompleted: {
+		case OpWriteCompleted: {
 				
 			break;
 		}
@@ -127,7 +128,7 @@ DWORD TcpServer::AcceptThread(LPVOID serverPtr)
 	while (svr->_started) {
 		DWORD dwResult = ::WSAWaitForMultipleEvents(2, events, FALSE, INFINITE, FALSE);
 		if(dwResult == WAIT_OBJECT_0) {
-			IoBuffer *buf = svr->_ioBufferPool.getBuffer(IoOperation::Accept);
+			IoBuffer *buf = svr->_ioBufferPool.getBuffer(OpAccept);
 			if (acceptor.postAccept(buf))
 				acceptor.insertPengingIoBuffer(buf);
 			else

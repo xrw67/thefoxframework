@@ -30,7 +30,8 @@ public:
 		, _peerAddr(peerAddr)
 		, _state(kDisconnected)
 	{}
-	~TcpConnection();
+	~TcpConnection()
+	{}
 	
 	const String &name() const {return _name; }
 	const InetAddress &localAddress() {return _localAddr; }
@@ -38,6 +39,24 @@ public:
 	bool connected() const { return _state == kConnected; }
 	
     void setState(StateE s) { _state = s; }
+
+	void asyncSend(IoBuffer *buf)
+	{
+		
+	}
+	
+	uint32_t enterIoLoop() 
+	{ 
+		MutexLockGuard lock(_lock);
+		++_numberOfPendingIo;
+		return _numberOfPendingIo;
+	}
+	uint32_t leaveIoLoop() 
+	{
+		MutexLockGuard lock(_lock);
+		--_numberOfPendingIo;
+		return _numberOfPendingIo;
+	}
 
 	IoBuffer *getNextReadBuffer(IoBuffer *buf = NULL)
 	{
@@ -76,7 +95,8 @@ public:
 	InetAddress _peerAddr;
 	Buffer _inBuffer; // 接收缓存
 
-	uint32_t _numberOfPendingIo;
+	uint32_t _numberOfPendingIo; // 正在处理的IoBuffer个数
+
 	// 读队列
 	uint32_t _readSequence;
 	uint32_t _currentReadSequence;
