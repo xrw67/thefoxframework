@@ -1,41 +1,37 @@
 #ifndef _THEFOX_NET_ACCEPTOR_H_
 #define _THEFOX_NET_ACCEPTOR_H_
 
-#include <boost/function.hpp>
 #include <base/scoped_ptr.h>
 #include <net/winapi.h>
-#include <net/Socket.h>
 
 namespace thefox
 {
 
+class InetAddress;
+class IoBuffer;
+
 class Acceptor
 {
 public:
-	static const int kMaxPostAccept = 10;
-
-	typedef boost::function<void (SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr)> NewConnectionCallback;
-	
 	Acceptor(const InetAddress &listenAddr);
 	~Acceptor();
 	
-	SOCKET getSocketHandle () { return _acceptSocket.getSocketHandle(); }
-
-	void setNewConnectionCallback(const NewConnectionCallback &cb)
-	 { _newConnectionCallback = cb; }
-	
 	void listen();
-	bool listening() const { return _listening; }
-	
-	void handleAccept(IoBuffer *ioBuffer);
-private:
-	typedef std::list<IoBuffer *> AcceptIoBufferList;
+	void stop();
+	void insertPengingIoBuffer(IoBuffer *buf) { _IoBuffers.push_back(buf); }
+	bool postAccept(IoBuffer *buf);
+	void getAcceptExSockAddrs(IoBuffer *buf, InetAddress &localAddr, InetAddress &peerAddr);
 
 	bool _listening;
-	Socket _acceptSocket;
-	MutexLock _bufferLock;
-	AcceptIoBufferList _acceptIoBuffers;
-	NewConnectionCallback _newConnectionCallback;
+	SOCKET _acceptSocket;
+	HANDLE _acceptEvent;
+	HANDLE _stopEvent;
+
+	MutexLock _lock;
+	std::list<IoBuffer *> _IoBuffers;
+
+	LPFN_ACCEPTEX _lpfnAcceptEx;
+	LPFN_GETACCEPTEXSOCKADDRS _lpfnGetAcceptExSockAddrs; 
 };
 
 }

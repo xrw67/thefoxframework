@@ -5,29 +5,31 @@
 #ifndef _THEFOX_NET_TCPCONNECTION_H_
 #define _THEFOX_NET_TCPCONNECTION_H_
 
-#include <base/noncopyable.h>
-#include <base/scoped_ptr.h>
 #include <net/winapi.h>
 #include <net/Buffer.h>
 #include <net/IoBuffer.h>
-#include <net/Callbacks.h>
 #include <net/InetAddress.h>
-
-#include <boost/shared_ptr.hpp>
+#include <net/Socket.h>
 
 namespace thefox
 {
 
-class Socket;
-
 class TcpConnection
 {
 public:
-	TcpConnection(TcpServer *server,
-				const String &name,
-	 			SOCKET socket, 
-				const InetAddress &localAddr,
-				const InetAddress &peerAddr);
+	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
+	typedef std::map<uint32_t, IoBuffer *> IoBufferMap;
+
+	TcpConnection(const String &name, 
+				SOCKET socket, 
+				const InetAddress &localAddr, 
+				const InetAddress &peerAddr)
+		: _name(name)
+		, _socket(socket)
+		, _localAddr(localAddr)
+		, _peerAddr(peerAddr)
+		, _state(kDisconnected)
+	{}
 	~TcpConnection();
 	
 	const String &name() const {return _name; }
@@ -35,63 +37,56 @@ public:
 	const InetAddress &peerAddress() {return _peerAddr; }
 	bool connected() const { return _state == kConnected; }
 	
-	void send(const void *message, size_t len);
-	void shotdown();
-	void setTcpNoDelay(bool on);
+    void setState(StateE s) { _state = s; }
+
+	IoBuffer *getNextReadBuffer(IoBuffer *buf = NULL)
+	{
+		IoBuffer *outBuf = NULL;
+		if (buf) {
+			if (_currentReadSequence == buf->getSequence()) {
+			    outBuf = buf;
+				++_currentReadSequence;
+			} else if(_currentReadSequence < buf->getSequence()) {
+				_readBufferMap[buf->getSequence()] = buf;
+				if (_readBufferMap.end() != _readBufferMap.find(_currentReadSequence)) {
+				    outBuf = _readBufferMap[_currentReadSequence];
+					_readBufferMap.erase(_currentReadSequence);
+					++_currentReadSequence;
+				}
+			}
+		} else {
+			if (_readBufferMap.end() != _readBufferMap.find(_currentReadSequence)) {
+			    outBuf = _readBufferMap[_currentReadSequence];
+				_readBufferMap.erase(_currentReadSequence);
+				++_currentReadSequence;
+			}
+		}
+		return outBuf;
+	}
+	IoBuffer *getNextSendBuffer(IoBuffer *buf = NULL)
+	{
 	
-	void setConnectionCallback(const ConnectionCallback &cb) { _connectionCallback = cb; }
-	void setMessageCallback(const MessageCallback &cb) { _messageCallback = cb; }
-	void setWriteCompleteCallback(const WriteCompleteCallback &cb) { _writeCompleteCallback = cb; }
-	void setCloseCallback(const CloseCallback &cb){ _closeCallback = cb; }
+	}
 	
-	void handleIoProcess(IoBuffer *iobuf, DWORD bytesTransfered);
-	
-	void connectEstablished();
-	void connectDestroyed(); 
-	
-private:
-	typedef std::map<uint32_t, IoBuffer *> IoBufferMap;
-	enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
-	
-	void handleRead(IoBuffer *ioBuffer, Timestamp receiveTime);
-	void handleWrite();
-	void handleClose();
-	void handleError();
-    void setState(StatE s) { _state = s; }
-	
-	inline IoBuffer *getNextReadBuffer(IoBuffer *buf = NULL);
-	inline IoBuffer *getNextSendBuffer(IoBuffer *buf = NULL);
-	
-	
-	TcpServer *_server;
 	StateE _state;
-	Socket _socket;
-	String _name;
+	SOCKET _socket; // 客户连接的SOCKET
+	String _name;  // 客户连接的名称
 	MutexLock _lock;
 	InetAddress _localAddr;
 	InetAddress _peerAddr;
-	MutexLock _lock;
-	ConnectionCallback _connectionCallback;
-	MessageCallback _messageCallback;
-	WriteCompleteCallback _writeCompleteCallback;
-	CloseCallback _closeCallback;
 	Buffer _inBuffer; // 接收缓存
 
 	uint32_t _numberOfPendingIo;
 	// 读队列
-	uint32_t _readSequenceNumber;
-	uint32_t _currentReadSequenceNumber;
+	uint32_t _readSequence;
+	uint32_t _currentReadSequence;
 	IoBufferMap _readBufferMap;
 	// 发送队列
-	uint32_t _sendSequenceNumber;
-	uint32_t _currentSendSequenceNumber;
+	uint32_t _sendSequence;
+	uint32_t _currentSendSequence;
 	IoBufferMap _sendBufferMap;
-	
-	static MutexLock freeIoBufferLock;
-	static std::list<IoBuffer *> freeIoBuffers;
 };
 
-typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;
 }
 
 #endif // _THEFOX_NET_TCPCONNECTION_H_

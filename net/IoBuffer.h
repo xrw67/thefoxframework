@@ -13,9 +13,9 @@ namespace thefox
 
 #define MAX_IO_BUFFER_SIZE 8192
 
-enum IoType{
+enum IoOperation{
 	None, 
-	Init, 
+	Init,
 	Accept,
 	Read, 
 	ReadCompleted, 
@@ -25,18 +25,19 @@ enum IoType{
 	ZeroReadCompleted
 };
 
-struct IoBuffer
+class IoBuffer
 {
+public:
 	OVERLAPPED _overlapped;
 	WSABUF _wsabuf;
 	SOCKET _socket; // 只有Accept类型使用
 	char _data[MAX_IO_BUFFER_SIZE];
 	size_t _bytesOfUsed;
-	IoType _ioType;
-	uint32_t _sequenceNumber;
+	IoOperation _op;
+	uint32_t _sequence;
 
-	IoBuffer(IoType ioType = None) 
-		: _ioType(ioType)
+	IoBuffer(IoOperation op = None) 
+		: _op(_op)
 		, _bytesOfUsed(0)
 	{
 		_wsabuf.buf = _data;
@@ -68,11 +69,11 @@ struct IoBuffer
 		return true;
 	}
 	
-	void setIoType(IoType type) { _ioType = type; }
-	const IoType getIoType() const {return _ioType; }
+	void setOperation(IoOperation op) { _op = op; }
+	const IoOperation getIoOperation() const {return _op; }
 	
-	void setSequenceNumber(uint32_t num) { _sequenceNumber = num; }
-	const uint32_t getSequenceNumber() const { return _sequenceNumber; }
+	void setSequence(uint32_t num) { _sequence = num; }
+	const uint32_t getSequence() const { return _sequence; }
 };
 
 }

@@ -27,12 +27,6 @@
     <ClCompile Include="ChatRoomServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\Eventloop.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\TcpConnection.cpp">
-      <Filter>Net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\net\TcpServer.cpp">
       <Filter>Net</Filter>
     </ClCompile>
@@ -47,31 +41,16 @@
     <ClInclude Include="..\..\net\Buffer.h">
       <Filter>Net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\Callbacks.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Eventloop.h">
-      <Filter>Net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\InetAddress.h">
       <Filter>Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\InitSocket.h">
       <Filter>Net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\IoBuffer.h">
-      <Filter>Net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\IoCompletionPort.h">
       <Filter>Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\Socket.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\SocketContext.h">
-      <Filter>Net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\TcpConnection.h">
       <Filter>Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\TcpServer.h">
@@ -81,6 +60,15 @@
       <Filter>Net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\Acceptor.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\IoBuffer.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TcpConnection.h">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\IoBufferPool.h">
       <Filter>Net</Filter>
     </ClInclude>
   </ItemGroup>

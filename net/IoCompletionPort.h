@@ -22,7 +22,7 @@ public:
 			::CloseHandle(_iocp);
 	}
 
-	BOOL registerHandle(HANDLE handle, ULONG_PTR completionKey)
+	void registerHandle(HANDLE handle, ULONG_PTR completionKey)
 	{
 		::CreateIoCompletionPort(_iocp, handle, completionKey, 0);
 	}

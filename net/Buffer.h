@@ -247,7 +247,7 @@ public:
 		return _buffer.capacity();
 	}
     
-    size_t readIoContext(IoBuffer *ioBuffer)
+    void readIoBuffer(IoBuffer *ioBuffer)
     {
         append(ioBuffer->getWSABuffer()->buf, ioBuffer->getWSABuffer()->len);
     }
