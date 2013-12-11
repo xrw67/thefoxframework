@@ -35,7 +35,7 @@ public:
 	IoOperation _op;
 	uint32_t _sequence;
 
-	IoBuffer(IoOperation op = None) 
+	IoBuffer(IoOperation op) 
 		: _op(_op)
 		, _bytesOfUsed(0)
 	{

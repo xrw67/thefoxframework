@@ -36,6 +36,8 @@ Acceptor::Acceptor(const InetAddress &listenAddr)
 Acceptor::~Acceptor()
 {
 	_listening = false;
+	::closesocket(_acceptSocket);
+	MutexLockGuard lock(_lock);
 	while (_IoBuffers.empty()) {
 		delete _IoBuffers.front();
 		_IoBuffers.pop_front();
@@ -46,11 +48,6 @@ void Acceptor::listen()
 {
 	_listening = true;
 	::listen(_acceptSocket, SOMAXCONN);
-}
-
-void Acceptor::stop()
-{
-	_listening = false;
 }
 
 void Acceptor::getAcceptExSockAddrs(IoBuffer *ioBuffer, InetAddress &localAddr, InetAddress &peerAddr)
