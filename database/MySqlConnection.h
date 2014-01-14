@@ -10,6 +10,7 @@
 #include <mysql.h>
 #include <base/Types.h>
 #include <base/MutexLock.h>
+#include <log/logger.h>
 #include "MySqlResultSet.h"
 
 namespace thefox
@@ -62,29 +63,34 @@ public:
 		if (isConnected())
 			close();
 			
-        if (NULL == (_connPtr = mysql_init(_conn))) {
+        if (NULL == (_connPtr = mysql_init(&_conn))) 
+		{
 			LOG_ERROR << "mysql_init error, not enough memory!";
 			return false;
 		}
 
-        if (0 != mysql_real_connect(_connPtr, 
+        if (NULL == mysql_real_connect(_connPtr, 
 									_host.c_str(), 
 									_user.c_str(), 
 									_passwd.c_str(), 
-									_dbname.empry() ? NULL : _dbName.c_str(), 
+									_dbName.c_str(), 
 									_port, 
 									NULL, 
-									CLIENT_MULTI_QUERIES)) {
+									CLIENT_MULTI_STATEMENTS)) 
+		{
 			LOG_ERROR << "Failed to connect to database, Error: " << mysql_error(_connPtr);
+			const char *ss = mysql_error(_connPtr);
 			return false;
         }
+
         return true;
     }
 	
 	/// @beirf 关闭数据库连接
 	void close()
     {
-        if (isConnected()) {
+        if (isConnected()) 
+		{
             mysql_close(_connPtr);
             _connPtr = NULL;
         }
@@ -100,19 +106,9 @@ public:
 	bool selectDb(const String &dbName) 
 	{ 
 		_dbName = dbName; 
-		if (0 != mysql_select_db(_commPtr, _dbName.c_str())) {
+		if (0 != mysql_select_db(_connPtr, _dbName.c_str())) 
+		{
 			LOG_ERROR << "select database failed, Error: " << mysql_error(_connPtr);
-			return false;
-		}
-		return true;
-	}
-	
-	/// @brief 设置字符集
-	/// @return 设置成功返回true，否则返回false
-	bool setCharset(const String &csName)
-	{
-		if (0 != mysql_set_charset_name(_commPtr, csName.c_str())) {
-			LOG_ERROR << "set charset failed, Error: " << mysql_error(_connPtr);
 			return false;
 		}
 		return true;
@@ -123,20 +119,22 @@ public:
 	/// @param[in|out] insertId 输出操作记录的ID
 	///    (注：对于INSERT和UPDATE语句且设置AUTO_INCREMENT才有效)
 	/// @return 执行成功返回true, 否则返回false
-    bool exec(const String &sql, uint32 *insertId = NULL)
+    bool exec(const String &sql, uint32_t *insertId = NULL)
     {
-		if (!isConnected()) {
+		if (!isConnected()) 
+		{
 			LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
 			return false;
 		}
 		
 		MutexLockGuard lock(_lock);
-        if (0 != mysql_real_query(_connPtr, sql.c_str())) {
+        if (0 != mysql_real_query(_connPtr, sql.c_str(), (unsigned long)sql.length()))
+		{
 			LOG_ERROR << "mysql query failed, sql=" << sql <<", Error: " << mysql_error(_connPtr);
             return false;
         }
         if (insertId)
-            *insertId = mysql_insert_id(_connPtr);
+            *insertId = (uint32_t)mysql_insert_id(_connPtr);
 			
         return true;
     }
@@ -148,20 +146,23 @@ public:
 	/// @sa resultSet
     bool query(const String &sql, MySqlResultSet &resultSet)
 	{
-		if (!isConnected()) {
+		if (!isConnected())
+		{
 			LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
 			return false;
 		}
 		
 		MutexLockGuard lock(_lock);
-        if (0 != mysql_real_query(_connPtr, sql.c_str())) {
+        if (0 != mysql_real_query(_connPtr, sql.c_str(), sql.length()))
+		{
 			LOG_ERROR << "mysql query failed, sql=" << sql <<", Error: " << mysql_error(_connPtr);
             return false;
         }
 		
 		if (resultSet)
 			mysql_free_result(resultSet);
-		if (resultSet = mysql_store_result(_connPtr)) {
+		if (resultSet = mysql_store_result(_connPtr)) 
+		{
 			LOG_ERROR << "mysql query failed, sql=" << sql <<", Error: " << mysql_error(_connPtr);
 		}
 		return true;
