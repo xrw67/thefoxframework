@@ -1,4 +1,4 @@
-#ifndef _THEFOX_STRING_UTIL_H_
+﻿#ifndef _THEFOX_STRING_UTIL_H_
 #define _THEFOX_STRING_UTIL_H_
 
 #include <base/Types.h>
@@ -24,7 +24,7 @@ inline String toString(const int val)
 inline String toString(const unsigned int val)
 {
 	char buf[32] = {0};
-	_snprintf(buf, sizeof(buf), "%u", val);
+	snprintf(buf, sizeof(buf), "%u", val);
 	return buf;
 }
 inline String toString(const long val)
@@ -35,16 +35,17 @@ inline String toString(const long val)
 inline String toString(const long long val)
 {
 	char buf[32] = {0};
-	_snprintf(buf, sizeof(buf), "%I64u", val);
+	snprintf(buf, sizeof(buf), "%I64u", val);
 	return buf;
 }
 
 inline String toString(const double val)
 {
 	char buf[32] = {0};
-	_snprintf(buf, sizeof(buf), "%f", val);
+	snprintf(buf, sizeof(buf), "%f", val);
 	return buf;
 }
+
 inline String toString(const bool val)
 {
 	return val ? "1" : "0";

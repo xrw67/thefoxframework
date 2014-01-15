@@ -1,4 +1,4 @@
-#ifndef _THEFOX_BASE_EVETN_H_
+﻿#ifndef _THEFOX_BASE_EVETN_H_
 #define _THEFOX_BASE_EVETN_H_
 
 #include <windows.h>

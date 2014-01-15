@@ -1,12 +1,18 @@
-/*
-* 互斥量操作类
+﻿/*
+* @filename MutexLock.h
+* @brief 互斥量操作类, 支持Windows和Linux
 * @author macwe@qq.com
 */
 
 #ifndef _THEFOX_MUTEXLOCK_H_
 #define _THEFOX_MUTEXLOCK_H_
 
+#ifdef WIN32
 #include <Windows.h>
+#else
+#include <pthread.h>
+#include <pthread_mutex.h>
+#endif
 
 namespace thefox 
 {
@@ -17,31 +23,53 @@ public:
 	MutexLock()
 	: _threadId(0)
 	{
-		::InitializeCriticalSection(&_cs);
+#ifdef WIN32
+		InitializeCriticalSection(&_cs);
+#else
+		_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
 	}
 	~MutexLock()
 	{
 		//assert(0 == _threadId);
-		::DeleteCriticalSection(&_cs);
+#ifdef WIN32
+		DeleteCriticalSection(&_cs);
+#endif
 	}
 	
 	void lock()
 	{
-		::EnterCriticalSection(&_cs);
-		_threadId = ::GetCurrentThreadId();
+#ifdef WIN32
+		EnterCriticalSection(&_cs);
+		_threadId = static_cast<uint32_t>(GetCurrentThreadId());
+#else
+		pthread_mutex_lock(&_mutex);
+		_threadId = static_cast<uint32_t>(pthread_self());
+#endif
 	}
 	
 	void unlock()
 	{
 		_threadId = 0;
-		::LeaveCriticalSection(&_cs);
+#ifdef WIN32
+		LeaveCriticalSection(&_cs);
+#else
+		pthread_mutex_unlock(&_mutex);
+#endif
 	}
 	
 private:
+	// 禁止拷贝
 	MutexLock(const MutexLock &);
 	const MutexLock &operator=(const MutexLock &);
+
+	uint32_t _threadId;
+#ifdef WIN32
 	CRITICAL_SECTION _cs;
-	DWORD _threadId;
+#else
+	pthread_mutex_t _mutex;
+#endif
+
 };
 
 class MutexLockGuard
@@ -59,6 +87,7 @@ public:
 private:
 	MutexLockGuard(const MutexLockGuard &);
 	const MutexLockGuard &operator=(const MutexLockGuard &);
+	
 	MutexLock &_mutex;
 };
 

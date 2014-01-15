@@ -1,7 +1,5 @@
-#ifndef _THEFOX_TYPES_H_
+﻿#ifndef _THEFOX_TYPES_H_
 #define _THEFOX_TYPES_H_
-
-#pragma warning(disable:4996)
 
 #include <string>
 
@@ -18,6 +16,12 @@ typedef long long int64_t;
 
 typedef std::string String;
 
+#ifdef WIN32
+#pragma warning(disable:4996)
+typedef sprintf _snprintf
+#else
+
+#endif
 
 } // namespace thefox
 
