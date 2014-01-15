@@ -14,14 +14,16 @@
 #include <pthread_mutex.h>
 #endif
 
+#include <base/noncopyable.h>
+
 namespace thefox 
 {
 
-class MutexLock
+class MutexLock : noncpoyable
 {
 public:
 	MutexLock()
-	: _threadId(0)
+		: _threadId(0)
 	{
 #ifdef WIN32
 		InitializeCriticalSection(&_cs);
@@ -31,7 +33,6 @@ public:
 	}
 	~MutexLock()
 	{
-		//assert(0 == _threadId);
 #ifdef WIN32
 		DeleteCriticalSection(&_cs);
 #endif
@@ -59,10 +60,6 @@ public:
 	}
 	
 private:
-	// 禁止拷贝
-	MutexLock(const MutexLock &);
-	const MutexLock &operator=(const MutexLock &);
-
 	uint32_t _threadId;
 #ifdef WIN32
 	CRITICAL_SECTION _cs;
@@ -72,7 +69,7 @@ private:
 
 };
 
-class MutexLockGuard
+class MutexLockGuard : noncpoyable
 {
 public:
 	MutexLockGuard(MutexLock &mutex)
@@ -85,9 +82,6 @@ public:
 		_mutex.unlock();
 	}
 private:
-	MutexLockGuard(const MutexLockGuard &);
-	const MutexLockGuard &operator=(const MutexLockGuard &);
-	
 	MutexLock &_mutex;
 };
 

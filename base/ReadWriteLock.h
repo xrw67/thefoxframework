@@ -1,10 +1,15 @@
 /*
-* ¶ÁÐ´Ëø
+* @filename ReadWriteLock.h
+* @brief ¶ÁÐ´Ëø
+* @author macwe@qq.com
 */
+
 #ifndef _THEFOX_READWRITELOCK_H_
 #endif _THEFOX_READWRITELOCK_H_
 
 #include <base/noncopyable.h>
+#include <base/Atomic.h>
+#include <base/MutexLock.h>
 
 namespace thefox
 {
@@ -14,44 +19,38 @@ class ReadWriteLock : noncopyable
 public:
 	ReadWriteLock()
 		: _reads(0)
-	{ 
-		::InitializeCriticalSection(&_enterLock); 
-	}
+	{}
 	
 	~ReadWriteLock()
-	{ 
-		::DeleteCriticalSection(&_enterLock); 
-	}
+	{}
 	
 	void readLock()
 	{
-		::EnterCriticalSection(&_enterLock);
-		::InterlockedIncrement(&_reads);
-		::LeaveCriticalSection(&_enterLock);
+		_enterLock.lock();
+		atomicInc(&_reads);
+		_enterLock.unlock();
 	}
 	
 	void readUnlock()
 	{
-		::InterlockedDecrement(&_reads);
+		atomicDec(&_reads);
 	}
 	
 	void writeLock()
 	{
-		::EnterCriticalSection(&_enterLock);
+		_enterLock.lock();
 		while (_reads > 0)
-		{
 			Sleep(0);
-		}
 	}
 	
 	void writeUnlock()
 	{
-		::LeaveCriticalSection(&_enterLock);
+		_enterLock.unlock();
 	}
 	
 private:
-	CRITICAL_SECTION _enterLock;
-	LONG _reads;
+	volatile uint32_t _reads;
+	MutexLock _enterLock;
 };
 
 class ReadLockGuard : noncpoyable
