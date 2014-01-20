@@ -1,6 +1,6 @@
 /*
 * @filename Atomic.h
-* @brief 原则操作
+* @brief 原子操作
 * @author macwe@qq.com
 */
 
