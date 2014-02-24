@@ -14,37 +14,42 @@ namespace thefox
 {
 
 namespace mysql
+
+class MysqlUtil
 {
+public:
+	bool isTableExist(MySqlConnection &conn, const String &tableName)
+	{
+		MySqlResultSet resultSet;
+		String sql("SHOW TABLES LIKE '"+ tableName+"'");
+		conn.query(sql, resultSet);
+		if (0 == resultSet.rowCount())
+			return false;
+		else
+			return true;
+	}
 
-bool isTableExist(MySqlConnection &conn, const String &tableName)
-{
-	MySqlResultSet resultSet;
-	String sql("SHOW TABLES LIKE '"+ tableName+"'");
-	conn.query(sql, resultSet);
-	if (0 == resultSet.rowCount())
-		return false;
-	else
-		return true;
-}
+	bool isQueryNotRecord(MySqlConnection &conn, const String &selectSql)
+	{
+		MySqlResultSet resultSet;
+		conn.query(selectSql, resultSet);
+		if (0 == resultSet.rowCount())
+			return false;
+		else
+			return true;
+	}
 
-bool isQueryNotRecord(MySqlConnection &conn, const String &selectSql)
-{
-	MySqlResultSet resultSet;
-	conn.query(selectSql, resultSet);
-	if (0 == resultSet.rowCount())
-		return false;
-	else
-		return true;
-}
+	bool setNames(const String &csName)
+	{
+		String sql("SET NAMES '"+ csName+"'");
+		return conn.exec(sql);
+	}
 
-bool setNames(const String &csName)
-{
-	String sql("SET NAMES '"+ csName+"'");
-	return conn.exec(sql);
-}
+};
 
-}; // namespace thefox
+} // nsmespace mysql
 
-}; // namespace thefox
+} // namespace thefox
 
 #endif // _THEFOX_MYSQL_UTIL_H_
+

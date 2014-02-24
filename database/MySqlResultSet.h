@@ -7,7 +7,7 @@
 #ifndef _THEFOX_MYSQL_RESULTSET_H_
 #define _THEFOX_MYSQL_RESULTSET_H_
 
-#include <mysql.h>
+#include <mysql/mysql.h>
 #include <base/Types.h>
 #include <base/noncopyable.h>
 
