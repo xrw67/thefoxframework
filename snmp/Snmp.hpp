@@ -40,33 +40,41 @@ public:
 	
 	bool get(const std::string &oids, std::vector<string> &values)
 	{
-		if (oids.length() < 1)
+		if (0 == oids.length())
 			return false;
 			
-		netsnmp_pdu *pdu;
-		netsnmp_pdu *response;
-		netsnmp_variable_list *vars;
+		netsnmp_pdu *pdu = NULL;
+		netsnmp_pdu *response = NULL;
+		netsnmp_variable_list *vars = NULL;
 		
 		if (NULL == (pdu = snmp_pdu_create(SNMP_MSG_GET)))
 			return false;
 		
 		// ½âÎöOID
 		size_t pos = 0;
-		size_t pos2 = 0;
+		size_t lastPos = 0;
 		while (true)
 		{
-			pos2 = oids.find_first_of(',', pos + 1);
-			
-			if (std::string::npos == pos2)
-		}
-		
-		for (int l = 0,int r=oids.find; i < )
-		{
-			name_length = MAX_OID_LEN;
-			if (!snmp_parse_oid(,))
-				return false;
+			pos = oids.find_first_of(',', lastPos);
+			if (std::string::npos == pos)
+			{
+				pos = oids.length();
+				if (pos != lastPos)
+				{
+					String oidBuf = oids.substr(lastPos, pos - lastPos);
+					snmp_add_null_var(pdu, oidBuf.c_str(), oidBuf.length());
+				}
+				break;
+			}
 			else
-				snmp_add_null_var(pdu, name, name_length);
+			{
+				if (pos != lastPos)
+				{
+					String oidBuf = oids.substr(lastPos, pos - lastPos);
+					snmp_add_null_var(pdu, oidBuf.c_str(), oidBuf.length());
+				}
+			}
+			lastPos = pos + 1;
 		}
 		
 		int status = snmp_synch_response(_sessionPtr, pdu, response);
@@ -87,19 +95,24 @@ public:
 		else if (STAT_TIMEOUT == status)
 		{
 			// ³¬Ê±
+			
 		}
 		else // status == STAT_ERROR
 		{
 			// Ê§°Ü
 			//TRACE(snmp_sess_perror(_sessionPtr));
+			
 		}
 		
 		if (response)
 			snmp_free_pdu(response);
+		
+		return (STAT_SUCCESS == status) ? true : false;
 	}
 	
 	bool getNext(const std::string &oids, std::string &newOids, std::vector<string> &values)
 	{
+		return false;
 	}
 	
 private:
@@ -126,6 +139,8 @@ private:
 			return false;
 		return true;
 	}
+	
+	const String variablesPrint(netsnmp_variable_list)
 	
 	struct snmp_session _session;
 	struct snmp_session *_sessionPtr;
