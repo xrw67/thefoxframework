@@ -1,13 +1,17 @@
 #ifdef _THEFOX_SNMP_H_
 #define _THEFOX_SNMP_H_
 
+#include <vector>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
+#include <base/Types.h>
+#include <base/noncopyable.h>
+#include <log/log.h>
 
 namespace thefox
 {
 
-class Snmp
+class Snmp : public noncopyable
 {
 public:
 	Snmp()
@@ -17,17 +21,23 @@ public:
 	~Snmp()
 	{}
 	
-	bool open1(const std::string &ipAddr, const std::string &community, const int port = 161, const int retries = 0, const int timeout = 3 * 1000 * 1000)
+	bool open1(const String &ipAddr,
+               const String &community,
+               int port = 161,
+               int retries = 0,
+               int timeout = 3 * 1000 * 1000)
 	{
 		return open(ipAddr, community, port, retries, timeout, SNMP_VERSION_1);
 	}
 	
-	bool open2(const std::string &ipAddr, const std::string &community, const int port = 161, const int retries = 0, const int timeout = 3 * 1000 * 1000)
+	bool open2(const String &ipAddr,
+               const String &community,
+               int port = 161,
+               int retries = 0,
+               int timeout = 3 * 1000 * 1000)
 	{ 
 		return open(ipAddr, community, port, retries, timeout, SNMP_VERSION_2c);
 	}
-	
-	/// @TODO bool open3(...)
 	
 	void close()
 	{
@@ -38,7 +48,7 @@ public:
 		}
 	}
 	
-	bool get(const std::string &oids, std::vector<string> &values)
+	bool get(const String &oids, std::vector<String> &values)
 	{
 		if (0 == oids.length())
 			return false;
@@ -50,13 +60,13 @@ public:
 		if (NULL == (pdu = snmp_pdu_create(SNMP_MSG_GET)))
 			return false;
 		
-		// ½âÎöOID
+		// è§£æOID
 		size_t pos = 0;
 		size_t lastPos = 0;
 		while (true)
 		{
 			pos = oids.find_first_of(',', lastPos);
-			if (std::string::npos == pos)
+			if (String::npos == pos)
 			{
 				pos = oids.length();
 				if (pos != lastPos)
@@ -90,18 +100,18 @@ public:
 			}
 			else
 			{
-				// PDU´íÎó
+				// PDUé”™è¯¯
 				return false;
 			}
 		}
 		else if (STAT_TIMEOUT == status)
 		{
-			// ³¬Ê±
+			// è¶…æ—¶
 			
 		}
 		else // status == STAT_ERROR
 		{
-			// Ê§°Ü
+			// Â ÃŸâˆâ€¹
 			//TRACE(snmp_sess_perror(_sessionPtr));
 			
 		}
@@ -112,7 +122,7 @@ public:
 		return (STAT_SUCCESS == status) ? true : false;
 	}
 	
-	bool getNext(const std::string &oids, std::string &newOids, std::vector<string> &values)
+	bool getNext(const String &oids, String &newOids, std::vector<string> &values)
 	{
 		if (0 == oids.length())
 			return false;
@@ -124,7 +134,7 @@ public:
 		if (NULL == (pdu = snmp_pdu_create(SNMP_MSG_GET)))
 			return false;
 		
-		// ½âÎöOID
+		// è§£æOID
 		size_t pos = 0;
 		size_t lastPos = 0;
 		while (true)
@@ -160,24 +170,27 @@ public:
 				values.clear();
 				for (vars = response->variables; vars; vars = vars->next_variable)
 				{
-					
+                    newOids += oid2String(vars->name, vars->name_length);
+                    newOids += ",";
 					values.push_back(asn2String(vars));
 				}
+                if (newOids.length() > 0)
+                    newOids = newOids.substr(0, newOids.length() - 1);
 			}
 			else
 			{
-				// PDU´íÎó
-				return false;
+				// PDUÂ¥ÃŒÅ’Ã›
+				
 			}
 		}
 		else if (STAT_TIMEOUT == status)
 		{
-			// ³¬Ê±
+			LOG_INFO
 			
 		}
 		else // status == STAT_ERROR
 		{
-			// Ê§°Ü
+			// Â ÃŸâˆâ€¹
 			//TRACE(snmp_sess_perror(_sessionPtr));
 			
 		}
@@ -189,22 +202,22 @@ public:
 	}
 	
 private:
-	bool open(const std::string &ipAddr, 
-				const std::string &community,
-				const int port,
-				const int retries,
-				const int timeout,
-				const int version)
+	bool open(const String &ipAddr,
+				const String &community,
+				int port,
+				int retries,
+				int timeout,
+				int version)
 	{
 		char addr[128];
 		snprintf(addr, sizeof(addr), "%s:%d", ipAddr.c_str(), port);
 		
 		snmp_sess_init(&_session);
-		_session.version = version; // °æ±¾
-		_session.retries = retries; // ÖØÊÔ´ÎÊı
-		_session.timeout =  timeout; // ³¬Ê±Ê±¼ä Î¢Ãî£¬£¨net-snmpÄ¬ÈÏÖµÎª1s£©
+		_session.version = version; // âˆÃŠÂ±Ã¦
+		_session.retries = retries; // Ã·Ã¿Â â€˜Â¥Å’Â Ë
+		_session.timeout =  timeout; // â‰¥Â¨Â Â±Â Â±Âºâ€° Å’Â¢âˆšÃ“Â£Â¨Â£Â®net-snmpÆ’Â¨Â»Å“Ã·ÂµÅ’â„¢1sÂ£Â©
 		_session.peername = addr;
-		_session.remote_port = port; // ĞÂ°æ²»ÔÙÊ¹ÓÃÁË
+		_session.remote_port = port; // â€“Â¬âˆÃŠâ‰¤Âªâ€˜Å¸Â Ï€â€âˆšÂ¡Ã€
 		_session.community = community.c_str();
 		_session.community_len = community.length();
 		
@@ -213,7 +226,19 @@ private:
 		return true;
 	}
 	
-	const String asn2String(netsnmp_variable_list *var)
+    static String oid2String(const oid *oid, int len)
+    {
+        char str[MAX_OID_LEN] = {0};
+        char tmp[32] = {0};
+        for (int i = 0; i < len; ++i)
+        {
+            snprintf(tmp, sizeof(tmp), ".%ld", oid[i]);
+            strcat(tsr, tmp);
+        }
+        return str;
+    }
+    
+	static String asn2String(const netsnmp_variable_list *var)
 	{
 		
 		switch (var->type)
@@ -248,7 +273,7 @@ private:
 			case ASN_IPADDRESS:
 				
 			case ASN_NULL:
-			
+                return "null";
 			case ASN_UINTEGER:
 				
 			case ASN_COUNTER64:
@@ -257,9 +282,15 @@ private:
 			case ASN_OPAQUE_COUNTER64:
 			
 			case ASN_OPAQUE_FLOAT:
-				
+            {
+                char buf[32];
+                snprintf(buf, sizeof(buf), "%f", vars->);
+            }
 			case ASN_OPAQUE_DOUBLE:
-				
+            {
+                char buf[32];
+                snprintf(buf, sizeof(buf), "%lf", vars->);
+            }
 			default:
 			
 		}
