@@ -13,7 +13,7 @@
 #include <stdint.h>
 #endif
 
-namespace muduo
+namespace thefox
 {
 
 inline uint32_t atomicInc(volatile uint32_t *value) 
