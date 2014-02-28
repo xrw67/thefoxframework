@@ -4,52 +4,52 @@
 * @author macwe@qq.com
 */
 
-#ifndef _THEFOX_MYSQL_UTIL_H_
-#define _THEFOX_MYSQL_UTIL_H_
+#ifndef _THEFOX_DB_MYSQL_UTIL_H_
+#define _THEFOX_DB_MYSQL_UTIL_H_
 
 #include <base/Types.h>
-#include "MySqlConnection"
+#include <db/MySqlConnection.h>
 
 namespace thefox
 {
 
-namespace mysql
+namespace db
 
 class MysqlUtil
 {
 public:
-	bool isTableExist(MySqlConnection &conn, const String &tableName)
-	{
-		MySqlResultSet resultSet;
-		String sql("SHOW TABLES LIKE '"+ tableName+"'");
-		conn.query(sql, resultSet);
-		if (0 == resultSet.rowCount())
-			return false;
-		else
-			return true;
-	}
+    static bool isTableExist(MySqlConnection &conn, const String &tableName)
+    {
+        MySqlResultSet resultSet;
+        String sql("SHOW TABLES LIKE '"+ tableName+"'");
+        conn.query(sql, resultSet);
+        if (0 == resultSet.rowCount())
+            return false;
+        else
+            return true;
+    }
 
-	bool isQueryNotRecord(MySqlConnection &conn, const String &selectSql)
-	{
-		MySqlResultSet resultSet;
-		conn.query(selectSql, resultSet);
-		if (0 == resultSet.rowCount())
-			return false;
-		else
-			return true;
-	}
+    static bool isQueryNotRecord(MySqlConnection &conn, const String &selectSql)
+    {
+        MySqlResultSet resultSet;
+        conn.query(selectSql, resultSet);
+        if (0 == resultSet.rowCount())
+            return false;
+        else
+            return true;
+    }
 
-	bool setNames(const String &csName)
-	{
-		String sql("SET NAMES '"+ csName+"'");
-		return conn.exec(sql);
-	}
+    static bool setNames(const String &csName)
+    {
+        String sql("SET NAMES '"+ csName+"'");
+        return conn.exec(sql);
+    }
 
 };
 
-} // nsmespace mysql
+} // nsmespace db
 
 } // namespace thefox
 
-#endif // _THEFOX_MYSQL_UTIL_H_
+#endif // _THEFOX_DB_MYSQL_UTIL_H_
 
