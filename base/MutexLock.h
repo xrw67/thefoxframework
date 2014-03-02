@@ -11,7 +11,6 @@
 #include <Windows.h>
 #else
 #include <pthread.h>
-#include <pthread_mutex.h>
 #endif
 
 #include <base/noncopyable.h>

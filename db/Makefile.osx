@@ -1,7 +1,10 @@
 CC=g++
 CFLAGS = -c -g
-INCLUDE=~/Documents/my_dev/thefoxframework.oschina/
+INCLUDE=./..
 LIBRARY=mysqlclient
 
 testmysql: test.o
 	$(CC) $(CFLAGS) -o $@ $^ -I $(INCLUDE) -l$(LIBRARY)
+test.o: test.cpp
+	$(CC) -o $@ $^ -I$(INCLUDE) -l$(LIBRARY)
+

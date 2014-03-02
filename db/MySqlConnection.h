@@ -10,7 +10,7 @@
 #include <mysql/mysql.h>
 #include <base/Types.h>
 #include <base/MutexLock.h>
-#include <log/logger.h>
+//#include <log/Logger.h>
 #include <db/MySqlResultSet.h>"
 
 namespace thefox
@@ -65,7 +65,7 @@ public:
             
         if (NULL == (_connPtr = mysql_init(&_conn))) 
         {
-            LOG_ERROR << "mysql_init error, not enough memory!";
+//            LOG_ERROR << "mysql_init error, not enough memory!";
             return false;
         }
 
@@ -78,8 +78,7 @@ public:
                                     NULL, 
                                     CLIENT_MULTI_STATEMENTS)) 
         {
-            LOG_ERROR << "Failed to connect to database, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
-            const char *ss = mysql_error(_connPtr);
+//            LOG_ERROR << "Failed to connect to database, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
 
@@ -108,7 +107,7 @@ public:
         _dbName = dbName; 
         if (0 != mysql_select_db(_connPtr, _dbName.c_str())) 
         {
-            LOG_ERROR << "select database failed, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
+//            LOG_ERROR << "select database failed, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
         return true;
@@ -123,14 +122,14 @@ public:
     {
         if (!isConnected()) 
         {
-            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
+//            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
             return false;
         }
         
         MutexLockGuard lock(_lock);
         if (0 != mysql_real_query(_connPtr, sql.c_str(), (unsigned long)sql.length()))
         {
-            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
+//            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
         if (insertId)
@@ -148,14 +147,14 @@ public:
     {
         if (!isConnected())
         {
-            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
+//            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
             return false;
         }
         
         MutexLockGuard lock(_lock);
         if (0 != mysql_real_query(_connPtr, sql.c_str(), sql.length()))
         {
-            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
+//            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
         
@@ -163,7 +162,7 @@ public:
             mysql_free_result(resultSet);
         if (resultSet = mysql_store_result(_connPtr)) 
         {
-            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
+//            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
         }
         return true;
     }

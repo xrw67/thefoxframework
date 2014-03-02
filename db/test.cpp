@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <db/MySqlConnection.h>
 
-#using namespace mysql.db;
+using namespace mysql.db;
 
 int main(int argc, char *argv[])
 {
