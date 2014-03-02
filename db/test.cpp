@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <db/MySqlConnection.h>
 
-using namespace mysql.db;
+using namespace thefox::db;
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     MySqlResultSet rs;
     if (mysql.query("select now()", rs))
     {
-        while (rs.FetchRow())
+        while (rs.fetchRow())
         {
             printf("%s\r\n", rs.getString(0));
         }

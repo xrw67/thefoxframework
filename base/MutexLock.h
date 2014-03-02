@@ -13,12 +13,13 @@
 #include <pthread.h>
 #endif
 
+#include <base/Types.h>
 #include <base/noncopyable.h>
 
 namespace thefox 
 {
 
-class MutexLock : noncpoyable
+class MutexLock : noncopyable
 {
 public:
 	MutexLock()
@@ -68,7 +69,7 @@ private:
 
 };
 
-class MutexLockGuard : noncpoyable
+class MutexLockGuard : noncopyable
 {
 public:
 	MutexLockGuard(MutexLock &mutex)

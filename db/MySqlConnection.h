@@ -11,7 +11,7 @@
 #include <base/Types.h>
 #include <base/MutexLock.h>
 //#include <log/Logger.h>
-#include <db/MySqlResultSet.h>"
+#include <db/MySqlResultSet.h>
 
 namespace thefox
 {
