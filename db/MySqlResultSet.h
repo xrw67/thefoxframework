@@ -7,6 +7,8 @@
 #ifndef _THEFOX_DB_MYSQL_RESULTSET_H_
 #define _THEFOX_DB_MYSQL_RESULTSET_H_
 
+#ifdef __macos__
+
 #include <mysql/mysql.h>
 #include <base/Types.h>
 #include <base/noncopyable.h>
@@ -18,7 +20,7 @@ namespace db
 {
 
 /// @beirf 结果集类
-class MySqlResultSet
+class MySqlResultSet :noncopyable
 {
 public:
     MySqlResultSet()
@@ -74,7 +76,7 @@ public:
     }
     
     /// @beirf 根据索引得到字符串类型的值
-    /// @param[in] index 索引号
+    /// @param[in] index 字段索引号
     /// @return 返回对应的值
     const char *getString(const int index) const 
     {
@@ -85,15 +87,40 @@ public:
         return _row[index] ? _row[index] : "";
     }
     
-    /// @beirf 根据索引得到int类型的值
+    /// @beirf 根据索引得到字符串类型的值
+    /// @param[in] fiendName 字段的名称
     /// @return 返回对应的值
-    const int getInt(const int index) const
+    const char *getString(const String &fieldName) const
+    {
+        int index = getFieldIndex(fieldName);
+        if (index >= 0)
+            return _row[index] ? _row[index] : "";
+        return "";
+    }
+    
+    /// @beirf 根据索引得到int类型的值
+    /// @param[in] index 字段索引号
+    /// @return 返回对应的值
+    int getInt(const int index) const
     { return atoi(getString(index)); }
     
-    /// @beirf 根据索引得到unsigned int类型的值
+    /// @beirf 根据索引得到int类型的值
+    /// @param[in] fiendName 字段的名称
     /// @return 返回对应的值
-    const uint32_t getUInt(const int index) const
+    int getInt(const String &fieldName) const
+    { return atoi(getString(fieldName)); }
+    
+    /// @beirf 根据索引得到uint类型的值
+    /// @param[in] index 字段索引号
+    /// @return 返回对应的值
+    uint32_t getUInt(const int index) const
     { return (uint32_t)atoi(getString(index)); }
+    
+    /// @beirf 根据索引得到uint类型的值
+    /// @param[in] fiendName 字段的名称
+    /// @return 返回对应的值
+    uint32_t getUInt(const String &fieldName) const
+    { return (uint32_t)atoi(getString(fieldName)); }
     
     /// @beirf 根据索引得到一个字符串类型值
     /// @return 返回索引号对应的值
@@ -106,16 +133,28 @@ public:
     operator bool() const 
     { return NULL == _res; }
     
-    operator MYSQL_RES *() 
+    operator MYSQL_RES *() const
     { return _res; }
     
-    const MySqlResultSet &operator=(MYSQL_RES *res) 
+    const MySqlResultSet &operator=(MYSQL_RES *res)  const
     {
         _res = res;
         return *this;
     }
 
 private:
+    int getFieldIndex(const String &fieldName) const
+    {
+        MYSQL_FIELD *field;
+        mysql_field_seek(_res, 0);
+        while (field = mysql_fetch_field(_res))
+        {
+            if (fieldName == field->name)
+                return field->index;
+        }
+        return -1;
+    }
+    
     MYSQL_RES *_res;
     MYSQL_ROW _row;
 };
