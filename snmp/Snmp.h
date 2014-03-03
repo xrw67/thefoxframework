@@ -1,4 +1,4 @@
-#ifdef _THEFOX_SNMP_H_
+#ifndef _THEFOX_SNMP_H_
 #define _THEFOX_SNMP_H_
 
 #include <vector>
@@ -6,7 +6,7 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <base/Types.h>
 #include <base/noncopyable.h>
-#include <log/log.h>
+//#include <log/log.h>
 
 namespace thefox
 {
@@ -60,6 +60,8 @@ public:
 		if (NULL == (pdu = snmp_pdu_create(SNMP_MSG_GET)))
 			return false;
 		
+        oid anOID[MAX_OID_LEN];
+        size_t anOID_len = MAX_OID_LEN;
 		// 解析OID
 		size_t pos = 0;
 		size_t lastPos = 0;
@@ -71,8 +73,10 @@ public:
 				pos = oids.length();
 				if (pos != lastPos)
 				{
+                    anOID_len = MAX_OID_LEN;
 					String oidBuf = oids.substr(lastPos, pos - lastPos);
-					snmp_add_null_var(pdu, oidBuf.c_str(), oidBuf.length());
+                    read_objid(oidBuf.c_str(), anOID, &anOID_len);
+					snmp_add_null_var(pdu, anOID, anOID_len);
 				}
 				break;
 			}
@@ -80,14 +84,16 @@ public:
 			{
 				if (pos != lastPos)
 				{
+                    anOID_len = MAX_OID_LEN;
 					String oidBuf = oids.substr(lastPos, pos - lastPos);
-					snmp_add_null_var(pdu, oidBuf.c_str(), oidBuf.length());
+                    read_objid(oidBuf.c_str(), anOID, &anOID_len);
+					snmp_add_null_var(pdu, anOID, anOID_len);
 				}
 			}
 			lastPos = pos + 1;
 		}
 		
-		int status = snmp_synch_response(_sessionPtr, pdu, response);
+		int status = snmp_synch_response(_sessionPtr, pdu, &response);
 		if (STAT_SUCCESS == status)
 		{
 			if (SNMP_ERR_NOERROR == response->errstat)
@@ -122,7 +128,7 @@ public:
 		return (STAT_SUCCESS == status) ? true : false;
 	}
 	
-	bool getNext(const String &oids, String &newOids, std::vector<string> &values)
+	bool getNext(const String &oids, String &newOids, std::vector<String> &values)
 	{
 		if (0 == oids.length())
 			return false;
@@ -134,6 +140,8 @@ public:
 		if (NULL == (pdu = snmp_pdu_create(SNMP_MSG_GET)))
 			return false;
 		
+        oid anOID[MAX_OID_LEN];
+        size_t anOID_len = MAX_OID_LEN;
 		// 解析OID
 		size_t pos = 0;
 		size_t lastPos = 0;
@@ -145,8 +153,10 @@ public:
 				pos = oids.length();
 				if (pos != lastPos)
 				{
+                    anOID_len = MAX_OID_LEN;
 					String oidBuf = oids.substr(lastPos, pos - lastPos);
-					snmp_add_null_var(pdu, oidBuf.c_str(), oidBuf.length());
+                    read_objid(oidBuf.c_str(), anOID, &anOID_len);
+					snmp_add_null_var(pdu, anOID, anOID_len);
 				}
 				break;
 			}
@@ -154,14 +164,16 @@ public:
 			{
 				if (pos != lastPos)
 				{
+                    anOID_len = MAX_OID_LEN;
 					String oidBuf = oids.substr(lastPos, pos - lastPos);
-					snmp_add_null_var(pdu, oidBuf.c_str(), oidBuf.length());
+                    read_objid(oidBuf.c_str(), anOID, &anOID_len);
+					snmp_add_null_var(pdu, anOID, anOID_len);
 				}
 			}
 			lastPos = pos + 1;
 		}
 		
-		int status = snmp_synch_response(_sessionPtr, pdu, response);
+		int status = snmp_synch_response(_sessionPtr, pdu, &response);
 		if (STAT_SUCCESS == status)
 		{
 			if (SNMP_ERR_NOERROR == response->errstat)
@@ -179,13 +191,13 @@ public:
 			}
 			else
 			{
-				// PDU¥ÌŒÛ
+				// PDU
 				
 			}
 		}
 		else if (STAT_TIMEOUT == status)
 		{
-			LOG_INFO
+		//	LOG_INFO
 			
 		}
 		else // status == STAT_ERROR
@@ -211,17 +223,19 @@ private:
 	{
 		char addr[128];
 		snprintf(addr, sizeof(addr), "%s:%d", ipAddr.c_str(), port);
-		
+		char commun[128];
+        snprintf(commun, sizeof(commun),"%s", community.c_str());
+
 		snmp_sess_init(&_session);
-		_session.version = version; // ∞Ê±æ
-		_session.retries = retries; // ÷ÿ ‘¥Œ ˝
-		_session.timeout =  timeout; // ≥¨ ± ±º‰ Œ¢√Ó£¨£®net-snmpƒ¨»œ÷µŒ™1s£©
+		_session.version = version; // 
+		_session.retries = retries; //
+		_session.timeout =  timeout; //
 		_session.peername = addr;
-		_session.remote_port = port; // –¬∞Ê≤ª‘Ÿ π”√¡À
-		_session.community = community.c_str();
-		_session.community_len = community.length();
+		_session.remote_port = port; //
+		_session.community = (u_char *)commun;
+		_session.community_len = strlen(commun);
 		
-		if (NULL == (ss = snmp_open(&session)))
+		if (NULL == (_sessionPtr = snmp_open(&_session)))
 			return false;
 		return true;
 	}
@@ -233,7 +247,7 @@ private:
         for (int i = 0; i < len; ++i)
         {
             snprintf(tmp, sizeof(tmp), ".%ld", oid[i]);
-            strcat(tsr, tmp);
+            strcat(str, tmp);
         }
         return str;
     }
@@ -284,15 +298,13 @@ private:
 			case ASN_OPAQUE_FLOAT:
             {
                 char buf[32];
-                snprintf(buf, sizeof(buf), "%f", vars->);
+                //snprintf(buf, sizeof(buf), "%f", vars->);
             }
 			case ASN_OPAQUE_DOUBLE:
             {
                 char buf[32];
-                snprintf(buf, sizeof(buf), "%lf", vars->);
+               // snprintf(buf, sizeof(buf), "%lf", vars->);
             }
-			default:
-			
 		}
 	}
 	
@@ -303,3 +315,4 @@ private:
 } // nameapace thefox
 
 #endif // _THEFOX_SNMP_H_
+

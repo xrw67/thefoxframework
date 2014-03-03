@@ -1,4 +1,4 @@
-#incldue <snmp/snmp.h>
+#include <snmp/Snmp.h>
 
 using namespace thefox;
 
@@ -14,9 +14,9 @@ int main(int argc, char **argv)
     }
     
     String oids(".1.3.6.1.2");
-    while (snmp.getnext(oids, oids, result))
+    while (snmp.getNext(oids, oids, result))
     {
-        if (!strncmp(oids, "",strlen("")))
+        if (!strncmp(oids.c_str(), "",strlen("")))
             break;
     }
 	

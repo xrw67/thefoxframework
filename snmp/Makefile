@@ -1,14 +1,14 @@
 CC=g++
 
-CFLAGS= -Wall -o -g
+CFLAGS= -g
+DFLAGS=-fPIC -shared
+INCLUDE=./..
 
-INCLUDE=
-
-LIBRARY=
+LIBRARY=libnetsnmp
 
 all: testsnmp
 
-testsnmp: test.o
-	$(CC) $(CFLAGS) -I$(INCLUDE) -L$(LIBRARY) test.cpp
+testsnmp: test.cpp
+	$(CC) $(CFLAGS) $(DFLAGS) -std=c++0x -o $@ $^ -I$(INCLUDE) -L$(LIBRARY)
 
 
