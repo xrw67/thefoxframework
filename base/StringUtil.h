@@ -130,7 +130,7 @@ inline String toUpper(String &str)
 
 inline bool charIsLetter(char c)
 {
-	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c >= 'z'))
+	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
 		return true;
 	return false;
 }
