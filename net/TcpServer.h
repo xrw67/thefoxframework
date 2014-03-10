@@ -1,64 +1,62 @@
-﻿#ifndef _THEFOX_NET_SERVER_TCPSERVER_H_
-#define _THEFOX_NET_SERVER_TCPSERVER_H_
+#ifndef _THEFOX_NET_TCPSERVER_H_
+#define _THEFOX_NET_TCPSERVER_H_
 
+#include <map>
 #include <base/Types.h>
-#include <base/noncopyable.h>
-#include <net/winapi.h>
+#include <net/Callbacks.h>
 #include <net/InetAddress.h>
-#include <net/IoCompletionPort.h>
-#include <net/IoBufferPool.h>
-#include <net/Acceptor.h>
+#include <net/win32.h>
 
 namespace thefox
 {
+namespace thefox
+{
 
-class Buffer;
-class Acceptor;
+class Iocp;
+class Socket;
 class TcpConnection;
 
-class TcpServer : noncopyable
+class TcpServer
 {
 public:
-	typedef TcpConnection *TcpConnectionPtr;
+	TcpServer(const InetAddress &listenAddr,
+              const String &nameArg);
+	~TcpServer(void);
 
-	TcpServer(const InetAddress &listenAddr, const String &nameArg);
-	~TcpServer();
-	
-	/// @brief 启动服务
-	void start();
-	/// @brief 停止服务
-	void stop();
+    void start();
+    
+    void setConnectionCallback(ConnectionCallback &cb);
+    void setCloseCallback(CloseCallback &cb);
+    void setMessageCallback(MessageCallback &cb);
+    void setWriteCompletionCallback(WriteCompletionCallback &cb);
 
-	void send(const TcpConnectionPtr &conn, const void *message, size_t len);
-	void shutdown(const TcpConnectionPtr &conn);
-
-	virtual void OnNewConnection(SOCKET socket, const InetAddress &localAddr, const InetAddress &peerAddr);
-	virtual void OnConnectionClose(const TcpConnectionPtr &conn);
-	virtual void OnConnectionError(const TcpConnectionPtr &conn);
-	virtual void OnReadCompleted(const TcpConnectionPtr &conn, Buffer *buf, Timestamp ts);
-	virtual void OnWriteCompleted(const TcpConnectionPtr &conn);
-	
-	void TcpServer::IoProcess(const TcpConnectionPtr &conn, IoBuffer *buf);
-
-	static DWORD WINAPI AcceptThread(LPVOID serverPtr); // 接收者线程
-	static DWORD WINAPI IoWorkThread(LPVOID serverPtr); // IO工作线程
 private:
-	void removeConnection(const TcpConnectionPtr &conn);
-	
-	typedef std::map<String, TcpConnectionPtr> ConnectionMap;
-	
-	IoCompletionPort _iocp; // 完成端口的封装
-	Acceptor _acceptor; // 接收客户端连接
-	IoBufferPool _ioBufferPool;
-	MutexLock _connectionMapLock;
-	ConnectionMap _connections; //客户端连接列表
-	uint32_t _nextConnId;
-	
-	bool _started;// 服务器是否启动
-	const String _hostport;// 服务器的地址
-	const String _name;// 服务器的名称
+    TcpServer();
+    void newConnection(SOCKET s, const InetAddress &peerAddr);
+    static DWORD WorkerThreadProc(LPVOID param);
+    static DWORD ListenerThreadProc(LPVOID param);
+
+    typedef std::map<string, TcpConnection *> ConnectionMap;
+    Iocp *_iocp;
+    Socket *_listenSocket;
+    const String _hostport;
+    const String _name;
+    bool _started;
+    volatile _nextConnId;
+
+    HANDLE _acceptEvent;
+
+    ConnectionCallback _connectionCallback;
+    CloseCallback _closeCallback;
+    MessageCallback _messageCallback;
+    WriteCompleteCallback _writeComplateCallback;
+
+    ConnectionMap _connections;
+    //std::list<TcpConnection *> _freeConnections;
+    EventPool _freeEvents;
 };
 
-}
+} // namespace net
+} // namespace thefox
 
-#endif // _THEFOX_NET_SERVER_TCPSERVER_H_
+#endif // _THEFOX_NET_TCPSERVER_H_

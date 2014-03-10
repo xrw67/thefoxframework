@@ -1,5 +1,6 @@
 #include <log/LogFile.h>
 #include <base/noncopyable.h>
+#include <base/Types.h>
 
 #pragma warning(disable:4996)
 

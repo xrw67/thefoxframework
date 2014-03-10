@@ -18,7 +18,7 @@ typedef std::string String;
 
 #ifdef WIN32
 #pragma warning(disable:4996)
-typedef sprintf _snprintf
+#define snprintf _snprintf
 #else
 
 #endif

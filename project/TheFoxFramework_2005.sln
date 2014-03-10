@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Log", "Log\Log.vcproj", "{A7BA90D5-ABD5-4D46-9CB9-3CD3F5001630}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLog", "TestLog\TestLog.vcproj", "{06038EFF-4A50-41DB-B39C-E350E58EAB43}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IocpDemo", "IocpDemo\IocpDemo.vcproj", "{F11C017B-D665-4E5B-942C-4791ECE52DCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,10 @@ Global
 		{A7BA90D5-ABD5-4D46-9CB9-3CD3F5001630}.Debug|Win32.Build.0 = Debug|Win32
 		{A7BA90D5-ABD5-4D46-9CB9-3CD3F5001630}.Release|Win32.ActiveCfg = Release|Win32
 		{A7BA90D5-ABD5-4D46-9CB9-3CD3F5001630}.Release|Win32.Build.0 = Release|Win32
-		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Debug|Win32.ActiveCfg = Debug|Win32
-		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Debug|Win32.Build.0 = Debug|Win32
-		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Release|Win32.ActiveCfg = Release|Win32
-		{06038EFF-4A50-41DB-B39C-E350E58EAB43}.Release|Win32.Build.0 = Release|Win32
+		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Debug|Win32.Build.0 = Debug|Win32
+		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Release|Win32.ActiveCfg = Release|Win32
+		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

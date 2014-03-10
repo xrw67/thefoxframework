@@ -73,7 +73,7 @@ public:
 	{
 		if (_buffer.avail() >= kMaxNumericSize)
 		{
-			int len = _snprintf(_buffer.current(), kMaxNumericSize, "%.12g", v);
+			int len = snprintf(_buffer.current(), kMaxNumericSize, "%.12g", v);
 			_buffer.add(len);
 		}
 		return *this;

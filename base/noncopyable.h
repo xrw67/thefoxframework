@@ -1,6 +1,5 @@
 /*
 * @filename noncopyable.h
-* @brief 从boost中引用
 */
 
 #ifndef _THEFOX_NONCOPYABLE_H_

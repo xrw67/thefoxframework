@@ -5,7 +5,6 @@
 
 namespace thefox
 {
-
 namespace net
 {
 
@@ -14,7 +13,7 @@ class TcpConnection;
 typedef TcpConnection *TcpConnectionPtr;
 
 typedef void (*ConnectionCallback)(const TcpConnectionPtr &conn);
-typedef void (*CliseCallback)(const TcpConnectionPtr &conn);
+typedef void (*CloseCallback)(const TcpConnectionPtr &conn);
 typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &conn);
 typedef void (*MessageCallback)(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime);
 
@@ -22,7 +21,6 @@ void defaultConnectionCallback(const TcpConnectionPtr &conn);
 void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime);
 
 } // namespace net
-
 } // namespace thefox
 
 #endif // _THEFOX_NET_CALLBACKS_H_

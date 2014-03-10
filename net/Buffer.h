@@ -2,12 +2,15 @@
 #ifndef _THEFOX_NET_BUFFER_H_
 #define _THEFOX_NET_BUFFER_H_
 
+#include <vector>
 #include <algorithm>
 #include <base/copyable.h>
 #include <base/Types.h>
-#include <net/IoBuffer.h>
+#include <net/win32.h>
 
 namespace thefox
+{
+namespace net
 {
 
 /// A buffer class modeled after org.jboss.netty.buffer.ChannelBuffer
@@ -246,11 +249,6 @@ public:
 	{
 		return _buffer.capacity();
 	}
-    
-    void readIoBuffer(IoBuffer *ioBuffer)
-    {
-        append(ioBuffer->getWSABuffer()->buf, ioBuffer->getWSABuffer()->len);
-    }
 private:
 
 	char* begin()
@@ -278,6 +276,7 @@ private:
 	static const char kCRLF[];
 };
 
-}
+} // namespace net
+} // namespace thefox
 
 #endif  // _THEFOX_NET_BUFFER_H_

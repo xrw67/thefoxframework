@@ -3,9 +3,11 @@
 
 #include <base/Types.h>
 #include <base/copyable.h>
-#include <net/winapi.h>
+#include <net/win32.h>
 
 namespace thefox
+{
+namespace net
 {
 
 class InetAddress : public copyable
@@ -63,6 +65,7 @@ private:
 	struct sockaddr_in _addr;
 };
 
-}
+} // namespace net
+} // namespace thefox
 
 #endif  // _THEFOX_NET_INETADDRESS_H
