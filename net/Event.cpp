@@ -1,5 +1,4 @@
 #include <net/Event.h>
-#include <net/TcpConnection.h>
 
 using namespace thefox;
 using namespace thefox::net;

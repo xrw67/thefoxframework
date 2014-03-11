@@ -26,3 +26,11 @@ void Socket::listen(const InetAddress &listenAddr)
          sizeof(struct sockaddr_in));
     ::listen(_s, 5);
 }
+
+struct sockaddr_in Socket::getLocalAddr()
+{
+    struct sockaddr_in addr;
+    int len = -1;
+    getsockname(_s, (sockaddr *)&addr, &len);
+    return addr;
+}

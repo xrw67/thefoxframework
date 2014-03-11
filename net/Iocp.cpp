@@ -28,15 +28,15 @@ bool Iocp::associateSocket(SOCKET s, ULONG_PTR CompletionKey)
     return true;
 }
 
-Event *Iocp::poll(int timeout)
+Event *Iocp::poll()
 {
 	TcpConnection *conn = NULL;
 	DWORD bytesTransfered = 0;
-	LPOVERLAPPED *ol = NULL;
+	OVERLAPPED *ol = NULL;
 	BOOL ret = FALSE;
 	
 	ret = GetQueuedCompletionStatus(
-		_hIocp, &bytesTransfered, (LPDWORD)&conn, ol, timeout);
+		_hIocp, &bytesTransfered, (LPDWORD)&conn, &ol, INFINITE);
 	
     // process error
     if (!ret) {

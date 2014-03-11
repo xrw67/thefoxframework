@@ -1,9 +1,10 @@
 #ifndef _THEFOX_NET_INETADDRESS_H
 #define _THEFOX_NET_INETADDRESS_H
 
+#include <Winsock2.h>
 #include <base/Types.h>
 #include <base/copyable.h>
-#include <net/win32.h>
+
 
 namespace thefox
 {

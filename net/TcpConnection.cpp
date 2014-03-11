@@ -2,7 +2,7 @@
 #include <base/Types.h>
 #include <net/Event.h>
 #include <net/Socket.h>
-#include <net/IoBufPool.h>
+#include <net/Iocp.h>
 
 using namespace thefox;
 using namespace thefox::net;
@@ -33,7 +33,27 @@ void TcpConnection::handleRead()
 
 }
 
+void TcpConnection::handleReadComplete()
+{
+
+}
+
 void TcpConnection::handleWrite()
+{
+
+}
+
+void TcpConnection::handleWriteComplete()
+{
+
+}
+
+void TcpConnection::handleZeroByteRead()
+{
+
+}
+
+void TcpConnection::handleZeroByteReadComplete()
 {
 
 }

@@ -1,6 +1,9 @@
 #include <stdio.h>
-#include "TcpServer.h"
+#include <net/TcpServer.h>
+#include <net/Callbacks.h>
 
+using namespace thefox;
+using namespace thefox::net;
 
 void onConnection(const TcpConnectionPtr &conn)
 {
@@ -21,14 +24,13 @@ void onWriteComplete(const TcpConnectionPtr &conn)
 
 }
 
-
 int main(int argc, char *argv[])
 {
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 
 	InetAddress listenAddr(7901);
-	TcpServer svr(listenAddr, "MyIocpDemo");
+	TcpServer svr("MyIocpDemo", listenAddr);
 
 	svr.setConnectionCallback(onConnection);
 	svr.setCloseCallback(onClose);
@@ -36,6 +38,9 @@ int main(int argc, char *argv[])
 	svr.setWriteCompleteCallback(onWriteComplete);
 	
 	svr.start();
+
+    while ('q' != getchar())
+        ;
 
 	return 0;
 }

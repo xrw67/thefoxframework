@@ -7,19 +7,21 @@ using namespace thefox::net;
 
 EventLoop::EventLoop(Iocp *iocp)
 : _iocp(iocp)
+, _quit(false)
 {
 }
 
 EventLoop::~EventLoop()
 {
+    _quit = true;
 }
 
 void EventLoop::loop()
 {
 	Event *evt = NULL;
 
-	while (true) {
-		evt = _iocp->poll(1000);
+	while (!_quit) {
+		evt = _iocp->poll();
 		if (evt)
 			evt->handleEvent();
 	}

@@ -5,18 +5,18 @@
 #include <net/EventLoop.h>
 #include <net/TcpConnection.h>
 
+
 using namespace thefox;
 using namespace thefox::net;
 
-TcpServer::TcpServer(const InetAddress &listenAddr,
-                     const String &nameArg)
-    : _hostport(listenAddr.toIpPort())
+TcpServer::TcpServer(const String &nameArg, InetAddress listenAddr)
+    : _listenAddr(listenAddr)
     , _name(nameArg)
     , _nextConnId(1)
     , _iocp(new Iocp())
     , _listenSocket(new Socket(Socket::Create()))
 {
-    _iocp->bindHandle(*_listenSocket);
+    _iocp->associateSocket(*_listenSocket, 0);
 }
 
 TcpServer::~TcpServer(void)
@@ -29,37 +29,39 @@ TcpServer::~TcpServer(void)
     delete _iocp;
 }
 
-void start()
+void TcpServer::start()
 {
     SYSTEM_INFO si;
     GetSystemInfo(&si);
-    for (int i = 0; i < (si.dwNumberOfProcessors * 2 + 2); ++i) {
+    for (DWORD i = 0; i < (si.dwNumberOfProcessors * 2 + 2); ++i) {
         HANDLE handle;
         handle = CreateThread(NULL, 0, WorkerThreadProc, _iocp, 0, NULL);
         CloseHandle(handle);
     }
 
-    _listenSocket.listen();
+    _acceptEvent = WSACreateEvent();
+    WSAEventSelect(*_listenSocket, _acceptEvent, FD_ACCEPT);
+    _listenSocket->listen(_listenAddr);
     HANDLE handle = CreateThread(NULL, 0, ListenerThreadProc, this, 0, NULL);
     CloseHandle(handle);
 }
 
-TcpServer::newConnection(SOCKET s, const InetAddress &peerAddr)
+void TcpServer::newConnection(SOCKET s, InetAddress peerAddr)
 {
     char buf[32] = {0};
-    _snprintf(buf, sizeof(buf), ":%s#%d", _hostport.c_str(), _nextConnId);
+    _snprintf(buf, sizeof(buf), ":%s#%d", _listenAddr.toIpPort().c_str(), _nextConnId);
     ++_nextConnId;
-    string connName = _name + buf;
-    InetAddress localAddr(Socket::getLocalAddr(s));
+    String connName = _name + buf;
+    InetAddress localAddr(_listenSocket->getLocalAddr());
     TcpConnection *conn = new TcpConnection(s, connName, localAddr, peerAddr);
 
     _connections[connName] = conn;
-    _iocp.associateSocket(s, conn);
+    _iocp->associateSocket(s, (ULONG_PTR)conn);
 
     conn->setConnectionCallback(_connectionCallback);
     conn->setCloseCallback(_closeCallback);
     conn->setMessageCallback(_messageCallback);
-    conn->setWriteCompletionCallback(_writeCompletionCallback);
+    conn->setWriteCompleteCallback(_writeCompleteCallback);
 
     conn->connectEstablished();
 }
@@ -74,27 +76,29 @@ DWORD TcpServer::WorkerThreadProc(LPVOID param)
 
 DWORD TcpServer::ListenerThreadProc(LPVOID param)
 {
-    TcpServer *server = reinterpret_cast<TcpServe *>(param);
-    while (true) {
-        DWORD dwRet = WSAWaitForMultipleEvent(1,&server->_acceptEvent, FALSE, 100, FALSE);
+    TcpServer *server = reinterpret_cast<TcpServer *>(param);
+    while (server->started()) {
+        DWORD dwRet = WSAWaitForMultipleEvents(1,&server->_acceptEvent, FALSE, 100, FALSE);
         
         if (WSA_WAIT_TIMEOUT == dwRet)
             continue;
 
         WSANETWORKEVENTS events;
-        int nRet = WSAEnumNetworkEvents(server->_listenSocket, server->_acceptEvent, &events);
+        int nRet = WSAEnumNetworkEvents(*server->_listenSocket, server->_acceptEvent, &events);
         if (SOCKET_ERROR == nRet) {
             // error
         }
         if (events.lNetworkEvents & FD_ACCEPT) {
             if (0 == events.iErrorCode[FD_ACCEPT_BIT]) {
                 SOCKET clientSocket = INVALID_SOCKET;
-                int len = -1;
-                clientSocket = WSAAccept(server->_listenSocket, NULL, &len, 0, 0);
+                struct sockaddr_in addr;
+                int len = sizeof(addr);
+                clientSocket = WSAAccept(*server->_listenSocket, (sockaddr *)&addr, &len, 0, 0);
                 if (SOCKET_ERROR == clientSocket) {
-                    // error
+                    DWORD errCode = WSAGetLastError();
+
                 } else {
-                    server->newConnection(accept, peer);
+                    server->newConnection(clientSocket, InetAddress(addr));
                 }
             } else {
                 // error

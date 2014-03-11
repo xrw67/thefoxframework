@@ -1,7 +1,10 @@
 #ifndef _THEFOX_NET_EVENT_H_
 #define _THEFOX_NET_EVENT_H_
 
-#include <net/win32.h>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <net/TcpConnection.h>
+
 
 namespace thefox 
 {

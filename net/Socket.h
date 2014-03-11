@@ -1,7 +1,7 @@
 #ifndef _THEFOX_NET_SOCKET_H_
 #define _THEFOX_NET_SOCKET_H_
 
-#include <net/win32.h>
+#include <Winsock2.h>
 
 namespace thefox
 {
@@ -18,7 +18,8 @@ public:
 	~Socket(void);
 
 	void listen(const InetAddress &listenAddr);
-	operator SOCKET()
+	struct sockaddr_in getLocalAddr();
+    operator SOCKET()
 	{
 		return _s;
 	}

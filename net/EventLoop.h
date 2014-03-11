@@ -17,6 +17,7 @@ public:
 	void loop();
 private:
 	Iocp *_iocp;
+    bool _quit;
 };
 
 } // namespace net

@@ -2,58 +2,59 @@
 #define _THEFOX_NET_TCPSERVER_H_
 
 #include <map>
+#include <Winsock2.h>
 #include <base/Types.h>
-#include <net/Callbacks.h>
+#include <base/noncopyable.h>
 #include <net/InetAddress.h>
-#include <net/win32.h>
+#include <net/Callbacks.h>
 
 namespace thefox
 {
-namespace thefox
+namespace net
 {
 
 class Iocp;
 class Socket;
-class TcpConnection;
 
-class TcpServer
+class TcpServer :noncopyable
 {
 public:
-	TcpServer(const InetAddress &listenAddr,
-              const String &nameArg);
+	TcpServer(const String &nameArg, InetAddress listenAddr);
 	~TcpServer(void);
 
     void start();
+    bool started() const { return _started; }
     
-    void setConnectionCallback(ConnectionCallback &cb);
-    void setCloseCallback(CloseCallback &cb);
-    void setMessageCallback(MessageCallback &cb);
-    void setWriteCompletionCallback(WriteCompletionCallback &cb);
+    void setConnectionCallback(const ConnectionCallback &cb)
+    { _connectionCallback = cb; }
+    void setCloseCallback(const CloseCallback &cb)
+    { _closeCallback = cb; }
+    void setMessageCallback(const MessageCallback &cb)
+    { _messageCallback = cb; }
+    void setWriteCompleteCallback(const WriteCompleteCallback &cb)
+    { _writeCompleteCallback = cb; }
 
 private:
-    TcpServer();
-    void newConnection(SOCKET s, const InetAddress &peerAddr);
-    static DWORD WorkerThreadProc(LPVOID param);
-    static DWORD ListenerThreadProc(LPVOID param);
+    void newConnection(SOCKET s, InetAddress peerAddr);
+    static DWORD WINAPI WorkerThreadProc(LPVOID param);
+    static DWORD WINAPI ListenerThreadProc(LPVOID param);
 
-    typedef std::map<string, TcpConnection *> ConnectionMap;
+    typedef std::map<String, TcpConnectionPtr> ConnectionMap;
     Iocp *_iocp;
     Socket *_listenSocket;
-    const String _hostport;
+    InetAddress _listenAddr;
     const String _name;
     bool _started;
-    volatile _nextConnId;
+    uint32_t _nextConnId;
 
     HANDLE _acceptEvent;
 
     ConnectionCallback _connectionCallback;
     CloseCallback _closeCallback;
     MessageCallback _messageCallback;
-    WriteCompleteCallback _writeComplateCallback;
+    WriteCompleteCallback _writeCompleteCallback;
 
     ConnectionMap _connections;
-    //std::list<TcpConnection *> _freeConnections;
-    EventPool _freeEvents;
 };
 
 } // namespace net

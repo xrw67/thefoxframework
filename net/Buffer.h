@@ -4,9 +4,11 @@
 
 #include <vector>
 #include <algorithm>
-#include <base/copyable.h>
+#include <Winsock2.h>
 #include <base/Types.h>
-#include <net/win32.h>
+#include <base/copyable.h>
+
+#pragma warning(disable:4996)
 
 namespace thefox
 {
@@ -125,16 +127,16 @@ public:
 		return result;
 	}
 
-	void append(const char* /*restrict*/ data, size_t len)
+	void append(const char *data, size_t len)
 	{
 		ensureWritableBytes(len);
 		std::copy(data, data+len, beginWrite());
 		hasWritten(len);
 	}
 
-	void append(const void* /*restrict*/ data, size_t len)
+	void append(const void *data, size_t len)
 	{
-		append(static_cast<const char*>(data), len);
+		append(static_cast<const char *>(data), len);
 	}
 
 	void ensureWritableBytes(size_t len)

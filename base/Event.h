@@ -1,6 +1,7 @@
 ﻿#ifndef _THEFOX_BASE_EVETN_H_
 #define _THEFOX_BASE_EVETN_H_
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <base/noncopyable.h>
 
