@@ -3,12 +3,12 @@
 
 #include <map>
 #include <Winsock2.h>
-#include <base/Types.h>
 #include <base/noncopyable.h>
+#include <base/Types.h>
+#include <base/MutexLock.h>
 #include <net/Buffer.h>
 #include <net/InetAddress.h>
 #include <net/Callbacks.h>
-#include <base/MutexLock.h>
 
 namespace thefox
 {
@@ -45,6 +45,7 @@ public:
     void handleEvent(IoContext *io);
     void handleClose();
 private:
+    typedef std::map<uint32_t, IoContext *> IoContextMap;
     enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
     void setState(StateE s) { _state = s; }
     void asyncRead(IoContext *buf = NULL);
@@ -56,6 +57,8 @@ private:
     void handleWriteComplete(IoContext *io);
     void handleZeroByteRead(IoContext *io);
     void handleZeroByteReadComplete(IoContext *io);
+    IoContext *getNextSendIoContext(IoContext *io);
+    IoContext *getNextReadIoContext(IoContext *io);
 
     const String _name;
     StateE _state;
@@ -66,9 +69,18 @@ private:
     Buffer _readBuffer;
     Buffer _sendBuffer;
     MutexLock _lock;
-    uint32_t _numberOfPendlingIO; // 表示还有多少IoContext在等待
-    std::map<uint32_t, IoContext *> _readIoContexts;
-    std::map<uint32_t, IoContext *> _sendIoContexts;
+    uint32_t _numberOfPendingIo; // 正在处理的IoBuffer个数,避免销毁后出现访问越界
+    
+    // 读队列
+	uint32_t _readSequence;
+	uint32_t _currentReadSequence;
+    IoContextMap _readIoContexts;
+    
+    // 发送队列
+	uint32_t _sendSequence;
+	uint32_t _currentSendSequence;
+    IoContextMap _sendIoContexts;
+    
     ConnectionCallback _connectionCallback;
     CloseCallback _closeCallback;
     MessageCallback _messageCallback;

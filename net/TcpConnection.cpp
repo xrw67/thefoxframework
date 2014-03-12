@@ -30,6 +30,7 @@ TcpConnection::~TcpConnection(void)
 void TcpConnection::send(const char *data, size_t len)
 {
     _sendBuffer.append(data, len);
+    asyncWrite()
 }
 
 void TcpConnection::send(const String &data)
@@ -51,6 +52,30 @@ void TcpConnection::handleClose()
     _closeCallback(this);
 }
 
+void TcpConnection::handleEvent(IoContext *io)
+{
+    switch (io->getIoType()) {
+    case IoContext::kRead:
+        handleRead(io);
+        break;
+    case IoContext::kReadComplete:
+        handleReadComplete(io);
+        break;
+    case IoContext::kWrite:
+        handleWrite(io);
+        break;
+    case IoContext::kWriteComplete:
+        handleWriteComplete(io);
+        break;
+    case IoContext::kZeroByteRead:
+        handleZeroByteRead(io);
+        break;
+    case IoContext::kZeroByteReadComplete:
+        handleZeroByteReadComplete(io);
+        break;
+    }
+}
+
 void TcpConnection::handleRead(IoContext *io)
 {
     
@@ -60,9 +85,14 @@ void TcpConnection::handleRead(IoContext *io)
 void TcpConnection::handleReadComplete(IoContext *io)
 {
 
-
-    asyncRead();
+    if (io = getNextReadIoContext()) {
+        char *ptr;
+        size_t len;
+        io->getBuffer(ptr, len);
+        _readBuffer.append(ptr, len);
+    }
     _messageCallback(this, &_readBuffer, Timestamp(Timestamp::now()));
+    asyncRead(io);
 }
 
 void TcpConnection::handleWrite(IoContext *io)
@@ -105,28 +135,33 @@ void TcpConnection::sendZeroByteRead(IoContext *io)
 {
     if (!io)
         io = IoContextPool::Instance().get();
+    io->setIoType(IoContext::kZeroByteRead);
+    io.setZeroBuf();
+    _iocp->postCompletion(io, this, 0);
 }
 
-void TcpConnection::handleEvent(IoContext *io)
+IoContext *TcpConnection::getNextSendIoContext(IoContext *io)
 {
-    switch (io->getIoType()) {
-    case IoContext::kRead:
-        handleRead(io);
-        break;
-    case IoContext::kReadComplete:
-        handleReadComplete(io);
-        break;
-    case IoContext::kWrite:
-        handleWrite(io);
-        break;
-    case IoContext::kWriteComplete:
-        handleWriteComplete(io);
-        break;
-    case IoContext::kZeroByteRead:
-        handleZeroByteRead(io);
-        break;
-    case IoContext::kZeroByteReadComplete:
-        handleZeroByteReadComplete(io);
-        break;
+    MutexLockGuard lock(_lock);
+    if (NULL == io) {
+        IoContext *io = NULL;
+        IoContextMap::iterator it 
+            = _sendIoContexts.find(_currentSendSequence);
+        if (_sendIoContexts.end() != it)
+            
     }
+        uint32_t ioSequence = io->getSequence();
+        if (ioSequence == _currentSendSequence) {
+            ++_currentSendSequence;
+            return io;
+        } else if (ioSequence < _currentSendSequence) {
+            _sendIoContexts[ioSequence] = io;
+            
+        }
+    }
+}
+
+IoContext *TcpConnection::getNextReadIoContext(IoContext *io)
+{
+    MutexLockGuard lock(_lock);
 }

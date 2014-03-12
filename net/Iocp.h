@@ -46,6 +46,11 @@ public:
         memcpy(_buffer, data, len);
         _wsa.len = static_cast<u_long>(len);    
     }
+    void setZeroBuf()
+    {
+        _wsa.buf = _buffer;
+        _wsa.len = 0;
+    }
     void resetBuffer()
     {
         _wsa.buf = _buffer;
