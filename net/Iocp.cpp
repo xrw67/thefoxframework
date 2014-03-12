@@ -1,67 +1,67 @@
 #include <net/Iocp.h>
-#include <net/Event.h>
 #include <net/TcpConnection.h>
 
 using namespace thefox;
 using namespace thefox::net;
 
 Iocp::Iocp(void)
+    : _quit(false)
 {
-	_hIocp = CreateIoCompletionPort(
-		INVALID_HANDLE_VALUE, NULL, 0, 0);
-	if (_hIocp == NULL) {
-		// Error
-	}
+	_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 }
 
 Iocp::~Iocp(void)
 {
+    _quit = true;
 }
 
-bool Iocp::associateSocket(SOCKET s, ULONG_PTR CompletionKey)
+bool Iocp::registerSocket(SOCKET s, TcpConnection *conn)
 {
-	if (CreateIoCompletionPort(
-		    (HANDLE)s, _hIocp, CompletionKey, 0) == NULL) {
-	    // Error
+	if (CreateIoCompletionPort((HANDLE)s, _hIocp, (ULONG_PTR)conn, 0) == NULL)
         return false;
-	}
     return true;
 }
 
-Event *Iocp::poll()
+bool Iocp::postCompletion(IoContext *buf, TcpConnection *conn, DWORD bytesTransferred)
 {
-	TcpConnection *conn = NULL;
+    BOOL result =  PostQueuedCompletionStatus(_hIocp, bytesTransferred, (ULONG_PTR)conn, &buf->_overlapped);
+    if (!result && GetLastError() != ERROR_IO_PENDING)
+        return false;
+    return true;
+}
+
+void Iocp::loop()
+{
 	DWORD bytesTransfered = 0;
-	OVERLAPPED *ol = NULL;
+    TcpConnection *conn = NULL;
+	OVERLAPPED *overlapped = NULL;
 	BOOL ret = FALSE;
 	
-	ret = GetQueuedCompletionStatus(
-		_hIocp, &bytesTransfered, (LPDWORD)&conn, &ol, INFINITE);
-	
-    // process error
-    if (!ret) {
-        DWORD errCode = GetLastError();
-        if (WAIT_TIMEOUT != errCode) {
-            Event *evt = conn->getEvent();
-            evt->setEvent(Event::EVENT_CLOSE);
-		    return evt;
+    while (!_quit) {
+	    ret = GetQueuedCompletionStatus(_hIocp,
+                                        &bytesTransfered,
+                                        (LPDWORD)&conn, 
+                                        &overlapped,
+                                        INFINITE);
+        if (!ret) {
+            DWORD errCode = GetLastError();
+            if (conn && WAIT_TIMEOUT != errCode)
+                conn->handleClose();
+            if (overlapped) {
+                IoContext *io = NULL;
+		        if ((io = CONTAINING_RECORD(overlapped, IoContext, _overlapped)) != NULL)
+                    IoContextPool::Instance().put(io);
+            }
+            continue;
         }
-        if (ol) {
-            Event *evt = NULL;
-		    if ((evt = CONTAINING_RECORD(ol, Event, _overlapped)) != NULL)
-			    delete evt;
+
+        if (ret && conn && overlapped) {
+            IoContext *io = NULL;
+		    if ((io = CONTAINING_RECORD(overlapped, IoContext, _overlapped)) != NULL)
+                conn->handleEvent(io);
         }
-        return NULL;
+
+        if (NULL == conn && NULL == overlapped)
+            break;
     }
-
-    if (ret && conn && ol) {
-        Event *evt = NULL;
-		if ((evt = CONTAINING_RECORD(ol, Event, _overlapped)) != NULL)
-			return evt;
-    }
-
-    if (NULL == conn && NULL == ol)
-        return NULL;
-
-    return NULL;
 }

@@ -4,28 +4,38 @@
 #include <list>
 #include <Winsock2.h>
 #include <base/noncopyable.h>
-
+#include <base/Types.h>
 
 namespace thefox
 {
 namespace net
 {
 
-class Event;
-
-class IoBuffer
+class IoContext
 {
 public:
-    IoBuffer(void)
+    OVERLAPPED _overlapped;
+
+    enum IoType{
+	    kRead,
+        kReadComplete,
+	    kWrite,
+        kWriteComplete,
+        kZeroByteRead,
+        kZeroByteReadComplete
+    };
+
+    IoContext(void)
     {
         _wsa.buf = _buffer;
         _wsa.len = sizeof(_buffer);
     }
-    ~IoBuffer(void)
-    {
-    }
-    int sequence() const { return _sequence; }
+    ~IoContext(void)
+    {}
+    uint32_t getSequence() const { return _sequence; }
     void setSequence(int seq) { _sequence = seq; }
+    IoType getIoType() const { return _ioType; }
+    void setIoType(IoType type) { _ioType = type; }
     void getBuffer(char *data, size_t &len)
     {
         data = _wsa.buf;
@@ -41,57 +51,59 @@ public:
         _wsa.buf = _buffer;
         _wsa.len = sizeof(_buffer); 
     }
-    WSABUF &getWSABuffer() { return _wsa; }
-
+    WSABUF &getWSABUF() { return _wsa; }
 private:
     static const int kMaxBufferSize = 8192;
+    IoType _ioType;
 	WSABUF _wsa;
 	char _buffer[kMaxBufferSize];
-    int _sequence;
+    uint32_t _sequence;
 };
 
-class IoBufPool : noncopyable
+class IoContextPool : noncopyable
 {
 public:
-    static IoBufPool &getInstance()
+    static IoContextPool &Instance()
     {
-        static IoBufPool theIoBufPool;
+        static IoContextPool theIoBufPool;
         return theIoBufPool;
     }
     
-    void push(IoBuffer *buf)
+    ~IoContextPool(void)
     {
-        if (buf)
-            _ioBuffers.push_back(buf);
-    }
-    IoBuffer *getBuf()
-    {
-        IoBuffer *buf = NULL;
-        while (!_ioBuffers.empty()) {
-            buf = _ioBuffers.front();
-            _ioBuffers.pop_front();
-            if (buf)
-                break;
-        }
-
-        if (!buf)
-            buf = new IoBuffer();
-
-        return buf;
-    }
-private:
-    ~IoBufPool(void)
-    {
-        while (!_ioBuffers.empty()) {
-            IoBuffer *buf = _ioBuffers.front();
-            _ioBuffers.pop_front();
+        while (!_IoContexts.empty()) {
+            IoContext *buf = _IoContexts.front();
+            _IoContexts.pop_front();
             if (buf)
                 delete buf;
         }
     }
 
-    std::list<IoBuffer *> _ioBuffers;
+    void put(IoContext *buf)
+    {
+        if (buf)
+            _IoContexts.push_back(buf);
+    }
+    IoContext *get()
+    {
+        IoContext *buf = NULL;
+        while (!_IoContexts.empty()) {
+            buf = _IoContexts.front();
+            _IoContexts.pop_front();
+            if (buf)
+                break;
+        }
+
+        if (NULL == buf)
+            buf = new IoContext();
+
+        return buf;
+    }
+private:
+    std::list<IoContext *> _IoContexts;
 };
+
+class TcpConnection;
 
 class Iocp
 {
@@ -100,11 +112,13 @@ public:
 	~Iocp(void);
 
 	/// @brief associate a socket to this iocp;
-	bool associateSocket(SOCKET s, ULONG_PTR CompletionKey);
+	bool registerSocket(SOCKET s, TcpConnection *conn);
+    bool postCompletion(IoContext *buf, TcpConnection *conn, DWORD bytesTransferred);
 
-	Event *poll();
+	void loop();
 private:
 	HANDLE _hIocp;
+    bool _quit;
 };
 
 } // namespace net

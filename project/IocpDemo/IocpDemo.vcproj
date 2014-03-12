@@ -182,14 +182,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\net\Event.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\net\EventLoop.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\net\InetAddress.cpp"
 				>
 			</File>
@@ -228,19 +220,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\net\Event.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\net\EventLoop.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\net\InetAddress.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\net\Iocp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\net\ObjectPool.h"
 				>
 			</File>
 			<File

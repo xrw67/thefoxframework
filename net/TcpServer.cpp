@@ -2,7 +2,6 @@
 #include <base/Types.h>
 #include <net/Iocp.h>
 #include <net/Socket.h>
-#include <net/EventLoop.h>
 #include <net/TcpConnection.h>
 
 
@@ -16,7 +15,7 @@ TcpServer::TcpServer(const String &nameArg, InetAddress listenAddr)
     , _iocp(new Iocp())
     , _listenSocket(new Socket(Socket::Create()))
 {
-    _iocp->associateSocket(*_listenSocket, 0);
+    _iocp->registerSocket(*_listenSocket, 0);
 }
 
 TcpServer::~TcpServer(void)
@@ -53,10 +52,9 @@ void TcpServer::newConnection(SOCKET s, InetAddress peerAddr)
     ++_nextConnId;
     String connName = _name + buf;
     InetAddress localAddr(_listenSocket->getLocalAddr());
-    TcpConnection *conn = new TcpConnection(s, connName, localAddr, peerAddr);
+    TcpConnection *conn = new TcpConnection(_iocp, s, connName, localAddr, peerAddr);
 
     _connections[connName] = conn;
-    _iocp->associateSocket(s, (ULONG_PTR)conn);
 
     conn->setConnectionCallback(_connectionCallback);
     conn->setCloseCallback(_closeCallback);
@@ -69,8 +67,7 @@ void TcpServer::newConnection(SOCKET s, InetAddress peerAddr)
 DWORD TcpServer::WorkerThreadProc(LPVOID param)
 {
     Iocp *iocp = reinterpret_cast<Iocp *>(param);
-    EventLoop loop(iocp);
-    loop.loop();
+    iocp->loop();
     return 0;
 }
 
