@@ -170,26 +170,25 @@ public:
 		ls = rs;
 		rs = temp;
 	}
-
-	static String operator+(const char *ls, const String &rs)
-	{
-		String buf(ls);
-		buf += rs;
-		return buf;
-	}
-
-	static BOOL operator==(const char *ls, const String &rs)
-	{
-		return !rs.compare(ls);
-	}
-
-	static BOOL operator==(const String &ls, const char *rs)
-	{
-		return !ls.compare(rs);
-	}
-
 };
 
+inline String operator+(const char *ls, const String &rs)
+{
+	String buf(ls);
+	buf += rs;
+	return buf;
+}
+
+inline BOOL operator==(const char *ls, const String &rs)
+{
+	return !rs.compare(ls);
+}
+
+inline BOOL operator==(const String &ls, const char *rs)
+{
+	return !ls.compare(rs);
+}
+	
 } // namespace thefox
 
 #endif // _THEFOX_STRING_UTIL_H_
