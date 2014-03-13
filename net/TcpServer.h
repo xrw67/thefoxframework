@@ -1,63 +1,59 @@
+/*
+ * @filename TcpServer.h
+ * @brief tcp服务器类
+ * @author macwe@qq.com
+ */
+
 #ifndef _THEFOX_NET_TCPSERVER_H_
 #define _THEFOX_NET_TCPSERVER_H_
 
-#include <map>
-#include <Winsock2.h>
 #include <base/Types.h>
 #include <base/noncopyable.h>
-#include <net/InetAddress.h>
 #include <net/Callbacks.h>
+#include <net/InetAddress.h>
 
 namespace thefox
 {
-namespace net
-{
 
-class Iocp;
-class Socket;
-
-class TcpServer :noncopyable
+#ifdef WIN32
+    class IocpServer;
+#else
+    class EpollServer;
+#endif
+    
+class TcpServer : noncopyable
 {
 public:
 	TcpServer(const String &nameArg, InetAddress listenAddr);
 	~TcpServer(void);
 
-    void start();
-    bool started() const { return _started; }
+    /// @brief 启动服务
+    /// @return 成功返回true，否则返回false
+    bool start();
     
+    /// @brief 停止服务
+    void stop();
+    
+    /// @brief 查看服务是否已经启动
+    /// @return 已经启动返回true，否则返回false
+    bool started();
+    
+    /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb)
-    { _connectionCallback = cb; }
+    
+    /// @brief 设置连接关闭回调函数
     void setCloseCallback(const CloseCallback &cb)
-    { _closeCallback = cb; }
+    
+    /// @brief 设置收到数据的回调函数
     void setMessageCallback(const MessageCallback &cb)
-    { _messageCallback = cb; }
-    void setWriteCompleteCallback(const WriteCompleteCallback &cb)
-    { _writeCompleteCallback = cb; }
-
 private:
-    void newConnection(SOCKET s, InetAddress peerAddr);
-    static DWORD WINAPI WorkerThreadProc(LPVOID param);
-    static DWORD WINAPI ListenerThreadProc(LPVOID param);
-
-    typedef std::map<String, TcpConnectionPtr> ConnectionMap;
-    Iocp *_iocp;
-    Socket *_listenSocket;
-    InetAddress _listenAddr;
-    const String _name;
-    bool _started;
-    uint32_t _nextConnId;
-
-    HANDLE _acceptEvent;
-
-    ConnectionCallback _connectionCallback;
-    CloseCallback _closeCallback;
-    MessageCallback _messageCallback;
-    WriteCompleteCallback _writeCompleteCallback;
-
-    ConnectionMap _connections;
+#ifdef WIN32
+    IocpServer *_model;
+#else
+    EpollServer *_model;
+#endif
 };
 
-} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_TCPSERVER_H_

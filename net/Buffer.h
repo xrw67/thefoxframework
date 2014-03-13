@@ -4,15 +4,19 @@
 
 #include <vector>
 #include <algorithm>
+
+#ifdef WIN32
 #include <Winsock2.h>
+#else
+#include <arpa/inet.h>
+#endif
+
 #include <base/Types.h>
 #include <base/copyable.h>
 
 #pragma warning(disable:4996)
 
 namespace thefox
-{
-namespace net
 {
 
 /// A buffer class modeled after org.jboss.netty.buffer.ChannelBuffer
@@ -56,30 +60,6 @@ public:
 
 	const char* peek() const
 	{ return begin() + _readerIndex; }
-
-	const char* findCRLF() const
-	{
-		const char* crlf = std::search(peek(), beginWrite(), kCRLF, kCRLF+2);
-		return crlf == beginWrite() ? NULL : crlf;
-	}
-
-	const char* findCRLF(const char* start) const
-	{
-		const char* crlf = std::search(start, beginWrite(), kCRLF, kCRLF+2);
-		return crlf == beginWrite() ? NULL : crlf;
-	}
-
-	const char* findEOL() const
-	{
-		const void* eol = memchr(peek(), '\n', readableBytes());
-		return static_cast<const char*>(eol);
-	}
-
-	const char* findEOL(const char* start) const
-	{
-		const void* eol = memchr(start, '\n', readableBytes());
-		return static_cast<const char*>(eol);
-	}
 
 	void retrieve(size_t len)
 	{
@@ -274,8 +254,6 @@ private:
 	std::vector<char> _buffer;
 	size_t _readerIndex;
 	size_t _writerIndex;
-
-	static const char kCRLF[];
 };
 
 } // namespace net

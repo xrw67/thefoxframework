@@ -1,14 +1,16 @@
 #ifndef _THEFOX_NET_INETADDRESS_H
 #define _THEFOX_NET_INETADDRESS_H
 
-#include <Winsock2.h>
 #include <base/Types.h>
 #include <base/copyable.h>
 
+#ifdef WIN32
+#include <Winsock2.h>
+#else
+#include <netinet/in.h>
+#endif
 
 namespace thefox
-{
-namespace net
 {
 
 class InetAddress : public copyable
@@ -66,7 +68,6 @@ private:
 	struct sockaddr_in _addr;
 };
 
-} // namespace net
 } // namespace thefox
 
 #endif  // _THEFOX_NET_INETADDRESS_H

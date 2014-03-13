@@ -2,25 +2,24 @@
 #define _THEFOX_NET_CALLBACKS_H_
 
 #include <base/Timestamp.h>
+#include <base/Types.h>
 
 namespace thefox
 {
-namespace net
-{
-
+    
 class Buffer;
-class TcpConnection;
-typedef TcpConnection *TcpConnectionPtr;
 
-typedef void (*ConnectionCallback)(const TcpConnectionPtr &conn);
-typedef void (*CloseCallback)(const TcpConnectionPtr &conn);
-typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &conn);
-typedef void (*MessageCallback)(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime);
+typedef void (*ConnectionCallback)(uint32_t connId);
+typedef void (*CloseCallback)(uint32_t connId);
+typedef void (*MessageCallback)(uint32_t connId,
+                                Buffer *buffer,
+                                Timestamp recvTime);
 
-void defaultConnectionCallback(const TcpConnectionPtr &conn);
-void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime);
+void defaultConnectionCallback(cuint32_t connId);
+void defaultMessageCallback(uint32_t connId,
+                            Buffer *buffer,
+                            Timestamp recvTime);
 
-} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_CALLBACKS_H_
