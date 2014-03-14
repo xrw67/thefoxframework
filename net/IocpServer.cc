@@ -2,17 +2,78 @@
 #include <net/TcpConnection.h>
 
 using namespace thefox;
-using namespace thefox::net;
 
-Iocp::Iocp(void)
+namespace thefox
+{
+    
+    class IoContext
+    {
+    public:
+        OVERLAPPED _overlapped;
+        
+        enum IoType{
+            kRead,
+            kWrite,
+        };
+        
+        IoContext(void)
+        {
+            _wsa.buf = _buffer;
+            _wsa.len = sizeof(_buffer);
+        }
+        ~IoContext(void)
+        {}
+        IoType getIoType() const { return _ioType; }
+        void setIoType(IoType type) { _ioType = type; }
+        void getBuffer(char *data, size_t &len)
+        {
+            data = _wsa.buf;
+            len = _wsa.len;
+        }
+        void setBuffer(char *data, size_t len)
+        {
+            memcpy(_buffer, data, len);
+            _wsa.len = static_cast<u_long>(len);
+        }
+        void resetBuffer()
+        {
+            _wsa.buf = _buffer;
+            _wsa.len = sizeof(_buffer);
+        }
+        WSABUF &getWSABUF() { return _wsa; }
+        int getBufUsed() const { return _wsa.len; }
+    private:
+        static const int kMaxBufferSize = 8192;
+        IoType _ioType;
+        WSABUF _wsa;
+        char _buffer[kMaxBufferSize];
+        uint32_t _sequence;
+    };
+    
+    class ClientContext
+    {
+        
+    };
+    
+}
+
+
+Iocp::Iocp(const String &nameArg, InetAddress listenAddr)
     : _quit(false)
 {
-	_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+    _hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+    _listenSocket = ::socket(
 }
 
 Iocp::~Iocp(void)
 {
     _quit = true;
+}
+
+bool IocpServer::start()
+{
+    
+
 }
 
 bool Iocp::registerSocket(SOCKET s, TcpConnection *conn)
