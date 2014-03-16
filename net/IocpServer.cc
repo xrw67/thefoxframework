@@ -18,6 +18,10 @@ public:
         
     IoContext(void)
     {
+		// OVERLAPPED需要初始化，否则WSARecv会ERROR_INVALID_HANDLE
+		memset(&_overlapped, 0, sizeof(_overlapped));
+		// buffer需要初始化，否则接收到的WSABUF.len会出问题
+		memset(&_buffer, 0, sizeof(_buffer));
         _wsa.buf = _buffer;
         _wsa.len = sizeof(_buffer);
     }
@@ -27,16 +31,18 @@ public:
     void setIoType(IoType type) { _ioType = type; }
     void setBuffer(const char *data, size_t len)
     {
+		memset(&_buffer, 0, sizeof(_buffer));
         memcpy(_buffer, data, len);
         _wsa.len = static_cast<u_long>(len);
     }
     void resetBuffer()
     {
+		memset(&_buffer, 0, sizeof(_buffer));
         _wsa.buf = _buffer;
         _wsa.len = sizeof(_buffer);
     }
-    WSABUF &getWsaBuf() { return _wsa; }
-    int getBufUsed() const { return _wsa.len; }
+    WSABUF &getWsaBuffer() { return _wsa; }
+    int getBufferUsed() const { return _wsa.len; }
 private:
     IoType _ioType;
     WSABUF _wsa;
@@ -68,7 +74,7 @@ public:
 	void appendReadBuffer(IoContextPtr io) 
 	{
 		if (io)
-			_readBuffer.append(io->getWsaBuf().buf, io->getBufUsed());
+			_readBuffer.append(io->getWsaBuffer().buf, io->getBufferUsed());
 	}
 	void appendWriteBuffer(const char *data, size_t len)
 	{
@@ -138,11 +144,11 @@ bool IocpServer::start()
         CloseHandle(handle);
     }
 
-    _listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    _listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
     _hAcceptEvent = WSACreateEvent();
     WSAEventSelect(_listenSocket, _hAcceptEvent, FD_ACCEPT);
     bind(_listenSocket, (struct sockaddr *)&_listenAddr.getSockAddrInet(), sizeof(struct sockaddr_in));
-    listen(_listenSocket, 5);
+    listen(_listenSocket, SOMAXCONN);
     handle = CreateThread(NULL, 0, acceptorThreadProc, this, 0, NULL);
     CloseHandle(handle);
 	return true;
@@ -200,19 +206,28 @@ void IocpServer::newConnection(SOCKET socket, const InetAddress &peerAddr)
     ConnectionPtr conn = new Connection(socket, connId, peerAddr);
     conn->setState(Connection::kConnected);
     _connections[connId] = conn;
-	CreateIoCompletionPort((HANDLE)socket, _hIocp, (ULONG_PTR)conn, 0);
+	HANDLE handle = CreateIoCompletionPort((HANDLE)socket, _hIocp, (ULONG_PTR)conn, 0);
+	if (NULL == handle) {
+		int errCode = GetLastError();
+		if (6 == errCode) {
+		;
+		}
+	}
 	IoContextPtr io = new IoContext();
 	io->setIoType(IoContext::kRead);
 	io->resetBuffer();
-	DWORD bytesRecv = 0;
+	DWORD nBytes = 0;
 	DWORD flags = 0;
-	WSARecv(conn->getSocket(), 
-			&io->getWsaBuf(), 
-			1, 
-			&bytesRecv, 
-			&flags, 
-			&io->_overlapped, 
-			NULL);
+	int bytesRecv = WSARecv(conn->getSocket(), &io->getWsaBuffer(), 1, 
+			&nBytes, &flags, &io->_overlapped, NULL);
+	if (SOCKET_ERROR == bytesRecv) {
+		int errCode = WSAGetLastError();
+		if (WSA_IO_PENDING != errCode) {
+			delete io;
+			removeConnection(conn);
+		}
+	}
+
 	_connectionCallback(connId);
 }
 
@@ -226,15 +241,15 @@ void IocpServer::handleRead(ConnectionPtr conn, IoContextPtr io)
 {
 	conn->appendReadBuffer(io);
 	io->resetBuffer();
-	DWORD bytesRecv = 0;
+	DWORD nBytes = 0;
 	DWORD flags = 0;
-	WSARecv(conn->getSocket(), 
-			&io->getWsaBuf(), 
-			1, 
-			&bytesRecv, 
-			&flags, 
-			&io->_overlapped, 
-			NULL);
+	int bytesRecv = WSARecv(conn->getSocket(), &io->getWsaBuffer(), 1, 
+			&nBytes, &flags, &io->_overlapped, NULL);
+	if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != WSAGetLastError())) {
+		delete io;
+		removeConnection(conn);
+	}
+	_messageCallback(conn->getConnId(), conn->getReadBuffer(), Timestamp(Timestamp::now()));
 }
 
 void IocpServer::handleWrite(ConnectionPtr conn, IoContextPtr io)
@@ -247,15 +262,14 @@ void IocpServer::handleWrite(ConnectionPtr conn, IoContextPtr io)
 			io = new IoContext();
 		io->setIoType(IoContext::kWrite);
 		io->setBuffer(readBuf->peek(), len);
-		DWORD bytesSend = 0;
+		DWORD nBytes = 0;
 		DWORD flags = 0;
-		WSASend(conn->getSocket(), 
-				&io->getWsaBuf(), 
-				1, 
-				&bytesSend, 
-				flags, 
-				&io->_overlapped, 
-				NULL);
+		int byteSend = WSASend(conn->getSocket(), &io->getWsaBuffer(), 1, 
+				&nBytes, flags, &io->_overlapped, NULL);
+		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError())) {
+			delete io;
+			removeConnection(conn);
+		}
 		readBuf->retrieve(len);
 	}
 }

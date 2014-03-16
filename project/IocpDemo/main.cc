@@ -8,17 +8,17 @@ using namespace thefox;
 
 void onConnection(int32_t connId)
 {
-	printf("Connection success connID=%d", connId);
+	printf("Connection success connID=%d\r\n", connId);
 }
 
 void onClose(int32_t connId)
 {
-	printf("Connection close connID=%d", connId);
+	printf("Connection close connID=%d\r\n", connId);
 }
 
 void onMessage(int32_t connId, Buffer *buf, Timestamp receiveTime)
 {
-	printf("Message come, size=%u", buf->readableBytes());
+	printf("Message come, size=%u\r\n", buf->readableBytes());
 	buf->retrieveAll();
 }
 
