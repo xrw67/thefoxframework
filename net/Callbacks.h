@@ -9,14 +9,15 @@ namespace thefox
     
 class Buffer;
 
-typedef void (*ConnectionCallback)(uint32_t connId);
-typedef void (*CloseCallback)(uint32_t connId);
-typedef void (*MessageCallback)(uint32_t connId,
+typedef void (*ConnectionCallback)(int32_t connId);
+typedef void (*CloseCallback)(int32_t connId);
+typedef void (*MessageCallback)(int32_t connId,
                                 Buffer *buffer,
                                 Timestamp recvTime);
+typedef void (*WriteCompleteCallback)(int32_t connId);
 
-void defaultConnectionCallback(cuint32_t connId);
-void defaultMessageCallback(uint32_t connId,
+void defaultConnectionCallback(int32_t connId);
+void defaultMessageCallback(int32_t connId,
                             Buffer *buffer,
                             Timestamp recvTime);
 

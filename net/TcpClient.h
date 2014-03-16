@@ -1,4 +1,4 @@
-/*
+﻿/*
  * @filename TcpClient.h
  * @brief tcp客户端连接类
  * @author macwe@qq.com
@@ -38,13 +38,16 @@ public:
     bool isOpen();
         
     /// @brief 设置连接状态改变回调函数
-    void setConnectionCallback(const ConnectionCallback &cb)
+    void setConnectionCallback(const ConnectionCallback &cb);
         
     /// @brief 设置连接关闭回调函数
-    void setCloseCallback(const CloseCallback &cb)
+    void setCloseCallback(const CloseCallback &cb);
         
     /// @brief 设置收到数据的回调函数
-    void setMessageCallback(const MessageCallback &cb)
+    void setMessageCallback(const MessageCallback &cb);
+
+	/// @brief 设置缓冲区中数据发送完成后的回调函数
+	void setWriteCompleteCallback(const WriteCompleteCallback &cb);
 private:
 #ifdef WIN32
     WsaEventClient *_model;

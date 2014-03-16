@@ -256,7 +256,6 @@ private:
 	size_t _writerIndex;
 };
 
-} // namespace net
 } // namespace thefox
 
 #endif  // _THEFOX_NET_BUFFER_H_

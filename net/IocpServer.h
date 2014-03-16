@@ -1,47 +1,63 @@
-#ifndef _THEFOX_NET_IOCP_H_
+﻿#ifndef _THEFOX_NET_IOCP_H_
 #define _THEFOX_NET_IOCP_H_
 
 #include <map>
 #include <base/noncopyable.h>
 #include <base/Types.h>
 #include <Winsock2.h>
+#include <base/MutexLock.h>
 #include <net/InetAddress.h>
+#include <net/Callbacks.h>
 
 namespace thefox
 {
 
-
 class IoContext;
-class ClientContext;
+class Connection;
+typedef IoContext *IoContextPtr;
+typedef Connection *ConnectionPtr;
+typedef std::map<int32_t, ConnectionPtr> ConnectionMap;
 
-class Iocp : noncopyable
+class IocpServer : noncopyable
 {
 public:
-	Iocp(const String &nameArg, InetAddress listenAddr);
-	~Iocp(void);
+	IocpServer(const String &nameArg, const InetAddress &listenAddr);
+	~IocpServer();
     bool start();
-    void stop();
     bool started();
+	void send(int32_t connId, const char *data, size_t len);
+	void removeConnection(int32_t connId);
     void setConnectionCallback(const ConnectionCallback &cb);
     void setCloseCallback(const CloseCallback &cb);
     void setMessageCallback(const MessageCallback &cb);
-private:
-	/// @brief associate a socket to this iocp;
-	bool registerSocket(SOCKET s, TcpConnection *conn);
-    bool postCompletion(IoContext *buf, TcpConnection *conn, DWORD bytesTransferred);
+	void setWriteCompleteCallback(const WriteCompleteCallback &cb);
 
-    // 工作者循环
+	// 工作者循环
 	void workerLoop();
     // 接受者循环
     void acceptorLoop();
+private:
+	void newConnection(SOCKET socket, const InetAddress &peerAddr);
+	void removeConnection(ConnectionPtr conn);
+	void handleRead(ConnectionPtr conn, IoContextPtr io);
+	void handleWrite(ConnectionPtr conn, IoContextPtr io = NULL);
+	ConnectionPtr getConnectionById(int32_t connId);
     
+	const String _name;
+	InetAddress _listenAddr;
     SOCKET _listenSocket;
 	HANDLE _hIocp;
-    HANDLE _hShuwdownEvent;
-    bool _quit;
+    HANDLE _hAcceptEvent;
+    bool _started;
+	int32_t _nextConnId;
+
+    ConnectionMap _connections;
+	MutexLock _connLock;
     
-    const String nameArg;
-    
+    ConnectionCallback _connectionCallback;
+	CloseCallback _closeCallback;
+	MessageCallback _messageCallback;
+	WriteCompleteCallback _writeCompleteCallback;
     
     
 };

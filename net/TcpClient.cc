@@ -4,7 +4,7 @@
 #ifndef WIN32
 #include <net/WsaEventClient.h>
 #else
-#include <net/pollClient.h>
+#include <net/PollClient.h>
 #endif
 
 using namespace thefox;

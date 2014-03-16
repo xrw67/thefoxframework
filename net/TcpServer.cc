@@ -1,7 +1,7 @@
 #include <net/TcpServer.h>
 #include <base/Types.h>
 
-#ifndef WIN32
+#ifdef WIN32
 #include <net/IocpServer.h>
 #else
 #include <net/EpollServer.h>
@@ -9,17 +9,18 @@
 
 using namespace thefox;
 
-TcpServer::TcpServer(const String &nameArg, InetAddress listenAddr)
+TcpServer::TcpServer(const String &nameArg, const InetAddress &listenAddr)
 {
 #ifdef WIN32
-    _model(new IocpServer(nameArg, listenAddr))
+    _model = new IocpServer(nameArg, listenAddr);
 #else
-    _model(new EpollServer(nameArg, listenAddr))
-#enif
+    _model = new EpollServer(nameArg, listenAddr);
+#endif
 }
 
-TcpServer::~TcpServer
+TcpServer::~TcpServer()
 {
+	delete _model;
 }
 
 bool TcpServer::start()
@@ -27,28 +28,31 @@ bool TcpServer::start()
     return _model->start();
 }
 
-void TcpServer::stop()
-{
-    return _model->stop();
-}
-
 bool TcpServer::started()
 {
     return _model->started();
 }
 
+void TcpServer::send(int32_t connId, const char *data, size_t len)
+{
+	_model->send(connId, data, len);
+}
+
 void TcpServer::setConnectionCallback(const ConnectionCallback &cb)
 {
-    _model->setWriteCompleteCallback;
+    _model->setConnectionCallback(cb);
 }
 void TcpServer::setCloseCallback(const CloseCallback &cb)
 {
-    _model->setWriteCompleteCallback;
+    _model->setCloseCallback(cb);
 }
 
 void TcpServer::setMessageCallback(const MessageCallback &cb)
 {
-    _model->setWriteCompleteCallback;
+    _model->setMessageCallback(cb);
 }
 
-
+void TcpServer::setWriteCompleteCallback(const WriteCompleteCallback &cb)
+{
+	_model->setWriteCompleteCallback(cb);
+}
