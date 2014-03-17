@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\EpollServer.cc" />
-    <ClCompile Include="..\..\net\IocpServer.cc" />
+    <ClCompile Include="..\..\net\Iocp.cc" />
     <ClCompile Include="..\..\net\SocketOps.cc" />
     <ClCompile Include="..\..\net\TcpServer.cc" />
     <ClCompile Include="main.cc" />
@@ -21,7 +21,7 @@
     <ClInclude Include="..\..\net\Buffer.h" />
     <ClInclude Include="..\..\net\Callbacks.h" />
     <ClInclude Include="..\..\net\EpollServer.h" />
-    <ClInclude Include="..\..\net\IocpServer.h" />
+    <ClInclude Include="..\..\net\Iocp.h" />
     <ClInclude Include="..\..\net\SocketOps.h" />
     <ClInclude Include="..\..\net\TcpConnection.h" />
     <ClInclude Include="..\..\net\TcpServer.h" />

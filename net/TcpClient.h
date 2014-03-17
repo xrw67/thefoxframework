@@ -10,25 +10,27 @@
 #include <base/Types.h>
 #include <base/noncopyable.h>
 #include <net/Callbacks.h>
-#include <net/InetAddress.h>
 
 namespace thefox
 {
+
 #ifdef WIN32
-    class WsaEventClient;
+    class Iocp;
 #else
-    class PollClient;
+    class Epoll;
 #endif
+
+class InetAddress;
 
 class TcpClient : noncopyable
 {
 public:
-    TcpClient(InetAddress serverAddr);
+    TcpClient(const String &nameArg);
     TcpClient(void);
         
     /// @brief 连接服务器
     /// @return 成功返回true，否则返回false
-    bool open();
+    bool open(const InetAddress &serverAddr);
         
     /// @brief 关闭连接
     void close();
@@ -36,7 +38,10 @@ public:
     /// @brief 查看是否已经连接
     /// @return 已经连接返回true，否则返回false
     bool isOpen();
-        
+    
+	/// @brief 发送数据
+	void send(const char *data, size_t len);
+
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);
         
@@ -50,11 +55,11 @@ public:
 	void setWriteCompleteCallback(const WriteCompleteCallback &cb);
 private:
 #ifdef WIN32
-    WsaEventClient *_model;
+    Iocp *_model;
 #else
-    PollClient *_model;
+    Epoll *_model;
 #endif
-    };
+};
     
 } // namespace thefox
 

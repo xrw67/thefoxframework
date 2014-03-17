@@ -2,19 +2,19 @@
 #include <base/Types.h>
 
 #ifdef WIN32
-#include <net/IocpServer.h>
+#include <net/Iocp.h>
 #else
 #include <net/EpollServer.h>
 #endif
 
 using namespace thefox;
 
-TcpServer::TcpServer(const String &nameArg, const InetAddress &listenAddr)
+TcpServer::TcpServer(const String &nameArg)
 {
 #ifdef WIN32
-    _model = new IocpServer(nameArg, listenAddr);
+    _model = new Iocp(nameArg);
 #else
-    _model = new EpollServer(nameArg, listenAddr);
+    _model = new EpollServer(nameArg);
 #endif
 }
 
@@ -23,9 +23,9 @@ TcpServer::~TcpServer()
 	delete _model;
 }
 
-bool TcpServer::start()
+bool TcpServer::start(const InetAddress &listenAddr)
 {
-    return _model->start();
+    return _model->start(listenAddr);
 }
 
 bool TcpServer::started()

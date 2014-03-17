@@ -21,13 +21,13 @@
     <ClCompile Include="..\..\net\EpollServer.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\IocpServer.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\net\SocketOps.cc">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="main.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\Iocp.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,9 +41,6 @@
     <ClInclude Include="..\..\net\EpollServer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\IocpServer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\SocketOps.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -51,6 +48,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\TcpConnection.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Iocp.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

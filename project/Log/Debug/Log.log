@@ -1,9 +1,0 @@
-﻿Build started 2014-3-15 19:31:28.
-Project "C:\mydev\thefoxframework.oschina\project\Log\Log.vcxproj" on node 2 (rebuild target(s)).
-InitializeBuildStatus:
-  Creating "Debug\Log.unsuccessfulbuild" because "AlwaysCreate" was specified.
-Done Building Project "C:\mydev\thefoxframework.oschina\project\Log\Log.vcxproj" (rebuild target(s)) -- FAILED.
-
-Build FAILED.
-
-Time Elapsed 00:00:00.51

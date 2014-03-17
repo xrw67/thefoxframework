@@ -7,8 +7,7 @@
 
 using namespace thefox;
 
-InetAddress listenAddr(7901);
-TcpServer svr("MyIocpDemo", listenAddr);
+TcpServer svr("MyIocpDemo");
 
 void onConnection(const TcpConnectionPtr &conn)
 {
@@ -36,7 +35,7 @@ int main(int argc, char *argv[])
 	svr.setConnectionCallback(onConnection);
 	svr.setCloseCallback(onClose);
 	svr.setMessageCallback(onMessage);
-	svr.start();
+	svr.start(InetAddress(7901));
 
     while ('q' != getchar())
         ;

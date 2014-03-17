@@ -15,7 +15,7 @@ namespace thefox
 {
 
 #ifdef WIN32
-    class IocpServer;
+    class Iocp;
 #else
     class EpollServer;
 #endif
@@ -26,12 +26,12 @@ class TcpConnection;
 class TcpServer : noncopyable
 {
 public:
-	TcpServer(const String &nameArg, const InetAddress &listenAddr);
+	TcpServer(const String &nameArg);
 	~TcpServer(void);
 
     /// @brief 启动服务
     /// @return 成功返回true，否则返回false
-    bool start();
+    bool start(const InetAddress &listenAddr);
     
     /// @brief 查看服务是否已经启动
     /// @return 已经启动返回true，否则返回false
@@ -56,7 +56,7 @@ public:
 	void setWriteCompleteCallback(const WriteCompleteCallback &cb);
 private:
 #ifdef WIN32
-    IocpServer *_model;
+    Iocp *_model;
 #else
     EpollServer *_model;
 #endif

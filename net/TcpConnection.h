@@ -51,6 +51,7 @@ public:
 		_writeBuffer.append(data, len);
 	}
 	void setState(StateT state) { _state = state; }
+	void setAny(void *any) { _any = any; }
 private:
 	int _connId;
 	SOCKET _socket;
@@ -60,6 +61,7 @@ private:
 	StateT _state;
 	MutexLock _readLock;
 	MutexLock _writeLock;
+	void *_any;
 };
 
 } // namespace thefox
