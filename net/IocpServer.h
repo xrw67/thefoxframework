@@ -42,7 +42,8 @@ private:
 	void handleRead(ConnectionPtr conn, IoContextPtr io);
 	void handleWrite(ConnectionPtr conn, IoContextPtr io = NULL);
 	ConnectionPtr getConnectionById(int32_t connId);
-    
+    bool initIocp();
+
 	const String _name;
 	InetAddress _listenAddr;
     SOCKET _listenSocket;

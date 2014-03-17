@@ -6,6 +6,7 @@
 #include <algorithm>
 
 #ifdef WIN32
+#pragma warning(disable:4996)
 #include <Winsock2.h>
 #else
 #include <arpa/inet.h>
@@ -13,8 +14,6 @@
 
 #include <base/Types.h>
 #include <base/copyable.h>
-
-#pragma warning(disable:4996)
 
 namespace thefox
 {
