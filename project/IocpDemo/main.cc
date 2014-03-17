@@ -3,22 +3,27 @@
 #include <net/InetAddress.h>
 #include <net/Buffer.h>
 #include <net/TcpServer.h>
+#include <net/TcpConnection.h>
 
 using namespace thefox;
 
-void onConnection(int32_t connId)
+InetAddress listenAddr(7901);
+TcpServer svr("MyIocpDemo", listenAddr);
+
+void onConnection(const TcpConnectionPtr &conn)
 {
-	printf("Connection success connID=%d\r\n", connId);
+	printf("Connection success connID=%d\r\n", conn->getConnId());
 }
 
-void onClose(int32_t connId)
+void onClose(const TcpConnectionPtr &conn)
 {
-	printf("Connection close connID=%d\r\n", connId);
+	printf("Connection close connID=%d\r\n", conn->getConnId());
 }
 
-void onMessage(int32_t connId, Buffer *buf, Timestamp receiveTime)
+void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
 {
-	printf("Message come, size=%u\r\n", buf->readableBytes());
+	printf("%s Message come[%d], size=%u\r\n", receiveTime.toFormatString().c_str(), conn->getConnId(), buf->readableBytes());
+	svr.send(conn, buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }
 
@@ -27,8 +32,6 @@ int main(int argc, char *argv[])
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 
-	InetAddress listenAddr(7901);
-	TcpServer svr("MyIocpDemo", listenAddr);
 
 	svr.setConnectionCallback(onConnection);
 	svr.setCloseCallback(onClose);

@@ -33,9 +33,9 @@ bool TcpServer::started()
     return _model->started();
 }
 
-void TcpServer::send(int32_t connId, const char *data, size_t len)
+void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
-	_model->send(connId, data, len);
+	_model->send(conn, data, len);
 }
 
 void TcpServer::setConnectionCallback(const ConnectionCallback &cb)

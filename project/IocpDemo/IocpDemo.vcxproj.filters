@@ -50,5 +50,8 @@
     <ClInclude Include="..\..\net\Buffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\TcpConnection.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

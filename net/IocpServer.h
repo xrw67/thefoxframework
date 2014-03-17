@@ -13,10 +13,9 @@ namespace thefox
 {
 
 class IoContext;
-class Connection;
+class TcpConnection;
 typedef IoContext *IoContextPtr;
-typedef Connection *ConnectionPtr;
-typedef std::map<int32_t, ConnectionPtr> ConnectionMap;
+typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
 
 class IocpServer : noncopyable
 {
@@ -25,8 +24,8 @@ public:
 	~IocpServer();
     bool start();
     bool started();
-	void send(int32_t connId, const char *data, size_t len);
-	void removeConnection(int32_t connId);
+	void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+	void removeConnection(const TcpConnectionPtr &conn);
     void setConnectionCallback(const ConnectionCallback &cb);
     void setCloseCallback(const CloseCallback &cb);
     void setMessageCallback(const MessageCallback &cb);
@@ -38,10 +37,8 @@ public:
     void acceptorLoop();
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);
-	void removeConnection(ConnectionPtr conn);
-	void handleRead(ConnectionPtr conn, IoContextPtr io);
-	void handleWrite(ConnectionPtr conn, IoContextPtr io = NULL);
-	ConnectionPtr getConnectionById(int32_t connId);
+	void handleRead(const TcpConnectionPtr &conn, IoContextPtr io);
+	void handleWrite(const TcpConnectionPtr &conn, IoContextPtr io = NULL);
     bool initIocp();
 
 	const String _name;

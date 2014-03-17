@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\net\EpollServer.h" />
     <ClInclude Include="..\..\net\IocpServer.h" />
     <ClInclude Include="..\..\net\SocketOps.h" />
+    <ClInclude Include="..\..\net\TcpConnection.h" />
     <ClInclude Include="..\..\net\TcpServer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -73,6 +74,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>

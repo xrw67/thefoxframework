@@ -1,5 +1,6 @@
 #include <net/IocpServer.h>
 #include <net/Buffer.h>
+#include <net/TcpConnection.h>
 
 using namespace thefox;
 
@@ -58,53 +59,7 @@ private:
     WSABUF _wsabuf;
 	size_t _bufUsed;
 };
-    
-class Connection
-{
-public:
-	enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
-
-	Connection(SOCKET socket, int connId, const InetAddress &peerAddr)
-		: _socket(socket)
-		, _connId(connId)
-		, _peerAddr(peerAddr)
-	{}
-	~Connection()
-	{
-		if (INVALID_SOCKET != _socket) {
-			closesocket(_socket);
-			_socket = INVALID_SOCKET;
-		}
-	}
-	int getConnId() const { return _connId; }
-	SOCKET getSocket() { return _socket; }
-	const InetAddress &getPeerAddr() const { return _peerAddr; }
-	Buffer *getReadBuffer() { return &_readBuffer; }
-	Buffer *getWriteBuffer() { return &_writeBuffer; }
-	void appendReadBuffer(IoContextPtr io) 
-	{
-		if (io) {
-			MutexLockGuard lock(_readLock);
-			_readBuffer.append(io->getWsaBuffer().buf, io->getBufferUsed());
-		}
-	}
-	void appendWriteBuffer(const char *data, size_t len)
-	{
-		MutexLockGuard lock(_writeLock);
-		_writeBuffer.append(data, len);
-	}
-	void setState(StateT state) { _state = state; }
-private:
-	int _connId;
-	SOCKET _socket;
-	InetAddress _peerAddr;
-	Buffer _readBuffer;
-	Buffer _writeBuffer;
-	StateT _state;
-	MutexLock _readLock;
-	MutexLock _writeLock;
-};
-    
+        
 // IOCP工作线程
 DWORD WINAPI workerThreadProc(LPVOID param)
 {
@@ -138,7 +93,7 @@ IocpServer::~IocpServer()
 	PostQueuedCompletionStatus(_hIocp, 0, (ULONG_PTR)0, 0);
 
 	 for (ConnectionMap::iterator it = _connections.begin(); it != _connections.end(); ++it) {
-        ConnectionPtr conn = it->second;
+        TcpConnectionPtr conn = it->second;
         delete conn;
     }
 }
@@ -211,23 +166,18 @@ bool IocpServer::started()
 	return _started;
 }
 
-void IocpServer::send(int32_t connId, const char *data, size_t len)
+void IocpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
-	ConnectionPtr conn = NULL;
-	if ((conn = getConnectionById(connId)) != NULL) {
-		conn->appendWriteBuffer(data, len);
-		handleWrite(conn);
-	}
+	conn->appendWriteBuffer(data, len);
+	handleWrite(conn);
 }
 
-void IocpServer::removeConnection(int32_t connId)
+void IocpServer::removeConnection(const TcpConnectionPtr &conn)
 {
+	conn->setState(TcpConnection::kDisconnected);
+	_closeCallback(conn);
 	MutexLockGuard lock(_connLock);
-	ConnectionPtr conn = getConnectionById(connId);
-	if (NULL != conn)
-		removeConnection(conn);
-	else
-		;// LOG_WARN << 移除一个不存在的连接
+	_connections.erase(conn->getConnId());
 }
 
 void IocpServer::setConnectionCallback(const ConnectionCallback &cb)
@@ -255,15 +205,13 @@ void IocpServer::newConnection(SOCKET socket, const InetAddress &peerAddr)
 	int32_t connId = _nextConnId;
 	++_nextConnId;
 
-    ConnectionPtr conn = new Connection(socket, connId, peerAddr);
-    conn->setState(Connection::kConnected);
+    TcpConnectionPtr conn = new TcpConnection(socket, connId, peerAddr);
+    conn->setState(TcpConnection::kConnecting);
     _connections[connId] = conn;
 	HANDLE handle = CreateIoCompletionPort((HANDLE)socket, _hIocp, (ULONG_PTR)conn, 0);
 	if (NULL == handle) {
 		int errCode = GetLastError();
-		if (6 == errCode) {
-		;
-		}
+		// LOG_ERROR 
 	}
 	IoContextPtr io = new IoContext();
 	io->setIoType(IoContext::kRead);
@@ -280,18 +228,11 @@ void IocpServer::newConnection(SOCKET socket, const InetAddress &peerAddr)
 		}
 	}
 
-	_connectionCallback(connId);
+	conn->setState(TcpConnection::kConnected);
+	_connectionCallback(conn);
 }
 
-void IocpServer::removeConnection(ConnectionPtr conn)
-{
-	_closeCallback(conn->getConnId());
-	_connections.erase(conn->getConnId());
-	delete conn;
-	// LOG_INFO <<　移除一个用户
-}
-
-void IocpServer::handleRead(ConnectionPtr conn, IoContextPtr io)
+void IocpServer::handleRead(const TcpConnectionPtr &conn, IoContextPtr io)
 {
 	if (0 == io->getBufferUsed()) {
 		// LOG_INFO << connection closed！，recv 0 bytes data！
@@ -300,7 +241,7 @@ void IocpServer::handleRead(ConnectionPtr conn, IoContextPtr io)
 		return;
 	}
 
-	conn->appendReadBuffer(io);
+	conn->appendReadBuffer(io->getWsaBuffer().buf, io->getBufferUsed());
 	io->resetBuffer();
 	DWORD nBytes = 0;
 	DWORD flags = 0;
@@ -310,10 +251,10 @@ void IocpServer::handleRead(ConnectionPtr conn, IoContextPtr io)
 		delete io;
 		removeConnection(conn);
 	}
-	_messageCallback(conn->getConnId(), conn->getReadBuffer(), Timestamp(Timestamp::now()));
+	_messageCallback(conn, conn->getReadBuffer(), Timestamp(Timestamp::now()));
 }
 
-void IocpServer::handleWrite(ConnectionPtr conn, IoContextPtr io)
+void IocpServer::handleWrite(const TcpConnectionPtr &conn, IoContextPtr io)
 {
 	Buffer *readBuf = conn->getWriteBuffer();
 	int bytesInReadBuffer = readBuf->readableBytes();
@@ -332,22 +273,16 @@ void IocpServer::handleWrite(ConnectionPtr conn, IoContextPtr io)
 			removeConnection(conn);
 		}
 		readBuf->retrieve(len);
+	} else {
+		if (NULL != io)
+			delete io;
 	}
-}
-
-ConnectionPtr IocpServer::getConnectionById(int32_t connId)
-{
-	ConnectionMap::iterator it = _connections.find(connId);
-	if (it != _connections.end())
-		return it->second;
-	else
-		return NULL;
 }
 
 void IocpServer::workerLoop()
 {
 	DWORD bytesTransfered = 0;
-    ConnectionPtr conn = NULL;
+    TcpConnectionPtr conn = NULL;
 	OVERLAPPED *overlapped = NULL;
 	BOOL ret = FALSE;
 	
@@ -360,7 +295,6 @@ void IocpServer::workerLoop()
         if (!ret) {
             DWORD errCode = GetLastError();
             if (conn && WAIT_TIMEOUT != errCode)
-                _closeCallback(conn->getConnId());
 				removeConnection(conn);
             if (overlapped) {
                 IoContext *io = NULL;
