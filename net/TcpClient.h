@@ -41,6 +41,7 @@ public:
     
 	/// @brief 发送数据
 	void send(const char *data, size_t len);
+	void send(const String &data);
 
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);

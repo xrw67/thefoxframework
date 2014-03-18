@@ -64,11 +64,13 @@ public:
 	}
 	
 	// 编码
-	static String encode(const Head &head, const gpb::Message &message)
+	static String encode(Head &head, const gpb::Message &message)
 	{
 		String result;
 		
 		result.resize(8);
+		
+		head.set_body_type(message.GetTypeName());
 		
 		if (head.AppendToString(&result)) {
 			int16_t headLen = ::htons(result.size() - 8);
@@ -104,7 +106,7 @@ public:
 		else
 			return false;
 	}
-	
+
 	static gpb::Message *createMessage(const String& type_name)
 	{
 		gpb::Message *message = NULL;

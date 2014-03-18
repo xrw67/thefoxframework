@@ -30,7 +30,7 @@ bool TcpClient::open(const InetAddress &serverAddr)
 
 void TcpClient::close()
 {
-    return _model->close();
+    _model->close();
 }
 
 bool TcpClient::isOpen()
@@ -40,9 +40,13 @@ bool TcpClient::isOpen()
 
 void TcpClient::send(const char *data, size_t len)
 {
-	return _model->send(data, len);
+	_model->send(data, len);
 }
 
+void TcpClient::send(const String &data)
+{
+	_model->send(data.c_str(), data.length());
+}
 void TcpClient::setConnectionCallback(const ConnectionCallback &cb)
 {
     _model->setConnectionCallback(cb);
