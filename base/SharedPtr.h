@@ -6,7 +6,7 @@
 #ifndef _THEFOX_SHAREDPTR_H_
 #define _THEFOX_SHAREDPTR_H_
 
-thefox namespace 
+namespace thefox  
 {
 
 class PtrCounter
@@ -31,7 +31,8 @@ public:
 	}
 private:
 	int _counter;
-}
+};
+
 template<typename T>	
 class SharedPtr
 {
@@ -42,7 +43,7 @@ public:
 	{}
 	SharedPtr(T *p)
 	: _pointer(p)
-	, _counter(new PtrCounter);
+	, _counter(new PtrCounter)
 	{}
 	SharedPtr(const SharedPtr &rsp)
 	: _pointer(rsp._pointer)
@@ -83,7 +84,7 @@ public:
 	operator bool()
 	{ return NULL != _pointer; }
 	
-	operator==(const SharedPtr *rsp)
+	bool operator==(const SharedPtr &rsp)
 	{ return _pointer == rsp._pointer; }
 	
 	int getCounter() const 
