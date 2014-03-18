@@ -37,6 +37,12 @@ public:
 		}
 	}
 	
+	const gpb::Descriptor * getDescriptor()
+	{
+		if (_body)
+			return _body->GetDescriptor();
+		return NULL;
+	}
 	// 解码
 	bool parseFromArray(const char *buf, size_t bufLen)
 	{
