@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IocpDemo", "IocpDemo\IocpDe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetClient", "NetClient\NetClient.vcxproj", "{ED5F747A-580C-498D-A86A-29A6EADE83EC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Net", "Net\Net.vcxproj", "{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{ED5F747A-580C-498D-A86A-29A6EADE83EC}.Debug|Win32.Build.0 = Debug|Win32
 		{ED5F747A-580C-498D-A86A-29A6EADE83EC}.Release|Win32.ActiveCfg = Release|Win32
 		{ED5F747A-580C-498D-A86A-29A6EADE83EC}.Release|Win32.Build.0 = Release|Win32
+		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Debug|Win32.Build.0 = Debug|Win32
+		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Release|Win32.ActiveCfg = Release|Win32
+		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

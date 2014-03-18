@@ -110,7 +110,7 @@ bool Iocp::initIocp()
 	HANDLE handle;
 	
 	int threadNum = getCpuNum() * 2 + 2;
-    for (DWORD i = 0; i < threadNum; ++i) {
+    for (int i = 0; i < threadNum; ++i) {
 		handle = CreateThread(NULL, 0, workerThreadProc, this, 0, NULL);
         CloseHandle(handle);
     }
@@ -303,6 +303,7 @@ bool Iocp::open(const InetAddress &serverAddr)
 		return false;
 	}
 	newConnection(_socket, serverAddr);
+	return true;
 }
 
 void Iocp::close()
