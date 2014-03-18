@@ -2,8 +2,6 @@
 #include <net/Buffer.h>
 #include <net/TcpConnection.h>
 
-using namespace thefox;
-
 namespace thefox
 {
     
@@ -52,7 +50,7 @@ public:
 		_bufUsed = 0;
     }
     WSABUF &getWsaBuffer() { return _wsabuf; }
-	void setBufUsed(size_t len) { _bufUsed = len; }
+	void setBufferUsed(size_t len) { _bufUsed = len; }
     size_t getBufferUsed() const { return _bufUsed; }
 private:
     IoType _ioType;
@@ -76,8 +74,9 @@ DWORD WINAPI acceptorThreadProc(LPVOID param)
 	return 0;
 }
 
-}
+} // namespace thefox
 
+using namespace thefox;
 
 Iocp::Iocp(const String &nameArg)
     : _name(nameArg)
@@ -173,6 +172,7 @@ void Iocp::removeConnection(const TcpConnectionPtr &conn)
 	_closeCallback(conn);
 	MutexLockGuard lock(_connLock);
 	_connections.erase(conn->getConnId());
+	delete conn;
 }
 
 void Iocp::setConnectionCallback(const ConnectionCallback &cb)
@@ -324,9 +324,8 @@ void Iocp::close()
 void Iocp::send(const char *data, size_t len)
 {
 	ConnectionMap::iterator it = _connections.begin();
-	if (it != _connections.end()) {
+	if (it != _connections.end())
 		send(it->second, data, len);
-	}
 }
 
 void Iocp::workerLoop()
@@ -337,11 +336,8 @@ void Iocp::workerLoop()
 	BOOL ret = FALSE;
 	
     while (started()) {
-	    ret = GetQueuedCompletionStatus(_hIocp,
-                                        &bytesTransfered,
-                                        (LPDWORD)&conn, 
-                                        &overlapped,
-                                        INFINITE);
+	    ret = GetQueuedCompletionStatus(
+				_hIocp, &bytesTransfered, (LPDWORD)&conn, &overlapped, INFINITE);
         if (!ret) {
             DWORD errCode = GetLastError();
             if (conn && WAIT_TIMEOUT != errCode)
@@ -357,7 +353,7 @@ void Iocp::workerLoop()
         if (ret && conn && overlapped) {
             IoContext *io = NULL;
 		    if ((io = CONTAINING_RECORD(overlapped, IoContext, _overlapped)) != NULL) {
-				io->setBufUsed(bytesTransfered);
+				io->setBufferUsed(bytesTransfered);
 				if (IoContext::kRead == io->getIoType())
 					handleRead(conn, io);
 				else if (IoContext::kWrite == io->getIoType())
