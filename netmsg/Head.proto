@@ -1,6 +1,0 @@
-package thefox;
-
-message Head {
-	required int32 sequence = 1;
-	required string body_type = 2;
-}
