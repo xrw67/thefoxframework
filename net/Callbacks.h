@@ -8,19 +8,14 @@ namespace thefox
 {
     
 class Buffer;
-class TcpConnection;
-typedef TcpConnection *TcpConnectionPtr;
-typedef void (*ConnectionCallback)(const TcpConnectionPtr &conn);
-typedef void (*CloseCallback)(const TcpConnectionPtr &conn);
-typedef void (*MessageCallback)(const TcpConnectionPtr &conn,
-                                Buffer *buffer,
-                                Timestamp recvTime);
-typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &conn);
 
-void defaultConnectionCallback(const TcpConnectionPtr &conn);
-void defaultMessageCallback(const TcpConnectionPtr &conn,
-                            Buffer *buffer,
-                            Timestamp recvTime);
+typedef void (*ConnectionCallback)(int32_t connId);
+typedef void (*CloseCallback)(int32_t connId);
+typedef void (*MessageCallback)(int32_t connId, Buffer *buffer, Timestamp recvTime);
+typedef void (*WriteCompleteCallback)(int32_t connId);
+
+void defaultConnectionCallback(int32_t connId);
+void defaultMessageCallback(int32_t connId, Buffer *buffer, Timestamp recvTime);
 
 } // namespace thefox
 

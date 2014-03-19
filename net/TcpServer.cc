@@ -4,7 +4,7 @@
 #ifdef WIN32
 #include <net/Iocp.h>
 #else
-#include <net/EpollServer.h>
+#include <net/Epoll.h>
 #endif
 
 using namespace thefox;
@@ -14,7 +14,7 @@ TcpServer::TcpServer(const String &nameArg)
 #ifdef WIN32
     _model = new Iocp(nameArg);
 #else
-    _model = new EpollServer(nameArg);
+    _model = new Epoll(nameArg);
 #endif
 }
 
@@ -33,9 +33,18 @@ bool TcpServer::started()
     return _model->started();
 }
 
-void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
+void TcpServer::send(int32_t connId, const char *data, size_t len)
 {
-	_model->send(conn, data, len);
+	_model->send(connId, data, len);
+}
+void TcpServer::send(int32_t connId, const String &data)
+{
+	_model->send(connId, data.c_str(), data.length());
+}
+
+void TcpServer::removeConnection(int32_t connId)
+{
+	_model->removeConnection(connId);
 }
 
 void TcpServer::setConnectionCallback(const ConnectionCallback &cb)

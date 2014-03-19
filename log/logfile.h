@@ -22,7 +22,7 @@ namespace thefox
 {
 
 
-class LOG_API LogFile : noncopyable
+class LogFile : noncopyable
 {
 public:
 	class File;

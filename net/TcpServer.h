@@ -17,11 +17,10 @@ namespace thefox
 #ifdef WIN32
     class Iocp;
 #else
-    class EpollServer;
+    class Epoll;
 #endif
 
 class InetAddress;
-class TcpConnection;
 
 class TcpServer : noncopyable
 {
@@ -38,10 +37,11 @@ public:
     bool started();
     
 	/// @brief 发送数据
-	void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+	void send(int32_t connId, const char *data, size_t len);
+	void send(int32_t connId, const String &data);
 
 	/// @brief 移除客户连接
-	void removeConnection(const TcpConnectionPtr &conn);
+	void removeConnection(int32_t connId);
 
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);
@@ -58,7 +58,7 @@ private:
 #ifdef WIN32
     Iocp *_model;
 #else
-    EpollServer *_model;
+    Epoll *_model;
 #endif
 };
 

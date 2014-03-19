@@ -15,18 +15,17 @@ namespace thefox
 class IoContext;
 class TcpConnection;
 typedef IoContext *IoContextPtr;
-typedef TcpConnection *TcpConnectionPtr;
 typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
 
-class Iocp : noncopyable
+class IocpServer : noncopyable
 {
 public:
-	Iocp(const String &nameArg);
-	~Iocp();
-    bool start(const InetAddress &listenAddr);
-	bool started() { return _started; }
-	void send(int32_t connId, const char *data, size_t len);
-	void removeConnection(int32_t connId);
+	IocpServer(const String &nameArg, const InetAddress &listenAddr);
+	~IocpServer();
+    bool start();
+    bool started();
+	void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+	void removeConnection(const TcpConnectionPtr &conn);
     void setConnectionCallback(const ConnectionCallback &cb);
     void setCloseCallback(const CloseCallback &cb);
     void setMessageCallback(const MessageCallback &cb);
@@ -36,23 +35,15 @@ public:
 	void workerLoop();
     // 接受者循环
     void acceptorLoop();
-
-	// 客户端使用的方法
-	bool open(const InetAddress &serverAddr);
-	void close();
-	bool isOpen() { return _started; }
-	void send(const char *data, size_t len);
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);
-	void removeConnection(const TcpConnectionPtr &conn);
-
 	void handleRead(const TcpConnectionPtr &conn, IoContextPtr io);
 	void handleWrite(const TcpConnectionPtr &conn, IoContextPtr io = NULL);
     bool initIocp();
-	int getCpuNum();
 
 	const String _name;
-    SOCKET _socket;
+	InetAddress _listenAddr;
+    SOCKET _listenSocket;
 	HANDLE _hIocp;
     HANDLE _hAcceptEvent;
     bool _started;

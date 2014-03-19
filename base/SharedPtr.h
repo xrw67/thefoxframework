@@ -9,28 +9,25 @@
 namespace thefox  
 {
 
+template<typename T> class SharedPtr;
+template<typename T> class WeakPtr;
+
 class PtrCounter
 {
 public:
+	friend template<typename T> class SharedPtr;
+	friend template<typename T> class WeakPtr;
+	
 	PtrCounter()
-	: _counter(1)
+	: _strongCounter(1)
+	, _weakCounter(0)
 	{}
 	~PtrCounter()
 	{}
-	int getCounter() const
-	{ return _counter; }
-	int add()
-	{ 
-		++_counter;
-		return _counter;
-	}
-	int dec()
-	{
-		--_counter;
-		return _counter;
-	}
+
 private:
-	int _counter;
+	int _strongCounter;
+	int _weakCounter;
 };
 
 template<typename T>	
@@ -49,30 +46,36 @@ public:
 	: _pointer(rsp._pointer)
 	, _counter(rsp._counter)
 	{
-		_counter->add();
+		++_counter->_strongCounter;
 	}
 	~SharedPtr()
 	{
-		if (0 == _counter->dec()) {
-			delete _pointer;
-			_pointer = NULL;
-			delete _counter;
-			_counter = NULL;
+		if (_counter) {
+			--_counter->_strongCounter;
+			if (0 == _counter->_strongCounter) {
+				delete _pointer;
+				_pointer = NULL;
+				delete _counter;
+				_counter = NULL;
+			}
 		}
 	}
 	
 	SharedPtr &operator=(const SharedPtr &rsp)
 	{
-		if (0 == _counter->dec()) {
-			delete _pointer;
-			_pointer = NULL;
-			delete _counter;
-			_counter = NULL;
+		if (_counter) {
+			--_counter->_strongCounter;
+			if (0 == _counter->_strongCounter) {
+				delete _pointer;
+				_pointer = NULL;
+				delete _counter;
+				_counter = NULL;
+			}
 		}
 		
 		_pointer = rsp._pointer;
 		_counter = rsp._counter;
-		_counter->add();
+		++_counter->_strongCounter;
 		return *this;
 	}
 	T &operator*()
@@ -88,7 +91,7 @@ public:
 	{ return _pointer == rsp._pointer; }
 	
 	int getCounter() const 
-	{ return (NULL != _counter) ? _counter->getCounter() : 0; }
+	{ return (NULL != _counter) ? _counter->_strongCounter : 0; }
 	
 private:
 	T *_pointer;
