@@ -74,14 +74,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\net\EpollServer.h" />
     <ClInclude Include="..\..\net\Iocp.h" />
     <ClInclude Include="..\..\net\TcpClient.h" />
     <ClInclude Include="..\..\net\TcpConnection.h" />
     <ClInclude Include="..\..\net\TcpServer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\net\EpollServer.cc" />
     <ClCompile Include="..\..\net\Iocp.cc" />
     <ClCompile Include="..\..\net\TcpClient.cc" />
     <ClCompile Include="..\..\net\TcpServer.cc" />

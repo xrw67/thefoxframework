@@ -45,9 +45,9 @@ public:
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);
 	void removeConnection(const TcpConnectionPtr &conn);
-
 	void handleRead(const TcpConnectionPtr &conn, IoContextPtr io);
 	void handleWrite(const TcpConnectionPtr &conn, IoContextPtr io = NULL);
+	void handleZeroByteRead(const TcpConnectionPtr &conn, IoContextPtr io = NULL);
     bool initIocp();
 	int getCpuNum();
 

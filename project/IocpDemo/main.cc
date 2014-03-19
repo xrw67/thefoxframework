@@ -9,20 +9,20 @@ using namespace thefox;
 
 TcpServer svr("MyIocpDemo");
 
-void onConnection(const TcpConnectionPtr &conn)
+void onConnection(int32_t connId)
 {
-	printf("Connection success connID=%d\r\n", conn->getConnId());
+	printf("Connection success connID=%d\r\n", connId);
 }
 
-void onClose(const TcpConnectionPtr &conn)
+void onClose(int32_t connId)
 {
-	printf("Connection close connID=%d\r\n", conn->getConnId());
+	printf("Connection close connID=%d\r\n", connId);
 }
 
-void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
+void onMessage(int32_t connId, Buffer *buf, Timestamp receiveTime)
 {
-	printf("%s Message come[%d], size=%u\r\n", receiveTime.toFormatString().c_str(), conn->getConnId(), buf->readableBytes());
-	svr.send(conn, buf->peek(), buf->readableBytes());
+	printf("%s Message come[%d], size=%u\r\n", receiveTime.toFormatString().c_str(), connId, buf->readableBytes());
+	svr.send(connId, buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }
 
