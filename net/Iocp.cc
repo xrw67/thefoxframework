@@ -264,6 +264,7 @@ void Iocp::handleRead(const TcpConnectionPtr &conn, IoContextPtr io)
 	if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != WSAGetLastError())) {
 		delete io;
 		removeConnection(conn);
+		return;
 	}
 	_messageCallback(conn->getConnId(), conn->getReadBuffer(), Timestamp(Timestamp::now()));
 }
@@ -285,6 +286,7 @@ void Iocp::handleWrite(const TcpConnectionPtr &conn, IoContextPtr io)
 		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError())) {
 			delete io;
 			removeConnection(conn);
+			return;
 		}
 		readBuf->retrieve(len);
 	} else {
@@ -306,6 +308,7 @@ void Iocp::handleZeroByteRead(const TcpConnectionPtr &conn, IoContextPtr io)
 	if ((SOCKET_ERROR == byteRecv) && (WSA_IO_PENDING != WSAGetLastError())) {
 		delete io;
 		removeConnection(conn);
+		return;
 	}
 }
 

@@ -30,6 +30,7 @@ public:
 	{}
 	~TcpConnection()
 	{
+		MutexLockGuard lock(_readLock);
 		if (INVALID_SOCKET != _socket) {
 			closesocket(_socket);
 			_socket = INVALID_SOCKET;
