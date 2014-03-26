@@ -30,27 +30,27 @@ public:
 	{}
 	~TcpConnection()
 	{
+		MutexLockGuard lock(_mutex);
 		if (INVALID_SOCKET != _socket) {
 			closesocket(_socket);
 			_socket = INVALID_SOCKET;
 		}
 	}
-	int getConnId() const { return _connId; }
-	SOCKET getSocket() { return _socket; }
+	int connId() const { return _connId; }
+	SOCKET socket() { return _socket; }
 	const InetAddress &getPeerAddr() const { return _peerAddr; }
-	Buffer *getReadBuffer() { return &_readBuffer; }
-	Buffer *getWriteBuffer() { return &_writeBuffer; }
+	Buffer *readBuffer() { return &_readBuffer; }
+	Buffer *writeBuffer() { return &_writeBuffer; }
 	void appendReadBuffer(const char *data, size_t len) 
 	{
-		MutexLockGuard lock(_readLock);
+		MutexLockGuard lock(_mutex);
 		_readBuffer.append(data, len);
 	}
 	void appendWriteBuffer(const char *data, size_t len)
 	{
-		MutexLockGuard lock(_writeLock);
+		MutexLockGuard lock(_mutex);
 		_writeBuffer.append(data, len);
 	}
-	StateT state() const { return _state; }
 	void setState(StateT state) { _state = state; }
 	void setAny(void *any) { _any = any; }
 private:
@@ -59,9 +59,9 @@ private:
 	InetAddress _peerAddr;
 	Buffer _readBuffer;
 	Buffer _writeBuffer;
+	
 	StateT _state;
-	MutexLock _readLock;
-	MutexLock _writeLock;
+	MutexLock _mutex;;
 	void *_any;
 };
 

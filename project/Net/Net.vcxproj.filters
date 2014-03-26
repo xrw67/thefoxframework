@@ -23,6 +23,15 @@
     <ClInclude Include="..\..\net\TcpClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\IoEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\EventLoop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\SocketEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\TcpServer.cc">
@@ -32,6 +41,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\TcpClient.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventLoop.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

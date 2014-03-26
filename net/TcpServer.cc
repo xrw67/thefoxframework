@@ -9,12 +9,12 @@
 
 using namespace thefox;
 
-TcpServer::TcpServer(const String &nameArg)
+TcpServer::TcpServer(EventLoop *eventloop, const String &nameArg)
 {
 #ifdef WIN32
-    _model = new Iocp(nameArg);
+    _model = new Iocp(eventloop, nameArg);
 #else
-    _model = new Epoll(nameArg);
+    _model = new Epoll(eventloop, nameArg);
 #endif
 }
 
@@ -33,18 +33,18 @@ bool TcpServer::started()
     return _model->started();
 }
 
-void TcpServer::send(int32_t connId, const char *data, size_t len)
+void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
-	_model->send(connId, data, len);
+	_model->send(conn, data, len);
 }
-void TcpServer::send(int32_t connId, const String &data)
+void TcpServer::send(const TcpConnectionPtr &conn, const String &data)
 {
-	_model->send(connId, data.c_str(), data.length());
+	_model->send(conn, data.c_str(), data.length());
 }
 
-void TcpServer::removeConnection(int32_t connId)
+void TcpServer::removeConnection(const TcpConnectionPtr &conn)
 {
-	_model->removeConnection(connId);
+	_model->removeConnection(conn);
 }
 
 void TcpServer::setConnectionCallback(const ConnectionCallback &cb)

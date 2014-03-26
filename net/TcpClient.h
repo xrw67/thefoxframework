@@ -20,12 +20,13 @@ namespace thefox
     class Epoll;
 #endif
 
+class EventLoop;
 class InetAddress;
 
 class TcpClient : noncopyable
 {
 public:
-    TcpClient(const String &nameArg);
+    TcpClient(EventLoop *eventloop, const String &nameArg);
     TcpClient(void);
         
     /// @brief 连接服务器

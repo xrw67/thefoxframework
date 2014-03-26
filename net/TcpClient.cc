@@ -9,12 +9,12 @@
 
 using namespace thefox;
 
-TcpClient::TcpClient(const String &nameArg)
+TcpClient::TcpClient(EventLoop *eventloop, const String &nameArg)
 {
 #ifdef WIN32
-    _model = new Iocp(nameArg);
+    _model = new Iocp(eventloop, nameArg);
 #else
-    _model = new Epoll(nameArg);
+    _model = new Epoll(eventloop, nameArg);
 #endif
 }
 

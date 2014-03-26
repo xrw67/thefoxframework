@@ -20,12 +20,13 @@ namespace thefox
     class Epoll;
 #endif
 
+class EventLoop;
 class InetAddress;
 
 class TcpServer : noncopyable
 {
 public:
-	TcpServer(const String &nameArg);
+	TcpServer(EventLoop *eventloop, const String &nameArg);
 	~TcpServer(void);
 
     /// @brief 启动服务
@@ -37,11 +38,11 @@ public:
     bool started();
     
 	/// @brief 发送数据
-	void send(int32_t connId, const char *data, size_t len);
-	void send(int32_t connId, const String &data);
+	void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+	void send(const TcpConnectionPtr &conn, const String &data);
 
 	/// @brief 移除客户连接
-	void removeConnection(int32_t connId);
+	void removeConnection(const TcpConnectionPtr &conn);
 
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);
