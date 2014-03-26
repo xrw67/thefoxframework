@@ -40,14 +40,14 @@ public:
 	// 客户端使用的方法
 	bool open(const InetAddress &serverAddr);
 	void close();
-	bool isOpen() { return _started; }
+	bool isOpen();
 	void send(const char *data, size_t len);
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);
 	void removeConnection(const TcpConnectionPtr &conn);
+
 	void handleRead(const TcpConnectionPtr &conn, IoContextPtr io);
 	void handleWrite(const TcpConnectionPtr &conn, IoContextPtr io = NULL);
-	void handleZeroByteRead(const TcpConnectionPtr &conn, IoContextPtr io = NULL);
     bool initIocp();
 	int getCpuNum();
 
@@ -64,9 +64,7 @@ private:
     ConnectionCallback _connectionCallback;
 	CloseCallback _closeCallback;
 	MessageCallback _messageCallback;
-	WriteCompleteCallback _writeCompleteCallback;
-    
-    
+	WriteCompleteCallback _writeCompleteCallback;  
 };
 
 } // namespace thefox

@@ -13,7 +13,6 @@ public:
     enum IoType{
         kRead,
         kWrite,
-		kZeroByteRead
     };
         
     IoContext(void)
@@ -50,14 +49,6 @@ public:
         _wsabuf.len = kMaxBufSize;
 		_bufUsed = 0;
     }
-	void setZeroByteBuffer()
-	{
-		memset(&_overlapped, 0, sizeof(OVERLAPPED));
-		memset(_wsabuf.buf, 0, kMaxBufSize);
-		_wsabuf.len = 0;
-		_bufUsed = 0;
-	}
-
     WSABUF &getWsaBuffer() { return _wsabuf; }
 	void setBufferUsed(size_t len) { _bufUsed = len; }
     size_t getBufferUsed() const { return _bufUsed; }
@@ -97,7 +88,6 @@ Iocp::Iocp(const String &nameArg)
 Iocp::~Iocp()
 {
 	close();
-	CloseHandle(_hIocp);
 }
 
 int Iocp::getCpuNum()
@@ -173,20 +163,24 @@ bool Iocp::start(const InetAddress &listenAddr)
 void Iocp::send(int32_t connId, const char *data, size_t len)
 {
 	TcpConnection *conn = _connections[connId];
-	conn->appendWriteBuffer(data, len);
-	handleWrite(conn);
+	if (NULL != conn) {
+		conn->appendWriteBuffer(data, len);
+		handleWrite(conn);
+	}
 }
 
 void Iocp::removeConnection(int32_t connId)
 {
 	TcpConnection *conn = _connections[connId];
-	removeConnection(conn);
+	if (NULL != conn)
+		removeConnection(conn);
 }
 
 void Iocp::removeConnection(const TcpConnectionPtr &conn)
 {
-	conn->setState(TcpConnection::kDisconnected);
+	conn->setState(TcpConnection::kDisconnecting);
 	_closeCallback(conn->getConnId());
+	conn->setState(TcpConnection::kDisconnected);
 	MutexLockGuard lock(_connLock);
 	_connections.erase(conn->getConnId());
 	delete conn;
@@ -221,7 +215,7 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
     conn->setState(TcpConnection::kConnecting);
     _connections[connId] = conn;
 	HANDLE handle = CreateIoCompletionPort((HANDLE)socket, _hIocp, (ULONG_PTR)conn, 0);
-	if (handle == _hIocp) {
+	if (NULL == handle) {
 		int errCode = GetLastError();
 		// LOG_ERROR 
 	}
@@ -237,11 +231,9 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 		if (WSA_IO_PENDING != errCode) {
 			delete io;
 			removeConnection(conn);
-			return;
 		}
 	}
 
-	handleZeroByteRead(conn, NULL);
 	conn->setState(TcpConnection::kConnected);
 	_connectionCallback(conn->getConnId());
 }
@@ -264,7 +256,6 @@ void Iocp::handleRead(const TcpConnectionPtr &conn, IoContextPtr io)
 	if ((SOCKET_ERROR == bytesRecv) && (WSA_IO_PENDING != WSAGetLastError())) {
 		delete io;
 		removeConnection(conn);
-		return;
 	}
 	_messageCallback(conn->getConnId(), conn->getReadBuffer(), Timestamp(Timestamp::now()));
 }
@@ -286,29 +277,11 @@ void Iocp::handleWrite(const TcpConnectionPtr &conn, IoContextPtr io)
 		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError())) {
 			delete io;
 			removeConnection(conn);
-			return;
 		}
 		readBuf->retrieve(len);
 	} else {
 		if (NULL != io)
 			delete io;
-	}
-}
-
-void Iocp::handleZeroByteRead(const TcpConnectionPtr &conn, IoContextPtr io)
-{
-	if (NULL == io)
-		io = new IoContext;
-	io->setIoType(IoContext::kZeroByteRead);
-	io->setZeroByteBuffer();
-	DWORD nBytes = 0;
-	DWORD flags = 0;
-	int byteRecv = WSARecv(conn->getSocket(), &io->getWsaBuffer(), 1, 
-			&nBytes, &flags, &io->_overlapped, NULL);
-	if ((SOCKET_ERROR == byteRecv) && (WSA_IO_PENDING != WSAGetLastError())) {
-		delete io;
-		removeConnection(conn);
-		return;
 	}
 }
 
@@ -359,6 +332,14 @@ void Iocp::close()
 	_connections.clear();
 }
 
+bool Iocp::isOpen()
+{
+	ConnectionMap::iterator it = _connections.begin();
+	if (it != _connections.end())
+		return TcpConnection::kDisconnected != it->second->state();
+	return false;
+}
+
 void Iocp::send(const char *data, size_t len)
 {
 	ConnectionMap::iterator it = _connections.begin();
@@ -396,8 +377,6 @@ void Iocp::workerLoop()
 					handleRead(conn, io);
 				else if (IoContext::kWrite == io->getIoType())
 					handleWrite(conn, io);
-				else if (IoContext::kZeroByteRead == io->getIoType())
-					handleZeroByteRead(conn, io);
 			}
         }
 

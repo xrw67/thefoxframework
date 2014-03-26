@@ -30,7 +30,6 @@ public:
 	{}
 	~TcpConnection()
 	{
-		MutexLockGuard lock(_readLock);
 		if (INVALID_SOCKET != _socket) {
 			closesocket(_socket);
 			_socket = INVALID_SOCKET;
@@ -51,6 +50,7 @@ public:
 		MutexLockGuard lock(_writeLock);
 		_writeBuffer.append(data, len);
 	}
+	StateT state() const { return _state; }
 	void setState(StateT state) { _state = state; }
 	void setAny(void *any) { _any = any; }
 private:
