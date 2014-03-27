@@ -55,6 +55,7 @@ public:
 
 	/// @brief 设置缓冲区中数据发送完成后的回调函数
 	void setWriteCompleteCallback(const WriteCompleteCallback &cb);
+
 private:
 #ifdef WIN32
     Iocp *_model;

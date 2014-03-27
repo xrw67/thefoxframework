@@ -1,16 +1,23 @@
-﻿#ifndef _THEFOX_NET_IOCP_H_
+﻿/*
+* @filename Iocp.h
+* @brief 基于完成端口的socket实现
+* @author macwe@qq.com
+*/
+
+#ifndef _THEFOX_NET_IOCP_H_
 #define _THEFOX_NET_IOCP_H_
 
 #include <map>
+#include <Winsock2.h>
 #include <base/noncopyable.h>
 #include <base/Types.h>
-#include <Winsock2.h>
 #include <base/MutexLock.h>
 #include <net/InetAddress.h>
 #include <net/Callbacks.h>
 
 namespace thefox
 {
+
 class SocketEvent;
 class EventLoop;
 typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;

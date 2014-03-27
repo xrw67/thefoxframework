@@ -1,4 +1,4 @@
-#pragma warning(disable:4996)
+#pragma warning(disable:4996) // 禁用warning 4996
 
 #include <net/Iocp.h>
 #include <net/Buffer.h>
@@ -97,8 +97,10 @@ bool Iocp::start(const InetAddress &listenAddr)
 		_started = false;
 		return false;
 	}
+
     _hAcceptEvent = WSACreateEvent();
     WSAEventSelect(_socket, _hAcceptEvent, FD_ACCEPT);
+
     int ret = bind(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(struct sockaddr_in));
 	if (SOCKET_ERROR   == ret) {
 		int errCode = WSAGetLastError();
@@ -107,6 +109,7 @@ bool Iocp::start(const InetAddress &listenAddr)
 		_started = false;
 		return false;
 	}
+
     ret = listen(_socket, 200);
 	if (SOCKET_ERROR   == ret) {
 		int errCode = WSAGetLastError();
@@ -115,6 +118,7 @@ bool Iocp::start(const InetAddress &listenAddr)
 		_started = false;
 		return false;
 	}
+
     HANDLE handle = CreateThread(NULL, 0, acceptorThreadProc, this, 0, NULL);
     CloseHandle(handle);
 
@@ -155,6 +159,7 @@ bool Iocp::open(const InetAddress &serverAddr)
 		_started = false;
 		return false;
 	}
+
 	newConnection(_socket, serverAddr);
 	return true;
 }
@@ -191,10 +196,8 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 	if (NULL != conn) {
 		conn->setState(TcpConnection::kConnected);
 		handleConnection(conn);
-
 		//postZeroByteReadEvent(conn);
 		postReadEvent(conn);
-		
 	}
 }
 
@@ -202,15 +205,14 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
 {
 	MutexLockGuard lock(_connMutex);
 
-	if (NULL == conn)
-		return;
-
-	conn->setState(TcpConnection::kDisconnecting);
-	handleClose(conn);
-	conn->setState(TcpConnection::kDisconnected);
+	if (NULL != conn) {
+		conn->setState(TcpConnection::kDisconnecting);
+		handleClose(conn);
+		conn->setState(TcpConnection::kDisconnected);
 	
-	if(_connections.erase(conn->connId() > 0))
-		safeDelete(conn);
+		if(0 != _connections.erase(conn->connId()))
+			safeDelete(conn);
+	}
 }
 
 void Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
@@ -218,14 +220,19 @@ void Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 	if (NULL == e)
 		e = new SocketEvent(this, conn);
 	
-	e->setEventType(kEventTypeCpRead);
+	e->setEventType(kEventTypeRead);
 	e->setEventCallback(handleRead, handleError);
 	e->resetBuffer();
 
 	DWORD nBytes = 0;
 	DWORD flags = 0;
-	int bytesRecv = WSARecv(
-		conn->socket(), &e->wsaBuffer(), 1, &nBytes, &flags, &e->_overlapped, NULL);
+	int bytesRecv = WSARecv(conn->socket(), 
+							&e->wsaBuffer(), 
+							1, 
+							&nBytes, 
+							&flags, 
+							&e->_overlapped, 
+							NULL);
 	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
 		safeDelete(e);
 		removeConnection(conn);
@@ -238,17 +245,23 @@ void Iocp::postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 	int writeable = buf->readableBytes();
 	if (writeable > 0) {
 		int len = (writeable < SocketEvent::kMaxBufSize) ? writeable : SocketEvent::kMaxBufSize;
+		
 		if (NULL == e)
 			e = new SocketEvent(this, conn);
 	
-		e->setEventType(kEventTypeCpWrite);
+		e->setEventType(kEventTypeWrite);
 		e->setEventCallback(handleWrite, handleError);
 		e->setBuffer(buf->peek(), len);
 
 		DWORD nBytes = 0;
 		DWORD flags = 0;
-		int byteSend = WSASend(
-			conn->socket(), &e->wsaBuffer(), 1, &nBytes, flags, &e->_overlapped, NULL);
+		int byteSend = WSASend(conn->socket(), 
+								&e->wsaBuffer(), 
+								1, 
+								&nBytes, 
+								flags, 
+								&e->_overlapped, 
+								NULL);
 		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError())) {
 			safeDelete(e);
 			removeConnection(conn);
@@ -256,8 +269,11 @@ void Iocp::postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 		} else {
 			buf->retrieve(len);
 		}
+
 		if (0 == buf->readableBytes())
 			handleWriteComplete(conn);
+	} else {
+		safeDelete(e);
 	}
 }
 
@@ -266,18 +282,21 @@ void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 	if (NULL == e)
 		e = new SocketEvent(this, conn);
 	
-	e->setEventType(kEventTypeCpZeroByteRead);
+	e->setEventType(kEventTypeZeroByteRead);
 	e->setEventCallback(handleZeroByteRead, handleError);
 	e->setZeroByteBuffer();
 
 	DWORD nBytes = 0;
 	DWORD flags = 0;
-	int bytesRecv = WSARecv(
-		conn->socket(), &e->wsaBuffer(), 1, &nBytes, &flags, &e->_overlapped, NULL);
-	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
-		safeDelete(e);
-		removeConnection(conn);
-	}
+	int bytesRecv = WSARecv(conn->socket(), 
+							&e->wsaBuffer(), 
+							1, 
+							&nBytes, 
+							&flags, 
+							&e->_overlapped, 
+							NULL);
+	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError())
+		safeDelete(e); // 这里没有removeConnection
 }
 
 void Iocp::acceptorLoop()

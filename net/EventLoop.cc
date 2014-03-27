@@ -12,24 +12,43 @@ DWORD WINAPI eventloopThreadProc(LPVOID param)
 }
 
 } // namespace thefox
+
 using namespace thefox;
 
 EventLoop::EventLoop()
+{
+	init();
+}
+
+EventLoop::~EventLoop()
+{
+	quit();
+	CloseHandle(_hQuitEvent);
+	CloseHandle(_hIocp);
+}
+
+void EventLoop::init()
 {
 	_hQuitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 }
 
-EventLoop::~EventLoop()
+void EventLoop::exec()
 {
-	SetEvent(_hQuitEvent);
-	CloseHandle(_hQuitEvent);
-	CloseHandle(_hIocp);
+	ResetEvent(_hQuitEvent);
+
+	HANDLE handle;
+	int threads = getCpuNum() * 2;
+	for (int i = 0; i < threads; ++i) {
+		handle = CreateThread(NULL, 0, eventloopThreadProc, this, 0, NULL);
+		CloseHandle(handle);
+	}
+	WaitForSingleObject(_hQuitEvent, INFINITE);
 }
 
-void EventLoop::registerHandle(HANDLE h)
+void EventLoop::registerHandle(HANDLE handle)
 {
-	CreateIoCompletionPort(h, _hIocp, 0, 0);
+	CreateIoCompletionPort(handle, _hIocp, 0, 0);
 }
 
 void EventLoop::postEvent(IoEvent *e)
@@ -41,18 +60,15 @@ void EventLoop::postEvent(IoEvent *e)
 	}
 }
 
-void EventLoop::exec()
+void EventLoop::quit()
 {
-	ResetEvent(_hQuitEvent);
+	int threads = getCpuNum() * 2;
+	for (int i = 0; i < threads; ++i)
+		PostQueuedCompletionStatus(_hIocp, 0, NULL, NULL);
 
-	HANDLE handle;
-	int cpuNum = getCpuNum();
-	for (int i = 0; i < cpuNum; ++i) {
-		handle = CreateThread(NULL, 0, eventloopThreadProc, this, 0, NULL);
-		CloseHandle(handle);
-	}
-	WaitForSingleObject(_hQuitEvent, INFINITE);
+	SetEvent(_hQuitEvent);
 }
+
 void EventLoop::loop()
 {
 	DWORD bytesTransfered = 0;
@@ -83,11 +99,10 @@ void EventLoop::loop()
 			}
 		}
 
-		if (0 == bytesTransfered && 0 == CompletionKey && NULL == overlapped)
+		if (0 == bytesTransfered && NULL == CompletionKey && NULL == overlapped)
             break;
 	}
 }
-
 
 int EventLoop::getCpuNum()
 {

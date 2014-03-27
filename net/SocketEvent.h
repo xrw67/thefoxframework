@@ -1,5 +1,11 @@
-#ifndef _THEFOX_NET_CPEVENT_H_
-#define _THEFOX_NET_CPEVENT_H_
+/*
+* @filename SocketEvent.h
+* @brief 表示Socket事件
+* @author macwe@qq.com
+*/
+
+#ifndef _THEFOX_NET_SOCKETEVENT_H_
+#define _THEFOX_NET_SOCKETEVENT_H_
 
 #include <net/IoEvent.h>
 
@@ -13,6 +19,7 @@ class SocketEvent : public IoEvent
 {
 public:
 	static const int kMaxBufSize = 8192;
+
 	SocketEvent(Iocp *iocp, TcpConnection *conn)
 		: IoEvent()
 		, _iocp(iocp)
@@ -20,6 +27,7 @@ public:
 	{
 		resetBuffer();
 	}
+
 	void resetBuffer()
 	{
 		memset(&_overlapped, 0, sizeof(OVERLAPPED));
@@ -27,6 +35,7 @@ public:
 		_wsabuf.len = kMaxBufSize;
 		memset(&_buf, 0, kMaxBufSize);
 	}
+
 	void setBuffer(const char *data, size_t len)
 	{
 		memset(&_overlapped, 0, sizeof(OVERLAPPED));
@@ -34,14 +43,18 @@ public:
 		_wsabuf.len = len;
 		memcpy(&_buf, data, len);
 	}
+
 	void setZeroByteBuffer() 
 	{
 		memset(&_overlapped, 0, sizeof(OVERLAPPED));
 		_wsabuf.buf = _buf;
 		_wsabuf.len = 0;
 	}
+
 	Iocp *iocp() const { return _iocp; }
+
 	TcpConnection *conn() const { return _conn; }
+
 	WSABUF wsaBuffer() const { return _wsabuf; }
 
 private:
@@ -53,4 +66,4 @@ private:
 
 } // namespace thefox
 
-#endif // _THEFOX_NET_CPEVENT_H_
+#endif // _THEFOX_NET_SOCKETEVENT_H_
