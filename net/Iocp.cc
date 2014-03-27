@@ -17,19 +17,12 @@ void handleError(IoEvent *e)
 	safeDelete(e)
 }
 
-void handleClose(IoEvent *e)
-{
-	SocketEvent *se = static_cast<SocketEvent *>(e);
-	// LOG_INFO<<socket close;
-	se->iocp()->removeConnection(se->conn());
-	safeDelete(e)
-}
-
 void handleRead(IoEvent *e)
 {
 	SocketEvent *se = static_cast<SocketEvent *>(e);
 	if (0 == se->bytesTransfered()) {
-		handleClose(e);
+		se->iocp()->removeConnection(se->conn());
+		safeDelete(e)
 	} else {
 		se->conn()->appendReadBuffer(se->wsaBuffer().buf, se->bytesTransfered());
 		se->iocp()->handleMessage(
@@ -199,7 +192,7 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 		conn->setState(TcpConnection::kConnected);
 		handleConnection(conn);
 
-		postZeroByteReadEvent(conn);
+		//postZeroByteReadEvent(conn);
 		postReadEvent(conn);
 		
 	}
@@ -213,7 +206,7 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
 		return;
 
 	conn->setState(TcpConnection::kDisconnecting);
-	this->handleClose(conn);
+	handleClose(conn);
 	conn->setState(TcpConnection::kDisconnected);
 	
 	if(_connections.erase(conn->connId() > 0))
