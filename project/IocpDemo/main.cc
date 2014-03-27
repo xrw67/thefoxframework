@@ -8,22 +8,25 @@
 
 using namespace thefox;
 
-//void onConnection(int32_t connId)
-//{
-//	printf("Connection success connID=%d\r\n", connId);
-//}
-//
-//void onClose(int32_t connId)
-//{
-//	printf("Connection close connID=%d\r\n", connId);
-//}
-//
-//void onMessage(int32_t connId, Buffer *buf, Timestamp receiveTime)
-//{
-//	printf("%s Message come[%d], size=%u\r\n", receiveTime.toFormatString().c_str(), connId, buf->readableBytes());
-//	svr.send(connId, buf->peek(), buf->readableBytes());
-//	buf->retrieveAll();
-//}
+TcpServer *svr = NULL;
+
+void onConnection(const TcpConnectionPtr &conn)
+{
+	printf("Connection success connID=%d\r\n", conn->connId());
+}
+
+void onClose(const TcpConnectionPtr &conn)
+{
+	printf("Connection close connID=%d\r\n", conn->connId());
+}
+
+void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
+{
+	printf("%s Message come[%d], size=%u\r\n",
+		receiveTime.toFormatString().c_str(), conn->connId(), buf->readableBytes());
+	svr->send(conn, buf->peek(), buf->readableBytes());
+	buf->retrieveAll();
+}
 
 int main(int argc, char *argv[])
 {
@@ -31,15 +34,17 @@ int main(int argc, char *argv[])
     WSAStartup(MAKEWORD(2, 2), &wsd);
 
 	EventLoop loop;
-	TcpServer svr(&loop, "MyIocpDemo");
-	//svr.setConnectionCallback(onConnection);
-	//svr.setCloseCallback(onClose);
-	//svr.setMessageCallback(onMessage);
-	svr.start(InetAddress(7901));
+	svr = new TcpServer(&loop, "MyIocpDemo");
+	svr->setConnectionCallback(onConnection);
+	svr->setCloseCallback(onClose);
+	svr->setMessageCallback(onMessage);
+	svr->start(InetAddress(7901));
 	loop.exec();
 
     while ('q' != getchar())
         ;
 
+	WSACleanup();
+	delete svr;
 	return 0;
 }

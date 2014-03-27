@@ -10,24 +10,59 @@
 namespace thefox
 {
 
-void handleRead(IoEvent *e, EventError err)
+void handleError(IoEvent *e)
 {
-	
+	SocketEvent *se = static_cast<SocketEvent *>(e);
+	// LOG_ERROR<<socket error;
+	if (NULL != se->conn())
+		se->iocp()->removeConnection(se->conn());
+	delete e;
 }
 
-void handleWrite(IoEvent *e, EventError err)
+void handleClose(IoEvent *e)
+{
+	SocketEvent *se = static_cast<SocketEvent *>(e);
+	// LOG_INFO<<socket close;
+	se->iocp()->removeConnection(se->conn());
+	delete e;
+}
+
+void handleRead(IoEvent *e)
+{
+	SocketEvent *se = static_cast<SocketEvent *>(e);
+	if (0 == se->bytesTransfered()) {
+		handleClose(e);
+	} else {
+		se->conn()->appendReadBuffer(se->wsaBuffer().buf, se->bytesTransfered());
+		se->iocp()->handleMessage(
+			se->conn(), se->conn()->readBuffer(), Timestamp(Timestamp::now()));
+		if (!se->iocp()->postReadEvent(se->conn(), se))
+			handleError(e);
+	}
+}
+
+void handleWrite(IoEvent *e)
+{
+	SocketEvent *se = static_cast<SocketEvent *>(e);
+	if (!se->iocp()->postWriteEvent(se->conn(), se))
+		handleError(e);
+}
+
+void handleZeroByteRead(IoEvent *e)
+{
+	SocketEvent *se = static_cast<SocketEvent *>(e);
+	if (!se->iocp()->postZeroByteReadEvent(se->conn(), se))
+		handleError(e);
+}
+
+void defaultConnectionCallback(const TcpConnectionPtr &conn)
 {
 
 }
 
-void handleZeroByteRead(IoEvent *e, EventError err)
+void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
 {
-
-}
-
-void handleClose(IoEvent *e, EventError err)
-{
-
+	buffer->retrieveAll();
 }
 
 // 接收新连接的线程
@@ -47,6 +82,10 @@ Iocp::Iocp(EventLoop *eventloop, const String &nameArg)
 	, _name(nameArg)
 	, _nextConnId(1)
 	, _started(false)
+	, _connectionCallback(defaultConnectionCallback)
+	, _messageCallback(defaultMessageCallback)
+	, _writeCompleteCallback(NULL)
+	, _closeCallback(NULL)
 {
 }
 
@@ -97,8 +136,10 @@ bool Iocp::start(const InetAddress &listenAddr)
 
 void Iocp::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
-	if (NULL != conn)
+	if (NULL != conn) {
 		conn->appendWriteBuffer(data, len);
+		postWriteEvent(conn);
+	}
 }
 
 bool Iocp::open(const InetAddress &serverAddr)
@@ -153,7 +194,7 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 		int32_t connId = _nextConnId;
 		++_nextConnId;
 
-		TcpConnectionPtr conn = new TcpConnection(socket, connId, peerAddr);
+		conn = new TcpConnection(socket, connId, peerAddr);
 		conn->setState(TcpConnection::kConnecting);
 		_connections[connId] = conn;
 		_eventloop->registerHandle((HANDLE)socket);
@@ -161,22 +202,28 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 	
 	if (NULL != conn) {
 		conn->setState(TcpConnection::kConnected);
-		_connectionCallback(conn);
+		handleConnection(conn);
 
-		if (!postReadEvent(conn))
+		if (!postReadEvent(conn) || !postZeroByteReadEvent(conn))
 			removeConnection(conn);
 	}
 }
 
-void Iocp::removeConnection(const TcpConnectionPtr &conn)
+void Iocp::removeConnection(TcpConnectionPtr conn)
 {
+	MutexLockGuard lock(_connMutex);
+
+	if (NULL == conn)
+		return;
+
 	conn->setState(TcpConnection::kDisconnecting);
-	_closeCallback(conn);
+	this->handleClose(conn);
 	conn->setState(TcpConnection::kDisconnected);
 	
-	MutexLockGuard lock(_connMutex);
-	if(_connections.erase(conn->connId() > 0))
+	if(_connections.erase(conn->connId() > 0)) {
 		delete conn;
+		conn = NULL;
+	}
 }
 
 bool Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
@@ -185,15 +232,17 @@ bool Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 		e = new SocketEvent(this, conn);
 	
 	e->setEventType(kEventTypeCpRead);
-	e->setEventCallback(handleRead);
+	e->setEventCallback(handleRead, handleError);
 	e->resetBuffer();
 
 	DWORD nBytes = 0;
 	DWORD flags = 0;
 	int bytesRecv = WSARecv(
 		conn->socket(), &e->wsaBuffer(), 1, &nBytes, &flags, &e->_overlapped, NULL);
-	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError())
+	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
+		delete e;
 		return false;
+	}
 	return true;
 }
 
@@ -207,23 +256,43 @@ bool Iocp::postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 			e = new SocketEvent(this, conn);
 	
 		e->setEventType(kEventTypeCpWrite);
-		e->setEventCallback(handleWrite);
+		e->setEventCallback(handleWrite, handleError);
 		e->setBuffer(buf->peek(), len);
 
 		DWORD nBytes = 0;
 		DWORD flags = 0;
 		int byteSend = WSASend(
 			conn->socket(), &e->wsaBuffer(), 1, &nBytes, flags, &e->_overlapped, NULL);
-		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError()))
+		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError())) {
+			delete e;
 			return false;
-		else
+		} else {
 			buf->retrieve(len);
+		}
+
+		if (0 == buf->readableBytes())
+			handleWriteComplete(conn);
 	}
 	return true;
 }
 
 bool Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 {
+	if (NULL == e)
+		e = new SocketEvent(this, conn);
+	
+	e->setEventType(kEventTypeCpZeroByteRead);
+	e->setEventCallback(handleZeroByteRead, handleError);
+	e->setZeroByteBuffer();
+
+	DWORD nBytes = 0;
+	DWORD flags = 0;
+	int bytesRecv = WSARecv(
+		conn->socket(), &e->wsaBuffer(), 1, &nBytes, &flags, &e->_overlapped, NULL);
+	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
+		delete e;
+		return false;
+	}
 	return true;
 }
 

@@ -32,6 +32,15 @@ void EventLoop::registerHandle(HANDLE h)
 	CreateIoCompletionPort(h, _hIocp, 0, 0);
 }
 
+void EventLoop::postEvent(IoEvent *e)
+{
+	if (NULL != e) {
+		PostQueuedCompletionStatus(_hIocp, 0, NULL, &e->_overlapped);
+	} else {
+		//LOG_ERROR<<post a NULL event;
+	}
+}
+
 void EventLoop::exec()
 {
 	ResetEvent(_hQuitEvent);
@@ -51,7 +60,7 @@ void EventLoop::loop()
 	OVERLAPPED *overlapped = NULL;
 	BOOL ret = FALSE;
 
-	while (WAIT_OBJECT_0 == WaitForSingleObject(_hQuitEvent, 0)) {
+	while (WAIT_OBJECT_0 != WaitForSingleObject(_hQuitEvent, 0)) {
 		ret = GetQueuedCompletionStatus(_hIocp, 
 										&bytesTransfered, 
 										&CompletionKey, 
@@ -61,7 +70,7 @@ void EventLoop::loop()
             if (overlapped && WAIT_TIMEOUT != GetLastError()) {
                 IoEvent *e = NULL;
 		        if ((e = CONTAINING_RECORD(overlapped, IoEvent, _overlapped)) != NULL)
-					e->handleEvent(kCpError);
+					e->handleError();
             }
             continue;
         }
@@ -70,7 +79,7 @@ void EventLoop::loop()
 			IoEvent *e = NULL;
 			if ((e = CONTAINING_RECORD(overlapped, IoEvent, _overlapped)) != NULL) {
 				e->setBytesTransfered(bytesTransfered);
-				e->handleEvent(kNoError);
+				e->handleEvent();
 			}
 		}
 

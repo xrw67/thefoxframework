@@ -24,7 +24,7 @@ public:
     bool start(const InetAddress &listenAddr);
 	bool started() { return _started; }
 	void send(const TcpConnectionPtr &conn, const char *data, size_t len);
-	void removeConnection(const TcpConnectionPtr &conn);
+	void removeConnection(TcpConnectionPtr conn);
 
 	// 客户端方法
 	bool open(const InetAddress &serverAddr);
@@ -44,9 +44,19 @@ public:
 	void setWriteCompleteCallback(const WriteCompleteCallback &cb)
 	{ _writeCompleteCallback = cb; }
 
+	void handleConnection(const TcpConnectionPtr &conn)
+	{ if (NULL != _connectionCallback) _connectionCallback(conn); }
+	void handleClose(const TcpConnectionPtr &conn)
+	{ if (NULL != _closeCallback) _closeCallback(conn); }
+	void handleMessage(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
+	{ if (NULL != _messageCallback) _messageCallback(conn, buffer, recvTime); }
+	void handleWriteComplete(const TcpConnectionPtr &conn)
+	{ if (NULL != _writeCompleteCallback) _writeCompleteCallback(conn); }
+
 	bool postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
 	bool postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
 	bool postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
+
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);
 

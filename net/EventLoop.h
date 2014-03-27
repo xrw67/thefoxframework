@@ -17,6 +17,8 @@ public:
 	void loop(); // don'y use, one thread
 	void quit();
 	void registerHandle(HANDLE h);
+	void postEvent(IoEvent *e);
+
 private:
 	int getCpuNum();
 	HANDLE _hIocp;

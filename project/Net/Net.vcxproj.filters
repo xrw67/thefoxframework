@@ -43,7 +43,7 @@
     <ClCompile Include="..\..\net\TcpClient.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventLoop.cc">
+    <ClCompile Include="..\..\net\EventLoop.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

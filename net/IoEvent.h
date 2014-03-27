@@ -18,12 +18,7 @@ enum {
 	kEventTypeUser
 };
 
-enum  EventError {
-	kNoError,
-	kCpError
-};
-
-typedef void (*EventCallback)(IoEvent *, EventError);
+typedef void (*EventCallback)(IoEvent *);
 
 class IoEvent
 {
@@ -39,15 +34,23 @@ public:
 	}
 	int32_t eventType() const { return _eventType; }
 	void setEventType(int32_t type) { _eventType = type; }
-	void setEventCallback(const EventCallback &cb)
-	{ _eventCallback = cb; }
+	void setEventCallback(const EventCallback &eventCb, const EventCallback &errorCb)
+	{ 
+		_eventCallback = eventCb;
+		_errorCallback = errorCb;
+	}
 	void setBytesTransfered(DWORD bytesTransfered)
 	{ _bytesTransfered = bytesTransfered;}
-	void handleEvent(EventError error)
-	{ _eventCallback(this, error); }
+	DWORD bytesTransfered() const { return _bytesTransfered; }
+	void handleEvent()
+	{ _eventCallback(this); }
+	void handleError()
+	{ _errorCallback(this); }
+
 protected:
 	int32_t _eventType;
 	EventCallback _eventCallback;
+	EventCallback _errorCallback;
 	DWORD _bytesTransfered;
 };
 

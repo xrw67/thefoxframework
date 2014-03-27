@@ -42,7 +42,7 @@ void TcpServer::send(const TcpConnectionPtr &conn, const String &data)
 	_model->send(conn, data.c_str(), data.length());
 }
 
-void TcpServer::removeConnection(const TcpConnectionPtr &conn)
+void TcpServer::removeConnection(TcpConnectionPtr conn)
 {
 	_model->removeConnection(conn);
 }

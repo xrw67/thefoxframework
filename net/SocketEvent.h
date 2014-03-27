@@ -15,6 +15,7 @@ public:
 	static const int kMaxBufSize = 8192;
 	SocketEvent(Iocp *iocp, TcpConnection *conn)
 		: IoEvent()
+		, _iocp(iocp)
 		, _conn(conn)
 	{
 		resetBuffer();
@@ -33,9 +34,17 @@ public:
 		_wsabuf.len = len;
 		memcpy(&_buf, data, len);
 	}
+	void setZeroByteBuffer() 
+	{
+		memset(&_overlapped, 0, sizeof(OVERLAPPED));
+		_wsabuf.buf = _buf;
+		_wsabuf.len = 0;
+	}
+	Iocp *iocp() const { return _iocp; }
+	TcpConnection *conn() const { return _conn; }
+	WSABUF wsaBuffer() const { return _wsabuf; }
 
-	TcpConnection *conn() { return _conn; }
-	WSABUF wsaBuffer() { return _wsabuf; }
+private:
 	char _buf[8192];
     WSABUF _wsabuf;
 	TcpConnection *_conn;

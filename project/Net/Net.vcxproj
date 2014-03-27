@@ -83,10 +83,10 @@
     <ClInclude Include="..\..\net\TcpServer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\net\EventLoop.cc" />
     <ClCompile Include="..\..\net\Iocp.cc" />
     <ClCompile Include="..\..\net\TcpClient.cc" />
     <ClCompile Include="..\..\net\TcpServer.cc" />
-    <ClCompile Include="EventLoop.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
