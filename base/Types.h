@@ -16,6 +16,7 @@ typedef std::string String;
 
 #endif
 
+#define safeDelete(p) if (NULL != p) { delete p; p = NULL; }
 } // namespace thefox
 
 #endif // _THEFOX_TYPES_H_

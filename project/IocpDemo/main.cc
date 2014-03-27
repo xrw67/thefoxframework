@@ -22,8 +22,8 @@ void onClose(const TcpConnectionPtr &conn)
 
 void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
 {
-	printf("%s Message come[%d], size=%u\r\n",
-		receiveTime.toFormatString().c_str(), conn->connId(), buf->readableBytes());
+	buf->appendInt8(0);
+	printf("%s", buf->peek());
 	svr->send(conn, buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }

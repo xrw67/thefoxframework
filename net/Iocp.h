@@ -53,9 +53,9 @@ public:
 	void handleWriteComplete(const TcpConnectionPtr &conn)
 	{ if (NULL != _writeCompleteCallback) _writeCompleteCallback(conn); }
 
-	bool postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
-	bool postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
-	bool postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
+	void postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
+	void postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
+	void postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
 
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);

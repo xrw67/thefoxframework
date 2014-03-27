@@ -4,27 +4,28 @@
 #include <net/Buffer.h>
 #include <net/TcpClient.h>
 #include <net/TcpConnection.h>
+#include <net/EventLoop.h>
 
 using namespace thefox;
 
 
-TcpClient client("MyIocpClientDemo");
+TcpClient *client = NULL;
 
-void onConnection(int32_t connId)
+void onConnection(const TcpConnectionPtr &conn)
 {
-	printf("Connection success connID=%d\r\n", connId);
-	client.send("Hello!", strlen("Hello!"));
+	printf("Connection success\r\n");
+	client->send("Hello!", strlen("Hello!"));
 }
 
-void onClose(int32_t connId)
+void onClose(const TcpConnectionPtr &conn)
 {
-	printf("Connection close connID=%d\r\n", connId);
+	printf("Connection close\r\n");
 }
 
-void onMessage(int32_t connId, Buffer *buf, Timestamp receiveTime)
+void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
 {
-	printf("%s Message come[%d], size=%u\r\n", receiveTime.toFormatString().c_str(), connId, buf->readableBytes());
-	client.send(buf->peek(), buf->readableBytes());
+	printf("%s Message come, size=%u\r\n", receiveTime.toFormatString().c_str(), buf->readableBytes());
+	client->send(buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }
 
@@ -33,14 +34,16 @@ int main(int argc, char *argv[])
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 
-
-	client.setConnectionCallback(onConnection);
-	client.setCloseCallback(onClose);
-	client.setMessageCallback(onMessage);
-	client.open(InetAddress("127.0.0.1", 7901));
+	EventLoop loop;
+	client = new TcpClient(&loop, "MyIocpClientDemo");
+	client->setConnectionCallback(onConnection);
+	client->setCloseCallback(onClose);
+	client->setMessageCallback(onMessage);
+	client->open(InetAddress("127.0.0.1", 7901));
 
     while ('q' != getchar())
         ;
-
+	WSACleanup();
+	delete client;
 	return 0;
 }
