@@ -14,26 +14,34 @@ void handleError(IoEvent *e)
 {
 	SocketEvent *se = static_cast<SocketEvent *>(e);
 	// LOG_ERROR<<socket error;
+	Iocp *iocp = se->iocp();
+	TcpConnectionPtr conn = se->conn();
+
 	safeDelete(e)
+	iocp->removeConnection(conn);
 }
 
 void handleRead(IoEvent *e)
 {
 	SocketEvent *se = static_cast<SocketEvent *>(e);
+	Iocp *iocp = se->iocp();
+	TcpConnectionPtr conn = se->conn();
+
 	if (0 == se->bytesTransfered()) {
-		se->iocp()->removeConnection(se->conn());
 		safeDelete(e)
+		iocp->removeConnection(conn);
 	} else {
-		se->conn()->appendReadBuffer(se->wsaBuffer().buf, se->bytesTransfered());
+		conn->appendReadBuffer(se->wsaBuffer().buf, se->bytesTransfered());
 		se->iocp()->handleMessage(
-			se->conn(), se->conn()->readBuffer(), Timestamp(Timestamp::now()));
-		se->iocp()->postReadEvent(se->conn(), se);
+			conn, conn->readBuffer(), Timestamp(Timestamp::now()));
+		se->iocp()->postReadEvent(conn, se);
 	}
 }
 
 void handleWrite(IoEvent *e)
 {
 	SocketEvent *se = static_cast<SocketEvent *>(e);
+	
 	se->conn()->writeBuffer()->retrieve(se->bytesTransfered());
 	se->iocp()->postWriteEvent(se->conn(), se);
 }
@@ -197,20 +205,23 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 	if (NULL != conn) {
 		conn->setState(TcpConnection::kConnected);
 		handleConnection(conn);
-		//postZeroByteReadEvent(conn);
+		
+		postZeroByteReadEvent(conn);
 		postReadEvent(conn);
 	}
 }
 
 void Iocp::removeConnection(TcpConnectionPtr conn)
 {
-	MutexLockGuard lock(_connMutex);
+	if (INVALID_SOCKET != conn->socket())
+		closesocket(conn->socket());
 
-	if (NULL != conn) {
+	if (0 == conn->leaveEventLoop()) {
 		conn->setState(TcpConnection::kDisconnecting);
 		handleClose(conn);
 		conn->setState(TcpConnection::kDisconnected);
-	
+		
+		MutexLockGuard lock(_connMutex);
 		if(0 != _connections.erase(conn->connId()))
 			safeDelete(conn);
 	}
@@ -218,9 +229,10 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
 
 void Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 {
-	if (NULL == e)
+	if (NULL == e) {
+		conn->enterEventLoop();
 		e = new SocketEvent(this, conn);
-
+	}
 	e->setEventType(kEventTypeRead);
 	e->setEventCallback(handleRead, handleError);
 	e->resetBuffer();
@@ -242,17 +254,17 @@ void Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 
 void Iocp::postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 {
-	Buffer *buf = conn->writeBuffer();
-	int writeable = buf->readableBytes();
+	size_t writeable = conn->writeBuffer()->readableBytes();
 	if (writeable > 0) {
 		int len = (writeable < SocketEvent::kMaxBufSize) ? writeable : SocketEvent::kMaxBufSize;
 		
-		if (NULL == e)
+		if (NULL == e) {
+			conn->enterEventLoop();
 			e = new SocketEvent(this, conn);
-	
+		}
 		e->setEventType(kEventTypeWrite);
 		e->setEventCallback(handleWrite, handleError);
-		e->setBuffer(buf->peek(), len);
+		e->setBuffer(conn->writeBuffer()->peek(), len);
 
 		DWORD nBytes = 0;
 		DWORD flags = 0;
@@ -266,21 +278,20 @@ void Iocp::postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 		if ((SOCKET_ERROR == byteSend) && (WSA_IO_PENDING != WSAGetLastError())) {
 			safeDelete(e);
 			removeConnection(conn);
-			return;
 		}
-
-		if (0 == buf->readableBytes())
-			handleWriteComplete(conn);
 	} else {
 		safeDelete(e);
+		handleWriteComplete(conn);
+		conn->leaveEventLoop();
 	}
 }
 
 void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 {
-	if (NULL == e)
+	if (NULL == e) {
+		conn->enterEventLoop();
 		e = new SocketEvent(this, conn);
-	
+	}
 	e->setEventType(kEventTypeZeroByteRead);
 	e->setEventCallback(handleZeroByteRead, handleError);
 	e->setZeroByteBuffer();
@@ -294,8 +305,10 @@ void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 							&flags, 
 							&e->_overlapped, 
 							NULL);
-	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError())
-		safeDelete(e); // 这里没有removeConnection
+	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
+		safeDelete(e);
+		removeConnection(conn);
+	}
 }
 
 void Iocp::acceptorLoop()

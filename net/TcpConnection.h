@@ -29,12 +29,12 @@ public:
 		: _socket(socket)
 		, _connId(connId)
 		, _peerAddr(peerAddr)
+		, _pendingEvent(0)
 	{
 	}
 
 	~TcpConnection()
 	{
-		MutexLockGuard lock(_mutex);
 		if (INVALID_SOCKET != _socket) {
 			closesocket(_socket);
 			_socket = INVALID_SOCKET;
@@ -70,23 +70,36 @@ public:
 
 	void appendReadBuffer(const char *data, size_t len) 
 	{
-		MutexLockGuard lock(_mutex);
 		_readBuffer.append(data, len);
 	}
 
 	void appendWriteBuffer(const char *data, size_t len)
 	{
-		MutexLockGuard lock(_mutex);
 		_writeBuffer.append(data, len);
 	}
 
+	void enterEventLoop()
+	{
+		MutexLockGuard lock(_mutex);
+		++_pendingEvent;
+	}
+	
+	size_t leaveEventLoop()
+	{
+		MutexLockGuard lock(_mutex);
+		if (_pendingEvent > 0)
+			--_pendingEvent;
+		return _pendingEvent;
+	}
+
+	size_t pendingEvent() const { return _pendingEvent; }
 private:
 	int _connId;
 	SOCKET _socket;
 	InetAddress _peerAddr;
 	Buffer _readBuffer;
 	Buffer _writeBuffer;
-	
+	size_t _pendingEvent; // 未完成的事件
 	StateT _state;
 	MutexLock _mutex;
 	void *_any;
