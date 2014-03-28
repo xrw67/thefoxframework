@@ -88,7 +88,7 @@ private:
 	Buffer _writeBuffer;
 	
 	StateT _state;
-	MutexLock _mutex;;
+	MutexLock _mutex;
 	void *_any;
 };
 

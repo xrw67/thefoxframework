@@ -33,7 +33,7 @@ void EventLoop::init()
 	_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 }
 
-void EventLoop::exec()
+void EventLoop::start()
 {
 	ResetEvent(_hQuitEvent);
 
@@ -43,7 +43,20 @@ void EventLoop::exec()
 		handle = CreateThread(NULL, 0, eventloopThreadProc, this, 0, NULL);
 		CloseHandle(handle);
 	}
+}
+
+void EventLoop::join()
+{
 	WaitForSingleObject(_hQuitEvent, INFINITE);
+}
+
+void EventLoop::quit()
+{
+	int threads = getCpuNum() * 2;
+	for (int i = 0; i < threads; ++i)
+		PostQueuedCompletionStatus(_hIocp, 0, NULL, NULL);
+
+	SetEvent(_hQuitEvent);
 }
 
 void EventLoop::registerHandle(HANDLE handle)
@@ -58,15 +71,6 @@ void EventLoop::postEvent(IoEvent *e)
 	} else {
 		//LOG_ERROR<<post a NULL event;
 	}
-}
-
-void EventLoop::quit()
-{
-	int threads = getCpuNum() * 2;
-	for (int i = 0; i < threads; ++i)
-		PostQueuedCompletionStatus(_hIocp, 0, NULL, NULL);
-
-	SetEvent(_hQuitEvent);
 }
 
 void EventLoop::loop()

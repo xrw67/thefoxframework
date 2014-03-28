@@ -41,10 +41,9 @@ int main(int argc, char *argv[])
 	client->setMessageCallback(onMessage);
 	client->open(InetAddress("127.0.0.1", 7901));
 	client->close();
-	loop.exec();
+	loop.start();
+	loop.join();
 
-    while ('q' != getchar())
-        ;
 	WSACleanup();
 	delete client;
 	return 0;

@@ -34,6 +34,7 @@ void handleRead(IoEvent *e)
 void handleWrite(IoEvent *e)
 {
 	SocketEvent *se = static_cast<SocketEvent *>(e);
+	se->conn()->writeBuffer()->retrieve(se->bytesTransfered());
 	se->iocp()->postWriteEvent(se->conn(), se);
 }
 
@@ -219,7 +220,7 @@ void Iocp::postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 {
 	if (NULL == e)
 		e = new SocketEvent(this, conn);
-	
+
 	e->setEventType(kEventTypeRead);
 	e->setEventCallback(handleRead, handleError);
 	e->resetBuffer();
@@ -266,8 +267,6 @@ void Iocp::postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 			safeDelete(e);
 			removeConnection(conn);
 			return;
-		} else {
-			buf->retrieve(len);
 		}
 
 		if (0 == buf->readableBytes())

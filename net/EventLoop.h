@@ -22,7 +22,10 @@ public:
 	~EventLoop();
 
 	/// @brief 开始消息循环(多线程)
-	void exec();
+	void start();
+
+	/// @brief 阻塞并等待时间循环退出
+	void join();
 
 	/// @brief 退出消息循环
 	void quit();

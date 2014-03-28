@@ -39,10 +39,8 @@ int main(int argc, char *argv[])
 	svr->setCloseCallback(onClose);
 	svr->setMessageCallback(onMessage);
 	svr->start(InetAddress(7901));
-	loop.exec();
-
-    while ('q' != getchar())
-        ;
+	loop.start();
+	loop.join();
 
 	WSACleanup();
 	delete svr;
