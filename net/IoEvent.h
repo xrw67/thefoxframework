@@ -19,6 +19,7 @@ enum {
 	kEventTypeRead,
 	kEventTypeWrite,
 	kEventTypeZeroByteRead,
+	kEventTypeClose,
 	kEventTypeTimer,
 	kEventTypeUser // 用户自定义事件开始
 };

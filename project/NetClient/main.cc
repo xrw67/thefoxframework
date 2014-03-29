@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
 	client->setCloseCallback(onClose);
 	client->setMessageCallback(onMessage);
 	client->open(InetAddress("127.0.0.1", 7901));
-	client->close();
 	loop.start();
 	loop.join();
 

@@ -63,6 +63,7 @@ public:
 	void postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
 	void postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
 	void postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
+	void postCloseEvent(const TcpConnectionPtr &conn);
 
 private:
 	void newConnection(SOCKET socket, const InetAddress &peerAddr);

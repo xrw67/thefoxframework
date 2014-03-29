@@ -177,8 +177,8 @@ void Iocp::close()
 {	
 	_started = false;
 
-	while (!_connections.empty())
-		removeConnection(_connections.begin()->second);
+	if (!_connections.empty())
+		postCloseEvent(_connections.begin()->second);
 }
 
 void Iocp::send(const char *data, size_t len)
@@ -204,17 +204,18 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 	
 	if (NULL != conn) {
 		conn->setState(TcpConnection::kConnected);
-		handleConnection(conn);
-		
 		postZeroByteReadEvent(conn);
 		postReadEvent(conn);
+		handleConnection(conn);
 	}
 }
 
 void Iocp::removeConnection(TcpConnectionPtr conn)
 {
-	if (INVALID_SOCKET != conn->socket())
+	if (INVALID_SOCKET != conn->socket()) {
+		CancelIo((HANDLE)conn->socket());
 		closesocket(conn->socket());
+	}
 
 	if (0 == conn->leaveEventLoop()) {
 		conn->setState(TcpConnection::kDisconnecting);
@@ -309,6 +310,15 @@ void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e)
 		safeDelete(e);
 		removeConnection(conn);
 	}
+}
+
+void Iocp::postCloseEvent(const TcpConnectionPtr &conn)
+{
+	conn->enterEventLoop();
+	SocketEvent *e = new SocketEvent(this, conn);
+	e->setEventType(kEventTypeClose);
+	e->setEventCallback(handleError, handleError);
+	_eventloop->postEvent(e);
 }
 
 void Iocp::acceptorLoop()
