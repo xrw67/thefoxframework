@@ -30,6 +30,8 @@ public:
 		, _connId(connId)
 		, _peerAddr(peerAddr)
 		, _pendingEvent(0)
+		, _readBytes(0)
+		, _writeBytes(0)
 	{
 	}
 
@@ -71,11 +73,13 @@ public:
 	void appendReadBuffer(const char *data, size_t len) 
 	{
 		_readBuffer.append(data, len);
+		_readBytes += len;
 	}
 
 	void appendWriteBuffer(const char *data, size_t len)
 	{
 		_writeBuffer.append(data, len);
+		_writeBytes += len;
 	}
 
 	void enterEventLoop()
@@ -93,6 +97,8 @@ public:
 	}
 
 	size_t pendingEvent() const { return _pendingEvent; }
+	size_t readBytes() const { return _readBytes; }
+	size_t writeBytes() const { return _writeBytes; }
 private:
 	int _connId;
 	SOCKET _socket;
@@ -103,6 +109,10 @@ private:
 	StateT _state;
 	MutexLock _mutex;
 	void *_any;
+
+	// 统计信息
+	size_t _readBytes;
+	size_t _writeBytes;
 };
 
 } // namespace thefox

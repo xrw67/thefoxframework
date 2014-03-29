@@ -22,8 +22,7 @@ void onClose(const TcpConnectionPtr &conn)
 
 void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
 {
-	//buf->appendInt8(0);
-	//printf("%s", buf->peek());
+	printf("收到数据 总共读:%u 总共写:%u\r\n", conn->readBytes(), conn->writeBytes());
 	svr->send(conn, buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }
