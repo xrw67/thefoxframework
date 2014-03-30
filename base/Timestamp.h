@@ -54,6 +54,13 @@ public:
 	int64_t timestamp() const { return _usTimestamp; }
 	bool valid() const { return _usTimestamp > 0; }
 
+    LARGE_INTEGER toLargeInt() const 
+    {
+        LARGE_INTEGER li;
+        li.QuadPart = (_usTimestamp * 10) + 116444736000000000;
+        return li;
+    }
+
 	static Timestamp now()
 	{
 		FILETIME ft;
@@ -75,6 +82,11 @@ private:
 inline bool operator<(Timestamp lhs, Timestamp rhs)
 {
 	return lhs.timestamp() < rhs.timestamp();
+}
+
+inline bool operator<=(Timestamp lhs, Timestamp rhs)
+{
+	return lhs.timestamp() <= rhs.timestamp();
 }
 
 inline bool operator==(Timestamp lhs, Timestamp rhs)

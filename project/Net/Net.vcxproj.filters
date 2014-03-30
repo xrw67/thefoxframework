@@ -32,6 +32,9 @@
     <ClInclude Include="..\..\net\SocketEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\TimerQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\TcpServer.cc">
@@ -44,6 +47,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\EventLoop.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\TimerQueue.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
