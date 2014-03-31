@@ -3,81 +3,54 @@
  * @brief 基于引用计数的智能指针，是std::shared_ptr的仿制品
  * @author  macwe@qq.com
  */
-#ifndef _THEFOX_SHAREDPTR_H_
-#define _THEFOX_SHAREDPTR_H_
+#ifndef _THEFOX_BASE_SHAREDPTR_H_ 
+#define _THEFOX_BASE_SHAREDPTR_H_
 
 namespace thefox  
 {
-
-template<typename T> class SharedPtr;
-template<typename T> class WeakPtr;
-
-class PtrCounter
-{
-public:
-	friend template<typename T> class SharedPtr;
-	friend template<typename T> class WeakPtr;
-	
-	PtrCounter()
-	: _strongCounter(1)
-	, _weakCounter(0)
-	{}
-	~PtrCounter()
-	{}
-
-private:
-	int _strongCounter;
-	int _weakCounter;
-};
 
 template<typename T>	
 class SharedPtr
 {
 public:
 	SharedPtr()
-	: _pointer(NULL)
-	, _counter(NULL)
-	{}
-	SharedPtr(T *p)
+    : _pointer(NULL)
+    {}
+    
+    SharedPtr(T *p = NULL)
 	: _pointer(p)
-	, _counter(new PtrCounter)
-	{}
+	{
+        if (NULL != _pointer)
+            _pointer->addRef();
+    }
+    
 	SharedPtr(const SharedPtr &rsp)
 	: _pointer(rsp._pointer)
-	, _counter(rsp._counter)
 	{
-		++_counter->_strongCounter;
+		if (NULL != _pointer)
+            _pointer->addRef();
 	}
+    
 	~SharedPtr()
 	{
-		if (_counter) {
-			--_counter->_strongCounter;
-			if (0 == _counter->_strongCounter) {
-				delete _pointer;
-				_pointer = NULL;
-				delete _counter;
-				_counter = NULL;
-			}
-		}
+		if (NULL != _pointer) {
+			if (0 == _pointer->release())
+				safeDelete(_pointer);
 	}
 	
 	SharedPtr &operator=(const SharedPtr &rsp)
 	{
-		if (_counter) {
-			--_counter->_strongCounter;
-			if (0 == _counter->_strongCounter) {
-				delete _pointer;
-				_pointer = NULL;
-				delete _counter;
-				_counter = NULL;
-			}
-		}
-		
-		_pointer = rsp._pointer;
-		_counter = rsp._counter;
-		++_counter->_strongCounter;
+        if (_pointer != rsp->_pointer) {
+            if (NULL != _pointer) {
+                if (0 == _pointer->release())
+                    safeDelete(_pointer);
+            }
+            _pointer = rsp._pointer;
+            _pointer->addRef();
+        }
 		return *this;
 	}
+        
 	T &operator*()
 	{ return *_pointer; }
 	
@@ -90,14 +63,19 @@ public:
 	bool operator==(const SharedPtr &rsp)
 	{ return _pointer == rsp._pointer; }
 	
-	int getCounter() const 
-	{ return (NULL != _counter) ? _counter->_strongCounter : 0; }
+	size_t useCount() const _pointer
+	{ return (NULL != _pointer) ? _pointer->useCount() : 0; }
 	
 private:
 	T *_pointer;
-	PtrCounter *_counter;
 };
-	
+
+template<typename T>
+inline SharedPtr<T> makeShared(T *p)
+{
+    return SharedPtr<T>(p);
+}
+    
 } // namespace thefox;
 
-#endif // _THEFOX_SHAREDPTR_H_
+#endif // _THEFOX_BASE_SHAREDPTR_H_
