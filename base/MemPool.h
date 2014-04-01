@@ -13,7 +13,7 @@
 namespace thefox
 {
 
-template<typename T, int kBlockSize = 32>
+template<typename T, int kBlockSize = 1>
 class MemPool : noncopyable
 {
 public:
@@ -43,13 +43,14 @@ public:
             ret = _freeBlocks.back();
             _freeBlocks.pop_back();
         } else {
-            if (_freeHead == (_chunks.back() + (_chunks.size() * kBlockSize)) {
+            if (_freeHead == (_chunks.back() + (_chunks.size() * kBlockSize))) {
                 addChunk();
                 _freeHead = _chunks.back();
             }
             ret = _freeHead;
-            _freeHead += sizeof(T);
+            ++_freeHead;
         }
+		return ret;
     }
     
     void put(T *pointer)
@@ -64,7 +65,7 @@ private:
         _chunks.push_back(reinterpret_cast<T *>(malloc(sizeof(T) * blockSize)));
     }
     
-    std:vector<T *> _chunks;
+    std::vector<T *> _chunks;
     T *_freeHead;
     std::vector<T *> _freeBlocks;
 };
