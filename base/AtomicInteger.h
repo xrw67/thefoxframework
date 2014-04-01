@@ -1,24 +1,19 @@
 /*
 * @filename Atomic.h
-* @brief 原子操作
+* @brief 鍘熷瓙鐨勬暟瀛楃被
 * @author macwe@qq.com
 */
 
 #ifndef _THEFOX_ATOMIC_H
 #define _THEFOX_ATOMIC_H
 
-#ifdef WIN32
-
-#else
-#include <stdint.h>
-#endif
+#include <base/Types.h>
 
 namespace thefox
 {
-
-inline uint32_t atomicInc(volatile uint32_t *value) 
+    
+inline int32_t atomicInc(volatile int32_t *value)
 {
-	
 #ifdef WIN32
 	InterlockedIncrement(value);
 #else
@@ -27,7 +22,7 @@ inline uint32_t atomicInc(volatile uint32_t *value)
 	return *value;
 }
 
-inline uint64_t atomicInc(volatile uint64_t *value) 
+inline int64_t atomicInc(volatile int64_t *value)
 {
 #ifdef WIN32
 	InterlockedIncrement64(value);
@@ -37,7 +32,7 @@ inline uint64_t atomicInc(volatile uint64_t *value)
 	return *value;
 }
 
-inline uint32_t atomicDec(volatile uint32_t *value)
+inline int32_t atomicDec(volatile int32_t *value)
 {
 #ifdef WIN32
 	InterlockedDecrement(value);
@@ -47,7 +42,7 @@ inline uint32_t atomicDec(volatile uint32_t *value)
 	return *value;
 }
 
-inline uint64_t atomicDec(volatile uint64_t *value)
+inline int64_t atomicDec(volatile int64_t *value)
 {
 #ifdef WIN32
 	InterlockedDecrement64(value);
@@ -56,6 +51,31 @@ inline uint64_t atomicDec(volatile uint64_t *value)
 #endif
 	return *value;
 }
+
+
+class AtomicInteger
+{
+public:
+    AtomicInteger()
+    : _value(0)
+    {}
+    
+    T inc()
+    {
+        return atomicInc(&_value);
+    }
+    
+    T dec()
+    {
+        return atomicDec(*_value);
+    }
+    
+private:
+    T _value;
+};
+
+typedef AtomicInteger<int32_t> AtomicInt32;
+typedef AtomicInteger<int64_t> AtomicInt64;
 
 } // namespace thefox
 
