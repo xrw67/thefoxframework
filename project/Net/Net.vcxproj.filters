@@ -29,10 +29,10 @@
     <ClInclude Include="..\..\net\EventLoop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\SocketEvent.h">
+    <ClInclude Include="..\..\net\TimerQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\TimerQueue.h">
+    <ClInclude Include="..\..\net\CpEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

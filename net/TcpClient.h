@@ -8,7 +8,7 @@
 #define _THEFOX_NET_TCPCLIENT_H_
 
 #include <base/Types.h>
-#include <base/noncopyable.h>
+#include <base/Shareable.h>
 #include <net/Callbacks.h>
 
 namespace thefox
@@ -23,7 +23,7 @@ namespace thefox
 class EventLoop;
 class InetAddress;
 
-class TcpClient : noncopyable
+class TcpClient : Shareable
 {
 public:
     TcpClient(EventLoop *eventloop, const String &nameArg);

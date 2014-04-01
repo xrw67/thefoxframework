@@ -18,7 +18,7 @@
 namespace thefox
 {
 
-class SocketEvent;
+class CpEvent;
 class EventLoop;
 typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
 
@@ -60,9 +60,9 @@ public:
 	void handleWriteComplete(const TcpConnectionPtr &conn)
 	{ if (NULL != _writeCompleteCallback) _writeCompleteCallback(conn); }
 
-	void postReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
-	void postWriteEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
-	void postZeroByteReadEvent(const TcpConnectionPtr &conn, SocketEvent *e = NULL);
+	void postReadEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
+	void postWriteEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
+	void postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
 	void postCloseEvent(const TcpConnectionPtr &conn);
 
 private:

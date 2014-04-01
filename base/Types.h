@@ -1,7 +1,7 @@
 ﻿#ifndef _THEFOX_TYPES_H_
 #define _THEFOX_TYPES_H_
 
-#ifdef WIN32 && _MSC_VER < 1600
+#if defined WIN32 && _MSC_VER < 1600
 typedef __int8 int8_t;
 typedef __int16 int16_t;
 typedef __int32 int32_t;
@@ -28,8 +28,8 @@ typedef std::string String;
 
 #endif
 
-#define safeDelete(p) if (NULL != p) { delete p; p = NULL; }
-#define safeDeleteArray(p) if (NULL != p) {delete []p; p = NULL; }
+#define SAFE_DELETE(p) if (NULL != p) { delete p; p = NULL; }
+#define SAFE_DELETE_ARRAY(p) if (NULL != p) {delete []p; p = NULL; }
 
 } // namespace thefox
 

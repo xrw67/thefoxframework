@@ -74,7 +74,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\net\SocketEvent.h" />
+    <ClInclude Include="..\..\net\CpEvent.h" />
     <ClInclude Include="..\..\net\EventLoop.h" />
     <ClInclude Include="..\..\net\Iocp.h" />
     <ClInclude Include="..\..\net\IoEvent.h" />

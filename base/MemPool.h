@@ -1,5 +1,5 @@
-/*
- * @filename Mempool.h
+﻿/*
+ * @filename MemPool.h
  * @brief 可存放固定大小元素的内存池
  * @author macwe@qq.com
  */
@@ -14,7 +14,7 @@
 namespace thefox
 {
 
-template<typename T, int kBlockSize = 1>
+template<typename T, int kBlockSize = 32>
 class MemPool : noncopyable
 {
 public:
@@ -36,6 +36,7 @@ public:
         _freeHead = NULL;
     }
     
+    /// @brief 获取分配的内存
     T *get()
     {
         T *ret = NULL;

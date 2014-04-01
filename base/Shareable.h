@@ -1,4 +1,4 @@
-/*
+﻿/*
 * @filename Sharedable.h
 * @brief 作为基类使用，作为SharedPtr管理的类的父类
 * @author macwe@qq.com
