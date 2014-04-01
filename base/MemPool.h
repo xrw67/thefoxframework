@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <base/noncopyable.h>
+#include <base/MutexLock.h>
 
 namespace thefox
 {
@@ -39,6 +40,7 @@ public:
     {
         T *ret = NULL;
         
+		MutexLockGuard lock(_mutex);
         if (!_freeBlocks.empty()) {
             ret = _freeBlocks.back();
             _freeBlocks.pop_back();
@@ -55,6 +57,7 @@ public:
     
     void put(T *pointer)
     {
+		MutexLockGuard lock(_mutex);
         _freeBlocks.push_back(pointer);
     }
     
@@ -68,6 +71,7 @@ private:
     std::vector<T *> _chunks;
     T *_freeHead;
     std::vector<T *> _freeBlocks;
+	MutexLock _mutex;
 };
     
 } // namespace thefox
