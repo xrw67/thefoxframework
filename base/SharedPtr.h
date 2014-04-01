@@ -1,8 +1,9 @@
 /*
  * @filename SharedPtr.h
- * @brief 基于引用计数的智能指针，是std::shared_ptr的仿制品
+ * @brief 基于引用计数的智能指针，管理的对象必须是Shareable的子类
  * @author  macwe@qq.com
  */
+
 #ifndef _THEFOX_BASE_SHAREDPTR_H_ 
 #define _THEFOX_BASE_SHAREDPTR_H_
 
@@ -13,10 +14,6 @@ template<typename T>
 class SharedPtr
 {
 public:
-	SharedPtr()
-    : _pointer(NULL)
-    {}
-    
     SharedPtr(T *p = NULL)
 	: _pointer(p)
 	{
@@ -36,11 +33,12 @@ public:
 		if (NULL != _pointer) {
 			if (0 == _pointer->release())
 				safeDelete(_pointer);
+		}
 	}
 	
 	SharedPtr &operator=(const SharedPtr &rsp)
 	{
-        if (_pointer != rsp->_pointer) {
+        if (_pointer != rsp._pointer) {
             if (NULL != _pointer) {
                 if (0 == _pointer->release())
                     safeDelete(_pointer);
@@ -63,7 +61,7 @@ public:
 	bool operator==(const SharedPtr &rsp)
 	{ return _pointer == rsp._pointer; }
 	
-	size_t useCount() const _pointer
+	size_t useCount() const
 	{ return (NULL != _pointer) ? _pointer->useCount() : 0; }
 	
 private:

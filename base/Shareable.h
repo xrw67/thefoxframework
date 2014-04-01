@@ -10,12 +10,16 @@
 #include <base/noncopyable.h>
 #include <base/MutexLock.h>
 
-namespace thefox : noncopyable
+namespace thefox
 {
 
-class Shareable
+class Shareable : noncopyable
 {
 public:
+	Shareable()
+		: _refCount(0)
+	{}
+
 	void addRef()
     {
         MutexLockGuard lock(_refMutex);
@@ -30,7 +34,7 @@ public:
         return _refCount;
     }
     
-	size_t useCount() const
+	size_t useCount()
     {
         MutexLockGuard lock(_refMutex);
         return _refCount;
