@@ -20,7 +20,7 @@ TcpServer::TcpServer(EventLoop *eventloop, const String &nameArg)
 
 TcpServer::~TcpServer()
 {
-	delete _model;
+    delete _model;
 }
 
 bool TcpServer::start(const InetAddress &listenAddr)
@@ -35,16 +35,16 @@ bool TcpServer::started()
 
 void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
-	_model->send(conn, data, len);
+    _model->send(conn, data, len);
 }
 void TcpServer::send(const TcpConnectionPtr &conn, const String &data)
 {
-	_model->send(conn, data.c_str(), data.length());
+    _model->send(conn, data.c_str(), data.length());
 }
 
 void TcpServer::removeConnection(TcpConnectionPtr conn)
 {
-	_model->removeConnection(conn);
+    _model->removeConnection(conn);
 }
 
 void TcpServer::setConnectionCallback(const ConnectionCallback &cb)
@@ -63,5 +63,5 @@ void TcpServer::setMessageCallback(const MessageCallback &cb)
 
 void TcpServer::setWriteCompleteCallback(const WriteCompleteCallback &cb)
 {
-	_model->setWriteCompleteCallback(cb);
+    _model->setWriteCompleteCallback(cb);
 }

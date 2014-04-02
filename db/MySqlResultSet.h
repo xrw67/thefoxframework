@@ -1,4 +1,4 @@
-﻿/*
+/*
 * @filename MySqlResultSet.h
 * @brief libmysql结果集的C++封装类，支持Windows和Linux
 * @author macwe@qq.com
@@ -28,8 +28,7 @@ public:
     
     ~MySqlResultSet()
     {
-        if (_res) 
-        {
+        if (_res) {
             mysql_free_result(_res);
             _res = NULL;
         }
@@ -143,12 +142,11 @@ public:
 private:
     int getFieldIndex(const String &fieldName) const
     {
-        for (int i = 0; i < _res->field_count; ++i)
-	{
-		if (fieldName == _res->fields[i].name)
-			return i;
-	}
-	return -1;
+        for (int i = 0; i < _res->field_count; ++i) {
+        if (fieldName == _res->fields[i].name)
+            return i;
+        }
+        return -1;
     }
     
     MYSQL_RES *_res;

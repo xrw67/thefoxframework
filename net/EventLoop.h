@@ -1,6 +1,6 @@
 /*
 * @filename EventLoop.h
-* @brief ÊÂ¼şÑ­»·
+* @brief äº‹ä»¶å¾ªç¯
 * @author macwe@qq.com
 */
 
@@ -14,37 +14,37 @@ namespace thefox
 
 class IoEvent;
 
-/// @brief ÊÂ¼şÑ­»·Àà
+/// @brief äº‹ä»¶å¾ªç¯ç±»
 class EventLoop
 {
 public:
-	EventLoop();
-	~EventLoop();
+    EventLoop();
+    ~EventLoop();
 
-	/// @brief ¿ªÊ¼ÏûÏ¢Ñ­»·(¶àÏß³Ì)
-	void start();
+    /// @brief å¼€å§‹æ¶ˆæ¯å¾ªç¯(å¤šçº¿ç¨‹)
+    void start();
 
-	/// @brief ×èÈû²¢µÈ´ıÊ±¼äÑ­»·ÍË³ö
-	void join();
+    /// @brief é˜»å¡å¹¶ç­‰å¾…æ—¶é—´å¾ªç¯é€€å‡º
+    void join();
 
-	/// @brief ÍË³öÏûÏ¢Ñ­»·
-	void quit();
+    /// @brief é€€å‡ºæ¶ˆæ¯å¾ªç¯
+    void quit();
 
-	/// @brief ×¢²á¾ä±úµ½Ê±¼äÑ­»·ÉÏ
-	/// @param[in] handle ¾ä±ú±äÁ¿
-	void registerHandle(HANDLE handle);
+    /// @brief æ³¨å†Œå¥æŸ„åˆ°æ—¶é—´å¾ªç¯ä¸Š
+    /// @param[in] handle å¥æŸ„å˜é‡
+    void registerHandle(HANDLE handle);
 
-	/// @brief Í¶µİÊÂ¼şµ½ÏûÏ¢Ñ­»·ÉÏ
-	/// @param[in] Í¶µİµÄÊÂ¼şÖ¸Õë
-	void postEvent(IoEvent *e);
+    /// @brief æŠ•é€’äº‹ä»¶åˆ°æ¶ˆæ¯å¾ªç¯ä¸Š
+    /// @param[in] æŠ•é€’çš„äº‹ä»¶æŒ‡é’ˆ
+    void postEvent(IoEvent *e);
 
-	/// @brief Æô¶¯Ò»¸ö¹¤×÷Ñ­»·. ¾¯¸æ:µ¥Ïß³Ì,²»ÒªÊ¹ÓÃ
-	void loop();
+    /// @brief å¯åŠ¨ä¸€ä¸ªå·¥ä½œå¾ªç¯. è­¦å‘Š:å•çº¿ç¨‹,ä¸è¦ä½¿ç”¨
+    void loop();
 private:
-	void init();
-	int getCpuNum();
-	HANDLE _hIocp;
-	HANDLE _hQuitEvent;
+    void init();
+    int getCpuNum();
+    HANDLE _hIocp;
+    HANDLE _hQuitEvent;
 };
 
 } // namespace thefox

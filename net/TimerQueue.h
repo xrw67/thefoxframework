@@ -16,10 +16,11 @@ class EventLoop;
 class TimerQueue
 {
 public:
-	TimerQueue(EventLoop *loop);
-	~TimerQueue();
-	void addTimer(Timestamp when, IoEvent *ev);
+    TimerQueue(EventLoop *loop);
+    ~TimerQueue();
+    void addTimer(Timestamp when, IoEvent *ev);
     void timerProc();
+    
 private:
     typedef std::pair<Timestamp, IoEvent *> Entry;
     typedef std::set<Entry> TimerList;

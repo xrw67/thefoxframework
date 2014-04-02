@@ -44,7 +44,7 @@ void TimerQueue::addTimer(Timestamp when, IoEvent *ev)
         _timers.insert(Entry(when, ev));
     }
 
-	SetWaitableTimer(_hTimer, 
+    SetWaitableTimer(_hTimer, 
         &_timers.begin()->first.toLargeInt(), 0, NULL, NULL, 0);
 }
 

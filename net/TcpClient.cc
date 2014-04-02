@@ -20,7 +20,7 @@ TcpClient::TcpClient(EventLoop *eventloop, const String &nameArg)
 
 TcpClient::TcpClient()
 {
-	delete _model;
+    delete _model;
 }
 
 bool TcpClient::open(const InetAddress &serverAddr)
@@ -40,12 +40,12 @@ bool TcpClient::isOpen()
 
 void TcpClient::send(const char *data, size_t len)
 {
-	_model->send(data, len);
+    _model->send(data, len);
 }
 
 void TcpClient::send(const String &data)
 {
-	_model->send(data.c_str(), data.length());
+    _model->send(data.c_str(), data.length());
 }
 void TcpClient::setConnectionCallback(const ConnectionCallback &cb)
 {
@@ -64,5 +64,5 @@ void TcpClient::setMessageCallback(const MessageCallback &cb)
 
 void TcpClient::setWriteCompleteCallback(const WriteCompleteCallback &cb)
 {
-	_model->setWriteCompleteCallback(cb);
+    _model->setWriteCompleteCallback(cb);
 }

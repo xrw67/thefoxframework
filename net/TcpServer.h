@@ -1,4 +1,4 @@
-﻿/*
+/*
  * @filename TcpServer.h
  * @brief tcp服务器类
  * @author macwe@qq.com
@@ -26,8 +26,8 @@ class InetAddress;
 class TcpServer : Shareable
 {
 public:
-	TcpServer(EventLoop *eventloop, const String &nameArg);
-	~TcpServer(void);
+    TcpServer(EventLoop *eventloop, const String &nameArg);
+    ~TcpServer(void);
 
     /// @brief 启动服务
     /// @return 成功返回true，否则返回false
@@ -37,12 +37,12 @@ public:
     /// @return 已经启动返回true，否则返回false
     bool started();
     
-	/// @brief 发送数据
-	void send(const TcpConnectionPtr &conn, const char *data, size_t len);
-	void send(const TcpConnectionPtr &conn, const String &data);
+    /// @brief 发送数据
+    void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+    void send(const TcpConnectionPtr &conn, const String &data);
 
-	/// @brief 移除客户连接
-	void removeConnection(TcpConnectionPtr conn);
+    /// @brief 移除客户连接
+    void removeConnection(TcpConnectionPtr conn);
 
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);
@@ -53,8 +53,8 @@ public:
     /// @brief 设置收到数据的回调函数
     void setMessageCallback(const MessageCallback &cb);
 
-	/// @brief 设置缓冲区中数据发送完成后的回调函数
-	void setWriteCompleteCallback(const WriteCompleteCallback &cb);
+    /// @brief 设置缓冲区中数据发送完成后的回调函数
+    void setWriteCompleteCallback(const WriteCompleteCallback &cb);
 
 private:
 #ifdef WIN32

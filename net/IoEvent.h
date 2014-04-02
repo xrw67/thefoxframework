@@ -1,6 +1,6 @@
 /*
 * @filename IoEvent.h
-* @brief ±íÊ¾Ò»¸öIOÊÂ¼ş
+* @brief è¡¨ç¤ºä¸€ä¸ªIOäº‹ä»¶
 * @author macwe@qq.com
 */
 
@@ -14,14 +14,14 @@ namespace thefox
 
 class IoEvent;
 
-/// @brief ÊÂ¼şÀàĞÍ¶¨Òå
+/// @brief äº‹ä»¶ç±»å‹å®šä¹‰
 enum {
-	kEventTypeRead,
-	kEventTypeWrite,
-	kEventTypeZeroByteRead,
-	kEventTypeClose,
-	kEventTypeTimer,
-	kEventTypeUser // ÓÃ»§×Ô¶¨ÒåÊÂ¼ş¿ªÊ¼
+    kEventTypeRead,
+    kEventTypeWrite,
+    kEventTypeZeroByteRead,
+    kEventTypeClose,
+    kEventTypeTimer,
+    kEventTypeUser // ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶å¼€å§‹
 };
 
 typedef void (*EventCallback)(IoEvent *);
@@ -30,39 +30,39 @@ class IoEvent
 {
 public:
 #ifdef WIN32
-	OVERLAPPED _overlapped;
+    OVERLAPPED _overlapped;
 #endif
-	IoEvent()
-		: _bytesTransfered(0)
-	{
-		// OVERLAPPEDĞèÒª³õÊ¼»¯£¬·ñÔòWSARecv»áERROR_INVALID_HANDLE
-		memset(&_overlapped, 0, sizeof(OVERLAPPED));
-	}
+    IoEvent()
+        : _bytesTransfered(0)
+    {
+        // OVERLAPPEDéœ€è¦åˆå§‹åŒ–ï¼Œå¦åˆ™WSARecvä¼šERROR_INVALID_HANDLE
+        memset(&_overlapped, 0, sizeof(OVERLAPPED));
+    }
 
-	int32_t eventType() const { return _eventType; }
+    int32_t eventType() const { return _eventType; }
 
-	void setEventType(int32_t type) { _eventType = type; }
+    void setEventType(int32_t type) { _eventType = type; }
 
-	void setEventCallback(const EventCallback &eventCb, const EventCallback &errorCb)
-	{ 
-		_eventCallback = eventCb;
-		_errorCallback = errorCb;
-	}
+    void setEventCallback(const EventCallback &eventCb, const EventCallback &errorCb)
+    { 
+        _eventCallback = eventCb;
+        _errorCallback = errorCb;
+    }
 
-	void setBytesTransfered(DWORD bytesTransfered)
-	{ _bytesTransfered = bytesTransfered;}
+    void setBytesTransfered(DWORD bytesTransfered)
+    { _bytesTransfered = bytesTransfered;}
 
-	DWORD bytesTransfered() const { return _bytesTransfered; }
+    DWORD bytesTransfered() const { return _bytesTransfered; }
 
-	void handleEvent() { _eventCallback(this); }
+    void handleEvent() { _eventCallback(this); }
 
-	void handleError() { _errorCallback(this); }
+    void handleError() { _errorCallback(this); }
 
 protected:
-	int32_t _eventType;
-	EventCallback _eventCallback;
-	EventCallback _errorCallback;
-	DWORD _bytesTransfered;
+    int32_t _eventType;
+    EventCallback _eventCallback;
+    EventCallback _errorCallback;
+    DWORD _bytesTransfered;
 };
 
 } // namespace thefox

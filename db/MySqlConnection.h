@@ -1,4 +1,4 @@
-﻿/*
+/*
 * @filename MySqlConnection.h
 * @brief libmysql连接管理C++封装类，支持Windows和Linux
 * @author macwe@qq.com
@@ -35,7 +35,6 @@ public:
         , _port(port)
         , _dbName(dbName)
     {}
-    
     ~MySqlConnection()
     {
         close();
@@ -88,8 +87,7 @@ public:
     /// @beirf 关闭数据库连接
     void close()
     {
-        if (isConnected()) 
-        {
+        if (isConnected()) {
             mysql_close(_connPtr);
             _connPtr = NULL;
         }
@@ -105,8 +103,7 @@ public:
     bool selectDb(const String &dbName) 
     { 
         _dbName = dbName; 
-        if (0 != mysql_select_db(_connPtr, _dbName.c_str())) 
-        {
+        if (0 != mysql_select_db(_connPtr, _dbName.c_str())) {
 //            LOG_ERROR << "select database failed, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
@@ -120,15 +117,13 @@ public:
     /// @return 执行成功返回true, 否则返回false
     bool exec(const String &sql, uint32_t *insertId = NULL)
     {
-        if (!isConnected()) 
-        {
+        if (!isConnected()) {
 //            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
             return false;
         }
         
         MutexLockGuard lock(_lock);
-        if (0 != mysql_real_query(_connPtr, sql.c_str(), (unsigned long)sql.length()))
-        {
+        if (0 != mysql_real_query(_connPtr, sql.c_str(), (unsigned long)sql.length())) {
 //            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
@@ -145,23 +140,20 @@ public:
     /// @sa resultSet
     bool query(const String &sql, MySqlResultSet &resultSet)
     {
-        if (!isConnected())
-        {
+        if (!isConnected()) {
 //            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
             return false;
         }
         
         MutexLockGuard lock(_lock);
-        if (0 != mysql_real_query(_connPtr, sql.c_str(), sql.length()))
-        {
+        if (0 != mysql_real_query(_connPtr, sql.c_str(), sql.length())) {
 //            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
         
         if (resultSet)
             mysql_free_result(resultSet);
-        if (resultSet = mysql_store_result(_connPtr)) 
-        {
+        if (resultSet = mysql_store_result(_connPtr)) {
 //            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
         }
         return true;
@@ -176,7 +168,7 @@ private:
     String _user;
     String _passwd;
     String _dbName;
-    int _port;
+    int32_t _port;
 };
 
 } // namespace db
