@@ -1,4 +1,4 @@
-﻿/*
+/*
  * @filename MemPool.h
  * @brief 可存放固定大小元素的内存池
  * @author macwe@qq.com
@@ -23,7 +23,6 @@ public:
         addChunk();
         _freeHead = _chunks.back();
     }
-    
     ~MemPool()
     {
         while (!_chunks.empty()) {
@@ -41,7 +40,7 @@ public:
     {
         T *ret = NULL;
         
-		MutexLockGuard lock(_mutex);
+        MutexLockGuard lock(_mutex);
         if (!_freeBlocks.empty()) {
             ret = _freeBlocks.back();
             _freeBlocks.pop_back();
@@ -53,12 +52,12 @@ public:
             ret = _freeHead;
             ++_freeHead;
         }
-		return ret;
+        return ret;
     }
     
     void put(T *pointer)
     {
-		MutexLockGuard lock(_mutex);
+        MutexLockGuard lock(_mutex);
         _freeBlocks.push_back(pointer);
     }
     
@@ -72,7 +71,7 @@ private:
     std::vector<T *> _chunks;
     T *_freeHead;
     std::vector<T *> _freeBlocks;
-	MutexLock _mutex;
+    MutexLock _mutex;
 };
     
 } // namespace thefox

@@ -2,8 +2,8 @@
 * from boost
 */
 
-#ifndef _THEFOX_SCOPED_PTR_H_
-#define _THEFOX_SCOPED_PTR_H_
+#ifndef _THEFOX_BASE_SCOPEDPTR_H_
+#define _THEFOX_BASE_SCOPEDPTR_H_
 
 namespace thefox
 {
@@ -36,7 +36,7 @@ public:
     ~scoped_ptr() // never throws
     {
         if (0 != ptr)
-			delete ptr;
+            delete ptr;
     }
 
     void reset(T * p = 0) // never throws
@@ -86,4 +86,4 @@ template<class T> inline T * get_pointer(scoped_ptr<T> const & p)
 
 }
 
-#endif // _THEFOX_SCOPED_PTR_H_
+#endif // _THEFOX_BASE_SCOPEDPTR_H_

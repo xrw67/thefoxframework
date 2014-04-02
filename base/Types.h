@@ -1,6 +1,7 @@
-﻿#ifndef _THEFOX_TYPES_H_
-#define _THEFOX_TYPES_H_
+#ifndef _THEFOX_BASE_TYPES_H_
+#define _THEFOX_BASE_TYPES_H_
 
+// 简单类型定义
 #if defined WIN32 && _MSC_VER < 1600
 typedef __int8 int8_t;
 typedef __int16 int16_t;
@@ -21,6 +22,7 @@ namespace thefox
     
 typedef std::string String;
 
+
 #ifdef WIN32
 #pragma warning(disable:4996)
 #define snprintf _snprintf
@@ -28,9 +30,20 @@ typedef std::string String;
 
 #endif
 
-#define SAFE_DELETE(p) if (NULL != p) { delete p; p = NULL; }
-#define SAFE_DELETE_ARRAY(p) if (NULL != p) {delete []p; p = NULL; }
+// 安全删除对象
+#define SAFE_DELETE(p) \
+    if (NULL != p) { \
+        delete p;\
+        p = NULL;\
+    }
+    
+// 安全删除对象数组
+#define SAFE_DELETE_ARRAY(p) \
+    if (NULL != p) { \
+        delete []p;\
+        p = NULL;\
+    }
 
 } // namespace thefox
 
-#endif // _THEFOX_TYPES_H_
+#endif // _THEFOX_BASE_TYPES_H_

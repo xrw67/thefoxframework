@@ -3,8 +3,8 @@
  * @brief 使用数组实现的栈
  * @author macwe@qq.com
  */
-#ifndef _THEFOX_STACK_H_
-#define _THEFOX_STACK_H_
+#ifndef _THEFOX_BASE_STACK_H_
+#define _THEFOX_BASE_STACK_H_
 
 #include <vector>
 
@@ -18,7 +18,6 @@ class Stack
 public:
     Stack()
     {}
-    
     ~Stack()
     {}
 
@@ -39,8 +38,7 @@ public:
     /// @return 成功返回true，否则返回false
     bool getTop(T &value) const
     {
-        if (!_data.empty())
-        {
+        if (!_data.empty()) {
             value = _data[_data.size() - 1];
             return true;
         }
@@ -56,8 +54,7 @@ public:
     bool getAt(const int position, T &value) const
     {
         size_t index = 0;
-        if (getIndexByPosition(position, index))
-        {
+        if (getIndexByPosition(position, index)) {
             value = _data[index];
             return true;
         }
@@ -73,8 +70,7 @@ public:
     bool setAt(const int position, const T &value)
     {
         size_t index = 0;
-        if (getIndexByPosition(position, index))
-        {
+        if (getIndexByPosition(position, index)) {
             _data[index] = value;
             return true;
         }
@@ -102,16 +98,14 @@ private:
         if (position > 0) // 从栈顶向下遍历
         {
             int i = static_cast<int>(_data.size() - position);
-            if (i >= 0)
-            {
+            if (i >= 0) {
                 index = i;
                 return true;
             }
         }
         else if (position < 0) //从栈底向上遍历
         {
-            if (static_cast<int>(_data.size()) + position >= 0)
-            {
+            if (static_cast<int>(_data.size()) + position >= 0) {
                 index = (position * -1) - 1;
                 return true;
             }
@@ -121,6 +115,7 @@ private:
     
     std::vector<T> _data;
 };
+
 } // namespace thefox
 
-#endif
+#endif // _THEFOX_BASE_STACK_H_

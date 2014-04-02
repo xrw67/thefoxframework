@@ -9,23 +9,23 @@ template<typename T>
 class WeakPtr
 {
 public:
-	WeakPtr()
-	{}
-	WeakPtr(const SharedPtr<T> &sp)
-	{}
-	WeakPtr(const WeakPtr &wp)
-	{}
-	~WeakPtr()
-	{}
-	SharedPtr<T> lock() const
-	{}
-	
-	void reset();
-	void swap(WeakPtr<T> &b)
-	{}
+    WeakPtr()
+    {}
+    WeakPtr(const SharedPtr<T> &sp)
+    {}
+    WeakPtr(const WeakPtr &wp)
+    {}
+    ~WeakPtr()
+    {}
+    SharedPtr<T> lock() const
+    {}
+    
+    void reset();
+    void swap(WeakPtr<T> &b)
+    {}
 private:
-	PtrCounter _counter;
-}	
+    PtrCounter _counter;
+}    
 
 } // namespace thefox
 

@@ -1,5 +1,5 @@
-#ifndef _THEFOX_STRING_UNIDOCE_H_
-#define _THEFOX_STRING_UNIDOCE_H_
+#ifndef _THEFOX_BASE_STRING_UNIDOCE_H_
+#define _THEFOX_BASE_STRING_UNIDOCE_H_
 
 namespace thefox
 {
@@ -22,9 +22,9 @@ inline String gbkToUnicode(const String &str)
 
 inline String unicodeToGbk(const String &str)
 {
-	
+    
 }
 
 }
 
-#endif // _THEFOX_STRING_UNIDOCE_H_
+#endif // _THEFOX_BASE_STRING_UNIDOCE_H_

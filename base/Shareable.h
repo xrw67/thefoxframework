@@ -1,4 +1,4 @@
-﻿/*
+/*
 * @filename Sharedable.h
 * @brief 作为基类使用，作为SharedPtr管理的类的父类
 * @author macwe@qq.com
@@ -16,17 +16,17 @@ namespace thefox
 class Shareable : noncopyable
 {
 public:
-	Shareable()
-		: _refCount(0)
-	{}
+    Shareable()
+        : _refCount(0)
+    {}
 
-	void addRef()
+    void addRef()
     {
         MutexLockGuard lock(_refMutex);
         ++_refCount;
     }
     
-	size_t release()
+    size_t release()
     {
         MutexLockGuard lock(_refMutex);
         if (_refCount > 0)
@@ -34,13 +34,13 @@ public:
         return _refCount;
     }
     
-	size_t useCount()
+    size_t useCount()
     {
         MutexLockGuard lock(_refMutex);
         return _refCount;
     }
 private:
-	size_t _refCount;
+    size_t _refCount;
     MutexLock _refMutex;
 };
 

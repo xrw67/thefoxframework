@@ -1,6 +1,6 @@
 /*
  * @filename SharedPtr.h
- * @brief »ùÓÚÒıÓÃ¼ÆÊıµÄÖÇÄÜÖ¸Õë£¬¹ÜÀíµÄ¶ÔÏó±ØĞëÊÇShareableµÄ×ÓÀà
+ * @brief åŸºäºå¼•ç”¨è®¡æ•°çš„æ™ºèƒ½æŒ‡é’ˆï¼Œç®¡ç†çš„å¯¹è±¡å¿…é¡»æ˜¯Shareableçš„å­ç±»
  * @author  macwe@qq.com
  */
 
@@ -10,34 +10,34 @@
 namespace thefox  
 {
 
-template<typename T>	
+template<typename T>    
 class SharedPtr
 {
 public:
     SharedPtr(T *p = NULL)
-	: _pointer(p)
-	{
+    : _pointer(p)
+    {
         if (NULL != _pointer)
             _pointer->addRef();
     }
     
-	SharedPtr(const SharedPtr &rsp)
-	: _pointer(rsp._pointer)
-	{
-		if (NULL != _pointer)
+    SharedPtr(const SharedPtr &rsp)
+    : _pointer(rsp._pointer)
+    {
+        if (NULL != _pointer)
             _pointer->addRef();
-	}
+    }
     
-	~SharedPtr()
-	{
-		if (NULL != _pointer) {
-			if (0 == _pointer->release())
-				safeDelete(_pointer);
-		}
-	}
-	
-	SharedPtr &operator=(const SharedPtr &rsp)
-	{
+    ~SharedPtr()
+    {
+        if (NULL != _pointer) {
+            if (0 == _pointer->release())
+                safeDelete(_pointer);
+        }
+    }
+    
+    SharedPtr &operator=(const SharedPtr &rsp)
+    {
         if (_pointer != rsp._pointer) {
             if (NULL != _pointer) {
                 if (0 == _pointer->release())
@@ -46,26 +46,26 @@ public:
             _pointer = rsp._pointer;
             _pointer->addRef();
         }
-		return *this;
-	}
+        return *this;
+    }
         
-	T &operator*()
-	{ return *_pointer; }
-	
-	T *operator->()
-	{ return _pointer;}
-	
-	operator bool()
-	{ return NULL != _pointer; }
-	
-	bool operator==(const SharedPtr &rsp)
-	{ return _pointer == rsp._pointer; }
-	
-	size_t useCount() const
-	{ return (NULL != _pointer) ? _pointer->useCount() : 0; }
-	
+    T &operator*()
+    { return *_pointer; }
+    
+    T *operator->()
+    { return _pointer;}
+    
+    operator bool()
+    { return NULL != _pointer; }
+    
+    bool operator==(const SharedPtr &rsp)
+    { return _pointer == rsp._pointer; }
+    
+    size_t useCount() const
+    { return (NULL != _pointer) ? _pointer->useCount() : 0; }
+    
 private:
-	T *_pointer;
+    T *_pointer;
 };
 
 template<typename T>

@@ -1,11 +1,11 @@
 /*
  * @filename ObjectMemPool.h
- * @brief ´æ·Å¶ÔÏóÔªËØµÄÄÚ´æ³Ø,¿É×Ô¶¯µ÷ÓÃ¹¹Ôìº¯ÊıºÍÎö¹¹º¯Êı
+ * @brief å­˜æ”¾å¯¹è±¡å…ƒç´ çš„å†…å­˜æ± ,å¯è‡ªåŠ¨è°ƒç”¨æ„é€ å‡½æ•°å’Œææ„å‡½æ•°
  * @author macwe@qq.com
  */
 
-#ifndef _THEFOX_BASE_MEMPOOL_H_
-#define _THEFOX_BASE_MEMPOOL_H_
+#ifndef _THEFOX_BASE_OBJECTMEMPOOL_H_
+#define _THEFOX_BASE_OBJECTMEMPOOL_H_
 
 #include <new>
 #include <base/noncopyable.h>
@@ -18,21 +18,21 @@ template<typename T, int kBlockSize = 32>
 class ObjectMemPool : MemPool<T, kBlockSize>
 {
 public:
-    /// @brief »ñÈ¡·ÖÅäµÄÄÚ´æ
+    /// @brief è·å–åˆ†é…çš„å†…å­˜
     T *get()
     {
         T *ret = MemPool::get();
         new(ret) T(); // placement new
-		return ret;
+        return ret;
     }
     
     void put(T *pointer)
     {
         pointer->~T();
-		MemPool::put(pointer);
+        MemPool::put(pointer);
     }
 };
     
 } // namespace thefox
 
-#endif // _THEFOX_BASE_MEMPOOL_H_
+#endif // _THEFOX_BASE_OBJECTMEMPOOL_H_
