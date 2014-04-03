@@ -32,7 +32,7 @@ public:
     {
         if (NULL != _pointer) {
             if (0 == _pointer->release())
-                safeDelete(_pointer);
+                SAFE_DELETE(_pointer);
         }
     }
     
@@ -41,7 +41,7 @@ public:
         if (_pointer != rsp._pointer) {
             if (NULL != _pointer) {
                 if (0 == _pointer->release())
-                    safeDelete(_pointer);
+                    SAFE_DELETE(_pointer);
             }
             _pointer = rsp._pointer;
             _pointer->addRef();

@@ -1,6 +1,8 @@
 #ifndef _THEFOX_BASE_STRING_UTIL_H_
 #define _THEFOX_BASE_STRING_UTIL_H_
 
+#include <stdlib.h>
+#include <stdarg.h>
 #include <base/Types.h>
 
 namespace thefox
@@ -44,7 +46,8 @@ public:
     static String toString(const int val)
     {
         char buf[32] = {0};
-        return _itoa(val, buf, 10);
+		snprintf(buf, sizeof(buf), "%d", val);
+		return buf;
     }
 
     static String toString(const unsigned int val)
@@ -57,13 +60,14 @@ public:
     static String toString(const long val)
     {
         char buf[32] = {0};
-        return _ltoa(val, buf, 10);
+		snprintf(buf, sizeof(buf), "%ld", val);
+		return buf;
     }
 
     static String toString(const long long val)
     {
         char buf[32] = {0};
-        snprintf(buf, sizeof(buf), "%I64u", val);
+        snprintf(buf, sizeof(buf), "%lld", val);
         return buf;
     }
 
@@ -94,23 +98,23 @@ public:
         return str;
     }
 
-    static String trimLeft(String &str)
+    static String trimLeft(const String &str)
     {
         String::size_type index = str.find_first_not_of("\n\r\t");
         if (index != String::npos)
-            str = str.substr(index);
+            return str.substr(index);
         return str;
     }
 
-    static String trimRight(String &str)
+    static String trimRight(const String &str)
     {
         String::size_type index = str.find_last_not_of("\n\r\t");
         if (index != String::npos)
-            str = str.substr(0, index + 1);
+            return str.substr(0, index + 1);
         return str;
     }
 
-    static String trim(String &str)
+    static String trim(const String &str)
     {
         return trimRight(trimLeft(str));
     }
@@ -179,12 +183,12 @@ inline String operator+(const char *ls, const String &rs)
     return buf;
 }
 
-inline BOOL operator==(const char *ls, const String &rs)
+inline bool operator==(const char *ls, const String &rs)
 {
     return !rs.compare(ls);
 }
 
-inline BOOL operator==(const String &ls, const char *rs)
+inline bool operator==(const String &ls, const char *rs)
 {
     return !ls.compare(rs);
 }

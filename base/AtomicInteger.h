@@ -52,7 +52,7 @@ inline int64_t atomicDec(volatile int64_t *value)
     return *value;
 }
 
-
+template<typename T>
 class AtomicInteger
 {
 public:
@@ -64,7 +64,7 @@ public:
     { return atomicInc(&_value); }
     
     T dec()
-    { return atomicDec(*_value); }
+    { return atomicDec(&_value); }
     
 private:
     T _value;

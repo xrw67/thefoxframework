@@ -7,9 +7,14 @@
 #ifndef _THEFOX_BASE_TIMESTAMP_H_
 #define _THEFOX_BASE_TIMESTAMP_H_
 
-#include <time.h>
+#ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#else
+#include <sys/time.h>
+#endif
+
+#include <time.h>
 #include <base/Types.h>
 
 namespace thefox
@@ -20,25 +25,23 @@ class Timestamp
 public:
     Timestamp()
         : _usTimestamp(0)
-    {
-    }
+    {}
     Timestamp(int64_t usTimestamp)
         : _usTimestamp(usTimestamp)
-    {
-    }
+    {}
     Timestamp(const Timestamp &ts)
         : _usTimestamp(ts._usTimestamp)
-    {
-    }
+    {}
 
     String toString()
     {
         char buf[32] = {0};
         int64_t seconds = _usTimestamp / kMicroSecondsPerSecond;
         int64_t microseconds = _usTimestamp % kMicroSecondsPerSecond;
-        snprintf(buf, sizeof(buf), "%I64u.%06I64u", seconds, microseconds);
+        snprintf(buf, sizeof(buf), "%lld.%06lld", seconds, microseconds);
         return buf;
     }
+
     String toFormatString()
     {
         char buf[32] = {0};
@@ -52,25 +55,38 @@ public:
             microseconds);
         return buf;
     }
-    time_t toUnixTimestamp() const { return static_cast<time_t>(_usTimestamp / kMicroSecondsPerSecond); }
+
+    time_t toUnixTimestamp() const 
+	{ return static_cast<time_t>(_usTimestamp / kMicroSecondsPerSecond); }
+	
     int64_t timestamp() const { return _usTimestamp; }
+
     bool valid() const { return _usTimestamp > 0; }
 
+#ifdef WIN32
     LARGE_INTEGER toLargeInt() const 
     {
         LARGE_INTEGER li;
         li.QuadPart = (_usTimestamp * 10) + 116444736000000000;
         return li;
     }
+#endif
 
     static Timestamp now()
     {
+#ifdef WIN32
         FILETIME ft;
         ULARGE_INTEGER ui;  
         GetSystemTimeAsFileTime(&ft); // 精确到100ns
         ui.LowPart = ft.dwLowDateTime;  
         ui.HighPart = ft.dwHighDateTime;
         return Timestamp(static_cast<int64_t>(ui.QuadPart - 116444736000000000) / 10);
+#else
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+        int64_t seconds = tv.tv_sec;
+        return Timestamp(seconds * kMicroSecondsPerSecond + tv.tv_usec);
+#endif
     }
 
     static Timestamp invalid() { return Timestamp(); }

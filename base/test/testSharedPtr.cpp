@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <base/Types.h>
 #include <base/Shareable.h>
 #include <base/SharedPtr.h>
