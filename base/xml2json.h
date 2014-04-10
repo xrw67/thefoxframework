@@ -136,8 +136,6 @@ void traverse_node(rapidxml::xml_node<> *xmlnode, rapidjson::Value &jsvalue, rap
 					jsvalue.AddMember(name_ptr, jsvalue_chd, allocator);
 			}
 		}
-	} else {
-		std::cerr << "err data!!" << std::endl;
 	}
 }
 
