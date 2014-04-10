@@ -34,6 +34,8 @@ typedef std::string String;
 
 #endif
 
+#define elif else if
+
 // 安全删除对象
 #define SAFE_DELETE(p) \
     if (NULL != p) { \
