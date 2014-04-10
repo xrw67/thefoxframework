@@ -1,7 +1,12 @@
-#ifndef _THEFOX_XML2JSON_H_
-#define _THEFOX_XML2JSON_H_
+/*
+ * @filename xml2json.h
+ * @brief convert xml to json string
+ *        from http://github.com/cheedoong/xml2json
+ *        Copyright (C) 2013 Alan Zhuang (Cheedoong)	Tencent, Inc.
+ */
 
-// Copyright (C) 2013 Alan Zhuang (Cheedoong)	Tencent, Inc.
+#ifndef _THEFOX_BASE_XML2JSON_H_
+#define _THEFOX_BASE_XML2JSON_H_
 
 #include <map>
 #include <string>
@@ -163,4 +168,4 @@ String xml2json(const String &xmlStr)
 
 } // namespace thefox
 
-#endif //_THEFOX_XML2JSON_H_
+#endif //_THEFOX_BASE_XML2JSON_H_
