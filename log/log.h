@@ -18,10 +18,10 @@
 #ifndef _THEFOX_LOG_H_
 #define _THEFOX_LOG_H_
 
-#include <memory>
 #include <base/scoped_ptr.h>
-#include <log/logger.h>
-#include <log/logfile.h>
+#include <base/Types.h>
+#include <log/Logger.h>
+#include <log/LogFile.h>
 
 namespace thefox
 {

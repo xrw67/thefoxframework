@@ -2,6 +2,14 @@
 #include <base/noncopyable.h>
 #include <base/Types.h>
 
+#ifdef WIN32
+#define getcwd _getcwd
+#else
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
 using namespace thefox;
 
 // not thread safe
@@ -139,7 +147,15 @@ String LogFile::getLogFileName(const String &dir, const String& basename, time_t
     tm *tm_time = localtime(now);
     strftime(timebuf, sizeof timebuf, ".%Y%m%d-%H%M%S", tm_time);
     filename += timebuf;
-    _snprintf(pidbuf, sizeof pidbuf, ".%d", ::GetCurrentProcessId());
+
+    snprintf(pidbuf, sizeof pidbuf, ".%d", 
+#ifdef WIN32
+    ::GetCurrentProcessId()
+#else
+    getpid()
+#endif
+    );
+
     filename += pidbuf;
     filename += ".log";
 
@@ -160,7 +176,7 @@ void LogFile::makePath(String &dir)
 #endif
     
     if (!bAbsolutePath) {
-		_getcwd(filePath, sizeof(filePath));
+		getcwd(filePath, sizeof(filePath));
         char cSeparator = filePath[strlen(filePath)];
         if (!(cSeparator == '/' || cSeparator == '\\'))
             strcat(filePath, "/");
@@ -175,13 +191,20 @@ void LogFile::makePath(String &dir)
     while (*curDir != '\0') {
         if (*curDir == '\\' || *curDir == '/') {
             *curDir = '\0';
+#ifdef WIN32
             _mkdir(filePath);
+#else
+	    mkdir(filePath, S_IRWXU);
+#endif
             *curDir = '/';
         }
         ++curDir;
     }
+#ifdef WIN32
     _mkdir(filePath);
-    
+#else
+    mkdir(filePath, S_IRWXU);
+#endif 
     size_t pathLen = strlen(filePath);
     if ('/' != filePath[pathLen - 1]) {
         strcat(filePath, "/");

@@ -1,7 +1,9 @@
 #ifndef _THEFOX_LOG_LOGSTREAM_H_
 #define _THEFOX_LOG_LOGSTREAM_H_
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <base/Types.h>
 #include <base/noncopyable.h>
 
@@ -20,9 +22,8 @@ public:
 	~FixedBuffer(){}
 	void append(const char *buf, size_t len)
 	{
-		if (static_cast<size_t>(avail()) > len)
-		{
-			memcpy(_curPtr, buf, len);
+		if (static_cast<size_t>(avail()) > len){
+			memcpy((void *)_curPtr, (void *)buf, len);
 			_curPtr += len;
 		}
 	}

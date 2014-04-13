@@ -1,6 +1,6 @@
 /*
-* @file tflog.h
-* @brief  ‰≥ˆ»’÷æ
+* @file LogFile.h
+* @brief log to file
 *
 * @ahthor macwe@qq.com
 */
@@ -8,7 +8,11 @@
 #ifndef _THEFOX_LOGFILE_H_
 #define _THEFOX_LOGFILE_H_
 
-#include <direct.h>
+#ifdef WIN32
+#else
+#include <unistd.h>
+#endif
+#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <base/Types.h>

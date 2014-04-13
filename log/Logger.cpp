@@ -78,7 +78,8 @@ Logger::LineImpl::LineImpl(LogLevel level, const SourceFile& file, int line)
 #ifdef WIN32
 	_stream << ::GetCurrentThreadId() << ' ';
 #else
-	_stream << pthread_self()() << ' ';
+	pthread_t tid = pthread_self();
+	_stream << (unsigned int)tid << ' ';
 #endif
 	_stream << T(LogLevelName[level], 6);
 
