@@ -36,7 +36,7 @@ public:
     // 客户端方法
     bool open(const InetAddress &serverAddr);
     void close();
-    bool isOpen() { return _started; }
+    bool isOpen();
     void send(const char *data, size_t len);
 
     // 接受者循环

@@ -173,6 +173,15 @@ bool Iocp::open(const InetAddress &serverAddr)
     return true;
 }
 
+bool Iocp::isOpen()
+{
+	if (_started && !_connections.empty()) {
+		if (TcpConnection::kConnected == _connections.begin()->second->state())
+			return true;
+	}
+	return false;
+}
+
 void Iocp::close()
 {    
     _started = false;
