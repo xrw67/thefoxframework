@@ -1,9 +1,6 @@
-#ifndef _THEFOX_LOGSTREAM_H_
-#define _THEFOX_LOGSTREAM_H_
+#ifndef _THEFOX_LOG_LOGSTREAM_H_
+#define _THEFOX_LOG_LOGSTREAM_H_
 
-#pragma warning(disable:4996)
-
-#include <stdio.h>
 #include <stdlib.h>
 #include <base/Types.h>
 #include <base/noncopyable.h>

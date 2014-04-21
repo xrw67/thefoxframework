@@ -1,8 +1,6 @@
 #ifndef _THEFOX_LOGGER_H_
 #define _THEFOX_LOGGER_H_
 
-#pragma warning(disable:4996)
-
 #include <log/LogStream.h>
 #include <base/Timestamp.h>
 

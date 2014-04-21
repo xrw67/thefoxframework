@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "LogStream.h"
+#include <log/LogStream.h>
 
 namespace thefox
 {

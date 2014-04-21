@@ -1,5 +1,10 @@
 #include <log/Logger.h>
 
+#ifdef WIN32
+#else
+#include <pthread.h>
+#endif
+
 namespace thefox
 {
 
@@ -69,9 +74,13 @@ Logger::LineImpl::LineImpl(LogLevel level, const SourceFile& file, int line)
 	, _line(line)
 	, _basename(file)
 {
-  _stream << T(_time.toFormatString().c_str(), 24) << ' ';
-  _stream << ::GetCurrentThreadId() << ' ';
-  _stream << T(LogLevelName[level], 6);
+	_stream << T(_time.toFormatString().c_str(), 24) << ' ';
+#ifdef WIN32
+	_stream << ::GetCurrentThreadId() << ' ';
+#else
+	_stream << pthread_self()() << ' ';
+#endif
+	_stream << T(LogLevelName[level], 6);
 
 }
 

@@ -10,9 +10,7 @@
 
 #include <direct.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <time.h>
-#include <memory>
 #include <base/Types.h>
 #include <base/noncopyable.h>
 #include <base/MutexLock.h>
