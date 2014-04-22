@@ -7,10 +7,10 @@
 #ifndef _THEFOX_NET_TCPCONNECTION_H_
 #define _THEFOX_NET_TCPCONNECTION_H_
 
-#include <base/noncopyable.h>
 #include <base/Types.h>
 #include <base/MutexLock.h>
 #include <base/MemPool.h>
+#include <base/Shareable.h>
 #include <net/Buffer.h>
 #include <net/InetAddress.h>
 
@@ -21,7 +21,7 @@ namespace thefox
 typedef int SOCKET
 #endif
 
-class TcpConnection : noncopyable
+class TcpConnection : public Shareable
 {
 public:
     enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
@@ -61,10 +61,10 @@ public:
     StateT state() const { return _state; }
 
     /// @brief 
-    void *any() const { return _any; }
+    void *context() const { return _context; }
 
     /// @brief 
-    void setAny(void *any) { _any = any; }
+    void setContext(void *context) { _context = context; }
 
     //以下为内部使用
     void setState(StateT state) { _state = state; }
@@ -99,7 +99,8 @@ public:
     size_t readBytes() const { return _readBytes; }
     size_t writeBytes() const { return _writeBytes; }
 private:
-    int _connId;
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
+    int32_t _connId;
     SOCKET _socket;
     InetAddress _peerAddr;
     Buffer _readBuffer;
@@ -107,7 +108,7 @@ private:
     size_t _pendingEvent; // 未完成的事件
     StateT _state;
     MutexLock _mutex;
-    void *_any;
+    void *_context;
 
     // 统计信息
     size_t _readBytes;

@@ -1,0 +1,22 @@
+package thefox.rpc;
+
+message Call {
+	required int64 id = 1;
+	required string service = 2;
+    required string method = 3; // name of a method_descriptor
+    optional bytes request = 4; // pb2-encoded message
+}
+
+message Reply {
+	required int64 id = 1;
+	required bool result = 2; // true of false
+	optional bytes response = 3; // pb2-encoded message
+}
+
+message Box {
+    repeated Call call = 1;
+    repeated Reply reply = 2;
+}
+
+message Placeholder {  
+};

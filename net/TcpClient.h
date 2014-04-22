@@ -23,7 +23,7 @@ namespace thefox
 class EventLoop;
 class InetAddress;
 
-class TcpClient : Shareable
+class TcpClient : public Shareable
 {
 public:
     TcpClient(EventLoop *eventloop, const String &nameArg);
