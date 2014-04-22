@@ -14,10 +14,10 @@
 namespace thefox
 {
 
-class RpcChannel
+class RpcChannel : public gpb::RpcChannel
 {
 public:
-  RpcChannel(TcpConnection *conn);
+  RpcChannel(EventLoop *loop);
   ~RpcChannel();
   void CallMethod(const ::google::protobuf::MethodDescriptor* method,
                  ::google::protobuf::RpcController* controller,
@@ -40,7 +40,7 @@ private:
 	AtomicInt64 _id;
 	MutexLock _mutex;
 	std::map<int64_t, SharedPtr<RequestWait>> _requests;
-	TcpConnection *_conn;
+	TcpClient _client;
 };
 
 } // namespace thefox
