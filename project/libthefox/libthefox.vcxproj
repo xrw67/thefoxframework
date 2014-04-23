@@ -10,10 +10,50 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\log\log.h" />
+    <ClInclude Include="..\..\log\logfile.h" />
+    <ClInclude Include="..\..\log\Logger.h" />
+    <ClInclude Include="..\..\log\LogStream.h" />
+    <ClInclude Include="..\..\net\Buffer.h" />
+    <ClInclude Include="..\..\net\Callbacks.h" />
+    <ClInclude Include="..\..\net\CpEvent.h" />
+    <ClInclude Include="..\..\net\Endian.h" />
+    <ClInclude Include="..\..\net\EventLoop.h" />
+    <ClInclude Include="..\..\net\InetAddress.h" />
+    <ClInclude Include="..\..\net\Iocp.h" />
+    <ClInclude Include="..\..\net\IoEvent.h" />
+    <ClInclude Include="..\..\net\SocketOps.h" />
+    <ClInclude Include="..\..\net\TcpClient.h" />
+    <ClInclude Include="..\..\net\TcpConnection.h" />
+    <ClInclude Include="..\..\net\TcpServer.h" />
+    <ClInclude Include="..\..\net\TimerQueue.h" />
+    <ClInclude Include="..\..\rpc\common.h" />
+    <ClInclude Include="..\..\rpc\rpc.pb.h" />
+    <ClInclude Include="..\..\rpc\RpcChannel.h" />
+    <ClInclude Include="..\..\rpc\RpcCodec.h" />
+    <ClInclude Include="..\..\rpc\RpcServer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\log\LogFile.cpp" />
+    <ClCompile Include="..\..\log\Logger.cpp" />
+    <ClCompile Include="..\..\log\LogStream.cpp" />
+    <ClCompile Include="..\..\net\EventLoop.cc" />
+    <ClCompile Include="..\..\net\Iocp.cc" />
+    <ClCompile Include="..\..\net\TcpClient.cc" />
+    <ClCompile Include="..\..\net\TcpServer.cc" />
+    <ClCompile Include="..\..\net\TimerQueue.cc" />
+    <ClCompile Include="..\..\rpc\rpc.pb.cc" />
+    <ClCompile Include="..\..\rpc\RpcChannel.cc" />
+    <ClCompile Include="..\..\rpc\RpcServer.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\rpc\rpc.proto" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}</ProjectGuid>
+    <ProjectGuid>{77DF8D9B-AE9A-41AB-B798-6205096D3029}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Net</RootNamespace>
+    <RootNamespace>libthefox</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -38,10 +78,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>../../;$(IncludePath)</IncludePath>
+    <IncludePath>../..;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>../../;$(IncludePath)</IncludePath>
+    <IncludePath>../..;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -73,23 +113,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\net\CpEvent.h" />
-    <ClInclude Include="..\..\net\EventLoop.h" />
-    <ClInclude Include="..\..\net\Iocp.h" />
-    <ClInclude Include="..\..\net\IoEvent.h" />
-    <ClInclude Include="..\..\net\TcpClient.h" />
-    <ClInclude Include="..\..\net\TcpConnection.h" />
-    <ClInclude Include="..\..\net\TcpServer.h" />
-    <ClInclude Include="..\..\net\TimerQueue.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\net\EventLoop.cc" />
-    <ClCompile Include="..\..\net\Iocp.cc" />
-    <ClCompile Include="..\..\net\TcpClient.cc" />
-    <ClCompile Include="..\..\net\TcpServer.cc" />
-    <ClCompile Include="..\..\net\TimerQueue.cc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

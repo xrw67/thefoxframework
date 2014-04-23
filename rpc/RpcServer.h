@@ -3,14 +3,14 @@
 
 #include <map>
 #include <base/Types.h>
+#include <base/MutexLock.h>
+#include <net/TcpServer.h>
 #include <rpc/common.h>
 #include <google/protobuf/service.h>
 
 namespace thefox
 {
-
-class TcpServer;
-    
+ 
 class RpcServer
 {
 public:
@@ -20,12 +20,13 @@ public:
 	void registerService(gpb::Service *service);
 	bool start(const InetAddress &listen);
 	
-	void onMessage(const TcpConnectionPtr& conn, const rpc::Call *call, Timestamp receiveTime);
+	void onMessage(const TcpConnectionPtr &conn, const rpc::Call *call, Timestamp receiveTime);
 
 	void doneCallback(const int64_t id, const gpb::Message *response);
 private:
 	typedef std::map<String, gpb::Service *> ServiceMap;
-	SharedPtr<TcpServer> _server;
+	TcpServer _server;
+	MutexLock _mutex;
 	ServiceMap _services;
 };
 

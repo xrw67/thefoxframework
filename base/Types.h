@@ -16,6 +16,7 @@
 #endif
 
 #include <string>
+#include <assert.h>
 
 namespace thefox 
 {
@@ -24,6 +25,7 @@ typedef std::string String;
 
 
 #ifdef WIN32
+	#pragma warning(disable:4819)
 	#pragma warning(disable:4996)
 	#define snprintf _snprintf
 
@@ -35,6 +37,12 @@ typedef std::string String;
 #endif
 
 #define elif else if
+
+// 指定是否允许copy ctor 和 assign opt.
+#undef THEFOX_DISALLOW_EVIL_CONSTRUCTORS
+#define THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TypeName)    \
+  TypeName(const TypeName&);                           \
+  void operator=(const TypeName&)
 
 // 安全删除对象
 #define SAFE_DELETE(p) \

@@ -1,14 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Net", "Net\Net.vcxproj", "{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libthefox", "libthefox\libthefox.vcxproj", "{77DF8D9B-AE9A-41AB-B798-6205096D3029}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IocpDemo", "IocpDemo\IocpDemo.vcxproj", "{F11C017B-D665-4E5B-942C-4791ECE52DCC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D} = {F37C0E15-B67C-4B17-AB3C-FF90343BD43D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRpcServer", "testRpcServer\testRpcServer.vcxproj", "{69D6BBB9-14DB-4635-A5CD-00B2FC968CAC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerTest", "TimerTest\TimerTest.vcxproj", "{E64FCC31-4832-4152-A8AF-07AD6C9C08E1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRpcClient", "testRpcClient\testRpcClient.vcxproj", "{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,18 +13,18 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Debug|Win32.Build.0 = Debug|Win32
-		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Release|Win32.ActiveCfg = Release|Win32
-		{F37C0E15-B67C-4B17-AB3C-FF90343BD43D}.Release|Win32.Build.0 = Release|Win32
-		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Debug|Win32.Build.0 = Debug|Win32
-		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Release|Win32.ActiveCfg = Release|Win32
-		{F11C017B-D665-4E5B-942C-4791ECE52DCC}.Release|Win32.Build.0 = Release|Win32
-		{E64FCC31-4832-4152-A8AF-07AD6C9C08E1}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E64FCC31-4832-4152-A8AF-07AD6C9C08E1}.Debug|Win32.Build.0 = Debug|Win32
-		{E64FCC31-4832-4152-A8AF-07AD6C9C08E1}.Release|Win32.ActiveCfg = Release|Win32
-		{E64FCC31-4832-4152-A8AF-07AD6C9C08E1}.Release|Win32.Build.0 = Release|Win32
+		{77DF8D9B-AE9A-41AB-B798-6205096D3029}.Debug|Win32.ActiveCfg = Debug|Win32
+		{77DF8D9B-AE9A-41AB-B798-6205096D3029}.Debug|Win32.Build.0 = Debug|Win32
+		{77DF8D9B-AE9A-41AB-B798-6205096D3029}.Release|Win32.ActiveCfg = Release|Win32
+		{77DF8D9B-AE9A-41AB-B798-6205096D3029}.Release|Win32.Build.0 = Release|Win32
+		{69D6BBB9-14DB-4635-A5CD-00B2FC968CAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{69D6BBB9-14DB-4635-A5CD-00B2FC968CAC}.Debug|Win32.Build.0 = Debug|Win32
+		{69D6BBB9-14DB-4635-A5CD-00B2FC968CAC}.Release|Win32.ActiveCfg = Release|Win32
+		{69D6BBB9-14DB-4635-A5CD-00B2FC968CAC}.Release|Win32.Build.0 = Release|Win32
+		{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}.Debug|Win32.Build.0 = Debug|Win32
+		{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}.Release|Win32.ActiveCfg = Release|Win32
+		{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

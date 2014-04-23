@@ -1,30 +1,35 @@
 #include <rpc/RpcServer.h>
+#include <net/Buffer.h>
 #include <net/TcpServer.h>
 #include <rpc/RpcCodec.h>
-#include <google/protobuf/descriptor.h>
 
 namespace thefox
 {
 
-static RpcServer *rpcServerPointer;
+static RpcServer *rpcServerPointer = NULL; // 全局的rpc服务器指针
     
-void onRpcConnection(const TcpConnectionPtr &conn)
+void onRpcServerConnection(const TcpConnectionPtr &conn)
 {
 }
 
-void onRpcClose(const TcpConnectionPtr &conn)
+void onRpcServerClose(const TcpConnectionPtr &conn)
 {
 
 }
 
-void onRpcMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp recvTime)
+void onRpcServerMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp recvTime)
 {
-    while (buf->) {
-        
-    }
-    rpcServerPointer
-    
-    delete call;
+	assert (NULL != rpcServerPointer);
+
+	while (RpcCodec::isValid(buf->peek(), buf->readableBytes())) {
+		rpc::Box box;
+		size_t bufLen = buf->readableBytes();
+		if (RpcCodec::parseFromArray(buf->peek(), bufLen, &box)) {
+			for (int i = 0; i < box.call_size(); ++i)
+				rpcServerPointer->onMessage(conn, &box.call(i), Timestamp(Timestamp::now()));
+			buf->retrieve(bufLen);
+		}
+	}
 }
 
 }; // namespace thefox
@@ -32,7 +37,7 @@ void onRpcMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp recvTime)
 using namespace thefox;
 
 RpcServer::RpcServer(EventLoop *loop)
-	: _server(new TcpServer(loop, "thefoxRpcServer")
+	: _server(loop, "thefoxRpcServer")
 {
     rpcServerPointer = this;
 }
@@ -54,9 +59,11 @@ void RpcServer::registerService(gpb::Service *service)
 
  bool RpcServer::start(const InetAddress &listenAddr)
 {
-	_server->setConnectionCallback(onRpcConnection);
-	
-	_server->start(listenAddr);
+	_server.setConnectionCallback(onRpcServerConnection);
+	_server.setMessageCallback(onRpcServerMessage);
+	_server.setCloseCallback(onRpcServerClose);
+
+	return _server.start(listenAddr);
 }
 
 
@@ -74,16 +81,21 @@ void RpcServer::onMessage(const TcpConnectionPtr& conn, const rpc::Call *call, T
 			gpb::Message *request(service->GetRequestPrototype(method).New());
 			request->ParseFromString(call->request());
 			
-			gpb::Message *response = &service->GetResponsePrototype(method).New());
+			gpb::Message *response(service->GetResponsePrototype(method).New());
             
-			service->CallMethod(method, NULL, call, response, gpb::NewCallback(&DoNothing));
+			service->CallMethod(method, NULL, request, response, gpb::NewCallback(&gpb::DoNothing));
             
             //done
-            rpc::Reply reply;
-            reply.set_id(call->id());
-            reply.set_result(true);
-            reply.set_response(response->SerializeAsString());
-            _server.send(conn,rpcEncode(reply));
+            rpc::Box box;
+			rpc::Reply * reply = box.add_reply();
+            reply->set_id(call->id());
+            reply->set_result(true);
+            reply->set_response(response->SerializeAsString());
+
+			_server.send(conn,RpcCodec::encode(box));
+			
+			delete request;
+			delete response;
 		}
 	}
 }

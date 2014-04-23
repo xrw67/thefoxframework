@@ -2,9 +2,6 @@
 #ifndef _THEFOX_NET_BUFFER_H_
 #define _THEFOX_NET_BUFFER_H_
 
-#include <vector>
-#include <algorithm>
-
 #ifdef WIN32
 #pragma warning(disable:4996)
 #include <Winsock2.h>
@@ -12,6 +9,8 @@
 #include <arpa/inet.h>
 #endif
 
+#include <vector>
+#include <algorithm>
 #include <base/Types.h>
 #include <base/copyable.h>
 

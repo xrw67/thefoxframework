@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="log">
+      <UniqueIdentifier>{e9e31d0d-cf35-4496-9a47-00d8497e2bac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{07e1d8f6-b463-4363-ad4b-81a3a4a2352e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{abb25a4d-c98e-4e56-bf35-87128dd4d2ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="protobuf">
+      <UniqueIdentifier>{bed4c40f-f053-4693-b9a7-16422f1ed2e7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\log\Logger.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log\LogStream.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log\log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log\logfile.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\EventLoop.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\InetAddress.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Iocp.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\IoEvent.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\SocketOps.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TcpClient.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TcpConnection.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TcpServer.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\TimerQueue.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Buffer.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Callbacks.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\CpEvent.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Endian.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rpc\RpcServer.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rpc\RpcChannel.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rpc\rpc.pb.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rpc\common.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rpc\RpcCodec.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\log\LogStream.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log\LogFile.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log\Logger.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\EventLoop.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\Iocp.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\TcpClient.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\TcpServer.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\TimerQueue.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rpc\RpcServer.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rpc\RpcChannel.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rpc\rpc.pb.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\rpc\rpc.proto">
+      <Filter>rpc</Filter>
+    </None>
+  </ItemGroup>
+</Project>
