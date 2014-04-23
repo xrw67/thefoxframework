@@ -6,6 +6,7 @@
 #include <base/MutexLock.h>
 #include <net/TcpServer.h>
 #include <rpc/common.h>
+#include <rpc/rpc.pb.h>
 #include <google/protobuf/service.h>
 
 namespace thefox

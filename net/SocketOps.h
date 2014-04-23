@@ -5,30 +5,31 @@
 #include <Winsock2.h>
 #else
 #endif
+
 namespace thefox
 {
 
-#ifdef WIN32
-class InitSocket
+class SocketLibrary
 {
 public:
-    InitSocket()
+	/// @breaf socket¿â³õÊ¼»¯
+    static void startup()
     {
+#ifdef WIN32
         WSADATA wsd;
         WSAStartup(MAKEWORD(2, 2), &wsd);
-    }
-    ~InitSocket()
-    {
-        WSACleanup();
-    }
-};
-#define INIT_SOCKET static InitSocket;
-#else
-#define INIT_SOCKET
 #endif
+    }
 
+	/// @breaf socket¿â×¢Ïú
+    static void shutdown()
+    { 
+#ifdef WIN32
+		WSACleanup(); 
+#endif
+	}
+};
 
-
-} // namespace net
+} // namespace thefox
 
 #endif // _THEFOX_NET_SOCKETOPS_H_

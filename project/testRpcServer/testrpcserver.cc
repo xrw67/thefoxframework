@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <net/InetAddress.h>
 #include <net/EventLoop.h>
+#include <net/SocketOps.h>
 #include <rpc/RpcServer.h>
 #include "../../rpc/test/echo.pb.h"
 
@@ -20,8 +21,7 @@ class EchoSerivceImpl : public echo::EchoService
 
 int main(int argc, char **argv)
 {
-	WSADATA wsd;
-    WSAStartup(MAKEWORD(2, 2), &wsd);
+	SocketLibrary::startup();
 
 	EventLoop loop;
 	loop.start();
@@ -35,6 +35,6 @@ int main(int argc, char **argv)
 
 	loop.join();
 
-	WSACleanup();
+	SocketLibrary::shutdown();
 	return 0;
 }

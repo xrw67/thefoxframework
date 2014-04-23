@@ -1,50 +1,132 @@
 #ifndef _THEFOX_BASE_THREAD_H_
 #define _THEFOX_BASE_THREAD_H_
 
-#include <functional>
-#include <memory>
-#include "afxmt.h"
+
+#include <base/Types.h>
+
+#ifdef WIN32
+    #include <Windows.h>
+#else
+    #include <pthread.h>
+#endif
 
 namespace thefox
 {
 
-class Thread :noncopyable
+typedef void (*ThreadCallback)(void *);
+
+class Thread
 {
 public:
-    typedef std::function<void()> ThreadFunc;
-    
-    explicit Thread(const ThreadFunt &cb, const String &name)
+    enum StateT { kInit, kStart, kJoined, kStop };
+
+    explicit Thread(const ThreadFunt &cb, void *arg, const String &name)
         : _cb(cb)
+        , _arg(arg)
+        , _name(name)
+        , _state(kInit)
+    #ifdef WIN32
+        , _handle(INVALID_HANDLE)
+        , _threadId(0)
+    #endif
+    {}
+
+    ~Thread()
     {
+        join();
+        setState(kStop);
     }
 
-    void start()
+    bool start()
     {
-        _workStatus = true;
-        ::AfxBeginThread(ThreadFunc, this);
+        if (kInit != state())
+            return;
+
+        bool result = false;
+#ifdef WIN32
+        _handle = ::CreateThread(NULL, 0, threadProc, (LPVOID)this, 0, &_threadId)
+        result = (NULL != _handle);
+#else
+        int ret = pthread_create(&_thread, NULL, _cb, (void *)_arg);
+        result = (0 == ret);
+#endif
+        setState(kStart);
+        return result;
     }
     
-    void stop()
+    bool stop()
     {
-        _workStatus = false;
-        ::WaitForSingleObject(_endEvent, INFINITE);
+        if (kStop == state() || kInit == state())
+            return true;
+
+        bool result = true;
+#ifdef WIN32
+        if(0 == ::TerminateThread(_handle, 0))
+            result = false;
+#else
+        if (0 != pthread_cancel(_thread))
+            result = false;
+#endif
+        if (result)
+            setState(kStop);
+
+        return result;
     }
-    
-    bool getWorkStatus() const { return _workStatus; }
+
+    bool join()
+    {
+        if (kStart != state())
+            return false;
+        bool result = false;
+#ifdef WIN32
+        if (INVALID_HANDLE != _handle) {
+            DWORD ret = ::WaitForSingleObject(_handle, INFINITE);
+            if (WAIT_OBJECT_0 == ret || WAIT_ABANDONED == ret) {
+                result = true;
+                _handle = NULL;
+            }
+        }
+#else
+        int ret = pthread_join(_thread, NULL);
+        if (0 == ret)
+            result = true;
+#endif
+        setState(kJoined);
+        return result;
+    }
+
+    const String &name() const { return _name; }
+    StateT State() const { return _state; }
+
+#ifdef WIN32
+    DWORD tid() const { return _threadId; }
+    operator HANDLE() { return _handle; }
+#else
+    pthread_t tid() const
+    {}
+#endif
+
+    void run() { _cb; }
 priavte:
-    static UINT ThreadFunc(LPVOID p)
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Thread);
+
+    static DWORD threadProc(LPVOID param)
     {
-        Thread *thread = (Thread *)p;
-        _cb();
-        thread->SetStopFlag();
-        return 0;
+        Thread *pThis = reinterpret_cast<Thread *>(param);
+        pThis->run();
     }
-    
-    void setStopFlag() { m_endEvent.SetEvent(); }
 
     ThreadCallback _cb;
-    bool _workStatus;
-    CEvent _endEvent;
+    void *_arg;
+    const String _name;
+    StateT _state;
+
+#ifdef _WIN32
+    HANDLE _handle;
+    DWORD _threadId;
+#else
+    pthread_t _thread;
+#endif
 };
 
 } // namespace thefox

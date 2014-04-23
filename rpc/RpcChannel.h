@@ -12,6 +12,7 @@
 #include <google/protobuf/service.h>
 #include <net/TcpClient.h>
 #include <rpc/common.h>
+#include <rpc/rpc.pb.h>
 
 namespace thefox
 {

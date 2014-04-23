@@ -1,7 +1,12 @@
 #ifndef _THEFOX_RPC_COMMON_H_
 #define _THEFOX_RPC_COMMON_H_
 
-#include <rpc/rpc.pb.h>
+namespace google
+{
+namespace protobuf
+{
+}
+}
 
 namespace thefox
 {
