@@ -13,36 +13,43 @@ class StringUtil
 public:
     static const int kMaxStringLen = 100 * 1024;
 
+    /// @brief 转换成int类型
     static int stoi(const String &str) 
     { 
         return (0 == str.length()) ? 0 : atoi(str.c_str());
     }
 
+    /// @brief 转换成unsigned int
     static unsigned int stoui(const String &str) 
     { 
         return (0 == str.length()) ? 0 : static_cast<unsigned int>(atoi(str.c_str()));
     } 
 
+    /// @brief 转换成long
     static long stol(const String &str) 
     { 
         return (0 == str.length()) ? 0L : atol(str.c_str()); 
     }
 
+    /// @brief 转换成float
     static float stof(const String &str)
     { 
         return (0 == str.length()) ? 0.0f : static_cast<float>(atof(str.c_str())); 
     }
 
+    /// @brief 转换成double
     static double stod(const String &str) 
     { 
         return (0 == str.length()) ? 0.0 : atof(str.c_str()); 
     }
 
+    /// @brief 转换成bool
     static bool stob(const String &str) 
     { 
         return (0 == str.length() || str == "0" || str == "false" || str == "FALSE") ? false : true; 
     }
 
+    /// @brief 将int类型数据转成字符串
     static String toString(const int val)
     {
         char buf[32] = {0};
@@ -50,6 +57,7 @@ public:
 		return buf;
     }
 
+    /// @brief 将unsigned int类型数据转成字符串
     static String toString(const unsigned int val)
     {
         char buf[32] = {0};
@@ -57,6 +65,7 @@ public:
         return buf;
     }
 
+    /// @brief 将long类型数据转成字符串
     static String toString(const long val)
     {
         char buf[32] = {0};
@@ -64,6 +73,7 @@ public:
 		return buf;
     }
 
+    /// @brief 将long long类型数据转成字符串
     static String toString(const long long val)
     {
         char buf[32] = {0};
@@ -71,6 +81,7 @@ public:
         return buf;
     }
 
+    /// @brief 将double类型数据转成字符串
     static String toString(const double val)
     {
         char buf[32] = {0};
@@ -78,11 +89,13 @@ public:
         return buf;
     }
 
+    /// @brief 将bool类型数据转成字符串
     static String toString(const bool val)
     {
         return val ? "1" : "0";
     }
 
+    /// @brief 格式化字符串
     static String &format(String &str, const char *format, ...)
     {
         va_list ap;
@@ -98,6 +111,7 @@ public:
         return str;
     }
 
+    /// @brief 移除左侧的空格、换行符和制表符
     static String trimLeft(const String &str)
     {
         String::size_type index = str.find_first_not_of("\n\r\t");
@@ -106,6 +120,7 @@ public:
         return str;
     }
 
+    /// @brief 移除右侧的空格、换行符和制表符
     static String trimRight(const String &str)
     {
         String::size_type index = str.find_last_not_of("\n\r\t");
@@ -114,11 +129,54 @@ public:
         return str;
     }
 
+    /// @brief 移除左右两侧的空格、换行符和制表符
     static String trim(const String &str)
     {
         return trimRight(trimLeft(str));
     }
 
+    /// @brief 判断字符串是否都是可显示的字符
+    static bool canDisplay(const String &str)
+    {
+        for (size_t i=0; i < str.length();i++) {
+            if (!(str[i] >= 0x20 && str[i] <= 127))
+                return false;
+        }
+        return true;
+    }
+
+    /// @brief 是否包含大写字母
+    static bool isContainUppercase(const String &str)
+    {
+        for (size_t i=0; i < str.length();i++) {
+            if (str[i] >= 'A' && str[i] <= 'Z')
+                return true;
+        }
+        return false;
+    }
+
+    /// @brief 是否包含小写字母
+    static bool isContainLowercase(const String &str)
+    {
+        for (size_t i=0; i < str.length();i++) {
+            if (str[i] >= 'a' && str[i] <= 'z')
+                return true;
+        }
+        return false;
+    }
+
+    /// @brief 是否是整型数据
+	static bool isInteger(const String &str)
+    {
+        for (size_t i=0; i < str.length();i++) {
+             if (str[i] >= '9' || str[i] <= '0')
+                return false;
+        }
+        return true;
+
+    }
+
+    /// @brief 转成小写字母
     static String toLower(String &str)
     {
         for (String::size_type i = 0; i < str.length(); ++i)
@@ -127,6 +185,7 @@ public:
         return str;
     }
 
+    /// @brief 转成大写字母
     static String toUpper(String &str)
     {
         for (String::size_type i = 0; i < str.length(); ++i)
@@ -135,6 +194,7 @@ public:
         return str;
     }
 
+    /// @brief 字符是不是字母
     static bool charIsLetter(char c)
     {
         if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
@@ -142,6 +202,7 @@ public:
         return false;
     }
 
+    /// @brief 两字符串是否相等，忽略大小写
     static bool equalsIgnoreCase(const String &s1, const String &s2)
     {
         if (s1.length() != s2.length())
@@ -158,6 +219,7 @@ public:
         return true;
     }
 
+    /// @brief 替换字符串中的文字
     static String replace(String &str, const String &from, const String &to)
     {
         String::size_type pos = 0;
