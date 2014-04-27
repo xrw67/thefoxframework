@@ -9,60 +9,78 @@
 #include <arpa/inet.h>
 #endif
 
-#include <vector>
-#include <algorithm>
 #include <base/Types.h>
-#include <base/copyable.h>
 
 namespace thefox
 {
 
-/// A buffer class modeled after org.jboss.netty.buffer.ChannelBuffer
 ///
-/// @code
 /// +-------------------+------------------+------------------+
 /// | prependable bytes |  readable bytes  |  writable bytes  |
 /// |                   |     (CONTENT)    |                  |
 /// +-------------------+------------------+------------------+
 /// |                   |                  |                  |
-/// 0      <=      readerIndex   <=   writerIndex    <=     size
-/// @endcode
-class Buffer : public copyable
+/// beginPtr   <=    readerPtr    <=    writerPtr    <=     endPtr
+class Buffer
 {
 public:
     static const size_t kCheapPrepend = 8;
     static const size_t kInitialSize = 1024;
 
     Buffer()
-        : _buffer(kCheapPrepend + kInitialSize)
-        , _readerIndex(kCheapPrepend)
-        , _writerIndex(kCheapPrepend)
     {
+		size_t len = kCheapPrepend + kInitialSize;
+		_beginPtr = static_cast<char *>(malloc(len));
+		_endPtr = _beginPtr + len;
+		_readerPtr = _writerPtr = _beginPtr + kInitialSize;
     }
+	Buffer(const Buffer &buf)
+	{
+		size_t len = buf._endPtr - buf._beginPtr;
+		_beginPtr = static_cast<char *>(malloc(len));
+		_endPtr = _beginPtr + len;
+		_readerPtr = _beginPtr + (buf._readerPtr - buf._beginPtr);
+		_writerPtr = _beginPtr + (buf._writerPtr - buf._beginPtr);
+	}
 
-    void swap(Buffer& rhs)
-    {
-        _buffer.swap(rhs._buffer);
-        std::swap(_readerIndex, rhs._readerIndex);
-        std::swap(_writerIndex, rhs._writerIndex);
-    }
+	~Buffer()
+	{
+		if (NULL != _beginPtr)
+			free(_beginPtr);
+		_beginPtr = _endPtr = _readerPtr = _writerPtr = NULL;
+	}
+
+	const Buffer &operator=(const Buffer &buf)
+	{
+		size_t readable = buf.readableBytes();
+		if ((_endPtr - _beginPtr) < (readable + kCheapPrepend)) {
+			size_t newSize = readable + kCheapPrepend;
+			free(_beginPtr);
+			_beginPtr = static_cast<char *>(malloc(newSize));
+			_endPtr = _beginPtr + newSize;
+		}
+
+		memcpy(_beginPtr + kCheapPrepend, buf._readerPtr, readable);
+		_readerPtr = _beginPtr + kCheapPrepend;
+		_writerPtr = _readerPtr + readable;
+	}
 
     size_t readableBytes() const
-    { return _writerIndex - _readerIndex; }
+    { return _writerPtr - _readerPtr; }
 
     size_t writableBytes() const
-    { return _buffer.size() - _writerIndex; }
+    { return _endPtr - _writerPtr; }
 
     size_t prependableBytes() const
-    { return _readerIndex; }
+    { return _readerPtr - _beginPtr; }
 
     const char* peek() const
-    { return begin() + _readerIndex; }
+    { return _readerPtr; }
 
     void retrieve(size_t len)
     {
         if (len < readableBytes())
-            _readerIndex += len;
+            _readerPtr += len;
         else
             retrieveAll();
     }
@@ -89,48 +107,40 @@ public:
 
     void retrieveAll()
     {
-        _readerIndex = kCheapPrepend;
-        _writerIndex = kCheapPrepend;
+        _readerPtr = _beginPtr + kCheapPrepend;
+        _writerPtr = _beginPtr + kCheapPrepend;
     }
 
-    String retrieveAllAsString()
+    std::string retrieveAllAsString()
     {
-        return retrieveAsString(readableBytes());;
+        return retrieveAsString(readableBytes());
     }
 
-    String retrieveAsString(size_t len)
+    std::string retrieveAsString(size_t len)
     {
-        String result(peek(), len);
+        std::string result(peek(), len);
         retrieve(len);
         return result;
     }
 
-    void append(const char *data, size_t len)
+    void append(const void *data, size_t len)
     {
         ensureWritableBytes(len);
-        std::copy(data, data+len, beginWrite());
+        memcpy(beginWrite(), (void *)data, len);
         hasWritten(len);
     }
 
-    void append(const void *data, size_t len)
-    {
-        append(static_cast<const char *>(data), len);
-    }
-
-    void ensureWritableBytes(size_t len)
-    {
-        if (writableBytes() < len)
-            makeSpace(len);
-    }
+	void append(const char *data, size_t len)
+    { append((void *)data, len); }
 
     char* beginWrite()
-    { return begin() + _writerIndex; }
+    { return _writerPtr; }
 
     const char* beginWrite() const
-    { return begin() + _writerIndex; }
+    { return _writerPtr; }
 
     void hasWritten(size_t len)
-    { _writerIndex += len; }
+    { _writerPtr += len; }
 
     ///
     /// Append int32_t using network endian
@@ -220,38 +230,38 @@ public:
 
     void prepend(const void* data, size_t len)
     {
-        _readerIndex -= len;
-        const char* d = static_cast<const char*>(data);
-        std::copy(d, d+len, begin()+_readerIndex);
-    }
-
-    size_t internalCapacity() const
-    {
-        return _buffer.capacity();
+        _readerPtr -= len;
+        memcpy(_readerPtr, data, len);
     }
 private:
-
-    char* begin()
-    { return &*_buffer.begin(); }
-
-    const char* begin() const
-    { return &*_buffer.begin(); }
-
-    void makeSpace(size_t len)
+	void ensureWritableBytes(size_t len)
     {
-        if (writableBytes() + prependableBytes() < len + kCheapPrepend) {
-            _buffer.resize(_writerIndex+len);
-        } else {
-            size_t readable = readableBytes();
-            std::copy(begin()+_readerIndex, begin()+_writerIndex, begin()+kCheapPrepend);
-            _readerIndex = kCheapPrepend;
-            _writerIndex = _readerIndex + readable;
-        }
+		if (writableBytes() < len) {
+			if (writableBytes() + prependableBytes() < len + kCheapPrepend) {
+				size_t readable = readableBytes();
+				size_t newSize = (_writerPtr - _beginPtr) + len;
+				char *temp = static_cast<char *>(malloc(newSize));
+				memcpy(temp + kCheapPrepend, _readerPtr, readable);
+				
+				free(_beginPtr);
+				_beginPtr = temp;
+				_readerPtr = _beginPtr + kCheapPrepend;
+				_writerPtr = _readerPtr + readable;
+				_endPtr = _beginPtr + newSize;
+			} else {
+				size_t readable = readableBytes();
+				memmove(_beginPtr + kCheapPrepend, _readerPtr, readable);
+				_readerPtr = _beginPtr + kCheapPrepend;
+				_writerPtr = _readerPtr + readable;
+			}	
+		}
     }
 
-    std::vector<char> _buffer;
-    size_t _readerIndex;
-    size_t _writerIndex;
+	// buffer
+    char *_beginPtr;
+	char *_readerPtr;
+	char *_writerPtr;
+	char *_endPtr;
 };
 
 } // namespace thefox

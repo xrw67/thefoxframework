@@ -8,6 +8,7 @@
 #define _THEFOX_NET_EVENTLOOP_H_
 
 #include <Windows.h>
+#include <base/Types.h>
 
 namespace thefox
 {
@@ -41,6 +42,8 @@ public:
     /// @brief 启动一个工作循环. 警告:单线程,不要使用
     void loop();
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EventLoop);
+    
     void init();
     int getCpuNum();
     HANDLE _hIocp;

@@ -8,13 +8,12 @@
 #define _THEFOX_BASE_FILE_H_
 
 #include <base/Types.h>
-#include <base/noncopyable.h>
 
 namespace thefox 
 {
 
 // 包装FILE指针，符合RAII原则
-class FileHandle : noncopyable
+class FileHandle
 {
 public:
     FileHandle(const String &filename, const String &mode)
@@ -29,10 +28,11 @@ public:
     FILE *handle() const { return _fp; }
     
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(FileHandle);
     FILE *_fp
 };
 
-class File : noncopyable
+class File
 {
 public:
     File(const String &filename,const String &mode )
@@ -46,6 +46,7 @@ public:
     bool WriteLine();
 
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(File);
     FileHandle _file;
 };
 

@@ -1,13 +1,12 @@
 #ifndef _THEFOX_BASE_PARAMLIST_H_
 #define _THEFOX_BASE_PARAMLIST_H_
 
-#include <base/types.h>
-#include <base/copyable.h>
+#include <base/Types.h>
 
 namespace thefox
 {
 
-class ParamList : copyable
+class ParamList
 {
 public:
     typedef std::map<String, String> ParamListType;

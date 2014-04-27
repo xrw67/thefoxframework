@@ -1,7 +1,8 @@
 #include <rpc/RpcServer.h>
 #include <net/Buffer.h>
-#include <net/TcpServer.h>
+#include <net/TcpConnection.h>
 #include <rpc/RpcCodec.h>
+#include <rpc/RpcChannel.h>
 
 namespace thefox
 {
@@ -10,6 +11,7 @@ static RpcServer *rpcServerPointer = NULL; // 全局的rpc服务器指针
     
 void onRpcServerConnection(const TcpConnectionPtr &conn)
 {
+	conn->bindRpcChannel(new RpcChannel(conn));
 }
 
 void onRpcServerClose(const TcpConnectionPtr &conn)

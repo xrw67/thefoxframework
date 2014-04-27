@@ -8,7 +8,6 @@
 #define _THEFOX_BASE_OBJECTMEMPOOL_H_
 
 #include <new>
-#include <base/noncopyable.h>
 #include <base/MemPool.h>
 
 namespace thefox
@@ -19,11 +18,11 @@ class ObjectMemPool : MemPool<T, kBlockSize>
 {
 public:
     /// @brief 获取分配的内存
-    T *get()
+    shared_ptr<T> get()
     {
         T *ret = MemPool::get();
         new(ret) T(); // placement new
-        return ret;
+        return shared_ptr(ret);
     }
     
     void put(T *pointer)

@@ -1,19 +1,19 @@
 #ifndef _THEFOX_BASE_MAILSLOT_H_
 #define _THEFOX_BASE_MAILSLOT_H_
 
-#include <base/noncopyable.h>
+#include <base/Types.h>
 
 namespace thefox {
     
 DROWD WINAPI mailslotThreadProc(LPVOID lpParameter);
     
-class MailsoltServer : noncopyable
+class MailslotServer
 {
 public:
-    MailsoltServer()
+    MailslotServer()
         : _bCreated(false)
     {}
-    ~CMailsoltServer() 
+    ~CMailslotServer() 
     {}
     
     bool create(LPCTSTR lpszSlotName)
@@ -38,18 +38,19 @@ public:
     virtual void onRead(const DWORD dataLen) = 0;
     
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MailslotServer);
     bool _bCreated;
     HANDLE _hSlot;
     HANDLE _hReadThread;
 };
     
     
-class CMailslotClient
+class MailslotClient
 {
 public:
-    CMailslotClient()
+    MailslotClient()
     {}
-    ~CMailslotClient()
+    ~MailslotClient()
     {}
     
     bool open(LPCTSTR SlotName)
@@ -83,8 +84,9 @@ public:
     }
     
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MailslotClient);
     HANDLE _hFile;
-}
+};
 
 
 DROWD WINAPI MailslotThreadProc(LPVOID lpParameter)

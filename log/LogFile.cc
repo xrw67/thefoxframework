@@ -1,8 +1,8 @@
 #include <log/LogFile.h>
-#include <base/noncopyable.h>
 #include <base/Types.h>
 
 #ifdef WIN32
+#include <direct.h>
 #define getcwd _getcwd
 #else
 #include <unistd.h>
@@ -13,10 +13,10 @@
 using namespace thefox;
 
 // not thread safe
-class LogFile::File : noncopyable
+class LogFile::File
 {
 public:
-	explicit File(const String& filename)
+	explicit File(const std::string& filename)
 		: _fp(fopen(filename.data(), "a"))
 		, _writtenBytes(0)
 	{
@@ -56,6 +56,7 @@ public:
 	size_t writtenBytes() const { return _writtenBytes; }
 
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogFile::File);
 	size_t write(const char* logline, size_t len)
 	{
 		return ::fwrite(logline, 1, len, _fp);
@@ -67,11 +68,10 @@ private:
 };
 
 
-LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, bool threadSafe)
+LogFile::LogFile(const std::string &dir, const std::string& basename, size_t rollSize)
 	: _dir(dir)
 	, _basename(basename)
 	, _rollSize(rollSize)
-	, _mutex(threadSafe ? new MutexLock : NULL)
 	, _startOfPeriod(0)
 	, _lastRoll(0)
 {
@@ -80,32 +80,11 @@ LogFile::LogFile(const String &dir, const String& basename, size_t rollSize, boo
 }
 
 LogFile::~LogFile()
-{
-	
-}
+{}
 
 void LogFile::append(const char* logline, int len)
 {
-	if (get_pointer(_mutex)) {
-		MutexLockGuard lock(*_mutex);
-		append_unlocked(logline, len);
-	} else {
-		append_unlocked(logline, len);
-	}
-}
-
-void LogFile::flush()
-{
-	if (get_pointer(_mutex)) {
-		MutexLockGuard lock(*_mutex);
-		_file->flush();
-	} else {
-		_file->flush();
-	}
-}
-
-void LogFile::append_unlocked(const char* logline, int len)
-{
+	MutexLockGuard lock(_mutex);
 	_file->append(logline, len);
 
 	if (_file->writtenBytes() > _rollSize) {
@@ -120,10 +99,16 @@ void LogFile::append_unlocked(const char* logline, int len)
 	}
 }
 
+void LogFile::flush()
+{
+	MutexLockGuard lock(_mutex);
+	_file->flush();
+}
+
 void LogFile::rollFile()
 {
 	time_t now = 0;
-	String filename = getLogFileName(_dir, _basename, &now);
+	std::string filename = getLogFileName(_dir, _basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
 	if (now > _lastRoll) {
@@ -133,9 +118,9 @@ void LogFile::rollFile()
 	}
 }
 
-String LogFile::getLogFileName(const String &dir, const String& basename, time_t *now)
+std::string LogFile::getLogFileName(const std::string &dir, const std::string& basename, time_t *now)
 {
-    String filename;
+    std::string filename;
     
     filename.reserve(dir.size() + basename.size() + 64);
     filename = dir + basename;
@@ -162,13 +147,13 @@ String LogFile::getLogFileName(const String &dir, const String& basename, time_t
     return filename;
 }
 
-void LogFile::makePath(String &dir)
+void LogFile::makePath(std::string &dir)
 {   
     char filePath[1000] = {0};
     bool bAbsolutePath = true;
 
 #ifdef WIN32
-	if (String::npos == dir.find(':'))
+	if (std::string::npos == dir.find(':'))
         bAbsolutePath = false;
 #else
     if ('/' != dir[0])

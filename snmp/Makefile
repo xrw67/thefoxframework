@@ -1,14 +1,18 @@
 CC=g++
 
 CFLAGS= -g
-DFLAGS=-fPIC -shared
-INCLUDE=./..
+#DFLAGS=-fPIC -shared
+INCLUDE=./.. -I/usr/local/include/
 
-LIBRARY=libnetsnmp
+LIBRARY=netsnmp
 
-all: testsnmp
+all: snmp
 
-testsnmp: test.cpp
-	$(CC) $(CFLAGS) $(DFLAGS) -std=c++0x -o $@ $^ -I$(INCLUDE) -L$(LIBRARY)
-
-
+snmp:	test.cpp
+	$(CC) $(CFLAGS) $(DFLAGS) -std=c++0x -o $@ $^ -I$(INCLUDE) -l$(LIBRARY) 
+	
+msg:
+	protoc --cpp_out=. ./NmsMsg.proto
+	
+clean:
+	rm -rf *.o snmp

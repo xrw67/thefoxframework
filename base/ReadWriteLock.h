@@ -7,14 +7,14 @@
 #ifndef _THEFOX_BASE_READWRITELOCK_H_
 #define _THEFOX_BASE_READWRITELOCK_H_
 
-#include <base/noncopyable.h>
-#include <base/Atomic.h>
+#include <base/Types.h>
+#include <base/AtomicInteger.h>
 #include <base/MutexLock.h>
 
 namespace thefox
 {
 
-class ReadWriteLock : noncopyable
+class ReadWriteLock
 {
 public:
     ReadWriteLock()
@@ -49,11 +49,12 @@ public:
     }
     
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ReadWriteLock);
     volatile uint32_t _reads;
     MutexLock _enterLock;
 };
 
-class ReadLockGuard : noncpoyable
+class ReadLockGuard
 {
 public:
     ReadLockGuard(ReadWriteLock &lock)
@@ -66,10 +67,11 @@ public:
         _lock.readUnlock();
     }
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ReadLockGuard);
     ReadWriteLock &_lock;
 };
 
-class WriteLockGuard : noncpoyable
+class WriteLockGuard
 {
 public:
     WriteLockGuard(ReadWriteLock &lock)
@@ -82,6 +84,7 @@ public:
         _lock.writeUnlock();
     }
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(WriteLockGuard);
     ReadWriteLock &_lock;
 };
 

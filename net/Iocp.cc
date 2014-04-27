@@ -6,51 +6,8 @@
 #include <net/EventLoop.h>
 #include <net/TcpConnection.h>
 
-
 namespace thefox
 {
-
-void handleError(IoEvent *e)
-{
-    CpEvent *se = static_cast<CpEvent *>(e);
-    // LOG_ERROR<<socket error;
-    Iocp *iocp = se->iocp();
-    TcpConnectionPtr conn = se->conn();
-
-    CpEventPool::instance()->put(se);
-    iocp->removeConnection(conn);
-}
-
-void handleRead(IoEvent *e)
-{
-    CpEvent *se = static_cast<CpEvent *>(e);
-    Iocp *iocp = se->iocp();
-    TcpConnectionPtr conn = se->conn();
-
-    if (0 == se->bytesTransfered()) {
-        CpEventPool::instance()->put(se);
-        iocp->removeConnection(conn);
-    } else {
-        conn->appendReadBuffer(se->wsaBuffer().buf, se->bytesTransfered());
-        se->iocp()->handleMessage(
-            conn, conn->readBuffer(), Timestamp(Timestamp::now()));
-        se->iocp()->postReadEvent(conn, se);
-    }
-}
-
-void handleWrite(IoEvent *e)
-{
-    CpEvent *se = static_cast<CpEvent *>(e);
-    
-    se->conn()->writeBuffer()->retrieve(se->bytesTransfered());
-    se->iocp()->postWriteEvent(se->conn(), se);
-}
-
-void handleZeroByteRead(IoEvent *e)
-{
-    CpEvent *se = static_cast<CpEvent *>(e);
-    se->iocp()->postZeroByteReadEvent(se->conn(), se);
-}
 
 void defaultConnectionCallback(const TcpConnectionPtr &conn)
 {
@@ -74,16 +31,16 @@ DWORD WINAPI acceptorThreadProc(LPVOID param)
 
 using namespace thefox;
 
-Iocp::Iocp(EventLoop *eventloop, const String &nameArg)
+Iocp::Iocp(EventLoop *eventloop, const std::string &nameArg)
     : _eventloop(eventloop)
     , _name(nameArg)
-    , _nextConnId(1)
     , _started(false)
     , _connectionCallback(defaultConnectionCallback)
     , _messageCallback(defaultMessageCallback)
     , _writeCompleteCallback(NULL)
     , _closeCallback(NULL)
 {
+
 }
 
 Iocp::~Iocp()
@@ -199,17 +156,11 @@ void Iocp::send(const char *data, size_t len)
 
 void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 {
-    TcpConnectionPtr conn = NULL;
-    {
-        MutexLockGuard lock(_connMutex);
-        int32_t connId = _nextConnId;
-        ++_nextConnId;
-
-        conn = TcpConnectionPool::instance()->get(socket, connId, peerAddr);
-        conn->setState(TcpConnection::kConnecting);
-        _connections[connId] = conn;
-        _eventloop->registerHandle((HANDLE)socket);
-    }
+	int32_t connId = _nextConnId.inc();
+    TcpConnectionPtr conn(new TcpConnection(socket, connId, peerAddr));
+    conn->setState(TcpConnection::kConnecting);
+    _connections[connId] = conn;
+    _eventloop->registerHandle((HANDLE)socket);
     
     if (NULL != conn) {
         conn->setState(TcpConnection::kConnected);
@@ -232,19 +183,19 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
         conn->setState(TcpConnection::kDisconnected);
         
         MutexLockGuard lock(_connMutex);
-        if(0 != _connections.erase(conn->connId()))
-            TcpConnectionPool::instance()->put(conn);
-    }
+        _connections.erase(conn->connId());
+	}
 }
 
 void Iocp::postReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
 {
     if (NULL == e) {
         conn->enterEventLoop();
-        e = CpEventPool::instance()->get(this, conn);
+        e = CpEventPool::instance()->get(conn);
     }
     e->setEventType(kEventTypeRead);
-    e->setEventCallback(handleRead, handleError);
+    e->setEventCallback(std::bind(&Iocp::handleCpRead, this, _1),
+		std::bind(&Iocp::handleCpError, this, _1));
     e->resetBuffer();
 
     DWORD nBytes = 0;
@@ -270,10 +221,11 @@ void Iocp::postWriteEvent(const TcpConnectionPtr &conn, CpEvent *e)
         
         if (NULL == e) {
             conn->enterEventLoop();
-            e = CpEventPool::instance()->get(this, conn);
+            e = CpEventPool::instance()->get(conn);
         }
         e->setEventType(kEventTypeWrite);
-        e->setEventCallback(handleWrite, handleError);
+        e->setEventCallback(std::bind(&Iocp::handleCpWrite, this, _1), 
+			std::bind(&Iocp::handleCpError, this, _1));
         e->setBuffer(conn->writeBuffer()->peek(), len);
 
         DWORD nBytes = 0;
@@ -300,10 +252,11 @@ void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
 {
     if (NULL == e) {
         conn->enterEventLoop();
-        e = CpEventPool::instance()->get(this, conn);
+        e = CpEventPool::instance()->get(conn);
     }
     e->setEventType(kEventTypeZeroByteRead);
-    e->setEventCallback(handleZeroByteRead, handleError);
+    e->setEventCallback(std::bind(&Iocp::handleCpZeroByteRead, this, _1),
+		std::bind(&Iocp::handleCpError, this, _1));
     e->setZeroByteBuffer();
 
     DWORD nBytes = 0;
@@ -324,10 +277,50 @@ void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
 void Iocp::postCloseEvent(const TcpConnectionPtr &conn)
 {
     conn->enterEventLoop();
-    CpEvent *e = CpEventPool::instance()->get(this, conn);
+    CpEvent *e = CpEventPool::instance()->get(conn);
     e->setEventType(kEventTypeClose);
-    e->setEventCallback(handleError, handleError);
+    e->setEventCallback(std::bind(&Iocp::handleCpError, this, _1),
+		std::bind(&Iocp::handleCpError, this, _1));
     _eventloop->postEvent(e);
+}
+
+
+void Iocp::handleCpError(IoEvent *evt)
+{
+    CpEvent *se = static_cast<CpEvent *>(evt);
+    // LOG_ERROR<<socket error;
+	removeConnection(se->conn());
+    CpEventPool::instance()->put(se);
+}
+
+void Iocp::handleCpRead(IoEvent *evt)
+{
+    CpEvent *se = static_cast<CpEvent *>(evt);
+    TcpConnectionPtr conn = se->conn();
+
+    if (0 == se->bytesTransfered()) {
+		removeConnection(conn);
+        CpEventPool::instance()->put(se);
+    } else {
+        conn->appendReadBuffer(se->wsaBuffer().buf, se->bytesTransfered());
+        handleMessage(
+            conn, conn->readBuffer(), Timestamp(Timestamp::now()));
+        postReadEvent(conn, se);
+    }
+}
+
+void Iocp::handleCpWrite(IoEvent *evt)
+{
+    CpEvent *se = static_cast<CpEvent *>(evt);
+    
+    se->conn()->writeBuffer()->retrieve(se->bytesTransfered());
+    postWriteEvent(se->conn(), se);
+}
+
+void Iocp::handleCpZeroByteRead(IoEvent *evt)
+{
+    CpEvent *se = static_cast<CpEvent *>(evt);
+    postZeroByteReadEvent(se->conn(), se);
 }
 
 void Iocp::acceptorLoop()

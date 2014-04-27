@@ -1,31 +1,31 @@
 #ifndef _THEFOX_WEAKPTR_H_
 #define _THEFOX_WEAKPTR_H_
 
-#include <base/SharedPtr.h>
+#include <base/shared_ptr.h>
 
 namespace thefox
 {
 template<typename T>
-class WeakPtr
+class weak_ptr
 {
 public:
-    WeakPtr()
+    weak_ptr()
     {}
-    WeakPtr(const SharedPtr<T> &sp)
+    weak_ptr(const SharedPtr<T> &sp)
     {}
-    WeakPtr(const WeakPtr &wp)
+    weak_ptr(const WeakPtr &wp)
     {}
-    ~WeakPtr()
+    ~weak_ptr()
     {}
     SharedPtr<T> lock() const
     {}
     
     void reset();
-    void swap(WeakPtr<T> &b)
+    void swap(weak_ptr<T> &b)
     {}
 private:
     PtrCounter _counter;
-}    
+};   
 
 } // namespace thefox
 

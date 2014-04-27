@@ -8,7 +8,6 @@
 #define _THEFOX_NET_TCPCLIENT_H_
 
 #include <base/Types.h>
-#include <base/Shareable.h>
 #include <net/Callbacks.h>
 
 namespace thefox
@@ -23,10 +22,10 @@ namespace thefox
 class EventLoop;
 class InetAddress;
 
-class TcpClient : public Shareable
+class TcpClient
 {
 public:
-    TcpClient(EventLoop *eventloop, const String &nameArg);
+    TcpClient(EventLoop *eventloop, const std::string &nameArg);
     TcpClient(void);
         
     /// @brief 连接服务器
@@ -42,7 +41,7 @@ public:
     
     /// @brief 发送数据
     void send(const char *data, size_t len);
-    void send(const String &data);
+    void send(const std::string &data);
 
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);
@@ -57,6 +56,7 @@ public:
     void setWriteCompleteCallback(const WriteCompleteCallback &cb);
 
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpClient);
 #ifdef WIN32
     Iocp *_model;
 #else

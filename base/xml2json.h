@@ -140,7 +140,7 @@ void traverse_node(rapidxml::xml_node<> *xmlnode, rapidjson::Value &jsvalue, rap
 }
 
 
-String xml2json(const String &xmlStr)
+string xml2json(const string &xmlStr)
 {
 	rapidxml::xml_document<> doc;
 	doc.parse<0>(const_cast<char *>(xmlStr.c_str()));

@@ -8,14 +8,14 @@
 #define _THEFOX_BASE_MEMPOOL_H_
 
 #include <vector>
-#include <base/noncopyable.h>
+#include <base/Types.h>
 #include <base/MutexLock.h>
 
 namespace thefox
 {
 
 template<typename T, int kBlockSize = 32>
-class MemPool : noncopyable
+class MemPool
 {
 public:
     MemPool()
@@ -62,6 +62,7 @@ public:
     }
     
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MemPool);
     void addChunk()
     {
         size_t blockSize = (_chunks.size() + 1) * kBlockSize;

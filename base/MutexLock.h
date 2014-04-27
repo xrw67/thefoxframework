@@ -15,12 +15,11 @@
 #endif
 
 #include <base/Types.h>
-#include <base/noncopyable.h>
 
 namespace thefox 
 {
 
-class MutexLock : noncopyable
+class MutexLock
 {
 public:
     MutexLock()
@@ -61,16 +60,16 @@ public:
     }
     
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MutexLock);
     uint32_t _threadId;
 #ifdef WIN32
     CRITICAL_SECTION _cs;
 #else
     pthread_mutex_t _mutex;
 #endif
-
 };
 
-class MutexLockGuard : noncopyable
+class MutexLockGuard
 {
 public:
     MutexLockGuard(MutexLock &mutex)
@@ -83,6 +82,7 @@ public:
         _mutex.unlock();
     }
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MutexLockGuard);
     MutexLock &_mutex;
 };
 

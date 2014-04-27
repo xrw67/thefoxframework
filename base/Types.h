@@ -1,6 +1,16 @@
 #ifndef _THEFOX_BASE_TYPES_H_
 #define _THEFOX_BASE_TYPES_H_
 
+#ifdef WIN32
+	#pragma warning(disable:4819)
+	#pragma warning(disable:4996)
+	#define snprintf _snprintf
+
+	#if _MSC_VER < 1500 // MSVC 2008
+		#define vsnprintf _vsnprintf
+	#endif
+#endif
+
 // 简单类型定义
 #if defined WIN32 && _MSC_VER < 1600 // MSVC 2010
 	typedef __int8 int8_t;
@@ -13,36 +23,32 @@
 	typedef unsigned __int64 uint63_t;
 #else
 	#include <stdint.h>
+	#define THEFOX_USE_CXX11
 #endif
 
-#include <string>
 #include <assert.h>
+#include <string>
+
+#ifdef THEFOX_USE_CXX11
+	#include <memory>
+	#include <functional>
+	using namespace std::placeholders; //std::bind可替换参数的占位符
+#else
+	#include <base/shared_ptr.h>
+	#include <base/weak_ptr.h>
+	#include <base/scoped_ptr.h>
+	#include <base/function.h>
+#endif
 
 namespace thefox 
 {
-    
-typedef std::string String;
-
-
-#ifdef WIN32
-	#pragma warning(disable:4819)
-	#pragma warning(disable:4996)
-	#define snprintf _snprintf
-
-	#if _MSC_VER < 1500 // MSVC2008
-		#define vsnprintf _vsnprintf
-	#endif
-#else
-
-#endif
-
-#define elif else if
 
 // 指定是否允许copy ctor 和 assign opt.
 #undef THEFOX_DISALLOW_EVIL_CONSTRUCTORS
 #define THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TypeName)    \
   TypeName(const TypeName&);                           \
   void operator=(const TypeName&)
+
 
 // 安全删除对象
 #define SAFE_DELETE(p) \

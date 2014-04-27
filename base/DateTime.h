@@ -8,7 +8,7 @@
 namespace thefox
 {
 
-inline String fromUnixTime(time_t t)
+inline string fromUnixTime(time_t t)
 {
     char buf[32] = {0};
     tm *tm_time = localtime(&t);
@@ -18,7 +18,7 @@ inline String fromUnixTime(time_t t)
     return buf;
 }
 
-inline time_t unixTimestamp(const String &timeStr)
+inline time_t unixTimestamp(const string &timeStr)
 {
     tm tm_time;
     memset(&tm_time, 0, sizeof(tm_time));

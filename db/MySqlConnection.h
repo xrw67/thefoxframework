@@ -23,11 +23,11 @@ namespace db
 class MySqlConnection
 {
 public:
-    MySqlConnection(const String &host = "",
-                    const String &user = "",
-                    const String &passwd = "",
+    MySqlConnection(const string &host = "",
+                    const string &user = "",
+                    const string &passwd = "",
                     const int port = 3306,
-                    const String &dbName = "")
+                    const string &dbName = "")
         : _connPtr(NULL)
         , _host(host)
         , _user(user)
@@ -46,7 +46,7 @@ public:
     /// @param[in] passwd 密码
     /// @param[in] port 主机端口号
     /// @param[in] dbName 数据库名
-    void setParam(const String &host, const String &user, const String &passwd, const int port, const String &dbName)
+    void setParam(const string &host, const string &user, const string &passwd, const int port, const string &dbName)
     {
         _host = host;
         _user = user;
@@ -100,7 +100,7 @@ public:
     
     /// @brief 选择数据库
     /// @return 设置成功返回true，否则返回false
-    bool selectDb(const String &dbName) 
+    bool selectDb(const string &dbName) 
     { 
         _dbName = dbName; 
         if (0 != mysql_select_db(_connPtr, _dbName.c_str())) {
@@ -115,7 +115,7 @@ public:
     /// @param[in|out] insertId 输出操作记录的ID
     ///    (注：对于INSERT和UPDATE语句且设置AUTO_INCREMENT才有效)
     /// @return 执行成功返回true, 否则返回false
-    bool exec(const String &sql, uint32_t *insertId = NULL)
+    bool exec(const string &sql, uint32_t *insertId = NULL)
     {
         if (!isConnected()) {
 //            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
@@ -138,7 +138,7 @@ public:
     /// @param[in|out] resultSet 返回的结果集
     /// @return 执行成功返回true, 否则返回false
     /// @sa resultSet
-    bool query(const String &sql, MySqlResultSet &resultSet)
+    bool query(const string &sql, MySqlResultSet &resultSet)
     {
         if (!isConnected()) {
 //            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
@@ -164,10 +164,10 @@ private:
     MYSQL *_connPtr;
     MutexLock _lock;
     
-    String _host;
-    String _user;
-    String _passwd;
-    String _dbName;
+    string _host;
+    string _user;
+    string _passwd;
+    string _dbName;
     int32_t _port;
 };
 

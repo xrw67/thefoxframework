@@ -9,23 +9,26 @@
 
 #include <map>
 #include <Winsock2.h>
-#include <base/noncopyable.h>
 #include <base/Types.h>
 #include <base/MutexLock.h>
+#include <base/AtomicInteger.h>
 #include <net/InetAddress.h>
 #include <net/Callbacks.h>
 
 namespace thefox
 {
 
+class IoEvent;
 class CpEvent;
 class EventLoop;
 typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
 
-class Iocp : noncopyable
+class Iocp
 {
 public:
-    Iocp(EventLoop *eventloop, const String &nameArg);
+    friend class TcpConnection;
+    
+    Iocp(EventLoop *eventloop, const std::string &nameArg);
     ~Iocp();
     // 服务端方法
     bool start(const InetAddress &listenAddr);
@@ -65,7 +68,14 @@ public:
     void postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
     void postCloseEvent(const TcpConnectionPtr &conn);
 
+	// cp事件回调函数
+	void handleCpError(IoEvent *evt);
+	void handleCpRead(IoEvent *evt);
+	void handleCpWrite(IoEvent *evt);
+	void handleCpZeroByteRead(IoEvent *evt);
+
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Iocp);
     void newConnection(SOCKET socket, const InetAddress &peerAddr);
 
     ConnectionCallback _connectionCallback;
@@ -74,11 +84,11 @@ private:
     WriteCompleteCallback _writeCompleteCallback;
 
     EventLoop *_eventloop;
-    const String _name;
+    const std::string _name;
     SOCKET _socket;
     HANDLE _hAcceptEvent;
     bool _started;
-    int32_t _nextConnId;
+    AtomicInt32 _nextConnId;
 
     ConnectionMap _connections;
     MutexLock _connMutex;

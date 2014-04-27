@@ -15,18 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\log\Logger.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log\LogStream.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log\log.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log\logfile.h">
-      <Filter>log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\EventLoop.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -66,32 +54,20 @@
     <ClInclude Include="..\..\net\Endian.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rpc\RpcServer.h">
-      <Filter>rpc</Filter>
+    <ClInclude Include="..\..\log\log.h">
+      <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rpc\RpcChannel.h">
-      <Filter>rpc</Filter>
+    <ClInclude Include="..\..\log\LogFile.h">
+      <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc.pb.h">
-      <Filter>rpc</Filter>
+    <ClInclude Include="..\..\log\Logger.h">
+      <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rpc\common.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\RpcCodec.h">
-      <Filter>rpc</Filter>
+    <ClInclude Include="..\..\log\LogStream.h">
+      <Filter>log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\log\LogStream.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log\LogFile.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log\Logger.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\net\EventLoop.cc">
       <Filter>net</Filter>
     </ClCompile>
@@ -107,19 +83,14 @@
     <ClCompile Include="..\..\net\TimerQueue.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rpc\RpcServer.cc">
-      <Filter>rpc</Filter>
+    <ClCompile Include="..\..\log\LogFile.cc">
+      <Filter>log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rpc\RpcChannel.cc">
-      <Filter>rpc</Filter>
+    <ClCompile Include="..\..\log\Logger.cc">
+      <Filter>log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc.pb.cc">
-      <Filter>rpc</Filter>
+    <ClCompile Include="..\..\log\LogStream.cc">
+      <Filter>log</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\rpc\rpc.proto">
-      <Filter>rpc</Filter>
-    </None>
   </ItemGroup>
 </Project>

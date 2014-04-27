@@ -2,7 +2,6 @@
 #define _THEFOX_NET_INETADDRESS_H
 
 #include <base/Types.h>
-#include <base/copyable.h>
 
 #ifdef WIN32
 #include <Winsock2.h>
@@ -13,7 +12,7 @@
 namespace thefox
 {
 
-class InetAddress : public copyable
+class InetAddress
 {
 public:
     InetAddress()
@@ -28,7 +27,7 @@ public:
         _addr.sin_port = htons(port);
     }
 
-    InetAddress(const String &ip, uint16_t port)
+    InetAddress(const std::string &ip, uint16_t port)
     {
         memset(&_addr, 0, sizeof(_addr));
         _addr.sin_family = AF_INET;
@@ -40,7 +39,7 @@ public:
     : _addr(addr)
     {}
 
-    String toIp() const
+    std::string toIp() const
     {
         char *host = inet_ntoa(_addr.sin_addr);
         if (NULL != host)
@@ -49,7 +48,7 @@ public:
             return "INVALID";
     }
     
-    String toIpPort() const
+    std::string toIpPort() const
     {
         char buf[32];
         _snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));

@@ -9,8 +9,6 @@
 
 #include <base/Types.h>
 #include <base/MutexLock.h>
-#include <base/MemPool.h>
-#include <base/Shareable.h>
 #include <net/Buffer.h>
 #include <net/InetAddress.h>
 
@@ -21,7 +19,7 @@ namespace thefox
 typedef int SOCKET
 #endif
 
-class TcpConnection : public Shareable
+class TcpConnection
 {
 public:
     enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
@@ -113,29 +111,6 @@ private:
     // 统计信息
     size_t _readBytes;
     size_t _writeBytes;
-};
-
-class TcpConnectionPool : public MemPool<TcpConnection>
-{
-public:
-    static TcpConnectionPool *instance()
-    {
-        static TcpConnectionPool gTcpConnectionPool;
-        return &gTcpConnectionPool;
-    }
-
-    TcpConnection *get(SOCKET socket, int connId, const InetAddress &peerAddr)
-    {
-        TcpConnection *ret = MemPool::get();
-        new(ret) TcpConnection(socket, connId, peerAddr); // placement new
-        return ret;
-    }
-    
-    void put(TcpConnection *conn)
-    {
-        conn->~TcpConnection();
-        MemPool::put(conn);
-    }
 };
 
 } // namespace thefox

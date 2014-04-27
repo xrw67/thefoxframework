@@ -4,26 +4,23 @@
 * @author macwe@qq.com
 */
 
-#ifndef _THEFOX_NET_CpEvent_H_
-#define _THEFOX_NET_CpEvent_H_
+#ifndef _THEFOX_NET_CPEVENT_H_
+#define _THEFOX_NET_CPEVENT_H_
 
 #include <base/MemPool.h>
 #include <net/IoEvent.h>
+#include <net/Callbacks.h>
 
 namespace thefox
 {
-
-class TcpConnection;
-class Tocp;
 
 class CpEvent : public IoEvent
 {
 public:
     static const int kMaxBufSize = 8192;
 
-    CpEvent(Iocp *iocp, TcpConnection *conn)
+    CpEvent(const TcpConnectionPtr &conn)
         : IoEvent()
-        , _iocp(iocp)
         , _conn(conn)
     {
         resetBuffer();
@@ -52,17 +49,14 @@ public:
         _wsabuf.len = 0;
     }
 
-    Iocp *iocp() const { return _iocp; }
-
-    TcpConnection *conn() const { return _conn; }
+    TcpConnectionPtr conn() const { return _conn; }
 
     WSABUF wsaBuffer() const { return _wsabuf; }
 
 private:
     char _buf[8192];
     WSABUF _wsabuf;
-    TcpConnection *_conn;
-    Iocp *_iocp;
+    TcpConnectionPtr _conn;
 };
 
 class CpEventPool : public MemPool<CpEvent>
@@ -74,10 +68,10 @@ public:
         return &gCpEventPool;
     }
 
-    CpEvent *get(Iocp *iocp, TcpConnection *conn)
+    CpEvent *get(TcpConnectionPtr conn)
     {
         CpEvent *ret = MemPool::get();
-        new(ret) CpEvent(iocp, conn); // placement new
+        new(ret) CpEvent(conn); // placement new
         return ret;
     }
     
@@ -90,4 +84,4 @@ public:
 
 } // namespace thefox
 
-#endif // _THEFOX_NET_CpEvent_H_
+#endif // _THEFOX_NET_CPEVENT_H_

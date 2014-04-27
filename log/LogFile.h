@@ -16,44 +16,40 @@
 #include <stdlib.h>
 #include <time.h>
 #include <base/Types.h>
-#include <base/noncopyable.h>
 #include <base/MutexLock.h>
-#include <base/scoped_ptr.h>
 
 namespace thefox
 {
 
 
-class LogFile : noncopyable
+class LogFile
 {
 public:
 	class File;
 
-	LogFile(const String &dir,
-            const String &basename,
-			size_t rollSize,
-			bool threadSafe = true
-			);
+	LogFile(const std::string &dir,
+            const std::string &basename,
+			size_t rollSize);
 	~LogFile();
 
 	void append(const char* logline, int len);
 	void flush();
 
 private:
-	void append_unlocked(const char* logline, int len);
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogFile);
 
-	static String getLogFileName(const String &dir, const String& basename, time_t* now);
+	static std::string getLogFileName(const std::string &dir, const std::string& basename, time_t* now);
 	void rollFile();
-    void makePath(String &dir);
+    void makePath(std::string &dir);
 
-	String _dir;
-	const String _basename;
+	std::string _dir;
+	const std::string _basename;
 	const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后换一个文件
 
-	scoped_ptr<MutexLock> _mutex;
+	MutexLock _mutex;
 	time_t _startOfPeriod;
 	time_t _lastRoll;
-	scoped_ptr<File> _file;
+	std::unique_ptr<File> _file;
 
 	static const int _kRollPerSeconds = 86400;
 };

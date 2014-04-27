@@ -104,7 +104,7 @@ public:
     /// @beirf 根据索引得到int类型的值
     /// @param[in] fiendName 字段的名称
     /// @return 返回对应的值
-    int getInt(const String &fieldName) const
+    int getInt(const string &fieldName) const
     { return atoi(getString(fieldName)); }
     
     /// @beirf 根据索引得到uint类型的值
@@ -116,7 +116,7 @@ public:
     /// @beirf 根据索引得到uint类型的值
     /// @param[in] fiendName 字段的名称
     /// @return 返回对应的值
-    uint32_t getUInt(const String &fieldName) const
+    uint32_t getUInt(const string &fieldName) const
     { return (uint32_t)atoi(getString(fieldName)); }
     
     /// @beirf 根据索引得到一个字符串类型值
@@ -140,7 +140,7 @@ public:
     }
 
 private:
-    int getFieldIndex(const String &fieldName) const
+    int getFieldIndex(const string &fieldName) const
     {
         for (int i = 0; i < _res->field_count; ++i) {
         if (fieldName == _res->fields[i].name)

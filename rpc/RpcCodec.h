@@ -54,9 +54,9 @@ public:
 	}
 
 	// ±àÂë
-	static String encode(const rpc::Box &msg)
+	static std::string encode(const rpc::Box &msg)
 	{
-		String result;
+		std::string result;
 		result.resize(sizeof(uint16_t) + sizeof(int32_t));
 		
 		if (msg.AppendToString(&result)) {
@@ -88,7 +88,7 @@ public:
 			return false;
 	}
 
-	static gpb::Message *createMessage(const String& type_name)
+	static gpb::Message *createMessage(const std::string& type_name)
 	{
 		gpb::Message *message = NULL;
 		const gpb::Descriptor* descriptor =

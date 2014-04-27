@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <base/Types.h>
-#include <base/noncopyable.h>
 
 namespace thefox
 {
@@ -13,7 +12,7 @@ namespace thefox
 const int kBufferSize = 4096;
 
 template<int SIZE>
-class FixedBuffer : noncopyable
+class FixedBuffer
 {
 public:
 	FixedBuffer()
@@ -34,17 +33,21 @@ public:
 	void reset() { _curPtr = _data; }
 	int avail() { return static_cast<int>(end() - _curPtr); }
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(FixedBuffer);
 	const char* end() const { return _data + sizeof(_data); }
 	char _data[SIZE];
 	char *_curPtr;
 };
 
 
-class LogStream : noncopyable
+class LogStream
 {
 public:
 	typedef LogStream self;
 	typedef FixedBuffer<kBufferSize> Buffer;
+
+	LogStream() {}
+	~LogStream() {}
 
 	self &operator<<(short);
 	self &operator<<(unsigned short v);
@@ -88,7 +91,7 @@ public:
 		_buffer.append(v, strlen(v));
 		return *this;
 	}
-	self &operator<<(const String& v)
+	self &operator<<(const std::string& v)
 	{
 		_buffer.append(v.c_str(), v.size());
 		return *this;
@@ -98,6 +101,7 @@ public:
 	const void resetBuffer() { _buffer.reset(); }
 
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogStream);
 	template<typename T>
 	void formatInteger(T v);
 	Buffer _buffer;

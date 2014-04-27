@@ -4,8 +4,6 @@
 #include <map>
 #include <base/Types.h>
 #include <base/Event.h>
-#include <base/Shareable.h>
-#include <base/SharedPtr.h>
 #include <base/MutexLock.h>
 #include <base/AtomicInteger.h>
 #include <base/Timestamp.h>

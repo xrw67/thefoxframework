@@ -24,7 +24,7 @@ enum {
     kEventTypeUser // 用户自定义事件开始
 };
 
-typedef void (*EventCallback)(IoEvent *);
+typedef std::function<void(IoEvent *evt)> EventCallback;
 
 class IoEvent
 {

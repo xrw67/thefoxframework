@@ -13,14 +13,14 @@
 namespace thefox
 {
 
-typedef void (*ThreadCallback)(void *);
+typedef function<void()> ThreadCallback;
 
 class Thread
 {
 public:
     enum StateT { kInit, kStart, kJoined, kStop };
 
-    explicit Thread(const ThreadFunt &cb, void *arg, const String &name)
+    explicit Thread(const ThreadFunt &cb, void *arg, const string &name)
         : _cb(cb)
         , _arg(arg)
         , _name(name)
@@ -95,7 +95,7 @@ public:
         return result;
     }
 
-    const String &name() const { return _name; }
+    const string &name() const { return _name; }
     StateT State() const { return _state; }
 
 #ifdef WIN32
@@ -106,9 +106,10 @@ public:
     {}
 #endif
 
-    void run() { _cb; }
 priavte:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Thread);
+
+    void run() { _cb; }
 
     static DWORD threadProc(LPVOID param)
     {
@@ -118,7 +119,7 @@ priavte:
 
     ThreadCallback _cb;
     void *_arg;
-    const String _name;
+    const string _name;
     StateT _state;
 
 #ifdef _WIN32

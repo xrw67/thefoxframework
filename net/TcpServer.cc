@@ -9,7 +9,7 @@
 
 using namespace thefox;
 
-TcpServer::TcpServer(EventLoop *eventloop, const String &nameArg)
+TcpServer::TcpServer(EventLoop *eventloop, const std::string &nameArg)
 {
 #ifdef WIN32
     _model = new Iocp(eventloop, nameArg);
@@ -37,7 +37,7 @@ void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
     _model->send(conn, data, len);
 }
-void TcpServer::send(const TcpConnectionPtr &conn, const String &data)
+void TcpServer::send(const TcpConnectionPtr &conn, const std::string &data)
 {
     _model->send(conn, data.c_str(), data.length());
 }

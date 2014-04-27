@@ -8,12 +8,13 @@
 
 #endif
 
-#include <base/noncopyable.h>
+#include <base/Types.h>
+
 
 namespace thefox
 {
 
-class Event : noncopyable
+class Event
 {
 public:
     Event()
@@ -30,14 +31,15 @@ public:
             CloseHandle(_event);
     }
     
-    void setEvent() { ::SetEvent(_event); }
-    void resetEvent() { ::ResetEvent(_event); }
+    void set() { ::SetEvent(_event); }
+    void reset() { ::ResetEvent(_event); }
     bool wait()
     {
-        WaitForSingleObject(_event, INFINITE);
+        ::WaitForSingleObject(_event, INFINITE);
         return true;
     }
 private:
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Event);
     HANDLE _event;                
 };
 

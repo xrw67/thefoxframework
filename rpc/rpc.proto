@@ -1,22 +1,35 @@
 package thefox.rpc;
 
+// 请求
 message Call {
 	required int64 id = 1;
 	required string service = 2;
     required string method = 3; // name of a method_descriptor
-    requried bytes request = 4; // pb2-encoded message
+    optional bytes request = 4; // pb2-encoded message
 }
 
+// 返回
 message Reply {
+	enum Result {
+		
+	};
 	required int64 id = 1;
 	required bool result = 2; // true of false
-	requried bytes response = 3; // pb2-encoded message
+	optional bytes response = 3; // pb2-encoded message
 }
 
+// 传输层传输的内容
 message Box {
-    repeated Call call = 1;
-    repeated Reply reply = 2;
+    optional Call call = 1;
+    optional Reply reply = 2;
+	optional bytes non_rpc_data = 3;
 }
 
+
+//空消息
 message Placeholder {  
+};
+
+// 心跳消息
+message HeartBeath {
 };

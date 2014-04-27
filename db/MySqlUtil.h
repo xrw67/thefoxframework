@@ -18,10 +18,10 @@ namespace db
 class MysqlUtil
 {
 public:
-    static bool isTableExist(MySqlConnection &conn, const String &tableName)
+    static bool isTableExist(MySqlConnection &conn, const string &tableName)
     {
         MySqlResultSet resultSet;
-        String sql("SHOW TABLES LIKE '"+ tableName+"'");
+        string sql("SHOW TABLES LIKE '"+ tableName+"'");
         conn.query(sql, resultSet);
         if (0 == resultSet.rowCount())
             return false;
@@ -29,7 +29,7 @@ public:
             return true;
     }
 
-    static bool isQueryNotRecord(MySqlConnection &conn, const String &selectSql)
+    static bool isQueryNotRecord(MySqlConnection &conn, const string &selectSql)
     {
         MySqlResultSet resultSet;
         conn.query(selectSql, resultSet);
@@ -39,9 +39,9 @@ public:
             return true;
     }
 
-    static bool setNames(const String &csName)
+    static bool setNames(const string &csName)
     {
-        String sql("SET NAMES '"+ csName+"'");
+        string sql("SET NAMES '"+ csName+"'");
         return conn.exec(sql);
     }
 

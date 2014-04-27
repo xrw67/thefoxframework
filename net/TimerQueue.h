@@ -22,6 +22,7 @@ public:
     void timerProc();
     
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TimerQueue);
     typedef std::pair<Timestamp, IoEvent *> Entry;
     typedef std::set<Entry> TimerList;
 

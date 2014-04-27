@@ -1,22 +1,23 @@
 #ifndef _THEFOX_NET_CALLBACKS_H_
 #define _THEFOX_NET_CALLBACKS_H_
 
-#include <base/Timestamp.h>
 #include <base/Types.h>
+#include <base/Timestamp.h>
 
 namespace thefox
 {
     
 class Buffer;
 class TcpConnection;
-typedef TcpConnection *TcpConnectionPtr;
-typedef void (*ConnectionCallback)(const TcpConnectionPtr &conn);
-typedef void (*CloseCallback)(const TcpConnectionPtr &conn);
-typedef void (*MessageCallback)(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime);
-typedef void (*WriteCompleteCallback)(const TcpConnectionPtr &conn);
+typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+
+typedef std::function<void(const TcpConnectionPtr &conn)> ConnectionCallback;
+typedef std::function<void(const TcpConnectionPtr &conn)> CloseCallback;
+typedef std::function<void(const TcpConnectionPtr &conn, Buffer *buffer, const Timestamp recvTime)> MessageCallback;
+typedef std::function<void(const TcpConnectionPtr &conn)> WriteCompleteCallback;
 
 void defaultConnectionCallback(const TcpConnectionPtr &conn);
-void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime);
+void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, const Timestamp recvTime);
 
 } // namespace thefox
 

@@ -9,7 +9,7 @@ namespace thefox
 class IpAddrUtil
 {
 public:
-	static String toString(uint32_t ip)
+	static string toString(uint32_t ip)
 	{
 		char buf[32] = {0};
 		uint8_t* ptr = (uint8_t*)&ip;
