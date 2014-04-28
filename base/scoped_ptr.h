@@ -6,7 +6,7 @@
 #define _THEFOX_BASE_SCOPEDPTR_H_
 
 #ifdef THEFOX_USE_CXX11
-error "you cann't use this file with define THEFOX_USE_CXX11"
+#error "you cann't use this file with define THEFOX_USE_CXX11"
 #undef THEFOX_USE_CXX11
 #endif
 

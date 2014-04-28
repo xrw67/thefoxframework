@@ -18,7 +18,6 @@
 #ifndef _THEFOX_LOG_H_
 #define _THEFOX_LOG_H_
 
-#include <base/scoped_ptr.h>
 #include <base/Types.h>
 #include <log/Logger.h>
 #include <log/LogFile.h>
@@ -26,7 +25,7 @@
 namespace thefox
 {
 
-static scoped_ptr<LogFile> g_logFile;
+static srd::unique_ptr<LogFile> g_logFile;
 
 inline void logOutputFunc(const char* msg, int len)
 {

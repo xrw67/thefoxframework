@@ -10,7 +10,7 @@
 #include <base/MutexLock.h>
 
 #ifdef THEFOX_USE_CXX11
-error "you cann't use this file with define THEFOX_USE_CXX11"
+#error "you cann't use this file with define THEFOX_USE_CXX11"
 #undef THEFOX_USE_CXX11
 #endif
 

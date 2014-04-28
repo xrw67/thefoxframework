@@ -3,12 +3,11 @@
 
 #include <time.h>
 #include <base/Types.h>
-#include <base/copyable.h>
 
 namespace thefox
 {
 
-inline string fromUnixTime(time_t t)
+inline std::string fromUnixTime(time_t t)
 {
     char buf[32] = {0};
     tm *tm_time = localtime(&t);
@@ -18,7 +17,7 @@ inline string fromUnixTime(time_t t)
     return buf;
 }
 
-inline time_t unixTimestamp(const string &timeStr)
+inline time_t unixTimestamp(const std::string &timeStr)
 {
     tm tm_time;
     memset(&tm_time, 0, sizeof(tm_time));
