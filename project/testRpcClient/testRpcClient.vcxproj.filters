@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="testrpcclient.cc" />
-    <ClCompile Include="..\..\rpc\test\echo.pb.cc" />
+    <ClCompile Include="..\..\net\rpc\test\testrpcclient.cc" />
+    <ClCompile Include="..\..\net\rpc\test\echo.pb.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\rpc\test\echo.pb.h" />
+    <ClInclude Include="..\..\net\rpc\test\echo.pb.h" />
   </ItemGroup>
 </Project>

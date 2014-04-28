@@ -1,4 +1,4 @@
-#include <rpc/RpcServiceManager.h>
+#include <net/rpc/RpcServiceManager.h>
 #include <google/protobuf/descriptor.h>
 
 using namespace thefox;
@@ -23,7 +23,7 @@ void RpcServiceManager::registerService(gpb::Service *service)
 	_services[service->GetDescriptor()->name()] = service;
 }
 
-gpb::Service *RpcServiceManager::findService(const String &serviceName)
+gpb::Service *RpcServiceManager::findService(const std::string &serviceName)
 {
 	MutexLockGuard lock(_mutex);
 	ServiceMap::const_iterator it = _services.find(serviceName);

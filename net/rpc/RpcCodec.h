@@ -16,8 +16,8 @@
 #include <base/Types.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <rpc/rpc.pb.h>
-#include <rpc/common.h>
+#include <net/rpc/rpc.pb.h>
+#include <net/rpc/common.h>
 
 namespace thefox
 {

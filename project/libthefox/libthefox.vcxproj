@@ -23,6 +23,14 @@
     <ClInclude Include="..\..\net\InetAddress.h" />
     <ClInclude Include="..\..\net\Iocp.h" />
     <ClInclude Include="..\..\net\IoEvent.h" />
+    <ClInclude Include="..\..\net\rpc\common.h" />
+    <ClInclude Include="..\..\net\rpc\rpc.pb.h" />
+    <ClInclude Include="..\..\net\rpc\RpcChannel.h" />
+    <ClInclude Include="..\..\net\rpc\RpcClient.h" />
+    <ClInclude Include="..\..\net\rpc\RpcCodec.h" />
+    <ClInclude Include="..\..\net\rpc\RpcController.h" />
+    <ClInclude Include="..\..\net\rpc\RpcServer.h" />
+    <ClInclude Include="..\..\net\rpc\RpcServiceManager.h" />
     <ClInclude Include="..\..\net\SocketOps.h" />
     <ClInclude Include="..\..\net\TcpClient.h" />
     <ClInclude Include="..\..\net\TcpConnection.h" />
@@ -35,9 +43,18 @@
     <ClCompile Include="..\..\log\LogStream.cc" />
     <ClCompile Include="..\..\net\EventLoop.cc" />
     <ClCompile Include="..\..\net\Iocp.cc" />
+    <ClCompile Include="..\..\net\rpc\rpc.pb.cc" />
+    <ClCompile Include="..\..\net\rpc\RpcChannel.cc" />
+    <ClCompile Include="..\..\net\rpc\RpcClient.cc" />
+    <ClCompile Include="..\..\net\rpc\RpcController.cc" />
+    <ClCompile Include="..\..\net\rpc\RpcServer.cc" />
+    <ClCompile Include="..\..\net\rpc\RpcServiceManager.cc" />
     <ClCompile Include="..\..\net\TcpClient.cc" />
     <ClCompile Include="..\..\net\TcpServer.cc" />
     <ClCompile Include="..\..\net\TimerQueue.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\net\rpc\rpc.proto" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{77DF8D9B-AE9A-41AB-B798-6205096D3029}</ProjectGuid>

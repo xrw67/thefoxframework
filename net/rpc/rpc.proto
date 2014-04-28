@@ -10,9 +10,6 @@ message Call {
 
 // 返回
 message Reply {
-	enum Result {
-		
-	};
 	required int64 id = 1;
 	required bool result = 2; // true of false
 	optional bytes response = 3; // pb2-encoded message
@@ -20,9 +17,14 @@ message Reply {
 
 // 传输层传输的内容
 message Box {
+	message NonRpcMsg {
+		required string name = 1;
+		required bytes data = 2;
+	};
+
     optional Call call = 1;
     optional Reply reply = 2;
-	optional bytes non_rpc_data = 3;
+	optional NonRpcMsg non_rpc_data = 3;
 }
 
 

@@ -39,9 +39,7 @@ Iocp::Iocp(EventLoop *eventloop, const std::string &nameArg)
     , _messageCallback(defaultMessageCallback)
     , _writeCompleteCallback(NULL)
     , _closeCallback(NULL)
-{
-
-}
+{}
 
 Iocp::~Iocp()
 {
@@ -94,10 +92,8 @@ bool Iocp::start(const InetAddress &listenAddr)
 
 void Iocp::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
-    if (NULL != conn) {
-        conn->appendWriteBuffer(data, len);
-        postWriteEvent(conn);
-    }
+    if (NULL != conn)
+        conn->send(data, len);
 }
 
 bool Iocp::open(const InetAddress &serverAddr)
@@ -158,6 +154,7 @@ void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 {
 	int32_t connId = _nextConnId.inc();
     TcpConnectionPtr conn(new TcpConnection(socket, connId, peerAddr));
+	conn->setPostWriteEventFunction(std::bind(&Iocp::postWriteEvent, this, conn, static_cast<CpEvent *>(NULL)));
     conn->setState(TcpConnection::kConnecting);
     _connections[connId] = conn;
     _eventloop->registerHandle((HANDLE)socket);

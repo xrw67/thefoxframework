@@ -66,6 +66,30 @@
     <ClInclude Include="..\..\log\LogStream.h">
       <Filter>log</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcChannel.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcClient.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcCodec.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcController.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcServer.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcServiceManager.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\common.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc.pb.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\EventLoop.cc">
@@ -92,5 +116,28 @@
     <ClCompile Include="..\..\log\LogStream.cc">
       <Filter>log</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\net\rpc\RpcChannel.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\RpcClient.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\RpcController.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\RpcServer.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\RpcServiceManager.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc.pb.cc">
+      <Filter>rpc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\net\rpc\rpc.proto">
+      <Filter>rpc</Filter>
+    </None>
   </ItemGroup>
 </Project>

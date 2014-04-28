@@ -2,8 +2,9 @@
 #include <net/InetAddress.h>
 #include <net/EventLoop.h>
 #include <net/SocketOps.h>
-#include <rpc/RpcChannel.h>
-#include "../../rpc/test/echo.pb.h"
+#include <net/rpc/RpcClient.h>
+#include <net/rpc/RpcChannel.h>
+#include <net/rpc/test/echo.pb.h>
 
 using namespace thefox;
 
@@ -14,11 +15,11 @@ int main(int argc, char **argv)
 	EventLoop loop;
 	loop.start();
 
-	RpcChannel rpcChannel(&loop);
-	rpcChannel.open(InetAddress("127.0.0.1", 7903));
+	RpcClient client(&loop);
+	RpcChannel channel(&client, InetAddress("127.0.0.1", 7903));
 	
 
-	echo::EchoService::Stub echoChannel(&rpcChannel);
+	echo::EchoService::Stub echoChannel(&channel);
 	echo::EchoRequest request;
 	request.set_message("hello");
 	echo::EchoResponse response;

@@ -19,6 +19,8 @@ namespace thefox
 typedef int SOCKET
 #endif
 
+typedef std::function<void()> PostEventFunction;
+
 class TcpConnection
 {
 public:
@@ -96,6 +98,19 @@ public:
     size_t pendingEvent() const { return _pendingEvent; }
     size_t readBytes() const { return _readBytes; }
     size_t writeBytes() const { return _writeBytes; }
+
+	void send(const char *data, size_t len)
+	{
+		appendWriteBuffer(data, len);
+		postWriteEvent();
+	}
+	void send(const std::string &data)
+	{ send(data.c_str(), data.length()); }
+
+	void setPostWriteEventFunction(const PostEventFunction &func)
+	{ _postWriteEvent = func; }
+    void postWriteEvent() { _postWriteEvent(); }
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
     int32_t _connId;
@@ -111,6 +126,8 @@ private:
     // 统计信息
     size_t _readBytes;
     size_t _writeBytes;
+
+	PostEventFunction _postWriteEvent;
 };
 
 } // namespace thefox

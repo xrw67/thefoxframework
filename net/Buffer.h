@@ -53,7 +53,7 @@ public:
 	const Buffer &operator=(const Buffer &buf)
 	{
 		size_t readable = buf.readableBytes();
-		if ((_endPtr - _beginPtr) < (readable + kCheapPrepend)) {
+		if (static_cast<size_t>(_endPtr - _beginPtr) < (readable + kCheapPrepend)) {
 			size_t newSize = readable + kCheapPrepend;
 			free(_beginPtr);
 			_beginPtr = static_cast<char *>(malloc(newSize));

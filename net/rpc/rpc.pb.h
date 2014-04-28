@@ -37,7 +37,9 @@ void protobuf_ShutdownFile_rpc_2eproto();
 class Call;
 class Reply;
 class Box;
+class Box_NonRpcMsg;
 class Placeholder;
+class HeartBeath;
 
 // ===================================================================
 
@@ -275,6 +277,108 @@ class Reply : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class Box_NonRpcMsg : public ::google::protobuf::Message {
+ public:
+  Box_NonRpcMsg();
+  virtual ~Box_NonRpcMsg();
+
+  Box_NonRpcMsg(const Box_NonRpcMsg& from);
+
+  inline Box_NonRpcMsg& operator=(const Box_NonRpcMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Box_NonRpcMsg& default_instance();
+
+  void Swap(Box_NonRpcMsg* other);
+
+  // implements Message ----------------------------------------------
+
+  Box_NonRpcMsg* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Box_NonRpcMsg& from);
+  void MergeFrom(const Box_NonRpcMsg& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string name = 1;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 1;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  inline ::std::string* release_name();
+  inline void set_allocated_name(::std::string* name);
+
+  // required bytes data = 2;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 2;
+  inline const ::std::string& data() const;
+  inline void set_data(const ::std::string& value);
+  inline void set_data(const char* value);
+  inline void set_data(const void* value, size_t size);
+  inline ::std::string* mutable_data();
+  inline ::std::string* release_data();
+  inline void set_allocated_data(::std::string* data);
+
+  // @@protoc_insertion_point(class_scope:thefox.rpc.Box.NonRpcMsg)
+ private:
+  inline void set_has_name();
+  inline void clear_has_name();
+  inline void set_has_data();
+  inline void clear_has_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* name_;
+  ::std::string* data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_rpc_2eproto();
+  friend void protobuf_AssignDesc_rpc_2eproto();
+  friend void protobuf_ShutdownFile_rpc_2eproto();
+
+  void InitAsDefaultInstance();
+  static Box_NonRpcMsg* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class Box : public ::google::protobuf::Message {
  public:
   Box();
@@ -327,42 +431,54 @@ class Box : public ::google::protobuf::Message {
 
   // nested types ----------------------------------------------------
 
+  typedef Box_NonRpcMsg NonRpcMsg;
+
   // accessors -------------------------------------------------------
 
-  // repeated .thefox.rpc.Call call = 1;
-  inline int call_size() const;
+  // optional .thefox.rpc.Call call = 1;
+  inline bool has_call() const;
   inline void clear_call();
   static const int kCallFieldNumber = 1;
-  inline const ::thefox::rpc::Call& call(int index) const;
-  inline ::thefox::rpc::Call* mutable_call(int index);
-  inline ::thefox::rpc::Call* add_call();
-  inline const ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Call >&
-      call() const;
-  inline ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Call >*
-      mutable_call();
+  inline const ::thefox::rpc::Call& call() const;
+  inline ::thefox::rpc::Call* mutable_call();
+  inline ::thefox::rpc::Call* release_call();
+  inline void set_allocated_call(::thefox::rpc::Call* call);
 
-  // repeated .thefox.rpc.Reply reply = 2;
-  inline int reply_size() const;
+  // optional .thefox.rpc.Reply reply = 2;
+  inline bool has_reply() const;
   inline void clear_reply();
   static const int kReplyFieldNumber = 2;
-  inline const ::thefox::rpc::Reply& reply(int index) const;
-  inline ::thefox::rpc::Reply* mutable_reply(int index);
-  inline ::thefox::rpc::Reply* add_reply();
-  inline const ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Reply >&
-      reply() const;
-  inline ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Reply >*
-      mutable_reply();
+  inline const ::thefox::rpc::Reply& reply() const;
+  inline ::thefox::rpc::Reply* mutable_reply();
+  inline ::thefox::rpc::Reply* release_reply();
+  inline void set_allocated_reply(::thefox::rpc::Reply* reply);
+
+  // optional .thefox.rpc.Box.NonRpcMsg non_rpc_data = 3;
+  inline bool has_non_rpc_data() const;
+  inline void clear_non_rpc_data();
+  static const int kNonRpcDataFieldNumber = 3;
+  inline const ::thefox::rpc::Box_NonRpcMsg& non_rpc_data() const;
+  inline ::thefox::rpc::Box_NonRpcMsg* mutable_non_rpc_data();
+  inline ::thefox::rpc::Box_NonRpcMsg* release_non_rpc_data();
+  inline void set_allocated_non_rpc_data(::thefox::rpc::Box_NonRpcMsg* non_rpc_data);
 
   // @@protoc_insertion_point(class_scope:thefox.rpc.Box)
  private:
+  inline void set_has_call();
+  inline void clear_has_call();
+  inline void set_has_reply();
+  inline void clear_has_reply();
+  inline void set_has_non_rpc_data();
+  inline void clear_has_non_rpc_data();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Call > call_;
-  ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Reply > reply_;
+  ::thefox::rpc::Call* call_;
+  ::thefox::rpc::Reply* reply_;
+  ::thefox::rpc::Box_NonRpcMsg* non_rpc_data_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_rpc_2eproto();
   friend void protobuf_AssignDesc_rpc_2eproto();
@@ -442,6 +558,78 @@ class Placeholder : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static Placeholder* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class HeartBeath : public ::google::protobuf::Message {
+ public:
+  HeartBeath();
+  virtual ~HeartBeath();
+
+  HeartBeath(const HeartBeath& from);
+
+  inline HeartBeath& operator=(const HeartBeath& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const HeartBeath& default_instance();
+
+  void Swap(HeartBeath* other);
+
+  // implements Message ----------------------------------------------
+
+  HeartBeath* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const HeartBeath& from);
+  void MergeFrom(const HeartBeath& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:thefox.rpc.HeartBeath)
+ private:
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+
+  friend void  protobuf_AddDesc_rpc_2eproto();
+  friend void protobuf_AssignDesc_rpc_2eproto();
+  friend void protobuf_ShutdownFile_rpc_2eproto();
+
+  void InitAsDefaultInstance();
+  static HeartBeath* default_instance_;
 };
 // ===================================================================
 
@@ -802,61 +990,273 @@ inline void Reply::set_allocated_response(::std::string* response) {
 
 // -------------------------------------------------------------------
 
+// Box_NonRpcMsg
+
+// required string name = 1;
+inline bool Box_NonRpcMsg::has_name() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Box_NonRpcMsg::set_has_name() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Box_NonRpcMsg::clear_has_name() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void Box_NonRpcMsg::clear_name() {
+  if (name_ != &::google::protobuf::internal::kEmptyString) {
+    name_->clear();
+  }
+  clear_has_name();
+}
+inline const ::std::string& Box_NonRpcMsg::name() const {
+  return *name_;
+}
+inline void Box_NonRpcMsg::set_name(const ::std::string& value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Box_NonRpcMsg::set_name(const char* value) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void Box_NonRpcMsg::set_name(const char* value, size_t size) {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Box_NonRpcMsg::mutable_name() {
+  set_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+inline ::std::string* Box_NonRpcMsg::release_name() {
+  clear_has_name();
+  if (name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = name_;
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void Box_NonRpcMsg::set_allocated_name(::std::string* name) {
+  if (name_ != &::google::protobuf::internal::kEmptyString) {
+    delete name_;
+  }
+  if (name) {
+    set_has_name();
+    name_ = name;
+  } else {
+    clear_has_name();
+    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required bytes data = 2;
+inline bool Box_NonRpcMsg::has_data() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Box_NonRpcMsg::set_has_data() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Box_NonRpcMsg::clear_has_data() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void Box_NonRpcMsg::clear_data() {
+  if (data_ != &::google::protobuf::internal::kEmptyString) {
+    data_->clear();
+  }
+  clear_has_data();
+}
+inline const ::std::string& Box_NonRpcMsg::data() const {
+  return *data_;
+}
+inline void Box_NonRpcMsg::set_data(const ::std::string& value) {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::kEmptyString) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+}
+inline void Box_NonRpcMsg::set_data(const char* value) {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::kEmptyString) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+}
+inline void Box_NonRpcMsg::set_data(const void* value, size_t size) {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::kEmptyString) {
+    data_ = new ::std::string;
+  }
+  data_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* Box_NonRpcMsg::mutable_data() {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::kEmptyString) {
+    data_ = new ::std::string;
+  }
+  return data_;
+}
+inline ::std::string* Box_NonRpcMsg::release_data() {
+  clear_has_data();
+  if (data_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = data_;
+    data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void Box_NonRpcMsg::set_allocated_data(::std::string* data) {
+  if (data_ != &::google::protobuf::internal::kEmptyString) {
+    delete data_;
+  }
+  if (data) {
+    set_has_data();
+    data_ = data;
+  } else {
+    clear_has_data();
+    data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// -------------------------------------------------------------------
+
 // Box
 
-// repeated .thefox.rpc.Call call = 1;
-inline int Box::call_size() const {
-  return call_.size();
+// optional .thefox.rpc.Call call = 1;
+inline bool Box::has_call() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Box::set_has_call() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void Box::clear_has_call() {
+  _has_bits_[0] &= ~0x00000001u;
 }
 inline void Box::clear_call() {
-  call_.Clear();
+  if (call_ != NULL) call_->::thefox::rpc::Call::Clear();
+  clear_has_call();
 }
-inline const ::thefox::rpc::Call& Box::call(int index) const {
-  return call_.Get(index);
+inline const ::thefox::rpc::Call& Box::call() const {
+  return call_ != NULL ? *call_ : *default_instance_->call_;
 }
-inline ::thefox::rpc::Call* Box::mutable_call(int index) {
-  return call_.Mutable(index);
-}
-inline ::thefox::rpc::Call* Box::add_call() {
-  return call_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Call >&
-Box::call() const {
+inline ::thefox::rpc::Call* Box::mutable_call() {
+  set_has_call();
+  if (call_ == NULL) call_ = new ::thefox::rpc::Call;
   return call_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Call >*
-Box::mutable_call() {
-  return &call_;
+inline ::thefox::rpc::Call* Box::release_call() {
+  clear_has_call();
+  ::thefox::rpc::Call* temp = call_;
+  call_ = NULL;
+  return temp;
+}
+inline void Box::set_allocated_call(::thefox::rpc::Call* call) {
+  delete call_;
+  call_ = call;
+  if (call) {
+    set_has_call();
+  } else {
+    clear_has_call();
+  }
 }
 
-// repeated .thefox.rpc.Reply reply = 2;
-inline int Box::reply_size() const {
-  return reply_.size();
+// optional .thefox.rpc.Reply reply = 2;
+inline bool Box::has_reply() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Box::set_has_reply() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void Box::clear_has_reply() {
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Box::clear_reply() {
-  reply_.Clear();
+  if (reply_ != NULL) reply_->::thefox::rpc::Reply::Clear();
+  clear_has_reply();
 }
-inline const ::thefox::rpc::Reply& Box::reply(int index) const {
-  return reply_.Get(index);
+inline const ::thefox::rpc::Reply& Box::reply() const {
+  return reply_ != NULL ? *reply_ : *default_instance_->reply_;
 }
-inline ::thefox::rpc::Reply* Box::mutable_reply(int index) {
-  return reply_.Mutable(index);
-}
-inline ::thefox::rpc::Reply* Box::add_reply() {
-  return reply_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Reply >&
-Box::reply() const {
+inline ::thefox::rpc::Reply* Box::mutable_reply() {
+  set_has_reply();
+  if (reply_ == NULL) reply_ = new ::thefox::rpc::Reply;
   return reply_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::thefox::rpc::Reply >*
-Box::mutable_reply() {
-  return &reply_;
+inline ::thefox::rpc::Reply* Box::release_reply() {
+  clear_has_reply();
+  ::thefox::rpc::Reply* temp = reply_;
+  reply_ = NULL;
+  return temp;
+}
+inline void Box::set_allocated_reply(::thefox::rpc::Reply* reply) {
+  delete reply_;
+  reply_ = reply;
+  if (reply) {
+    set_has_reply();
+  } else {
+    clear_has_reply();
+  }
+}
+
+// optional .thefox.rpc.Box.NonRpcMsg non_rpc_data = 3;
+inline bool Box::has_non_rpc_data() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Box::set_has_non_rpc_data() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Box::clear_has_non_rpc_data() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Box::clear_non_rpc_data() {
+  if (non_rpc_data_ != NULL) non_rpc_data_->::thefox::rpc::Box_NonRpcMsg::Clear();
+  clear_has_non_rpc_data();
+}
+inline const ::thefox::rpc::Box_NonRpcMsg& Box::non_rpc_data() const {
+  return non_rpc_data_ != NULL ? *non_rpc_data_ : *default_instance_->non_rpc_data_;
+}
+inline ::thefox::rpc::Box_NonRpcMsg* Box::mutable_non_rpc_data() {
+  set_has_non_rpc_data();
+  if (non_rpc_data_ == NULL) non_rpc_data_ = new ::thefox::rpc::Box_NonRpcMsg;
+  return non_rpc_data_;
+}
+inline ::thefox::rpc::Box_NonRpcMsg* Box::release_non_rpc_data() {
+  clear_has_non_rpc_data();
+  ::thefox::rpc::Box_NonRpcMsg* temp = non_rpc_data_;
+  non_rpc_data_ = NULL;
+  return temp;
+}
+inline void Box::set_allocated_non_rpc_data(::thefox::rpc::Box_NonRpcMsg* non_rpc_data) {
+  delete non_rpc_data_;
+  non_rpc_data_ = non_rpc_data;
+  if (non_rpc_data) {
+    set_has_non_rpc_data();
+  } else {
+    clear_has_non_rpc_data();
+  }
 }
 
 // -------------------------------------------------------------------
 
 // Placeholder
+
+// -------------------------------------------------------------------
+
+// HeartBeath
 
 
 // @@protoc_insertion_point(namespace_scope)

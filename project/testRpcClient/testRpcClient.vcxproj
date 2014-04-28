@@ -10,6 +10,13 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\net\rpc\test\echo.pb.cc" />
+    <ClCompile Include="..\..\net\rpc\test\testrpcclient.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\net\rpc\test\echo.pb.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -75,13 +82,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\rpc\test\echo.pb.cc" />
-    <ClCompile Include="testrpcclient.cc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\rpc\test\echo.pb.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

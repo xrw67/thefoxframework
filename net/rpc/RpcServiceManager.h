@@ -1,10 +1,10 @@
-#ifndef _THEFOX_RPC_RPCSERVER_H_
-#define _THEFOX_RPC_RPCSERVER_H_
+#ifndef _THEFOX_RPC_RPCSERVICEMANAGER_H_
+#define _THEFOX_RPC_RPCSERVICEMANAGER_H_
 
 #include <map>
 #include <base/Types.h>
 #include <base/MutexLock.h>
-#include <rpc/common.h>
+#include <net/rpc/common.h>
 #include <google/protobuf/service.h>
 
 namespace thefox
@@ -17,16 +17,17 @@ public:
 	~RpcServiceManager();
 
 	void registerService(gpb::Service *service);
-	gpb::Service *findService(const String &serviceName);
+	gpb::Service *findService(const std::string &serviceName);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcServiceManager);
-	typedef std::map<String, gpb::Service *> ServiceMap;
+	typedef std::map<std::string, gpb::Service *> ServiceMap;
+
 	MutexLock _mutex;
 	ServiceMap _services;
 };
 
 } // namespace thefox
 
-#endif  // _THEFOX_RPC_RPCSERVER_H_
+#endif  // _THEFOX_RPC_RPCSERVICEMANAGER_H_
 
