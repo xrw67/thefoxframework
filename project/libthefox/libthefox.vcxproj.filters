@@ -10,7 +10,7 @@
     <Filter Include="rpc">
       <UniqueIdentifier>{abb25a4d-c98e-4e56-bf35-87128dd4d2ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="protobuf">
+    <Filter Include="msg">
       <UniqueIdentifier>{bed4c40f-f053-4693-b9a7-16422f1ed2e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -90,6 +90,21 @@
     <ClInclude Include="..\..\net\rpc\rpc.pb.h">
       <Filter>rpc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\msg\msg.pb.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\msg\MsgCodec.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\msg\common.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\msg\MsgQueue.h">
+      <Filter>msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\msg\MsgBox.h">
+      <Filter>msg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\EventLoop.cc">
@@ -134,10 +149,19 @@
     <ClCompile Include="..\..\net\rpc\rpc.pb.cc">
       <Filter>rpc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\net\msg\msg.pb.cc">
+      <Filter>msg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\msg\MsgQueue.cc">
+      <Filter>msg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\net\rpc\rpc.proto">
       <Filter>rpc</Filter>
+    </None>
+    <None Include="..\..\net\msg\msg.proto">
+      <Filter>msg</Filter>
     </None>
   </ItemGroup>
 </Project>

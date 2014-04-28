@@ -13,20 +13,20 @@
 namespace thefox
 {
 
-typedef function<void()> ThreadCallback;
+typedef std::function<void()> ThreadCallback;
 
 class Thread
 {
 public:
     enum StateT { kInit, kStart, kJoined, kStop };
 
-    explicit Thread(const ThreadFunt &cb, void *arg, const string &name)
+    explicit Thread(const ThreadCallback &cb, void *arg, const std::string &name)
         : _cb(cb)
         , _arg(arg)
         , _name(name)
         , _state(kInit)
     #ifdef WIN32
-        , _handle(INVALID_HANDLE)
+        , _handle(NULL)
         , _threadId(0)
     #endif
     {}
@@ -40,11 +40,11 @@ public:
     bool start()
     {
         if (kInit != state())
-            return;
+            return false;
 
         bool result = false;
 #ifdef WIN32
-        _handle = ::CreateThread(NULL, 0, threadProc, (LPVOID)this, 0, &_threadId)
+        _handle = ::CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadProc, (LPVOID)this, 0, &_threadId);
         result = (NULL != _handle);
 #else
         int ret = pthread_create(&_thread, NULL, _cb, (void *)_arg);
@@ -79,7 +79,7 @@ public:
             return false;
         bool result = false;
 #ifdef WIN32
-        if (INVALID_HANDLE != _handle) {
+        if (NULL != _handle) {
             DWORD ret = ::WaitForSingleObject(_handle, INFINITE);
             if (WAIT_OBJECT_0 == ret || WAIT_ABANDONED == ret) {
                 result = true;
@@ -95,8 +95,9 @@ public:
         return result;
     }
 
-    const string &name() const { return _name; }
-    StateT State() const { return _state; }
+    const std::string &name() const { return _name; }
+    StateT state() const { return _state; }
+	void setState(const StateT &state) { _state = state; }
 
 #ifdef WIN32
     DWORD tid() const { return _threadId; }
@@ -106,20 +107,21 @@ public:
     {}
 #endif
 
-priavte:
+private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Thread);
 
     void run() { _cb; }
 
-    static DWORD threadProc(LPVOID param)
+    static DWORD WINAPI threadProc(LPVOID param)
     {
         Thread *pThis = reinterpret_cast<Thread *>(param);
         pThis->run();
+		return 0;
     }
 
     ThreadCallback _cb;
     void *_arg;
-    const string _name;
+    const std::string _name;
     StateT _state;
 
 #ifdef _WIN32

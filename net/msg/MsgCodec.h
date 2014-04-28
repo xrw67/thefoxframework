@@ -1,7 +1,7 @@
 /*
- * @brief 处理报文格式
+ * @brief 澶勭悊鎶ユ枃鏍煎紡
  *
- * 消息报文格式
+ * 娑堟伅鎶ユ枃鏍煎紡
  * +--------+---------+---------------+
  * |[0xacac]| bodyLen |body (protobuf)|
  * +--------+---------+---------------+
@@ -10,25 +10,26 @@
  *
  */
 
-#ifndef _THEFOX_RPC_RPCCODEC_H_
-#define _THEFOX_RPC_RPCCODEC_H_
+#ifndef _THEFOX_NET_MSG_MSGCODEC_H_
+#define _THEFOX_NET_MSG_MSGCODEC_H_
 
 #include <base/Types.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <net/rpc/rpc.pb.h>
-#include <net/rpc/common.h>
+#include <net/msg/msg.pb.h>
+#include <net/msg/common.h>
+#include <net/InetAddress.h>
 
 namespace thefox
 {
 
-#define PROTOCOL_ID 0xacac
+#define PROTOCOL_ID 0xcece
 
-class RpcCodec
+class MsgCodec
 {
 public:
-	// 解码
-	static bool parseFromArray(const char *buf, size_t &bufLen, rpc::Box *msg)
+	// 瑙ｇ爜
+	static bool parseFromArray(const char *buf, size_t &bufLen, msg::Box *msg)
 	{
 		assert(NULL != msg || NULL != buf);
 
@@ -53,8 +54,8 @@ public:
 		return false;
 	}
 
-	// 编码
-	static std::string encode(const rpc::Box &msg)
+	// 缂栫爜
+	static std::string encode(const msg::Box &msg)
 	{
 		std::string result;
 		result.resize(sizeof(uint16_t) + sizeof(int32_t));
@@ -88,6 +89,29 @@ public:
 			return false;
 	}
 
+	static gpb::Message *createMessage(const std::string& type_name)
+	{
+		gpb::Message *message = NULL;
+		const gpb::Descriptor* descriptor =
+		gpb::DescriptorPool::generated_pool()->FindMessageTypeByName(type_name);
+		if (descriptor) {
+			const gpb::Message* prototype =
+			gpb::MessageFactory::generated_factory()->GetPrototype(descriptor);
+			if (prototype)
+				message = prototype->New();
+		}
+		return message;
+	}
+
+	static gpb::Message *getMessageFromBox(const msg::Box *box)
+	{
+		gpb::Message *message = createMessage(box->msg_type());
+		if (message) {
+			message->ParseFromString(box->msg_body());
+		}
+		return message;
+	}
+	
 	static int16_t asInt16(const char *buf)
 	{
 		int16_t be16 = 0;
@@ -102,9 +126,9 @@ public:
 		return ::ntohl(be32);
 	}
 private:
-	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcCodec);
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MsgCodec);
 };
 
 } // namesapce thefox
 
-#endif // _THEFOX_RPC_RPCCODEC_H_
+#endif // _THEFOX_NET_MSG_MSGCODEC_H_

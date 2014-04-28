@@ -10,7 +10,6 @@
 namespace thefox
 {
 
-class TcpServer;
 class RpcServiceManager;
 typedef std::shared_ptr<RpcServiceManager> ServiceManagerPtr;
 

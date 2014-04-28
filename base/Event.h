@@ -38,6 +38,7 @@ public:
         ::WaitForSingleObject(_event, INFINITE);
         return true;
     }
+	operator HANDLE() { return _event; }
 private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Event);
     HANDLE _event;                
