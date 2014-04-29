@@ -11,6 +11,7 @@
 #include <Winsock2.h>
 #include <base/Types.h>
 #include <base/MutexLock.h>
+#include <base/Thread.h>
 #include <base/AtomicInteger.h>
 #include <net/InetAddress.h>
 #include <net/Callbacks.h>
@@ -92,6 +93,8 @@ private:
 
     ConnectionMap _connections;
     MutexLock _connMutex;
+
+	std::unique_ptr<Thread> _acceptorThread;
 };
 
 } // namespace thefox

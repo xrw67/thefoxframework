@@ -16,47 +16,47 @@ DWORD WINAPI eventloopThreadProc(LPVOID param)
 using namespace thefox;
 
 EventLoop::EventLoop()
+	: _started(false)
 {
     init();
 }
 
 EventLoop::~EventLoop()
 {
-    quit();
-    CloseHandle(_hQuitEvent);
+    stop();
     CloseHandle(_hIocp);
 }
 
 void EventLoop::init()
 {
-    _hQuitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
     _hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+	int threads = getCpuNum() * 2;
+    for (int i = 0; i < threads; ++i)
+		_threads.push_back(ThreadPtr(new Thread(std::bind(&EventLoop::loop, this), "eventloop.loop")));
 }
 
 void EventLoop::start()
 {
-    ResetEvent(_hQuitEvent);
-
-    HANDLE handle;
-    int threads = getCpuNum() * 2;
-    for (int i = 0; i < threads; ++i) {
-        handle = CreateThread(NULL, 0, eventloopThreadProc, this, 0, NULL);
-        CloseHandle(handle);
-    }
+	_started = true;
+    for (int i = 0; i < _threads.size(); ++i)
+		_threads[i]->start();
 }
 
 void EventLoop::join()
 {
-    WaitForSingleObject(_hQuitEvent, INFINITE);
+	for (int i = 0; i < _threads.size(); ++i)
+		_threads[i]->join();
 }
 
-void EventLoop::quit()
+void EventLoop::stop()
 {
+	_started = false;
     int threads = getCpuNum() * 2;
     for (int i = 0; i < threads; ++i)
         PostQueuedCompletionStatus(_hIocp, 0, NULL, NULL);
 
-    SetEvent(_hQuitEvent);
+   for (int i = 0; i < _threads.size(); ++i)
+		_threads[i]->stop();
 }
 
 void EventLoop::registerHandle(HANDLE handle)
@@ -80,7 +80,7 @@ void EventLoop::loop()
     OVERLAPPED *overlapped = NULL;
     BOOL ret = FALSE;
 
-    while (WAIT_OBJECT_0 != WaitForSingleObject(_hQuitEvent, 0)) {
+    while (_started) {
         ret = GetQueuedCompletionStatus(_hIocp, 
                                         &bytesTransfered, 
                                         &CompletionKey, 

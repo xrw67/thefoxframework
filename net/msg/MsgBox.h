@@ -26,6 +26,9 @@ public:
 	const gpb::Descriptor *descriptor() const
 	{ return _msgBody->GetDescriptor(); }
 
+	TcpConnectionPtr connection() 
+	{ return _conn; }
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MsgBox);
 	std::unique_ptr<msg::Box> _box;

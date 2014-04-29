@@ -37,7 +37,7 @@ MsgQueue::MsgQueue(const MsgBoxCallback& defaultCallback)
 	: _dispatcher(new MsgDispatcher(defaultCallback))
 	, _started(false)
 {
-	_thread.reset(new Thread(std::bind(&MsgQueue::loop, this), NULL, "MsgQueueParserThread"));
+	_thread.reset(new Thread(std::bind(&MsgQueue::loop, this), "MsgQueueParserThread"));
 }
 
 MsgQueue::~MsgQueue()

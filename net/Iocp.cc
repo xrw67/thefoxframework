@@ -19,14 +19,6 @@ void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timest
     buffer->retrieveAll();
 }
 
-// 接收新连接的线程
-DWORD WINAPI acceptorThreadProc(LPVOID param)
-{
-    Iocp *server = reinterpret_cast<Iocp *>(param);
-    server->acceptorLoop();
-    return 0;
-}
-
 } // namespace thefox
 
 using namespace thefox;
@@ -39,10 +31,14 @@ Iocp::Iocp(EventLoop *eventloop, const std::string &nameArg)
     , _messageCallback(defaultMessageCallback)
     , _writeCompleteCallback(NULL)
     , _closeCallback(NULL)
-{}
+{
+	_acceptorThread.reset(
+		new Thread(std::bind(&Iocp::acceptorLoop, this), "acceptorloop"));
+}
 
 Iocp::~Iocp()
 {
+	_acceptorThread->stop();
     close();
 }
 
@@ -83,9 +79,7 @@ bool Iocp::start(const InetAddress &listenAddr)
         return false;
     }
 
-    HANDLE handle = CreateThread(NULL, 0, acceptorThreadProc, this, 0, NULL);
-    CloseHandle(handle);
-
+	_acceptorThread->start();
     // LOG_INFO << tcpserver start done;
     return true;
 }
