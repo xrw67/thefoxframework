@@ -21,7 +21,7 @@
 #include <thirdparty/rapidjson/encodedstream.h>
 #include <thirdparty/rapidjson/stringbuffer.h>
 
-#include <base/Types.h>
+#include <string>
 
 namespace thefox
 {
@@ -140,7 +140,7 @@ void traverse_node(rapidxml::xml_node<> *xmlnode, rapidjson::Value &jsvalue, rap
 }
 
 
-string xml2json(const string &xmlStr)
+std::string xml2json(const std::string &xmlStr)
 {
 	rapidxml::xml_document<> doc;
 	doc.parse<0>(const_cast<char *>(xmlStr.c_str()));

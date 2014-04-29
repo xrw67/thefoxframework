@@ -1,4 +1,4 @@
-#ifdef _THEFOX_BASE_INI_FILE_H_
+#ifndef _THEFOX_BASE_INI_FILE_H_
 #define _THEFOX_BASE_INI_FILE_H_
 
 #include <base/Types.h>
@@ -10,17 +10,23 @@ class IniFile
 {
 public:
 	IniFile(const char *fileName)
-		: _fileName(fileName) {}
-	~IniFile() {}
+		: _fileName(fileName) 
+	{}
+	~IniFile() 
+	{}
 
 	int getInt(const char *section, const char *key)
-	{ return ::GetPrivateProfileInt(section, key, 0, _fileName.c_str()); }
+	{ 
+		return ::GetPrivateProfileInt(section, key, 0, _fileName.c_str()); 
+	}
+	
 	std::string getString(const char *section, const char *key)
 	{ 
 		char buf[8192] = {0};
 		::GetPrivateProfileString(section, key, "", buf, sizeof(buf), _fileName.c_str());
 		return buf;
 	}
+	
 private:
 	std::string _fileName;
 };
