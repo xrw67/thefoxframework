@@ -23,11 +23,13 @@
     <ClInclude Include="..\..\net\InetAddress.h" />
     <ClInclude Include="..\..\net\Iocp.h" />
     <ClInclude Include="..\..\net\IoEvent.h" />
-    <ClInclude Include="..\..\net\msg\common.h" />
-    <ClInclude Include="..\..\net\msg\msg.pb.h" />
-    <ClInclude Include="..\..\net\msg\MsgBox.h" />
-    <ClInclude Include="..\..\net\msg\MsgCodec.h" />
-    <ClInclude Include="..\..\net\msg\MsgQueue.h" />
+    <ClInclude Include="..\..\net\msgqueue\common.h" />
+    <ClInclude Include="..\..\net\msgqueue\MsgBox.h" />
+    <ClInclude Include="..\..\net\msgqueue\MqManager.h" />
+    <ClInclude Include="..\..\net\msgqueue\msg.pb.h" />
+    <ClInclude Include="..\..\net\msgqueue\MsgCodec.h" />
+    <ClInclude Include="..\..\net\msgqueue\MsgDispatcher.h" />
+    <ClInclude Include="..\..\net\msgqueue\QueueTuple.h" />
     <ClInclude Include="..\..\net\rpc\common.h" />
     <ClInclude Include="..\..\net\rpc\rpc.pb.h" />
     <ClInclude Include="..\..\net\rpc\RpcChannel.h" />
@@ -48,8 +50,7 @@
     <ClCompile Include="..\..\log\LogStream.cc" />
     <ClCompile Include="..\..\net\EventLoop.cc" />
     <ClCompile Include="..\..\net\Iocp.cc" />
-    <ClCompile Include="..\..\net\msg\msg.pb.cc" />
-    <ClCompile Include="..\..\net\msg\MsgQueue.cc" />
+    <ClCompile Include="..\..\net\msgqueue\msg.pb.cc" />
     <ClCompile Include="..\..\net\rpc\rpc.pb.cc" />
     <ClCompile Include="..\..\net\rpc\RpcChannel.cc" />
     <ClCompile Include="..\..\net\rpc\RpcClient.cc" />
@@ -61,7 +62,7 @@
     <ClCompile Include="..\..\net\TimerQueue.cc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\net\msg\msg.proto" />
+    <None Include="..\..\net\msgqueue\msg.proto" />
     <None Include="..\..\net\rpc\rpc.proto" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -64,6 +64,8 @@ private:
 #endif
 };
 
+typedef std::shared_ptr<TcpServer> TcpServerPtr;
+
 } // namespace thefox
 
 #endif // _THEFOX_NET_TCPSERVER_H_

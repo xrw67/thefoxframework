@@ -2,68 +2,82 @@
 #define _THEFOX_NET_MSGQUEUE_MQMANAGER_H_
 
 #include <map>
-#include <base/Types.h>
 #include <base/MutexLock.h>
-#include <net/msgqueue/Message.h>
 #include <net/msgqueue/QueueTuple.h>
 
 namespace thefox
 {
 
-namespace mq
-{
-
 class MqManager
 {
 public:
-	MqMaager()
+	MqManager()
 	{}
 	~MqManager()
 	{}
 
-	void pushMsg(const std::string &queueName, std::string *msg)
+	void pushMsg(const std::string &queueName, const TcpConnectionPtr &sender, gpb::Message *msg)
 	{
 		MutexLockGuard lock(_mutex);
 		QueueTupleMap::iterator it = _queues.find(queueName);
 		if (it != _queues.end()) {
-			it->second->push(msg);
+			it->second->push(sender, msg);
 		} else {
-			QueueTuplePtr queue(new QueueTuple());
-			queue->push(msg);
+			QueueTuplePtr queue(new QueueTuple(queueName));
+			queue->push(sender, msg);
 			_queues[queueName] = queue;
 		}
 	}
 
-	MessagePtr popMsg(const std::string &queueName)
+	MsgBoxPtr popMsg(const std::string &queueName)
 	{
 		MutexLockGuard lock(_mutex);
 		QueueTupleMap::iterator it = _queues.find(queueName);
 		if (it != _queues.end()) {
-			return it->second->pop(msg);
+			return it->second->pop();
 		} else {
 			return NULL;
 		}
 	}
-
-	// not safe
+	
 	QueueTuplePtr findQueue(const std::string &queueName)
 	{
-		QueueTupleMap::iterator it = _queues.find(queueName);
-		if (it != _queues.end()) {
-			return it->second;
-		} else {
-			return NULL;
-		}
+		MutexLockGuard lock(_mutex);
+		return findQueue_unlock(queueName);
 	}
 
+	size_t queueCount() 
+	{ 
+		MutexLockGuard lock(_mutex);
+		return _queues.size();
+	}
+	size_t queueLength(const std::string &queueName)
+	{
+		MutexLockGuard lock(_mutex);
+		QueueTuplePtr queue(findQueue_unlock(queueName));
+		if (queue)
+			return queue->size();
+		return 0;
+	}
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MqManager);
+	// not safe
+	QueueTuplePtr findQueue_unlock(const std::string &queueName)
+	{
+		QueueTupleMap::iterator it = _queues.find(queueName);
+		if (it != _queues.end())
+			return it->second;
+		else
+			return NULL;
+	}
+
 	// <queueName, queueTuple>
 	typedef std::map<std::string, QueueTuplePtr> QueueTupleMap;
 	QueueTupleMap _queues;
 	MutexLock _mutex;
 };
 
-} // namespace mq
+typedef std::shared_ptr<MqManager> MqManagerPtr;
 
 }// namespace thefox
 

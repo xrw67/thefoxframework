@@ -3,42 +3,46 @@
 
 #include <queue>
 #include <base/Types.h>
-#include <net/msgqueue/Message.h>
+#include <base/MutexLock.h>
+#include <net/msgqueue/MsgBox.h>
 
 namespace thefox
 {
 
-namespace mq
-{
-
-// not safe
+/// @berief 表示一个消息队列 not safe
 class QueueTuple
 {
 public:
-	void push(std::string *data)
+	QueueTuple(const std::string &name)
+		:_name(name) 
+	{}
+	~QueueTuple()
+	{}
+	
+	void push(const TcpConnectionPtr &sender, gpb::Message *msg)
 	{
-		MutexLockGuard lock(_mutex);
-		_msgs.push(new Message(data));
+		MsgBoxPtr box(new MsgBox(sender, msg));
+		_msgs.push(box);
 	}
 
-	MessagePtr pop()
+	MsgBoxPtr pop()
 	{
-		MessagePtr msg(_msgs.front());
+		MsgBoxPtr box(_msgs.front());
 		_msgs.front();
-		return msg;
+		return box;
 	}
-	size_t count() const
+	size_t size() const
 	{
 		return _msgs.size();
 	}
 private:
-	typedef std::queue<MessagePtr> MsgQueue;
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(QueueTuple);
+	typedef std::queue<MsgBoxPtr> MsgQueue;
 	MsgQueue _msgs;
+	const std::string _name;
 };
 
 typedef std::shared_ptr<QueueTuple> QueueTuplePtr;
-
-} // namespace mq
 
 } // namespace thefox
 

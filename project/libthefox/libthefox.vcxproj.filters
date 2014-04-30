@@ -7,11 +7,11 @@
     <Filter Include="net">
       <UniqueIdentifier>{07e1d8f6-b463-4363-ad4b-81a3a4a2352e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rpc">
-      <UniqueIdentifier>{abb25a4d-c98e-4e56-bf35-87128dd4d2ff}</UniqueIdentifier>
+    <Filter Include="net\msgqueue">
+      <UniqueIdentifier>{038849bf-c9d8-4f5a-add9-402cf892b4b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="msg">
-      <UniqueIdentifier>{bed4c40f-f053-4693-b9a7-16422f1ed2e7}</UniqueIdentifier>
+    <Filter Include="net\rpc">
+      <UniqueIdentifier>{abb25a4d-c98e-4e56-bf35-87128dd4d2ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,43 +67,49 @@
       <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcChannel.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcClient.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcCodec.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcController.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcServer.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcServiceManager.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\common.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\rpc.pb.h">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\msg\msg.pb.h">
-      <Filter>msg</Filter>
+    <ClInclude Include="..\..\net\msgqueue\MsgCodec.h">
+      <Filter>net\msgqueue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\msg\MsgCodec.h">
-      <Filter>msg</Filter>
+    <ClInclude Include="..\..\net\msgqueue\QueueTuple.h">
+      <Filter>net\msgqueue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\msg\common.h">
-      <Filter>msg</Filter>
+    <ClInclude Include="..\..\net\msgqueue\common.h">
+      <Filter>net\msgqueue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\msg\MsgQueue.h">
-      <Filter>msg</Filter>
+    <ClInclude Include="..\..\net\msgqueue\MqManager.h">
+      <Filter>net\msgqueue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\msg\MsgBox.h">
-      <Filter>msg</Filter>
+    <ClInclude Include="..\..\net\msgqueue\msg.pb.h">
+      <Filter>net\msgqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\msgqueue\MsgBox.h">
+      <Filter>net\msgqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\msgqueue\MsgDispatcher.h">
+      <Filter>net\msgqueue</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,36 +138,33 @@
       <Filter>log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\RpcChannel.cc">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\RpcClient.cc">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\RpcController.cc">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\RpcServer.cc">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\RpcServiceManager.cc">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\rpc.pb.cc">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\msg\msg.pb.cc">
-      <Filter>msg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\msg\MsgQueue.cc">
-      <Filter>msg</Filter>
+    <ClCompile Include="..\..\net\msgqueue\msg.pb.cc">
+      <Filter>net\msgqueue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\net\rpc\rpc.proto">
-      <Filter>rpc</Filter>
+      <Filter>net\rpc</Filter>
     </None>
-    <None Include="..\..\net\msg\msg.proto">
-      <Filter>msg</Filter>
+    <None Include="..\..\net\msgqueue\msg.proto">
+      <Filter>net\msgqueue</Filter>
     </None>
   </ItemGroup>
 </Project>
