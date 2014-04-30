@@ -29,6 +29,18 @@ void RpcServer::registerService(gpb::Service *service)
 	return _server->start(listenAddr);
 }
 
+void RpcServer::sendNonRpcMsg(const TcpConnectionPtr &conn, const gpb::Message *message)
+{
+	const std::string& typeName = message->GetTypeName();
+	rpc::NonRpcMsg *nrm = new rpc::NonRpcMsg();
+    nrm->set_msg_type(typeName);
+	nrm->set_msg_body(message->SerializeAsString());
+
+	rpc::Box box;
+	box.set_allocated_nonrpc_msg(nrm);
+	_server->send(conn, RpcCodec::encode(box));
+}
+
 void RpcServer::onConnection(const TcpConnectionPtr &conn)
 {}
 

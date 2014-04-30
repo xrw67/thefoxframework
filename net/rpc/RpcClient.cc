@@ -4,8 +4,14 @@
 
 using namespace thefox;
 
+void defaultNonRpcMsg(const std::string &msgType, const gpb::Message *message)
+{
+	
+}
+
 RpcClient::RpcClient(EventLoop *loop)
 	: _loop(loop)
+	, _nonRpcMsgCallback(defaultNonRpcMsg)
 {}
 
 RpcClient::~RpcClient() 

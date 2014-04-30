@@ -21,7 +21,7 @@ public:
 
 	void registerService(gpb::Service *service);
 	bool start(const InetAddress &listen);
-
+	void sendNonRpcMsg(const TcpConnectionPtr &conn, const gpb::Message *message);
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcServer);
 	void onConnection(const TcpConnectionPtr &conn);

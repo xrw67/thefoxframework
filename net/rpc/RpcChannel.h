@@ -27,12 +27,15 @@ public:
 				   const ::google::protobuf::Message* request,
 				   ::google::protobuf::Message* response,
 				   ::google::protobuf::Closure* done);
+	void setNonRpcMsgCallback(const NonRpcMsgCallback &cb)
+	{ _nonRpcMsgCallback = cb; }
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcChannel);
 	void onConnection(const TcpConnectionPtr &conn);
 	void onClose(const TcpConnectionPtr &conn);
 	void onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp recvTime);
 	void handleReplyMessage(const rpc::Reply &reply, Timestamp recvTime);
+	void handleNonRpcMessage(const rpc::NonRpcMsg &nrm, Timestamp recvTime);
 
 	class RequestWait
 	{
@@ -53,7 +56,7 @@ private:
 	RequestWaitMap _requests;
 	TcpConnectionPtr _conn;
 	std::shared_ptr<TcpClient> _client;
-
+	NonRpcMsgCallback _nonRpcMsgCallback;
 };
 
 } // namespace thefox

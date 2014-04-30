@@ -36,8 +36,8 @@ void protobuf_ShutdownFile_rpc_2eproto();
 
 class Call;
 class Reply;
+class NonRpcMsg;
 class Box;
-class Box_NonRpcMsg;
 class Placeholder;
 class HeartBeath;
 
@@ -277,14 +277,14 @@ class Reply : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class Box_NonRpcMsg : public ::google::protobuf::Message {
+class NonRpcMsg : public ::google::protobuf::Message {
  public:
-  Box_NonRpcMsg();
-  virtual ~Box_NonRpcMsg();
+  NonRpcMsg();
+  virtual ~NonRpcMsg();
 
-  Box_NonRpcMsg(const Box_NonRpcMsg& from);
+  NonRpcMsg(const NonRpcMsg& from);
 
-  inline Box_NonRpcMsg& operator=(const Box_NonRpcMsg& from) {
+  inline NonRpcMsg& operator=(const NonRpcMsg& from) {
     CopyFrom(from);
     return *this;
   }
@@ -298,17 +298,17 @@ class Box_NonRpcMsg : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Box_NonRpcMsg& default_instance();
+  static const NonRpcMsg& default_instance();
 
-  void Swap(Box_NonRpcMsg* other);
+  void Swap(NonRpcMsg* other);
 
   // implements Message ----------------------------------------------
 
-  Box_NonRpcMsg* New() const;
+  NonRpcMsg* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Box_NonRpcMsg& from);
-  void MergeFrom(const Box_NonRpcMsg& from);
+  void CopyFrom(const NonRpcMsg& from);
+  void MergeFrom(const NonRpcMsg& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -331,41 +331,41 @@ class Box_NonRpcMsg : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required string name = 1;
-  inline bool has_name() const;
-  inline void clear_name();
-  static const int kNameFieldNumber = 1;
-  inline const ::std::string& name() const;
-  inline void set_name(const ::std::string& value);
-  inline void set_name(const char* value);
-  inline void set_name(const char* value, size_t size);
-  inline ::std::string* mutable_name();
-  inline ::std::string* release_name();
-  inline void set_allocated_name(::std::string* name);
+  // required string msg_type = 1;
+  inline bool has_msg_type() const;
+  inline void clear_msg_type();
+  static const int kMsgTypeFieldNumber = 1;
+  inline const ::std::string& msg_type() const;
+  inline void set_msg_type(const ::std::string& value);
+  inline void set_msg_type(const char* value);
+  inline void set_msg_type(const char* value, size_t size);
+  inline ::std::string* mutable_msg_type();
+  inline ::std::string* release_msg_type();
+  inline void set_allocated_msg_type(::std::string* msg_type);
 
-  // required bytes data = 2;
-  inline bool has_data() const;
-  inline void clear_data();
-  static const int kDataFieldNumber = 2;
-  inline const ::std::string& data() const;
-  inline void set_data(const ::std::string& value);
-  inline void set_data(const char* value);
-  inline void set_data(const void* value, size_t size);
-  inline ::std::string* mutable_data();
-  inline ::std::string* release_data();
-  inline void set_allocated_data(::std::string* data);
+  // required bytes msg_body = 2;
+  inline bool has_msg_body() const;
+  inline void clear_msg_body();
+  static const int kMsgBodyFieldNumber = 2;
+  inline const ::std::string& msg_body() const;
+  inline void set_msg_body(const ::std::string& value);
+  inline void set_msg_body(const char* value);
+  inline void set_msg_body(const void* value, size_t size);
+  inline ::std::string* mutable_msg_body();
+  inline ::std::string* release_msg_body();
+  inline void set_allocated_msg_body(::std::string* msg_body);
 
-  // @@protoc_insertion_point(class_scope:thefox.rpc.Box.NonRpcMsg)
+  // @@protoc_insertion_point(class_scope:thefox.rpc.NonRpcMsg)
  private:
-  inline void set_has_name();
-  inline void clear_has_name();
-  inline void set_has_data();
-  inline void clear_has_data();
+  inline void set_has_msg_type();
+  inline void clear_has_msg_type();
+  inline void set_has_msg_body();
+  inline void clear_has_msg_body();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::std::string* name_;
-  ::std::string* data_;
+  ::std::string* msg_type_;
+  ::std::string* msg_body_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
@@ -375,7 +375,7 @@ class Box_NonRpcMsg : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_rpc_2eproto();
 
   void InitAsDefaultInstance();
-  static Box_NonRpcMsg* default_instance_;
+  static NonRpcMsg* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -431,8 +431,6 @@ class Box : public ::google::protobuf::Message {
 
   // nested types ----------------------------------------------------
 
-  typedef Box_NonRpcMsg NonRpcMsg;
-
   // accessors -------------------------------------------------------
 
   // optional .thefox.rpc.Call call = 1;
@@ -453,14 +451,14 @@ class Box : public ::google::protobuf::Message {
   inline ::thefox::rpc::Reply* release_reply();
   inline void set_allocated_reply(::thefox::rpc::Reply* reply);
 
-  // optional .thefox.rpc.Box.NonRpcMsg non_rpc_data = 3;
-  inline bool has_non_rpc_data() const;
-  inline void clear_non_rpc_data();
-  static const int kNonRpcDataFieldNumber = 3;
-  inline const ::thefox::rpc::Box_NonRpcMsg& non_rpc_data() const;
-  inline ::thefox::rpc::Box_NonRpcMsg* mutable_non_rpc_data();
-  inline ::thefox::rpc::Box_NonRpcMsg* release_non_rpc_data();
-  inline void set_allocated_non_rpc_data(::thefox::rpc::Box_NonRpcMsg* non_rpc_data);
+  // optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
+  inline bool has_nonrpc_msg() const;
+  inline void clear_nonrpc_msg();
+  static const int kNonrpcMsgFieldNumber = 3;
+  inline const ::thefox::rpc::NonRpcMsg& nonrpc_msg() const;
+  inline ::thefox::rpc::NonRpcMsg* mutable_nonrpc_msg();
+  inline ::thefox::rpc::NonRpcMsg* release_nonrpc_msg();
+  inline void set_allocated_nonrpc_msg(::thefox::rpc::NonRpcMsg* nonrpc_msg);
 
   // @@protoc_insertion_point(class_scope:thefox.rpc.Box)
  private:
@@ -468,14 +466,14 @@ class Box : public ::google::protobuf::Message {
   inline void clear_has_call();
   inline void set_has_reply();
   inline void clear_has_reply();
-  inline void set_has_non_rpc_data();
-  inline void clear_has_non_rpc_data();
+  inline void set_has_nonrpc_msg();
+  inline void clear_has_nonrpc_msg();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::thefox::rpc::Call* call_;
   ::thefox::rpc::Reply* reply_;
-  ::thefox::rpc::Box_NonRpcMsg* non_rpc_data_;
+  ::thefox::rpc::NonRpcMsg* nonrpc_msg_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -990,145 +988,145 @@ inline void Reply::set_allocated_response(::std::string* response) {
 
 // -------------------------------------------------------------------
 
-// Box_NonRpcMsg
+// NonRpcMsg
 
-// required string name = 1;
-inline bool Box_NonRpcMsg::has_name() const {
+// required string msg_type = 1;
+inline bool NonRpcMsg::has_msg_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void Box_NonRpcMsg::set_has_name() {
+inline void NonRpcMsg::set_has_msg_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void Box_NonRpcMsg::clear_has_name() {
+inline void NonRpcMsg::clear_has_msg_type() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void Box_NonRpcMsg::clear_name() {
-  if (name_ != &::google::protobuf::internal::kEmptyString) {
-    name_->clear();
+inline void NonRpcMsg::clear_msg_type() {
+  if (msg_type_ != &::google::protobuf::internal::kEmptyString) {
+    msg_type_->clear();
   }
-  clear_has_name();
+  clear_has_msg_type();
 }
-inline const ::std::string& Box_NonRpcMsg::name() const {
-  return *name_;
+inline const ::std::string& NonRpcMsg::msg_type() const {
+  return *msg_type_;
 }
-inline void Box_NonRpcMsg::set_name(const ::std::string& value) {
-  set_has_name();
-  if (name_ == &::google::protobuf::internal::kEmptyString) {
-    name_ = new ::std::string;
+inline void NonRpcMsg::set_msg_type(const ::std::string& value) {
+  set_has_msg_type();
+  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
+    msg_type_ = new ::std::string;
   }
-  name_->assign(value);
+  msg_type_->assign(value);
 }
-inline void Box_NonRpcMsg::set_name(const char* value) {
-  set_has_name();
-  if (name_ == &::google::protobuf::internal::kEmptyString) {
-    name_ = new ::std::string;
+inline void NonRpcMsg::set_msg_type(const char* value) {
+  set_has_msg_type();
+  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
+    msg_type_ = new ::std::string;
   }
-  name_->assign(value);
+  msg_type_->assign(value);
 }
-inline void Box_NonRpcMsg::set_name(const char* value, size_t size) {
-  set_has_name();
-  if (name_ == &::google::protobuf::internal::kEmptyString) {
-    name_ = new ::std::string;
+inline void NonRpcMsg::set_msg_type(const char* value, size_t size) {
+  set_has_msg_type();
+  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
+    msg_type_ = new ::std::string;
   }
-  name_->assign(reinterpret_cast<const char*>(value), size);
+  msg_type_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* Box_NonRpcMsg::mutable_name() {
-  set_has_name();
-  if (name_ == &::google::protobuf::internal::kEmptyString) {
-    name_ = new ::std::string;
+inline ::std::string* NonRpcMsg::mutable_msg_type() {
+  set_has_msg_type();
+  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
+    msg_type_ = new ::std::string;
   }
-  return name_;
+  return msg_type_;
 }
-inline ::std::string* Box_NonRpcMsg::release_name() {
-  clear_has_name();
-  if (name_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* NonRpcMsg::release_msg_type() {
+  clear_has_msg_type();
+  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = name_;
-    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = msg_type_;
+    msg_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
-inline void Box_NonRpcMsg::set_allocated_name(::std::string* name) {
-  if (name_ != &::google::protobuf::internal::kEmptyString) {
-    delete name_;
+inline void NonRpcMsg::set_allocated_msg_type(::std::string* msg_type) {
+  if (msg_type_ != &::google::protobuf::internal::kEmptyString) {
+    delete msg_type_;
   }
-  if (name) {
-    set_has_name();
-    name_ = name;
+  if (msg_type) {
+    set_has_msg_type();
+    msg_type_ = msg_type;
   } else {
-    clear_has_name();
-    name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    clear_has_msg_type();
+    msg_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
 }
 
-// required bytes data = 2;
-inline bool Box_NonRpcMsg::has_data() const {
+// required bytes msg_body = 2;
+inline bool NonRpcMsg::has_msg_body() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Box_NonRpcMsg::set_has_data() {
+inline void NonRpcMsg::set_has_msg_body() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void Box_NonRpcMsg::clear_has_data() {
+inline void NonRpcMsg::clear_has_msg_body() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void Box_NonRpcMsg::clear_data() {
-  if (data_ != &::google::protobuf::internal::kEmptyString) {
-    data_->clear();
+inline void NonRpcMsg::clear_msg_body() {
+  if (msg_body_ != &::google::protobuf::internal::kEmptyString) {
+    msg_body_->clear();
   }
-  clear_has_data();
+  clear_has_msg_body();
 }
-inline const ::std::string& Box_NonRpcMsg::data() const {
-  return *data_;
+inline const ::std::string& NonRpcMsg::msg_body() const {
+  return *msg_body_;
 }
-inline void Box_NonRpcMsg::set_data(const ::std::string& value) {
-  set_has_data();
-  if (data_ == &::google::protobuf::internal::kEmptyString) {
-    data_ = new ::std::string;
+inline void NonRpcMsg::set_msg_body(const ::std::string& value) {
+  set_has_msg_body();
+  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
+    msg_body_ = new ::std::string;
   }
-  data_->assign(value);
+  msg_body_->assign(value);
 }
-inline void Box_NonRpcMsg::set_data(const char* value) {
-  set_has_data();
-  if (data_ == &::google::protobuf::internal::kEmptyString) {
-    data_ = new ::std::string;
+inline void NonRpcMsg::set_msg_body(const char* value) {
+  set_has_msg_body();
+  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
+    msg_body_ = new ::std::string;
   }
-  data_->assign(value);
+  msg_body_->assign(value);
 }
-inline void Box_NonRpcMsg::set_data(const void* value, size_t size) {
-  set_has_data();
-  if (data_ == &::google::protobuf::internal::kEmptyString) {
-    data_ = new ::std::string;
+inline void NonRpcMsg::set_msg_body(const void* value, size_t size) {
+  set_has_msg_body();
+  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
+    msg_body_ = new ::std::string;
   }
-  data_->assign(reinterpret_cast<const char*>(value), size);
+  msg_body_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* Box_NonRpcMsg::mutable_data() {
-  set_has_data();
-  if (data_ == &::google::protobuf::internal::kEmptyString) {
-    data_ = new ::std::string;
+inline ::std::string* NonRpcMsg::mutable_msg_body() {
+  set_has_msg_body();
+  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
+    msg_body_ = new ::std::string;
   }
-  return data_;
+  return msg_body_;
 }
-inline ::std::string* Box_NonRpcMsg::release_data() {
-  clear_has_data();
-  if (data_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* NonRpcMsg::release_msg_body() {
+  clear_has_msg_body();
+  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = data_;
-    data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = msg_body_;
+    msg_body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
-inline void Box_NonRpcMsg::set_allocated_data(::std::string* data) {
-  if (data_ != &::google::protobuf::internal::kEmptyString) {
-    delete data_;
+inline void NonRpcMsg::set_allocated_msg_body(::std::string* msg_body) {
+  if (msg_body_ != &::google::protobuf::internal::kEmptyString) {
+    delete msg_body_;
   }
-  if (data) {
-    set_has_data();
-    data_ = data;
+  if (msg_body) {
+    set_has_msg_body();
+    msg_body_ = msg_body;
   } else {
-    clear_has_data();
-    data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    clear_has_msg_body();
+    msg_body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
 }
 
@@ -1212,41 +1210,41 @@ inline void Box::set_allocated_reply(::thefox::rpc::Reply* reply) {
   }
 }
 
-// optional .thefox.rpc.Box.NonRpcMsg non_rpc_data = 3;
-inline bool Box::has_non_rpc_data() const {
+// optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
+inline bool Box::has_nonrpc_msg() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Box::set_has_non_rpc_data() {
+inline void Box::set_has_nonrpc_msg() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Box::clear_has_non_rpc_data() {
+inline void Box::clear_has_nonrpc_msg() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Box::clear_non_rpc_data() {
-  if (non_rpc_data_ != NULL) non_rpc_data_->::thefox::rpc::Box_NonRpcMsg::Clear();
-  clear_has_non_rpc_data();
+inline void Box::clear_nonrpc_msg() {
+  if (nonrpc_msg_ != NULL) nonrpc_msg_->::thefox::rpc::NonRpcMsg::Clear();
+  clear_has_nonrpc_msg();
 }
-inline const ::thefox::rpc::Box_NonRpcMsg& Box::non_rpc_data() const {
-  return non_rpc_data_ != NULL ? *non_rpc_data_ : *default_instance_->non_rpc_data_;
+inline const ::thefox::rpc::NonRpcMsg& Box::nonrpc_msg() const {
+  return nonrpc_msg_ != NULL ? *nonrpc_msg_ : *default_instance_->nonrpc_msg_;
 }
-inline ::thefox::rpc::Box_NonRpcMsg* Box::mutable_non_rpc_data() {
-  set_has_non_rpc_data();
-  if (non_rpc_data_ == NULL) non_rpc_data_ = new ::thefox::rpc::Box_NonRpcMsg;
-  return non_rpc_data_;
+inline ::thefox::rpc::NonRpcMsg* Box::mutable_nonrpc_msg() {
+  set_has_nonrpc_msg();
+  if (nonrpc_msg_ == NULL) nonrpc_msg_ = new ::thefox::rpc::NonRpcMsg;
+  return nonrpc_msg_;
 }
-inline ::thefox::rpc::Box_NonRpcMsg* Box::release_non_rpc_data() {
-  clear_has_non_rpc_data();
-  ::thefox::rpc::Box_NonRpcMsg* temp = non_rpc_data_;
-  non_rpc_data_ = NULL;
+inline ::thefox::rpc::NonRpcMsg* Box::release_nonrpc_msg() {
+  clear_has_nonrpc_msg();
+  ::thefox::rpc::NonRpcMsg* temp = nonrpc_msg_;
+  nonrpc_msg_ = NULL;
   return temp;
 }
-inline void Box::set_allocated_non_rpc_data(::thefox::rpc::Box_NonRpcMsg* non_rpc_data) {
-  delete non_rpc_data_;
-  non_rpc_data_ = non_rpc_data;
-  if (non_rpc_data) {
-    set_has_non_rpc_data();
+inline void Box::set_allocated_nonrpc_msg(::thefox::rpc::NonRpcMsg* nonrpc_msg) {
+  delete nonrpc_msg_;
+  nonrpc_msg_ = nonrpc_msg;
+  if (nonrpc_msg) {
+    set_has_nonrpc_msg();
   } else {
-    clear_has_non_rpc_data();
+    clear_has_nonrpc_msg();
   }
 }
 

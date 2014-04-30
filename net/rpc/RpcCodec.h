@@ -76,6 +76,18 @@ public:
 		return result;
 	}
 	
+	static gpb::Message* createMessage(const std::string& type_name)
+	{
+		gpb::Message* message = NULL;
+		const gpb::Descriptor* descriptor = gpb::DescriptorPool::generated_pool()->FindMessageTypeByName(type_name);
+		if (descriptor) {
+			const gpb::Message* prototype = gpb::MessageFactory::generated_factory()->GetPrototype(descriptor);
+			if (prototype)
+				message = prototype->New();
+		}
+		return message;
+	}
+
 	static bool isValid(const char *buf, size_t bufLen) 
 	{
 		if (PROTOCOL_ID != (uint16_t)asInt16(buf))

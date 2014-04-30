@@ -15,16 +15,17 @@ message Reply {
 	optional bytes response = 3; // pb2-encoded message
 }
 
+// 非RPC数据
+message NonRpcMsg {
+	required string msg_type = 1;
+	required bytes msg_body = 2;
+};
+
 // 传输层传输的内容
 message Box {
-	message NonRpcMsg {
-		required string name = 1;
-		required bytes data = 2;
-	};
-
     optional Call call = 1;
     optional Reply reply = 2;
-	optional NonRpcMsg non_rpc_data = 3;
+	optional NonRpcMsg nonrpc_msg = 3;
 }
 
 

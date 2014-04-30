@@ -3,6 +3,7 @@
 
 #include <string>
 #include <google/protobuf/service.h>
+#include <net/Callbacks.h>
 
 namespace thefox
 {
@@ -62,8 +63,12 @@ class RpcController : public google::protobuf::RpcController
   // NotifyOnCancel() must be called no more than once per request.
   virtual void NotifyOnCancel(google::protobuf::Closure* callback);
 
+  TcpConnectionPtr connection() const { return _conn; }
+  void setConnection(TcpConnectionPtr conn) { _conn = conn; }
+
  private:
   std::string _reason;
+  TcpConnectionPtr _conn;
 };
 
 } // namespace thefox

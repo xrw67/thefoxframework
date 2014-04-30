@@ -8,6 +8,7 @@ using namespace thefox;
 
 RpcChannel::RpcChannel(RpcClient *rpcClient, const InetAddress &serverAddr)
 	: _client(new TcpClient(rpcClient->eventloop(), "thefox.rpcchannel"))
+	, _nonRpcMsgCallback(rpcClient->_nonRpcMsgCallback)
 {
 	_client->setConnectionCallback(std::bind(&RpcChannel::onConnection, this, _1));
 	_client->setMessageCallback(std::bind(&RpcChannel::onMessage, this, _1, _2, _3));
@@ -64,7 +65,9 @@ void RpcChannel::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Time
 		size_t bufLen = buf->readableBytes();
 		if (RpcCodec::parseFromArray(buf->peek(), bufLen, &box)) {
 			if (box.has_reply())
-				handleReplyMessage(box.reply(), Timestamp(Timestamp::now()));
+				handleReplyMessage(box.reply(), recvTime);
+			if (box.has_nonrpc_msg())
+				handleNonRpcMessage(box.nonrpc_msg(), recvTime);
 			buf->retrieve(bufLen);
 		}
 	}
@@ -90,5 +93,14 @@ void RpcChannel::handleReplyMessage(const rpc::Reply &reply, Timestamp recvTime)
 		reqWait->doneEvent.set();
 		if (reqWait->done)
 			reqWait->done->Run();
+	}
+}
+
+void RpcChannel::handleNonRpcMessage(const rpc::NonRpcMsg &nrm, Timestamp recvTime)
+{
+	gpb::Message* message = RpcCodec::createMessage(nrm.msg_type());
+	if (message) {
+		_nonRpcMsgCallback(nrm.msg_type(), message);
+		SAFE_DELETE(message);
 	}
 }
