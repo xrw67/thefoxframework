@@ -43,18 +43,6 @@ inline std::string createUuid()
 	return buf;
 }
 
-
-
-#ifdef WIN32
-    pwHUUID emptyUUID = {0};
-    if (!memcmp(&uuid,  &emptyUUID, sizeof(pwHUUID)))
-        UuidCreateSequential((UUID*)&uuid);
-#else
-    if (uuid_is_null(uuid))
-  		uuid_generate(uuid);
-#endif
-}
-
 } // namespace thefox
 
 #endif // _THEFOX_BASE_UUID_H_
