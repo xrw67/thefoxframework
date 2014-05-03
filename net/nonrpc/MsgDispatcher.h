@@ -2,8 +2,8 @@
 #define _THEFOX_NET_MSGQUEUE_MSGDISPATCHER_H_
 
 #include <map>
-#include <net/msgqueue/common.h>
-#include <net/msgqueue/MsgBox.h>
+#include <net/rpc/common.h>
+#include <net/nonrpcmsg/MsgBox.h>
 
 namespace thefox
 {

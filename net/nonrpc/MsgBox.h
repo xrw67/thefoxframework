@@ -4,7 +4,7 @@
 #include <base/Types.h>
 #include <base/Timestamp.h>
 #include <net/Callbacks.h>
-#include <net/msgqueue/common.h>
+#include <net/rpc/common.h>
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
 

@@ -1,9 +1,4 @@
-#ifndef _THEFOX_NET_MSGQUEUE_MQMANAGER_H_
-#define _THEFOX_NET_MSGQUEUE_MQMANAGER_H_
-
-#include <map>
-#include <base/MutexLock.h>
-#include <net/msgqueue/QueueTuple.h>
+#include <net/nonrpc/MqManager.h>
 
 namespace thefox
 {
@@ -16,7 +11,7 @@ public:
 	~MqManager()
 	{}
 
-	void pushMsg(const std::string &queueName, const TcpConnectionPtr &sender, gpb::Message *msg)
+	void pushMsg(const TcpConnectionPtr &sender, gpb::Message *msg)
 	{
 		MutexLockGuard lock(_mutex);
 		QueueTupleMap::iterator it = _queues.find(queueName);
@@ -29,7 +24,7 @@ public:
 		}
 	}
 
-	MsgBoxPtr popMsg(const std::string &queueName)
+	MsgBoxPtr popMsg()
 	{
 		MutexLockGuard lock(_mutex);
 		QueueTupleMap::iterator it = _queues.find(queueName);
@@ -40,25 +35,6 @@ public:
 		}
 	}
 	
-	QueueTuplePtr findQueue(const std::string &queueName)
-	{
-		MutexLockGuard lock(_mutex);
-		return findQueue_unlock(queueName);
-	}
-
-	size_t queueCount() 
-	{ 
-		MutexLockGuard lock(_mutex);
-		return _queues.size();
-	}
-	size_t queueLength(const std::string &queueName)
-	{
-		MutexLockGuard lock(_mutex);
-		QueueTuplePtr queue(findQueue_unlock(queueName));
-		if (queue)
-			return queue->size();
-		return 0;
-	}
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MqManager);
 	// not safe

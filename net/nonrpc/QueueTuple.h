@@ -13,7 +13,7 @@ namespace thefox
 class QueueTuple
 {
 public:
-	QueueTuple(const std::string &name)
+	QueueTuple()
 		:_name(name) 
 	{}
 	~QueueTuple()
