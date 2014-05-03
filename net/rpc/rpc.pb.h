@@ -23,6 +23,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
+#include <google/protobuf/service.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 
@@ -40,6 +41,7 @@ class NonRpcMsg;
 class Box;
 class Placeholder;
 class HeartBeath;
+class RpcList;
 
 // ===================================================================
 
@@ -629,6 +631,162 @@ class HeartBeath : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static HeartBeath* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RpcList : public ::google::protobuf::Message {
+ public:
+  RpcList();
+  virtual ~RpcList();
+
+  RpcList(const RpcList& from);
+
+  inline RpcList& operator=(const RpcList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RpcList& default_instance();
+
+  void Swap(RpcList* other);
+
+  // implements Message ----------------------------------------------
+
+  RpcList* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RpcList& from);
+  void MergeFrom(const RpcList& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string service = 1;
+  inline int service_size() const;
+  inline void clear_service();
+  static const int kServiceFieldNumber = 1;
+  inline const ::std::string& service(int index) const;
+  inline ::std::string* mutable_service(int index);
+  inline void set_service(int index, const ::std::string& value);
+  inline void set_service(int index, const char* value);
+  inline void set_service(int index, const char* value, size_t size);
+  inline ::std::string* add_service();
+  inline void add_service(const ::std::string& value);
+  inline void add_service(const char* value);
+  inline void add_service(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& service() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_service();
+
+  // @@protoc_insertion_point(class_scope:thefox.rpc.RpcList)
+ private:
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedPtrField< ::std::string> service_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_rpc_2eproto();
+  friend void protobuf_AssignDesc_rpc_2eproto();
+  friend void protobuf_ShutdownFile_rpc_2eproto();
+
+  void InitAsDefaultInstance();
+  static RpcList* default_instance_;
+};
+// ===================================================================
+
+class RpcService_Stub;
+
+class RpcService : public ::google::protobuf::Service {
+ protected:
+  // This class should be treated as an abstract interface.
+  inline RpcService() {};
+ public:
+  virtual ~RpcService();
+
+  typedef RpcService_Stub Stub;
+
+  static const ::google::protobuf::ServiceDescriptor* descriptor();
+
+  virtual void heartBeath(::google::protobuf::RpcController* controller,
+                       const ::thefox::rpc::HeartBeath* request,
+                       ::thefox::rpc::HeartBeath* response,
+                       ::google::protobuf::Closure* done);
+  virtual void listRpc(::google::protobuf::RpcController* controller,
+                       const ::thefox::rpc::Placeholder* request,
+                       ::thefox::rpc::RpcList* response,
+                       ::google::protobuf::Closure* done);
+
+  // implements Service ----------------------------------------------
+
+  const ::google::protobuf::ServiceDescriptor* GetDescriptor();
+  void CallMethod(const ::google::protobuf::MethodDescriptor* method,
+                  ::google::protobuf::RpcController* controller,
+                  const ::google::protobuf::Message* request,
+                  ::google::protobuf::Message* response,
+                  ::google::protobuf::Closure* done);
+  const ::google::protobuf::Message& GetRequestPrototype(
+    const ::google::protobuf::MethodDescriptor* method) const;
+  const ::google::protobuf::Message& GetResponsePrototype(
+    const ::google::protobuf::MethodDescriptor* method) const;
+
+ private:
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(RpcService);
+};
+
+class RpcService_Stub : public RpcService {
+ public:
+  RpcService_Stub(::google::protobuf::RpcChannel* channel);
+  RpcService_Stub(::google::protobuf::RpcChannel* channel,
+                   ::google::protobuf::Service::ChannelOwnership ownership);
+  ~RpcService_Stub();
+
+  inline ::google::protobuf::RpcChannel* channel() { return channel_; }
+
+  // implements RpcService ------------------------------------------
+
+  void heartBeath(::google::protobuf::RpcController* controller,
+                       const ::thefox::rpc::HeartBeath* request,
+                       ::thefox::rpc::HeartBeath* response,
+                       ::google::protobuf::Closure* done);
+  void listRpc(::google::protobuf::RpcController* controller,
+                       const ::thefox::rpc::Placeholder* request,
+                       ::thefox::rpc::RpcList* response,
+                       ::google::protobuf::Closure* done);
+ private:
+  ::google::protobuf::RpcChannel* channel_;
+  bool owns_channel_;
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(RpcService_Stub);
+};
+
+
 // ===================================================================
 
 
@@ -1255,6 +1413,54 @@ inline void Box::set_allocated_nonrpc_msg(::thefox::rpc::NonRpcMsg* nonrpc_msg) 
 // -------------------------------------------------------------------
 
 // HeartBeath
+
+// -------------------------------------------------------------------
+
+// RpcList
+
+// repeated string service = 1;
+inline int RpcList::service_size() const {
+  return service_.size();
+}
+inline void RpcList::clear_service() {
+  service_.Clear();
+}
+inline const ::std::string& RpcList::service(int index) const {
+  return service_.Get(index);
+}
+inline ::std::string* RpcList::mutable_service(int index) {
+  return service_.Mutable(index);
+}
+inline void RpcList::set_service(int index, const ::std::string& value) {
+  service_.Mutable(index)->assign(value);
+}
+inline void RpcList::set_service(int index, const char* value) {
+  service_.Mutable(index)->assign(value);
+}
+inline void RpcList::set_service(int index, const char* value, size_t size) {
+  service_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* RpcList::add_service() {
+  return service_.Add();
+}
+inline void RpcList::add_service(const ::std::string& value) {
+  service_.Add()->assign(value);
+}
+inline void RpcList::add_service(const char* value) {
+  service_.Add()->assign(value);
+}
+inline void RpcList::add_service(const char* value, size_t size) {
+  service_.Add()->assign(reinterpret_cast<const char*>(value), size);
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+RpcList::service() const {
+  return service_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+RpcList::mutable_service() {
+  return &service_;
+}
 
 
 // @@protoc_insertion_point(namespace_scope)

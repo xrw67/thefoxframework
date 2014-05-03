@@ -111,6 +111,9 @@
     <ClInclude Include="..\..\net\msgqueue\MsgDispatcher.h">
       <Filter>net\msgqueue</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\rpc\RpcService.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\EventLoop.cc">
@@ -157,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="..\..\net\msgqueue\msg.pb.cc">
       <Filter>net\msgqueue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\RpcService.cc">
+      <Filter>net\rpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

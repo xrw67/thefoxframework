@@ -9,7 +9,12 @@
 
 namespace thefox
 {
- 
+
+namespace rpc
+{
+class RpcList;
+}
+
 class RpcServiceManager
 {
 public:
@@ -18,6 +23,8 @@ public:
 
 	void registerService(gpb::Service *service);
 	gpb::Service *findService(const std::string &serviceName);
+
+	void getRpcList(rpc::RpcList *list);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcServiceManager);

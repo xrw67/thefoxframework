@@ -10,8 +10,7 @@
 namespace thefox
 {
 
-class RpcServiceManager;
-typedef std::shared_ptr<RpcServiceManager> ServiceManagerPtr;
+class RpcServiceImpl;
 
 class RpcServer
 {
@@ -22,6 +21,8 @@ public:
 	void registerService(gpb::Service *service);
 	bool start(const InetAddress &listen);
 	void sendNonRpcMsg(const TcpConnectionPtr &conn, const gpb::Message *message);
+	void setHearthBeathCallback(const HeartBeathCallback &cb);
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcServer);
 	void onConnection(const TcpConnectionPtr &conn);
@@ -32,6 +33,7 @@ private:
 
 	std::shared_ptr<TcpServer> _server;
 	ServiceManagerPtr _serviceManager;
+	std::unique_ptr<RpcServiceImpl> _rpcServiceImpl;
 };
 
 } // namespace thefox

@@ -1,5 +1,6 @@
 #include <net/rpc/RpcServiceManager.h>
 #include <google/protobuf/descriptor.h>
+#include <net/rpc/rpc.pb.h>
 
 using namespace thefox;
 
@@ -10,8 +11,7 @@ RpcServiceManager::RpcServiceManager()
 RpcServiceManager::~RpcServiceManager()
 {
     MutexLockGuard lock(_mutex);
-    for (ServiceMap::iterator it = _services.begin();
-         it != _services.end(); ++it) {
+    for (ServiceMap::iterator it = _services.begin(); it != _services.end(); ++it) {
         delete it->second;
     }
     _services.clear();
@@ -31,4 +31,11 @@ gpb::Service *RpcServiceManager::findService(const std::string &serviceName)
 		return it->second;
 
 	return NULL;
+}
+
+void RpcServiceManager::getRpcList(rpc::RpcList *list)
+{
+	MutexLockGuard lock(_mutex);
+    for (ServiceMap::iterator it = _services.begin(); it != _services.end(); ++it)
+        list->add_service(it->first);
 }

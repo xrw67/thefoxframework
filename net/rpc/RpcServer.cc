@@ -4,13 +4,17 @@
 #include <net/rpc/RpcCodec.h>
 #include <net/rpc/RpcChannel.h>
 #include <net/rpc/RpcServiceManager.h>
+#include <net/rpc/RpcService.h>
 
 using namespace thefox;
 
 RpcServer::RpcServer(EventLoop *loop)
 	: _server(new TcpServer(loop, "thefoxRpcServer"))
 	, _serviceManager(new RpcServiceManager())
-{}
+	, _rpcServiceImpl(new RpcServiceImpl(_serviceManager))
+{
+	registerService(_rpcServiceImpl.get());
+}
 
 RpcServer::~RpcServer() 
 {}
@@ -19,8 +23,12 @@ void RpcServer::registerService(gpb::Service *service)
 {
 	_serviceManager->registerService(service);
 }
+void RpcServer::setHearthBeathCallback(const HeartBeathCallback &cb)
+{ 
+	_rpcServiceImpl->setHearthBeathCallback(cb); 
+}
 
- bool RpcServer::start(const InetAddress &listenAddr)
+bool RpcServer::start(const InetAddress &listenAddr)
 {
 	_server->setConnectionCallback(std::bind(&RpcServer::onConnection, this, _1));
 	_server->setMessageCallback(std::bind(&RpcServer::onMessage, this, _1, _2, _3));

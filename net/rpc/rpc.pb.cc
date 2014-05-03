@@ -39,6 +39,10 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* HeartBeath_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   HeartBeath_reflection_ = NULL;
+const ::google::protobuf::Descriptor* RpcList_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  RpcList_reflection_ = NULL;
+const ::google::protobuf::ServiceDescriptor* RpcService_descriptor_ = NULL;
 
 }  // namespace
 
@@ -145,6 +149,22 @@ void protobuf_AssignDesc_rpc_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(HeartBeath));
+  RpcList_descriptor_ = file->message_type(6);
+  static const int RpcList_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RpcList, service_),
+  };
+  RpcList_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      RpcList_descriptor_,
+      RpcList::default_instance_,
+      RpcList_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RpcList, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RpcList, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(RpcList));
+  RpcService_descriptor_ = file->service(0);
 }
 
 namespace {
@@ -169,6 +189,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     Placeholder_descriptor_, &Placeholder::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     HeartBeath_descriptor_, &HeartBeath::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    RpcList_descriptor_, &RpcList::default_instance());
 }
 
 }  // namespace
@@ -186,6 +208,8 @@ void protobuf_ShutdownFile_rpc_2eproto() {
   delete Placeholder_reflection_;
   delete HeartBeath::default_instance_;
   delete HeartBeath_reflection_;
+  delete RpcList::default_instance_;
+  delete RpcList_reflection_;
 }
 
 void protobuf_AddDesc_rpc_2eproto() {
@@ -203,7 +227,11 @@ void protobuf_AddDesc_rpc_2eproto() {
     "\003Box\022\036\n\004call\030\001 \001(\0132\020.thefox.rpc.Call\022 \n\005"
     "reply\030\002 \001(\0132\021.thefox.rpc.Reply\022)\n\nnonrpc"
     "_msg\030\003 \001(\0132\025.thefox.rpc.NonRpcMsg\"\r\n\013Pla"
-    "ceholder\"\014\n\nHeartBeath", 342);
+    "ceholder\"\014\n\nHeartBeath\"\032\n\007RpcList\022\017\n\007ser"
+    "vice\030\001 \003(\t2\203\001\n\nRpcService\022<\n\nheartBeath\022"
+    "\026.thefox.rpc.HeartBeath\032\026.thefox.rpc.Hea"
+    "rtBeath\0227\n\007listRpc\022\027.thefox.rpc.Placehol"
+    "der\032\023.thefox.rpc.RpcListB\003\200\001\001", 509);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "rpc.proto", &protobuf_RegisterTypes);
   Call::default_instance_ = new Call();
@@ -212,12 +240,14 @@ void protobuf_AddDesc_rpc_2eproto() {
   Box::default_instance_ = new Box();
   Placeholder::default_instance_ = new Placeholder();
   HeartBeath::default_instance_ = new HeartBeath();
+  RpcList::default_instance_ = new RpcList();
   Call::default_instance_->InitAsDefaultInstance();
   Reply::default_instance_->InitAsDefaultInstance();
   NonRpcMsg::default_instance_->InitAsDefaultInstance();
   Box::default_instance_->InitAsDefaultInstance();
   Placeholder::default_instance_->InitAsDefaultInstance();
   HeartBeath::default_instance_->InitAsDefaultInstance();
+  RpcList::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_rpc_2eproto);
 }
 
@@ -1791,6 +1821,326 @@ void HeartBeath::Swap(HeartBeath* other) {
   return metadata;
 }
 
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int RpcList::kServiceFieldNumber;
+#endif  // !_MSC_VER
+
+RpcList::RpcList()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void RpcList::InitAsDefaultInstance() {
+}
+
+RpcList::RpcList(const RpcList& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void RpcList::SharedCtor() {
+  _cached_size_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+RpcList::~RpcList() {
+  SharedDtor();
+}
+
+void RpcList::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void RpcList::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* RpcList::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RpcList_descriptor_;
+}
+
+const RpcList& RpcList::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_rpc_2eproto();
+  return *default_instance_;
+}
+
+RpcList* RpcList::default_instance_ = NULL;
+
+RpcList* RpcList::New() const {
+  return new RpcList;
+}
+
+void RpcList::Clear() {
+  service_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool RpcList::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated string service = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_service:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_service()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->service(this->service_size() - 1).data(),
+            this->service(this->service_size() - 1).length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(10)) goto parse_service;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void RpcList::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // repeated string service = 1;
+  for (int i = 0; i < this->service_size(); i++) {
+  ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    this->service(i).data(), this->service(i).length(),
+    ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->service(i), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* RpcList::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // repeated string service = 1;
+  for (int i = 0; i < this->service_size(); i++) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->service(i).data(), this->service(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(1, this->service(i), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int RpcList::ByteSize() const {
+  int total_size = 0;
+
+  // repeated string service = 1;
+  total_size += 1 * this->service_size();
+  for (int i = 0; i < this->service_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->service(i));
+  }
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void RpcList::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const RpcList* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const RpcList*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void RpcList::MergeFrom(const RpcList& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  service_.MergeFrom(from.service_);
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void RpcList::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void RpcList::CopyFrom(const RpcList& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RpcList::IsInitialized() const {
+
+  return true;
+}
+
+void RpcList::Swap(RpcList* other) {
+  if (other != this) {
+    service_.Swap(&other->service_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata RpcList::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = RpcList_descriptor_;
+  metadata.reflection = RpcList_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+RpcService::~RpcService() {}
+
+const ::google::protobuf::ServiceDescriptor* RpcService::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RpcService_descriptor_;
+}
+
+const ::google::protobuf::ServiceDescriptor* RpcService::GetDescriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return RpcService_descriptor_;
+}
+
+void RpcService::heartBeath(::google::protobuf::RpcController* controller,
+                         const ::thefox::rpc::HeartBeath*,
+                         ::thefox::rpc::HeartBeath*,
+                         ::google::protobuf::Closure* done) {
+  controller->SetFailed("Method heartBeath() not implemented.");
+  done->Run();
+}
+
+void RpcService::listRpc(::google::protobuf::RpcController* controller,
+                         const ::thefox::rpc::Placeholder*,
+                         ::thefox::rpc::RpcList*,
+                         ::google::protobuf::Closure* done) {
+  controller->SetFailed("Method listRpc() not implemented.");
+  done->Run();
+}
+
+void RpcService::CallMethod(const ::google::protobuf::MethodDescriptor* method,
+                             ::google::protobuf::RpcController* controller,
+                             const ::google::protobuf::Message* request,
+                             ::google::protobuf::Message* response,
+                             ::google::protobuf::Closure* done) {
+  GOOGLE_DCHECK_EQ(method->service(), RpcService_descriptor_);
+  switch(method->index()) {
+    case 0:
+      heartBeath(controller,
+             ::google::protobuf::down_cast<const ::thefox::rpc::HeartBeath*>(request),
+             ::google::protobuf::down_cast< ::thefox::rpc::HeartBeath*>(response),
+             done);
+      break;
+    case 1:
+      listRpc(controller,
+             ::google::protobuf::down_cast<const ::thefox::rpc::Placeholder*>(request),
+             ::google::protobuf::down_cast< ::thefox::rpc::RpcList*>(response),
+             done);
+      break;
+    default:
+      GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
+      break;
+  }
+}
+
+const ::google::protobuf::Message& RpcService::GetRequestPrototype(
+    const ::google::protobuf::MethodDescriptor* method) const {
+  GOOGLE_DCHECK_EQ(method->service(), descriptor());
+  switch(method->index()) {
+    case 0:
+      return ::thefox::rpc::HeartBeath::default_instance();
+    case 1:
+      return ::thefox::rpc::Placeholder::default_instance();
+    default:
+      GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
+      return *reinterpret_cast< ::google::protobuf::Message*>(NULL);
+  }
+}
+
+const ::google::protobuf::Message& RpcService::GetResponsePrototype(
+    const ::google::protobuf::MethodDescriptor* method) const {
+  GOOGLE_DCHECK_EQ(method->service(), descriptor());
+  switch(method->index()) {
+    case 0:
+      return ::thefox::rpc::HeartBeath::default_instance();
+    case 1:
+      return ::thefox::rpc::RpcList::default_instance();
+    default:
+      GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
+      return *reinterpret_cast< ::google::protobuf::Message*>(NULL);
+  }
+}
+
+RpcService_Stub::RpcService_Stub(::google::protobuf::RpcChannel* channel)
+  : channel_(channel), owns_channel_(false) {}
+RpcService_Stub::RpcService_Stub(
+    ::google::protobuf::RpcChannel* channel,
+    ::google::protobuf::Service::ChannelOwnership ownership)
+  : channel_(channel),
+    owns_channel_(ownership == ::google::protobuf::Service::STUB_OWNS_CHANNEL) {}
+RpcService_Stub::~RpcService_Stub() {
+  if (owns_channel_) delete channel_;
+}
+
+void RpcService_Stub::heartBeath(::google::protobuf::RpcController* controller,
+                              const ::thefox::rpc::HeartBeath* request,
+                              ::thefox::rpc::HeartBeath* response,
+                              ::google::protobuf::Closure* done) {
+  channel_->CallMethod(descriptor()->method(0),
+                       controller, request, response, done);
+}
+void RpcService_Stub::listRpc(::google::protobuf::RpcController* controller,
+                              const ::thefox::rpc::Placeholder* request,
+                              ::thefox::rpc::RpcList* response,
+                              ::google::protobuf::Closure* done) {
+  channel_->CallMethod(descriptor()->method(1),
+                       controller, request, response, done);
+}
 
 // @@protoc_insertion_point(namespace_scope)
 

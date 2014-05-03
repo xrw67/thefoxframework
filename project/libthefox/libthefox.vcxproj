@@ -37,6 +37,7 @@
     <ClInclude Include="..\..\net\rpc\RpcCodec.h" />
     <ClInclude Include="..\..\net\rpc\RpcController.h" />
     <ClInclude Include="..\..\net\rpc\RpcServer.h" />
+    <ClInclude Include="..\..\net\rpc\RpcService.h" />
     <ClInclude Include="..\..\net\rpc\RpcServiceManager.h" />
     <ClInclude Include="..\..\net\SocketOps.h" />
     <ClInclude Include="..\..\net\TcpClient.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="..\..\net\rpc\RpcClient.cc" />
     <ClCompile Include="..\..\net\rpc\RpcController.cc" />
     <ClCompile Include="..\..\net\rpc\RpcServer.cc" />
+    <ClCompile Include="..\..\net\rpc\RpcService.cc" />
     <ClCompile Include="..\..\net\rpc\RpcServiceManager.cc" />
     <ClCompile Include="..\..\net\TcpClient.cc" />
     <ClCompile Include="..\..\net\TcpServer.cc" />
