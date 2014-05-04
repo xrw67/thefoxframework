@@ -1,0 +1,120 @@
+﻿Build started 2014-5-4 21:04:22.
+Project "C:\mydev\thefoxframework.osc\project\testRpcClient\testRpcClient.vcxproj" on node 2 (build target(s)).
+InitializeBuildStatus:
+  Creating "Debug\testRpcClient.unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\net\rpc\test\echo.pb.cc ..\..\net\rpc\test\testrpcclient.cc
+  testrpcclient.cc
+c:\mydev\thefoxframework.osc\base\types.h : warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  echo.pb.cc
+c:\program files\microsoft visual studio 10.0\vc\include\xutility(2227): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+          c:\program files\microsoft visual studio 10.0\vc\include\xutility(2212) : see declaration of 'std::_Copy_impl'
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(785) : see reference to function template instantiation '_OutIt std::copy<const Element[],Element[]>(_InIt,_InIt,_OutIt)' being compiled
+          with
+          [
+              _OutIt=google::protobuf::uint64 [],
+              Element=google::protobuf::uint64,
+              _InIt=const google::protobuf::uint64 []
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(784) : while compiling class template member function 'void google::protobuf::internal::ElementCopier<Element>::operator ()(Element [],const Element [],int)'
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(777) : see reference to class template instantiation 'google::protobuf::internal::ElementCopier<Element>' being compiled
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(776) : while compiling class template member function 'void google::protobuf::RepeatedField<Element>::CopyArray(Element [],const Element [],int)'
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(770) : while compiling class template member function 'void google::protobuf::RepeatedField<Element>::MoveArray(Element [],Element [],int)'
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(749) : while compiling class template member function 'void google::protobuf::RepeatedField<Element>::Reserve(int)'
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(590) : while compiling class template member function 'int google::protobuf::RepeatedField<Element>::size(void) const'
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\wire_format_lite_inl.h(250) : see reference to class template instantiation 'google::protobuf::RepeatedField<Element>' being compiled
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\wire_format_lite_inl.h(303) : see reference to function template instantiation 'bool google::protobuf::internal::WireFormatLite::ReadRepeatedFixedSizePrimitive<google::protobuf::uint64,TYPE_FIXED64>(int,google::protobuf::uint32,google::protobuf::io::CodedInputStream *,google::protobuf::RepeatedField<Element> *)' being compiled
+          with
+          [
+              Element=google::protobuf::uint64
+          ]
+c:\program files\microsoft visual studio 10.0\vc\include\xutility(2227): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+          c:\program files\microsoft visual studio 10.0\vc\include\xutility(2212) : see declaration of 'std::_Copy_impl'
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(785) : see reference to function template instantiation '_OutIt std::copy<const Element[],Element[]>(_InIt,_InIt,_OutIt)' being compiled
+          with
+          [
+              _OutIt=google::protobuf::int64 [],
+              Element=google::protobuf::int64,
+              _InIt=const google::protobuf::int64 []
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(784) : while compiling class template member function 'void google::protobuf::internal::ElementCopier<Element>::operator ()(Element [],const Element [],int)'
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(777) : see reference to class template instantiation 'google::protobuf::internal::ElementCopier<Element>' being compiled
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(776) : while compiling class template member function 'void google::protobuf::RepeatedField<Element>::CopyArray(Element [],const Element [],int)'
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(770) : while compiling class template member function 'void google::protobuf::RepeatedField<Element>::MoveArray(Element [],Element [],int)'
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(749) : while compiling class template member function 'void google::protobuf::RepeatedField<Element>::Reserve(int)'
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\repeated_field.h(590) : while compiling class template member function 'int google::protobuf::RepeatedField<Element>::size(void) const'
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\wire_format_lite_inl.h(250) : see reference to class template instantiation 'google::protobuf::RepeatedField<Element>' being compiled
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+          c:\mydev\thefoxframework.osc\google\protobuf\wire_format_lite_inl.h(305) : see reference to function template instantiation 'bool google::protobuf::internal::WireFormatLite::ReadRepeatedFixedSizePrimitive<google::protobuf::int64,TYPE_SFIXED64>(int,google::protobuf::uint32,google::protobuf::io::CodedInputStream *,google::protobuf::RepeatedField<Element> *)' being compiled
+          with
+          [
+              Element=google::protobuf::int64
+          ]
+  Generating Code...
+ManifestResourceCompile:
+  C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\testRpcClient.exe.embed.manifest.res" Debug\testRpcClient_manifest.rc 
+Link:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\mydev\thefoxframework.osc\project\Debug\testRpcClient.exe" /INCREMENTAL /NOLOGO ..\debug\libthefox.lib WS2_32.lib ..\libprotobuf.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\testRpcClient.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\mydev\thefoxframework.osc\project\Debug\testRpcClient.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\mydev\thefoxframework.osc\project\Debug\testRpcClient.lib" /MACHINE:X86 Debug\testRpcClient.exe.embed.manifest.res
+  Debug\echo.pb.obj
+  Debug\testrpcclient.obj
+LINK : fatal error LNK1104: cannot open file '..\libprotobuf.lib'
+Done Building Project "C:\mydev\thefoxframework.osc\project\testRpcClient\testRpcClient.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:04.76

@@ -25,7 +25,7 @@ public:
 				   ::google::protobuf::Message* response,
 				   ::google::protobuf::Closure* done);
 
-	void setMqManager(const MqManagerPtr &mqm);
+	void setTaskManager(const TaskManagerPtr &taskManager);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcChannel);
@@ -36,7 +36,7 @@ private:
 	TcpConnectionPtr _conn;
 	std::shared_ptr<TcpClient> _client;
 	RpcClient *_rpcClient;
-	MqManagerPtr _mqManager;
+	TaskManagerPtr _taskManager;
 };
 
 } // namespace thefox

@@ -1,14 +1,14 @@
 #include <net/rpc/RpcClient.h>
 #include <net/TcpConnection.h>
 #include <net/rpc/RpcChannel.h>
-#include <net/rpc/MqManager.h>
+#include <net/rpc/TaskManager.h>
 
 using namespace thefox;
 
 RpcClient::RpcClient(EventLoop *loop)
 	: _loop(loop)
 {
-	_mqManager = std::make_shared<MqManager>(
+	_taskManager = std::make_shared<TaskManager>(
 		NULL, std::bind(&RpcClient::handleReplyMessage, this, _1, _2, _3));
 }
 
@@ -17,7 +17,7 @@ RpcClient::~RpcClient()
 
 void RpcClient::registerChannel(RpcChannel *channel)
 {
-	channel->setMqManager(_mqManager);
+	channel->setTaskManager(_taskManager);
 	_channels.push_back(channel);
 }
 

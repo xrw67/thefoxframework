@@ -34,7 +34,7 @@ private:
 	std::shared_ptr<TcpServer> _server;
 	ServiceManagerPtr _serviceManager;
 	std::unique_ptr<RpcServiceImpl> _rpcServiceImpl;
-	MqManagerPtr _mqManager;
+	TaskManagerPtr _taskManager;
 };
 
 } // namespace thefox

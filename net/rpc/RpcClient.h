@@ -12,7 +12,7 @@ namespace thefox
 {
 
 class EventLoop;
-class MqManager;
+class TaskManager;
 
 class RpcClient
 {
@@ -58,7 +58,7 @@ private:
 	RequestWaitMap _requests;
 	EventLoop *_loop;
 	RpcChannelList _channels;
-	MqManagerPtr _mqManager;
+	TaskManagerPtr _taskManager;
 };
 
 } // namespace thefox

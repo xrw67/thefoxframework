@@ -5,7 +5,7 @@
 #include <net/rpc/RpcChannel.h>
 #include <net/rpc/RpcServiceManager.h>
 #include <net/rpc/RpcService.h>
-#include <net/rpc/MqManager.h>
+#include <net/rpc/TaskManager.h>
 
 using namespace thefox;
 
@@ -15,7 +15,7 @@ RpcServer::RpcServer(EventLoop *loop)
 	, _rpcServiceImpl(new RpcServiceImpl(_serviceManager))
 {
 	registerService(_rpcServiceImpl.get());
-	_mqManager = std::make_shared<MqManager>(
+	_taskManager = std::make_shared<TaskManager>(
 		std::bind(&RpcServer::handleCallMessage, this, _1, _2, _3), NULL);
 }
 
@@ -64,7 +64,7 @@ void RpcServer::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Times
 		BoxPtr box(new rpc::Box());
 		size_t bufLen = buf->readableBytes();
 		if (RpcCodec::parseFromArray(buf->peek(), bufLen, box)) {
-			_mqManager->pushBox(conn, recvTime, box);
+			_taskManager->pushBox(conn, recvTime, box);
 			buf->retrieve(bufLen);
 		}
 	}

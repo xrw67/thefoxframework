@@ -90,13 +90,13 @@
     <ClInclude Include="..\..\net\rpc\RpcService.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\rpc\MqManager.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\MsgBox.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\rpc\OobDispatcher.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\Task.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\TaskManager.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,7 +146,7 @@
     <ClCompile Include="..\..\net\rpc\RpcService.cc">
       <Filter>net\rpc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\rpc\MqManager.cc">
+    <ClCompile Include="..\..\net\rpc\TaskManager.cc">
       <Filter>net\rpc</Filter>
     </ClCompile>
   </ItemGroup>

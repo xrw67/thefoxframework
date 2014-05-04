@@ -4,7 +4,7 @@
 #include <map>
 #include <base/Types.h>
 #include <net/rpc/common.h>
-#include <net/rpc/MsgBox.h>
+#include <net/rpc/Task.h>
 #include <net/rpc/RpcCodec.h>
 #include <net/rpc/rpc.pb.h>
 

@@ -20,8 +20,8 @@ class RpcServiceManager;
 typedef std::shared_ptr<RpcServiceManager> ServiceManagerPtr;
 typedef std::shared_ptr<rpc::Box> BoxPtr;
 
-class MqManager;
-typedef std::shared_ptr<MqManager> MqManagerPtr;
+class TaskManager;
+typedef std::shared_ptr<TaskManager> TaskManagerPtr;
 
 typedef std::function<void(const TcpConnectionPtr &sender, 
 							const std::string &type, 

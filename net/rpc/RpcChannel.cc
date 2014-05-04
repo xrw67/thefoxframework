@@ -3,7 +3,7 @@
 #include <net/rpc/RpcServiceManager.h>
 #include <net/rpc/RpcClient.h>
 #include <net/rpc/RpcCodec.h>
-#include <net/rpc/MqManager.h>
+#include <net/rpc/TaskManager.h>
 
 using namespace thefox;
 
@@ -34,9 +34,9 @@ void RpcChannel::CallMethod(const ::google::protobuf::MethodDescriptor* method,
 	_rpcClient->CallMethod(_conn, method, controller, request, response, done);
 }
 
-void RpcChannel::setMqManager(const MqManagerPtr &mqManager)
+void RpcChannel::setTaskManager(const TaskManagerPtr &taskManager)
 {
-	_mqManager = mqManager; 
+	_taskManager = taskManager; 
 }
 
 void RpcChannel::onConnection(const TcpConnectionPtr &conn)
@@ -53,7 +53,7 @@ void RpcChannel::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Time
 		BoxPtr box(new rpc::Box());
 		size_t bufLen = buf->readableBytes();
 		if (RpcCodec::parseFromArray(buf->peek(), bufLen, box)) {
-			_mqManager->pushBox(conn, recvTime, box);
+			_taskManager->pushBox(conn, recvTime, box);
 			buf->retrieve(bufLen);
 		}
 	}

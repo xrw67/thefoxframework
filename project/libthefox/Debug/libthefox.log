@@ -1,0 +1,39 @@
+﻿Build started 2014-5-5 0:27:18.
+Project "C:\mydev\thefoxframework.osc\project\libthefox\libthefox.vcxproj" on node 2 (build target(s)).
+InitializeBuildStatus:
+  Creating "Debug\libthefox.unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /wd4996 /wd4819 /analyze- /errorReport:prompt ..\..\net\rpc\TaskManager.cc ..\..\net\rpc\RpcChannel.cc ..\..\net\rpc\RpcClient.cc ..\..\net\rpc\RpcServer.cc ..\..\net\rpc\RpcService.cc ..\..\net\rpc\RpcServiceManager.cc
+  RpcServiceManager.cc
+  RpcService.cc
+  RpcServer.cc
+  RpcClient.cc
+  RpcChannel.cc
+  TaskManager.cc
+  Generating Code...
+Lib:
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"C:\mydev\thefoxframework.osc\project\Debug\libthefox.lib" /NOLOGO Debug\LogFile.obj
+  Debug\Logger.obj
+  Debug\LogStream.obj
+  Debug\EventLoop.obj
+  Debug\Iocp.obj
+  Debug\TaskManager.obj
+  Debug\rpc.pb.obj
+  Debug\RpcChannel.obj
+  Debug\RpcClient.obj
+  Debug\RpcController.obj
+  Debug\RpcServer.obj
+  Debug\RpcService.obj
+  Debug\RpcServiceManager.obj
+  Debug\TcpClient.obj
+  Debug\TcpServer.obj
+  Debug\TimerQueue.obj
+  libthefox.vcxproj -> C:\mydev\thefoxframework.osc\project\Debug\libthefox.lib
+FinalizeBuildStatus:
+  Deleting file "Debug\libthefox.unsuccessfulbuild".
+  Touching "Debug\libthefox.lastbuildstate".
+Done Building Project "C:\mydev\thefoxframework.osc\project\libthefox\libthefox.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:10.92
