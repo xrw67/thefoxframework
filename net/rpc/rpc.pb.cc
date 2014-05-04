@@ -27,9 +27,10 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Reply_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Reply_reflection_ = NULL;
-const ::google::protobuf::Descriptor* NonRpcMsg_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* Reply_Result_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* OutOfBand_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  NonRpcMsg_reflection_ = NULL;
+  OutOfBand_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Box_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Box_reflection_ = NULL;
@@ -88,27 +89,28 @@ void protobuf_AssignDesc_rpc_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Reply));
-  NonRpcMsg_descriptor_ = file->message_type(2);
-  static const int NonRpcMsg_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NonRpcMsg, msg_type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NonRpcMsg, msg_body_),
+  Reply_Result_descriptor_ = Reply_descriptor_->enum_type(0);
+  OutOfBand_descriptor_ = file->message_type(2);
+  static const int OutOfBand_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, body_),
   };
-  NonRpcMsg_reflection_ =
+  OutOfBand_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      NonRpcMsg_descriptor_,
-      NonRpcMsg::default_instance_,
-      NonRpcMsg_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NonRpcMsg, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NonRpcMsg, _unknown_fields_),
+      OutOfBand_descriptor_,
+      OutOfBand::default_instance_,
+      OutOfBand_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(NonRpcMsg));
+      sizeof(OutOfBand));
   Box_descriptor_ = file->message_type(3);
   static const int Box_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, call_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, reply_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, nonrpc_msg_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, oob_),
   };
   Box_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -182,7 +184,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Reply_descriptor_, &Reply::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    NonRpcMsg_descriptor_, &NonRpcMsg::default_instance());
+    OutOfBand_descriptor_, &OutOfBand::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Box_descriptor_, &Box::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -200,8 +202,8 @@ void protobuf_ShutdownFile_rpc_2eproto() {
   delete Call_reflection_;
   delete Reply::default_instance_;
   delete Reply_reflection_;
-  delete NonRpcMsg::default_instance_;
-  delete NonRpcMsg_reflection_;
+  delete OutOfBand::default_instance_;
+  delete OutOfBand_reflection_;
   delete Box::default_instance_;
   delete Box_reflection_;
   delete Placeholder::default_instance_;
@@ -221,29 +223,32 @@ void protobuf_AddDesc_rpc_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\trpc.proto\022\nthefox.rpc\"D\n\004Call\022\n\n\002id\030\001 "
     "\002(\003\022\017\n\007service\030\002 \002(\t\022\016\n\006method\030\003 \002(\t\022\017\n\007"
-    "request\030\004 \001(\014\"5\n\005Reply\022\n\n\002id\030\001 \002(\003\022\016\n\006re"
-    "sult\030\002 \002(\010\022\020\n\010response\030\003 \001(\014\"/\n\tNonRpcMs"
-    "g\022\020\n\010msg_type\030\001 \002(\t\022\020\n\010msg_body\030\002 \002(\014\"r\n"
-    "\003Box\022\036\n\004call\030\001 \001(\0132\020.thefox.rpc.Call\022 \n\005"
-    "reply\030\002 \001(\0132\021.thefox.rpc.Reply\022)\n\nnonrpc"
-    "_msg\030\003 \001(\0132\025.thefox.rpc.NonRpcMsg\"\r\n\013Pla"
-    "ceholder\"\014\n\nHeartBeath\"\032\n\007RpcList\022\017\n\007ser"
-    "vice\030\001 \003(\t2\203\001\n\nRpcService\022<\n\nheartBeath\022"
-    "\026.thefox.rpc.HeartBeath\032\026.thefox.rpc.Hea"
-    "rtBeath\0227\n\007listRpc\022\027.thefox.rpc.Placehol"
-    "der\032\023.thefox.rpc.RpcListB\003\200\001\001", 509);
+    "request\030\004 \001(\014\"\254\001\n\005Reply\022\n\n\002id\030\001 \002(\003\022(\n\006r"
+    "esult\030\002 \002(\0162\030.thefox.rpc.Reply.Result\022\020\n"
+    "\010response\030\003 \001(\014\"[\n\006Result\022\007\n\003kOk\020\000\022\n\n\006kE"
+    "rror\020\001\022\024\n\020kServiceNotFound\020\002\022\023\n\017kMethodN"
+    "otFound\020\003\022\021\n\rkClientFailed\020\004\"\'\n\tOutOfBan"
+    "d\022\014\n\004type\030\001 \002(\t\022\014\n\004body\030\002 \002(\014\"k\n\003Box\022\036\n\004"
+    "call\030\001 \001(\0132\020.thefox.rpc.Call\022 \n\005reply\030\002 "
+    "\001(\0132\021.thefox.rpc.Reply\022\"\n\003oob\030\003 \001(\0132\025.th"
+    "efox.rpc.OutOfBand\"\r\n\013Placeholder\"\014\n\nHea"
+    "rtBeath\"\032\n\007RpcList\022\017\n\007service\030\001 \003(\t2\203\001\n\n"
+    "RpcService\022<\n\nheartBeath\022\026.thefox.rpc.He"
+    "artBeath\032\026.thefox.rpc.HeartBeath\0227\n\007list"
+    "Rpc\022\027.thefox.rpc.Placeholder\032\023.thefox.rp"
+    "c.RpcListB\003\200\001\001", 614);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "rpc.proto", &protobuf_RegisterTypes);
   Call::default_instance_ = new Call();
   Reply::default_instance_ = new Reply();
-  NonRpcMsg::default_instance_ = new NonRpcMsg();
+  OutOfBand::default_instance_ = new OutOfBand();
   Box::default_instance_ = new Box();
   Placeholder::default_instance_ = new Placeholder();
   HeartBeath::default_instance_ = new HeartBeath();
   RpcList::default_instance_ = new RpcList();
   Call::default_instance_->InitAsDefaultInstance();
   Reply::default_instance_->InitAsDefaultInstance();
-  NonRpcMsg::default_instance_->InitAsDefaultInstance();
+  OutOfBand::default_instance_->InitAsDefaultInstance();
   Box::default_instance_->InitAsDefaultInstance();
   Placeholder::default_instance_->InitAsDefaultInstance();
   HeartBeath::default_instance_->InitAsDefaultInstance();
@@ -631,6 +636,33 @@ void Call::Swap(Call* other) {
 
 // ===================================================================
 
+const ::google::protobuf::EnumDescriptor* Reply_Result_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Reply_Result_descriptor_;
+}
+bool Reply_Result_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#ifndef _MSC_VER
+const Reply_Result Reply::kOk;
+const Reply_Result Reply::kError;
+const Reply_Result Reply::kServiceNotFound;
+const Reply_Result Reply::kMethodNotFound;
+const Reply_Result Reply::kClientFailed;
+const Reply_Result Reply::Result_MIN;
+const Reply_Result Reply::Result_MAX;
+const int Reply::Result_ARRAYSIZE;
+#endif  // _MSC_VER
 #ifndef _MSC_VER
 const int Reply::kIdFieldNumber;
 const int Reply::kResultFieldNumber;
@@ -654,7 +686,7 @@ Reply::Reply(const Reply& from)
 void Reply::SharedCtor() {
   _cached_size_ = 0;
   id_ = GOOGLE_LONGLONG(0);
-  result_ = false;
+  result_ = 0;
   response_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -695,7 +727,7 @@ Reply* Reply::New() const {
 void Reply::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     id_ = GOOGLE_LONGLONG(0);
-    result_ = false;
+    result_ = 0;
     if (has_response()) {
       if (response_ != &::google::protobuf::internal::kEmptyString) {
         response_->clear();
@@ -727,15 +759,20 @@ bool Reply::MergePartialFromCodedStream(
         break;
       }
 
-      // required bool result = 2;
+      // required .thefox.rpc.Reply.Result result = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_result:
+          int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &result_)));
-          set_has_result();
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::thefox::rpc::Reply_Result_IsValid(value)) {
+            set_result(static_cast< ::thefox::rpc::Reply_Result >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(2, value);
+          }
         } else {
           goto handle_uninterpreted;
         }
@@ -780,9 +817,10 @@ void Reply::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->id(), output);
   }
 
-  // required bool result = 2;
+  // required .thefox.rpc.Reply.Result result = 2;
   if (has_result()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->result(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->result(), output);
   }
 
   // optional bytes response = 3;
@@ -804,9 +842,10 @@ void Reply::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->id(), target);
   }
 
-  // required bool result = 2;
+  // required .thefox.rpc.Reply.Result result = 2;
   if (has_result()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->result(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      2, this->result(), target);
   }
 
   // optional bytes response = 3;
@@ -834,9 +873,10 @@ int Reply::ByteSize() const {
           this->id());
     }
 
-    // required bool result = 2;
+    // required .thefox.rpc.Reply.Result result = 2;
     if (has_result()) {
-      total_size += 1 + 1;
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->result());
     }
 
     // optional bytes response = 3;
@@ -927,77 +967,77 @@ void Reply::Swap(Reply* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int NonRpcMsg::kMsgTypeFieldNumber;
-const int NonRpcMsg::kMsgBodyFieldNumber;
+const int OutOfBand::kTypeFieldNumber;
+const int OutOfBand::kBodyFieldNumber;
 #endif  // !_MSC_VER
 
-NonRpcMsg::NonRpcMsg()
+OutOfBand::OutOfBand()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void NonRpcMsg::InitAsDefaultInstance() {
+void OutOfBand::InitAsDefaultInstance() {
 }
 
-NonRpcMsg::NonRpcMsg(const NonRpcMsg& from)
+OutOfBand::OutOfBand(const OutOfBand& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void NonRpcMsg::SharedCtor() {
+void OutOfBand::SharedCtor() {
   _cached_size_ = 0;
-  msg_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  msg_body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-NonRpcMsg::~NonRpcMsg() {
+OutOfBand::~OutOfBand() {
   SharedDtor();
 }
 
-void NonRpcMsg::SharedDtor() {
-  if (msg_type_ != &::google::protobuf::internal::kEmptyString) {
-    delete msg_type_;
+void OutOfBand::SharedDtor() {
+  if (type_ != &::google::protobuf::internal::kEmptyString) {
+    delete type_;
   }
-  if (msg_body_ != &::google::protobuf::internal::kEmptyString) {
-    delete msg_body_;
+  if (body_ != &::google::protobuf::internal::kEmptyString) {
+    delete body_;
   }
   if (this != default_instance_) {
   }
 }
 
-void NonRpcMsg::SetCachedSize(int size) const {
+void OutOfBand::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* NonRpcMsg::descriptor() {
+const ::google::protobuf::Descriptor* OutOfBand::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return NonRpcMsg_descriptor_;
+  return OutOfBand_descriptor_;
 }
 
-const NonRpcMsg& NonRpcMsg::default_instance() {
+const OutOfBand& OutOfBand::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_rpc_2eproto();
   return *default_instance_;
 }
 
-NonRpcMsg* NonRpcMsg::default_instance_ = NULL;
+OutOfBand* OutOfBand::default_instance_ = NULL;
 
-NonRpcMsg* NonRpcMsg::New() const {
-  return new NonRpcMsg;
+OutOfBand* OutOfBand::New() const {
+  return new OutOfBand;
 }
 
-void NonRpcMsg::Clear() {
+void OutOfBand::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_msg_type()) {
-      if (msg_type_ != &::google::protobuf::internal::kEmptyString) {
-        msg_type_->clear();
+    if (has_type()) {
+      if (type_ != &::google::protobuf::internal::kEmptyString) {
+        type_->clear();
       }
     }
-    if (has_msg_body()) {
-      if (msg_body_ != &::google::protobuf::internal::kEmptyString) {
-        msg_body_->clear();
+    if (has_body()) {
+      if (body_ != &::google::protobuf::internal::kEmptyString) {
+        body_->clear();
       }
     }
   }
@@ -1005,35 +1045,35 @@ void NonRpcMsg::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool NonRpcMsg::MergePartialFromCodedStream(
+bool OutOfBand::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string msg_type = 1;
+      // required string type = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_msg_type()));
+                input, this->mutable_type()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->msg_type().data(), this->msg_type().length(),
+            this->type().data(), this->type().length(),
             ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_msg_body;
+        if (input->ExpectTag(18)) goto parse_body;
         break;
       }
 
-      // required bytes msg_body = 2;
+      // required bytes body = 2;
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_msg_body:
+         parse_body:
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_msg_body()));
+                input, this->mutable_body()));
         } else {
           goto handle_uninterpreted;
         }
@@ -1057,21 +1097,21 @@ bool NonRpcMsg::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void NonRpcMsg::SerializeWithCachedSizes(
+void OutOfBand::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string msg_type = 1;
-  if (has_msg_type()) {
+  // required string type = 1;
+  if (has_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->msg_type().data(), this->msg_type().length(),
+      this->type().data(), this->type().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->msg_type(), output);
+      1, this->type(), output);
   }
 
-  // required bytes msg_body = 2;
-  if (has_msg_body()) {
+  // required bytes body = 2;
+  if (has_body()) {
     ::google::protobuf::internal::WireFormatLite::WriteBytes(
-      2, this->msg_body(), output);
+      2, this->body(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -1080,23 +1120,23 @@ void NonRpcMsg::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* NonRpcMsg::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* OutOfBand::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required string msg_type = 1;
-  if (has_msg_type()) {
+  // required string type = 1;
+  if (has_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->msg_type().data(), this->msg_type().length(),
+      this->type().data(), this->type().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->msg_type(), target);
+        1, this->type(), target);
   }
 
-  // required bytes msg_body = 2;
-  if (has_msg_body()) {
+  // required bytes body = 2;
+  if (has_body()) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        2, this->msg_body(), target);
+        2, this->body(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -1106,22 +1146,22 @@ void NonRpcMsg::SerializeWithCachedSizes(
   return target;
 }
 
-int NonRpcMsg::ByteSize() const {
+int OutOfBand::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string msg_type = 1;
-    if (has_msg_type()) {
+    // required string type = 1;
+    if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->msg_type());
+          this->type());
     }
 
-    // required bytes msg_body = 2;
-    if (has_msg_body()) {
+    // required bytes body = 2;
+    if (has_body()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::BytesSize(
-          this->msg_body());
+          this->body());
     }
 
   }
@@ -1136,10 +1176,10 @@ int NonRpcMsg::ByteSize() const {
   return total_size;
 }
 
-void NonRpcMsg::MergeFrom(const ::google::protobuf::Message& from) {
+void OutOfBand::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const NonRpcMsg* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const NonRpcMsg*>(
+  const OutOfBand* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const OutOfBand*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1148,52 +1188,52 @@ void NonRpcMsg::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void NonRpcMsg::MergeFrom(const NonRpcMsg& from) {
+void OutOfBand::MergeFrom(const OutOfBand& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_msg_type()) {
-      set_msg_type(from.msg_type());
+    if (from.has_type()) {
+      set_type(from.type());
     }
-    if (from.has_msg_body()) {
-      set_msg_body(from.msg_body());
+    if (from.has_body()) {
+      set_body(from.body());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void NonRpcMsg::CopyFrom(const ::google::protobuf::Message& from) {
+void OutOfBand::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void NonRpcMsg::CopyFrom(const NonRpcMsg& from) {
+void OutOfBand::CopyFrom(const OutOfBand& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool NonRpcMsg::IsInitialized() const {
+bool OutOfBand::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
 
   return true;
 }
 
-void NonRpcMsg::Swap(NonRpcMsg* other) {
+void OutOfBand::Swap(OutOfBand* other) {
   if (other != this) {
-    std::swap(msg_type_, other->msg_type_);
-    std::swap(msg_body_, other->msg_body_);
+    std::swap(type_, other->type_);
+    std::swap(body_, other->body_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata NonRpcMsg::GetMetadata() const {
+::google::protobuf::Metadata OutOfBand::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = NonRpcMsg_descriptor_;
-  metadata.reflection = NonRpcMsg_reflection_;
+  metadata.descriptor = OutOfBand_descriptor_;
+  metadata.reflection = OutOfBand_reflection_;
   return metadata;
 }
 
@@ -1203,7 +1243,7 @@ void NonRpcMsg::Swap(NonRpcMsg* other) {
 #ifndef _MSC_VER
 const int Box::kCallFieldNumber;
 const int Box::kReplyFieldNumber;
-const int Box::kNonrpcMsgFieldNumber;
+const int Box::kOobFieldNumber;
 #endif  // !_MSC_VER
 
 Box::Box()
@@ -1214,7 +1254,7 @@ Box::Box()
 void Box::InitAsDefaultInstance() {
   call_ = const_cast< ::thefox::rpc::Call*>(&::thefox::rpc::Call::default_instance());
   reply_ = const_cast< ::thefox::rpc::Reply*>(&::thefox::rpc::Reply::default_instance());
-  nonrpc_msg_ = const_cast< ::thefox::rpc::NonRpcMsg*>(&::thefox::rpc::NonRpcMsg::default_instance());
+  oob_ = const_cast< ::thefox::rpc::OutOfBand*>(&::thefox::rpc::OutOfBand::default_instance());
 }
 
 Box::Box(const Box& from)
@@ -1227,7 +1267,7 @@ void Box::SharedCtor() {
   _cached_size_ = 0;
   call_ = NULL;
   reply_ = NULL;
-  nonrpc_msg_ = NULL;
+  oob_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1239,7 +1279,7 @@ void Box::SharedDtor() {
   if (this != default_instance_) {
     delete call_;
     delete reply_;
-    delete nonrpc_msg_;
+    delete oob_;
   }
 }
 
@@ -1272,8 +1312,8 @@ void Box::Clear() {
     if (has_reply()) {
       if (reply_ != NULL) reply_->::thefox::rpc::Reply::Clear();
     }
-    if (has_nonrpc_msg()) {
-      if (nonrpc_msg_ != NULL) nonrpc_msg_->::thefox::rpc::NonRpcMsg::Clear();
+    if (has_oob()) {
+      if (oob_ != NULL) oob_->::thefox::rpc::OutOfBand::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1309,17 +1349,17 @@ bool Box::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_nonrpc_msg;
+        if (input->ExpectTag(26)) goto parse_oob;
         break;
       }
 
-      // optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
+      // optional .thefox.rpc.OutOfBand oob = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_nonrpc_msg:
+         parse_oob:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_nonrpc_msg()));
+               input, mutable_oob()));
         } else {
           goto handle_uninterpreted;
         }
@@ -1357,10 +1397,10 @@ void Box::SerializeWithCachedSizes(
       2, this->reply(), output);
   }
 
-  // optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
-  if (has_nonrpc_msg()) {
+  // optional .thefox.rpc.OutOfBand oob = 3;
+  if (has_oob()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->nonrpc_msg(), output);
+      3, this->oob(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -1385,11 +1425,11 @@ void Box::SerializeWithCachedSizes(
         2, this->reply(), target);
   }
 
-  // optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
-  if (has_nonrpc_msg()) {
+  // optional .thefox.rpc.OutOfBand oob = 3;
+  if (has_oob()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        3, this->nonrpc_msg(), target);
+        3, this->oob(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -1417,11 +1457,11 @@ int Box::ByteSize() const {
           this->reply());
     }
 
-    // optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
-    if (has_nonrpc_msg()) {
+    // optional .thefox.rpc.OutOfBand oob = 3;
+    if (has_oob()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->nonrpc_msg());
+          this->oob());
     }
 
   }
@@ -1457,8 +1497,8 @@ void Box::MergeFrom(const Box& from) {
     if (from.has_reply()) {
       mutable_reply()->::thefox::rpc::Reply::MergeFrom(from.reply());
     }
-    if (from.has_nonrpc_msg()) {
-      mutable_nonrpc_msg()->::thefox::rpc::NonRpcMsg::MergeFrom(from.nonrpc_msg());
+    if (from.has_oob()) {
+      mutable_oob()->::thefox::rpc::OutOfBand::MergeFrom(from.oob());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1484,8 +1524,8 @@ bool Box::IsInitialized() const {
   if (has_reply()) {
     if (!this->reply().IsInitialized()) return false;
   }
-  if (has_nonrpc_msg()) {
-    if (!this->nonrpc_msg().IsInitialized()) return false;
+  if (has_oob()) {
+    if (!this->oob().IsInitialized()) return false;
   }
   return true;
 }
@@ -1494,7 +1534,7 @@ void Box::Swap(Box* other) {
   if (other != this) {
     std::swap(call_, other->call_);
     std::swap(reply_, other->reply_);
-    std::swap(nonrpc_msg_, other->nonrpc_msg_);
+    std::swap(oob_, other->oob_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

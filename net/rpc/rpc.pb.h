@@ -23,6 +23,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
+#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/service.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
@@ -37,12 +38,34 @@ void protobuf_ShutdownFile_rpc_2eproto();
 
 class Call;
 class Reply;
-class NonRpcMsg;
+class OutOfBand;
 class Box;
 class Placeholder;
 class HeartBeath;
 class RpcList;
 
+enum Reply_Result {
+  Reply_Result_kOk = 0,
+  Reply_Result_kError = 1,
+  Reply_Result_kServiceNotFound = 2,
+  Reply_Result_kMethodNotFound = 3,
+  Reply_Result_kClientFailed = 4
+};
+bool Reply_Result_IsValid(int value);
+const Reply_Result Reply_Result_Result_MIN = Reply_Result_kOk;
+const Reply_Result Reply_Result_Result_MAX = Reply_Result_kClientFailed;
+const int Reply_Result_Result_ARRAYSIZE = Reply_Result_Result_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* Reply_Result_descriptor();
+inline const ::std::string& Reply_Result_Name(Reply_Result value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    Reply_Result_descriptor(), value);
+}
+inline bool Reply_Result_Parse(
+    const ::std::string& name, Reply_Result* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<Reply_Result>(
+    Reply_Result_descriptor(), name, value);
+}
 // ===================================================================
 
 class Call : public ::google::protobuf::Message {
@@ -224,6 +247,33 @@ class Reply : public ::google::protobuf::Message {
 
   // nested types ----------------------------------------------------
 
+  typedef Reply_Result Result;
+  static const Result kOk = Reply_Result_kOk;
+  static const Result kError = Reply_Result_kError;
+  static const Result kServiceNotFound = Reply_Result_kServiceNotFound;
+  static const Result kMethodNotFound = Reply_Result_kMethodNotFound;
+  static const Result kClientFailed = Reply_Result_kClientFailed;
+  static inline bool Result_IsValid(int value) {
+    return Reply_Result_IsValid(value);
+  }
+  static const Result Result_MIN =
+    Reply_Result_Result_MIN;
+  static const Result Result_MAX =
+    Reply_Result_Result_MAX;
+  static const int Result_ARRAYSIZE =
+    Reply_Result_Result_ARRAYSIZE;
+  static inline const ::google::protobuf::EnumDescriptor*
+  Result_descriptor() {
+    return Reply_Result_descriptor();
+  }
+  static inline const ::std::string& Result_Name(Result value) {
+    return Reply_Result_Name(value);
+  }
+  static inline bool Result_Parse(const ::std::string& name,
+      Result* value) {
+    return Reply_Result_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   // required int64 id = 1;
@@ -233,12 +283,12 @@ class Reply : public ::google::protobuf::Message {
   inline ::google::protobuf::int64 id() const;
   inline void set_id(::google::protobuf::int64 value);
 
-  // required bool result = 2;
+  // required .thefox.rpc.Reply.Result result = 2;
   inline bool has_result() const;
   inline void clear_result();
   static const int kResultFieldNumber = 2;
-  inline bool result() const;
-  inline void set_result(bool value);
+  inline ::thefox::rpc::Reply_Result result() const;
+  inline void set_result(::thefox::rpc::Reply_Result value);
 
   // optional bytes response = 3;
   inline bool has_response() const;
@@ -265,7 +315,7 @@ class Reply : public ::google::protobuf::Message {
 
   ::google::protobuf::int64 id_;
   ::std::string* response_;
-  bool result_;
+  int result_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -279,14 +329,14 @@ class Reply : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class NonRpcMsg : public ::google::protobuf::Message {
+class OutOfBand : public ::google::protobuf::Message {
  public:
-  NonRpcMsg();
-  virtual ~NonRpcMsg();
+  OutOfBand();
+  virtual ~OutOfBand();
 
-  NonRpcMsg(const NonRpcMsg& from);
+  OutOfBand(const OutOfBand& from);
 
-  inline NonRpcMsg& operator=(const NonRpcMsg& from) {
+  inline OutOfBand& operator=(const OutOfBand& from) {
     CopyFrom(from);
     return *this;
   }
@@ -300,17 +350,17 @@ class NonRpcMsg : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const NonRpcMsg& default_instance();
+  static const OutOfBand& default_instance();
 
-  void Swap(NonRpcMsg* other);
+  void Swap(OutOfBand* other);
 
   // implements Message ----------------------------------------------
 
-  NonRpcMsg* New() const;
+  OutOfBand* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const NonRpcMsg& from);
-  void MergeFrom(const NonRpcMsg& from);
+  void CopyFrom(const OutOfBand& from);
+  void MergeFrom(const OutOfBand& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -333,41 +383,41 @@ class NonRpcMsg : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required string msg_type = 1;
-  inline bool has_msg_type() const;
-  inline void clear_msg_type();
-  static const int kMsgTypeFieldNumber = 1;
-  inline const ::std::string& msg_type() const;
-  inline void set_msg_type(const ::std::string& value);
-  inline void set_msg_type(const char* value);
-  inline void set_msg_type(const char* value, size_t size);
-  inline ::std::string* mutable_msg_type();
-  inline ::std::string* release_msg_type();
-  inline void set_allocated_msg_type(::std::string* msg_type);
+  // required string type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline const ::std::string& type() const;
+  inline void set_type(const ::std::string& value);
+  inline void set_type(const char* value);
+  inline void set_type(const char* value, size_t size);
+  inline ::std::string* mutable_type();
+  inline ::std::string* release_type();
+  inline void set_allocated_type(::std::string* type);
 
-  // required bytes msg_body = 2;
-  inline bool has_msg_body() const;
-  inline void clear_msg_body();
-  static const int kMsgBodyFieldNumber = 2;
-  inline const ::std::string& msg_body() const;
-  inline void set_msg_body(const ::std::string& value);
-  inline void set_msg_body(const char* value);
-  inline void set_msg_body(const void* value, size_t size);
-  inline ::std::string* mutable_msg_body();
-  inline ::std::string* release_msg_body();
-  inline void set_allocated_msg_body(::std::string* msg_body);
+  // required bytes body = 2;
+  inline bool has_body() const;
+  inline void clear_body();
+  static const int kBodyFieldNumber = 2;
+  inline const ::std::string& body() const;
+  inline void set_body(const ::std::string& value);
+  inline void set_body(const char* value);
+  inline void set_body(const void* value, size_t size);
+  inline ::std::string* mutable_body();
+  inline ::std::string* release_body();
+  inline void set_allocated_body(::std::string* body);
 
-  // @@protoc_insertion_point(class_scope:thefox.rpc.NonRpcMsg)
+  // @@protoc_insertion_point(class_scope:thefox.rpc.OutOfBand)
  private:
-  inline void set_has_msg_type();
-  inline void clear_has_msg_type();
-  inline void set_has_msg_body();
-  inline void clear_has_msg_body();
+  inline void set_has_type();
+  inline void clear_has_type();
+  inline void set_has_body();
+  inline void clear_has_body();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::std::string* msg_type_;
-  ::std::string* msg_body_;
+  ::std::string* type_;
+  ::std::string* body_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
@@ -377,7 +427,7 @@ class NonRpcMsg : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_rpc_2eproto();
 
   void InitAsDefaultInstance();
-  static NonRpcMsg* default_instance_;
+  static OutOfBand* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -453,14 +503,14 @@ class Box : public ::google::protobuf::Message {
   inline ::thefox::rpc::Reply* release_reply();
   inline void set_allocated_reply(::thefox::rpc::Reply* reply);
 
-  // optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
-  inline bool has_nonrpc_msg() const;
-  inline void clear_nonrpc_msg();
-  static const int kNonrpcMsgFieldNumber = 3;
-  inline const ::thefox::rpc::NonRpcMsg& nonrpc_msg() const;
-  inline ::thefox::rpc::NonRpcMsg* mutable_nonrpc_msg();
-  inline ::thefox::rpc::NonRpcMsg* release_nonrpc_msg();
-  inline void set_allocated_nonrpc_msg(::thefox::rpc::NonRpcMsg* nonrpc_msg);
+  // optional .thefox.rpc.OutOfBand oob = 3;
+  inline bool has_oob() const;
+  inline void clear_oob();
+  static const int kOobFieldNumber = 3;
+  inline const ::thefox::rpc::OutOfBand& oob() const;
+  inline ::thefox::rpc::OutOfBand* mutable_oob();
+  inline ::thefox::rpc::OutOfBand* release_oob();
+  inline void set_allocated_oob(::thefox::rpc::OutOfBand* oob);
 
   // @@protoc_insertion_point(class_scope:thefox.rpc.Box)
  private:
@@ -468,14 +518,14 @@ class Box : public ::google::protobuf::Message {
   inline void clear_has_call();
   inline void set_has_reply();
   inline void clear_has_reply();
-  inline void set_has_nonrpc_msg();
-  inline void clear_has_nonrpc_msg();
+  inline void set_has_oob();
+  inline void clear_has_oob();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::thefox::rpc::Call* call_;
   ::thefox::rpc::Reply* reply_;
-  ::thefox::rpc::NonRpcMsg* nonrpc_msg_;
+  ::thefox::rpc::OutOfBand* oob_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -1052,7 +1102,7 @@ inline void Reply::set_id(::google::protobuf::int64 value) {
   id_ = value;
 }
 
-// required bool result = 2;
+// required .thefox.rpc.Reply.Result result = 2;
 inline bool Reply::has_result() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -1063,13 +1113,14 @@ inline void Reply::clear_has_result() {
   _has_bits_[0] &= ~0x00000002u;
 }
 inline void Reply::clear_result() {
-  result_ = false;
+  result_ = 0;
   clear_has_result();
 }
-inline bool Reply::result() const {
-  return result_;
+inline ::thefox::rpc::Reply_Result Reply::result() const {
+  return static_cast< ::thefox::rpc::Reply_Result >(result_);
 }
-inline void Reply::set_result(bool value) {
+inline void Reply::set_result(::thefox::rpc::Reply_Result value) {
+  assert(::thefox::rpc::Reply_Result_IsValid(value));
   set_has_result();
   result_ = value;
 }
@@ -1146,145 +1197,145 @@ inline void Reply::set_allocated_response(::std::string* response) {
 
 // -------------------------------------------------------------------
 
-// NonRpcMsg
+// OutOfBand
 
-// required string msg_type = 1;
-inline bool NonRpcMsg::has_msg_type() const {
+// required string type = 1;
+inline bool OutOfBand::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void NonRpcMsg::set_has_msg_type() {
+inline void OutOfBand::set_has_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void NonRpcMsg::clear_has_msg_type() {
+inline void OutOfBand::clear_has_type() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void NonRpcMsg::clear_msg_type() {
-  if (msg_type_ != &::google::protobuf::internal::kEmptyString) {
-    msg_type_->clear();
+inline void OutOfBand::clear_type() {
+  if (type_ != &::google::protobuf::internal::kEmptyString) {
+    type_->clear();
   }
-  clear_has_msg_type();
+  clear_has_type();
 }
-inline const ::std::string& NonRpcMsg::msg_type() const {
-  return *msg_type_;
+inline const ::std::string& OutOfBand::type() const {
+  return *type_;
 }
-inline void NonRpcMsg::set_msg_type(const ::std::string& value) {
-  set_has_msg_type();
-  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
-    msg_type_ = new ::std::string;
+inline void OutOfBand::set_type(const ::std::string& value) {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
   }
-  msg_type_->assign(value);
+  type_->assign(value);
 }
-inline void NonRpcMsg::set_msg_type(const char* value) {
-  set_has_msg_type();
-  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
-    msg_type_ = new ::std::string;
+inline void OutOfBand::set_type(const char* value) {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
   }
-  msg_type_->assign(value);
+  type_->assign(value);
 }
-inline void NonRpcMsg::set_msg_type(const char* value, size_t size) {
-  set_has_msg_type();
-  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
-    msg_type_ = new ::std::string;
+inline void OutOfBand::set_type(const char* value, size_t size) {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
   }
-  msg_type_->assign(reinterpret_cast<const char*>(value), size);
+  type_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* NonRpcMsg::mutable_msg_type() {
-  set_has_msg_type();
-  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
-    msg_type_ = new ::std::string;
+inline ::std::string* OutOfBand::mutable_type() {
+  set_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
+    type_ = new ::std::string;
   }
-  return msg_type_;
+  return type_;
 }
-inline ::std::string* NonRpcMsg::release_msg_type() {
-  clear_has_msg_type();
-  if (msg_type_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* OutOfBand::release_type() {
+  clear_has_type();
+  if (type_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = msg_type_;
-    msg_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = type_;
+    type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
-inline void NonRpcMsg::set_allocated_msg_type(::std::string* msg_type) {
-  if (msg_type_ != &::google::protobuf::internal::kEmptyString) {
-    delete msg_type_;
+inline void OutOfBand::set_allocated_type(::std::string* type) {
+  if (type_ != &::google::protobuf::internal::kEmptyString) {
+    delete type_;
   }
-  if (msg_type) {
-    set_has_msg_type();
-    msg_type_ = msg_type;
+  if (type) {
+    set_has_type();
+    type_ = type;
   } else {
-    clear_has_msg_type();
-    msg_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    clear_has_type();
+    type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
 }
 
-// required bytes msg_body = 2;
-inline bool NonRpcMsg::has_msg_body() const {
+// required bytes body = 2;
+inline bool OutOfBand::has_body() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void NonRpcMsg::set_has_msg_body() {
+inline void OutOfBand::set_has_body() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void NonRpcMsg::clear_has_msg_body() {
+inline void OutOfBand::clear_has_body() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void NonRpcMsg::clear_msg_body() {
-  if (msg_body_ != &::google::protobuf::internal::kEmptyString) {
-    msg_body_->clear();
+inline void OutOfBand::clear_body() {
+  if (body_ != &::google::protobuf::internal::kEmptyString) {
+    body_->clear();
   }
-  clear_has_msg_body();
+  clear_has_body();
 }
-inline const ::std::string& NonRpcMsg::msg_body() const {
-  return *msg_body_;
+inline const ::std::string& OutOfBand::body() const {
+  return *body_;
 }
-inline void NonRpcMsg::set_msg_body(const ::std::string& value) {
-  set_has_msg_body();
-  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
-    msg_body_ = new ::std::string;
+inline void OutOfBand::set_body(const ::std::string& value) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
   }
-  msg_body_->assign(value);
+  body_->assign(value);
 }
-inline void NonRpcMsg::set_msg_body(const char* value) {
-  set_has_msg_body();
-  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
-    msg_body_ = new ::std::string;
+inline void OutOfBand::set_body(const char* value) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
   }
-  msg_body_->assign(value);
+  body_->assign(value);
 }
-inline void NonRpcMsg::set_msg_body(const void* value, size_t size) {
-  set_has_msg_body();
-  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
-    msg_body_ = new ::std::string;
+inline void OutOfBand::set_body(const void* value, size_t size) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
   }
-  msg_body_->assign(reinterpret_cast<const char*>(value), size);
+  body_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* NonRpcMsg::mutable_msg_body() {
-  set_has_msg_body();
-  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
-    msg_body_ = new ::std::string;
+inline ::std::string* OutOfBand::mutable_body() {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
   }
-  return msg_body_;
+  return body_;
 }
-inline ::std::string* NonRpcMsg::release_msg_body() {
-  clear_has_msg_body();
-  if (msg_body_ == &::google::protobuf::internal::kEmptyString) {
+inline ::std::string* OutOfBand::release_body() {
+  clear_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
   } else {
-    ::std::string* temp = msg_body_;
-    msg_body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    ::std::string* temp = body_;
+    body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }
-inline void NonRpcMsg::set_allocated_msg_body(::std::string* msg_body) {
-  if (msg_body_ != &::google::protobuf::internal::kEmptyString) {
-    delete msg_body_;
+inline void OutOfBand::set_allocated_body(::std::string* body) {
+  if (body_ != &::google::protobuf::internal::kEmptyString) {
+    delete body_;
   }
-  if (msg_body) {
-    set_has_msg_body();
-    msg_body_ = msg_body;
+  if (body) {
+    set_has_body();
+    body_ = body;
   } else {
-    clear_has_msg_body();
-    msg_body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    clear_has_body();
+    body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
 }
 
@@ -1368,41 +1419,41 @@ inline void Box::set_allocated_reply(::thefox::rpc::Reply* reply) {
   }
 }
 
-// optional .thefox.rpc.NonRpcMsg nonrpc_msg = 3;
-inline bool Box::has_nonrpc_msg() const {
+// optional .thefox.rpc.OutOfBand oob = 3;
+inline bool Box::has_oob() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Box::set_has_nonrpc_msg() {
+inline void Box::set_has_oob() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Box::clear_has_nonrpc_msg() {
+inline void Box::clear_has_oob() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Box::clear_nonrpc_msg() {
-  if (nonrpc_msg_ != NULL) nonrpc_msg_->::thefox::rpc::NonRpcMsg::Clear();
-  clear_has_nonrpc_msg();
+inline void Box::clear_oob() {
+  if (oob_ != NULL) oob_->::thefox::rpc::OutOfBand::Clear();
+  clear_has_oob();
 }
-inline const ::thefox::rpc::NonRpcMsg& Box::nonrpc_msg() const {
-  return nonrpc_msg_ != NULL ? *nonrpc_msg_ : *default_instance_->nonrpc_msg_;
+inline const ::thefox::rpc::OutOfBand& Box::oob() const {
+  return oob_ != NULL ? *oob_ : *default_instance_->oob_;
 }
-inline ::thefox::rpc::NonRpcMsg* Box::mutable_nonrpc_msg() {
-  set_has_nonrpc_msg();
-  if (nonrpc_msg_ == NULL) nonrpc_msg_ = new ::thefox::rpc::NonRpcMsg;
-  return nonrpc_msg_;
+inline ::thefox::rpc::OutOfBand* Box::mutable_oob() {
+  set_has_oob();
+  if (oob_ == NULL) oob_ = new ::thefox::rpc::OutOfBand;
+  return oob_;
 }
-inline ::thefox::rpc::NonRpcMsg* Box::release_nonrpc_msg() {
-  clear_has_nonrpc_msg();
-  ::thefox::rpc::NonRpcMsg* temp = nonrpc_msg_;
-  nonrpc_msg_ = NULL;
+inline ::thefox::rpc::OutOfBand* Box::release_oob() {
+  clear_has_oob();
+  ::thefox::rpc::OutOfBand* temp = oob_;
+  oob_ = NULL;
   return temp;
 }
-inline void Box::set_allocated_nonrpc_msg(::thefox::rpc::NonRpcMsg* nonrpc_msg) {
-  delete nonrpc_msg_;
-  nonrpc_msg_ = nonrpc_msg;
-  if (nonrpc_msg) {
-    set_has_nonrpc_msg();
+inline void Box::set_allocated_oob(::thefox::rpc::OutOfBand* oob) {
+  delete oob_;
+  oob_ = oob;
+  if (oob) {
+    set_has_oob();
   } else {
-    clear_has_nonrpc_msg();
+    clear_has_oob();
   }
 }
 
@@ -1472,6 +1523,10 @@ RpcList::mutable_service() {
 namespace google {
 namespace protobuf {
 
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::thefox::rpc::Reply_Result>() {
+  return ::thefox::rpc::Reply_Result_descriptor();
+}
 
 }  // namespace google
 }  // namespace protobuf

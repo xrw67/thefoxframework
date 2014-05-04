@@ -23,11 +23,10 @@
     <ClInclude Include="..\..\net\InetAddress.h" />
     <ClInclude Include="..\..\net\Iocp.h" />
     <ClInclude Include="..\..\net\IoEvent.h" />
-    <ClInclude Include="..\..\net\nonrpc\MqManager.h" />
-    <ClInclude Include="..\..\net\nonrpc\MsgBox.h" />
-    <ClInclude Include="..\..\net\nonrpc\MsgDispatcher.h" />
-    <ClInclude Include="..\..\net\nonrpc\QueueTuple.h" />
     <ClInclude Include="..\..\net\rpc\common.h" />
+    <ClInclude Include="..\..\net\rpc\MqManager.h" />
+    <ClInclude Include="..\..\net\rpc\MsgBox.h" />
+    <ClInclude Include="..\..\net\rpc\OobDispatcher.h" />
     <ClInclude Include="..\..\net\rpc\rpc.pb.h" />
     <ClInclude Include="..\..\net\rpc\RpcChannel.h" />
     <ClInclude Include="..\..\net\rpc\RpcClient.h" />
@@ -48,7 +47,7 @@
     <ClCompile Include="..\..\log\LogStream.cc" />
     <ClCompile Include="..\..\net\EventLoop.cc" />
     <ClCompile Include="..\..\net\Iocp.cc" />
-    <ClCompile Include="..\..\net\nonrpc\MqManager.cc" />
+    <ClCompile Include="..\..\net\rpc\MqManager.cc" />
     <ClCompile Include="..\..\net\rpc\rpc.pb.cc" />
     <ClCompile Include="..\..\net\rpc\RpcChannel.cc" />
     <ClCompile Include="..\..\net\rpc\RpcClient.cc" />
@@ -103,6 +102,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996;4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

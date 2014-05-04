@@ -13,6 +13,7 @@
 #ifndef _THEFOX_RPC_RPCCODEC_H_
 #define _THEFOX_RPC_RPCCODEC_H_
 
+#include <winsock2.h>
 #include <base/Types.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
@@ -28,7 +29,7 @@ class RpcCodec
 {
 public:
 	// ½âÂë
-	static bool parseFromArray(const char *buf, size_t &bufLen, rpc::Box *msg)
+	static bool parseFromArray(const char *buf, size_t &bufLen, const BoxPtr &msg)
 	{
 		assert(NULL != msg || NULL != buf);
 
@@ -76,9 +77,9 @@ public:
 		return result;
 	}
 	
-	static gpb::Message* createMessage(const std::string& type_name)
+	static gpb::Message *createMessage(const std::string& type_name)
 	{
-		gpb::Message* message = NULL;
+		gpb::Message *message = NULL;
 		const gpb::Descriptor* descriptor = gpb::DescriptorPool::generated_pool()->FindMessageTypeByName(type_name);
 		if (descriptor) {
 			const gpb::Message* prototype = gpb::MessageFactory::generated_factory()->GetPrototype(descriptor);
@@ -87,7 +88,10 @@ public:
 		}
 		return message;
 	}
-
+	static void deleteMessage(gpb::Message *message)
+	{
+		SAFE_DELETE(message);
+	}
 	static bool isValid(const char *buf, size_t bufLen) 
 	{
 		if (PROTOCOL_ID != (uint16_t)asInt16(buf))

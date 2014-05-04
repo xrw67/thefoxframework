@@ -3,9 +3,6 @@
 
 #include <map>
 #include <base/Types.h>
-#include <base/Event.h>
-#include <base/MutexLock.h>
-#include <base/AtomicInteger.h>
 #include <google/protobuf/service.h>
 #include <net/TcpClient.h>
 #include <net/rpc/common.h>
@@ -27,36 +24,19 @@ public:
 				   const ::google::protobuf::Message* request,
 				   ::google::protobuf::Message* response,
 				   ::google::protobuf::Closure* done);
-	void setNonRpcMsgCallback(const NonRpcMsgCallback &cb)
-	{ _nonRpcMsgCallback = cb; }
+
+	void setMqManager(const MqManagerPtr &mqm);
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcChannel);
 	void onConnection(const TcpConnectionPtr &conn);
 	void onClose(const TcpConnectionPtr &conn);
-	void onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp recvTime);
-	void handleReplyMessage(const rpc::Reply &reply, Timestamp recvTime);
-	void handleNonRpcMessage(const rpc::NonRpcMsg &nrm, Timestamp recvTime);
-
-	class RequestWait
-	{
-	public:
-		RequestWait(gpb::Message* response, gpb::Closure *done)
-			: response(response)
-			, done(done)
-		{}
-		gpb::Message* response;
-		gpb::Closure *done;
-		Event doneEvent;
-	};
-
-	typedef std::shared_ptr<RequestWait> RequestWaitPtr;
-	typedef std::map<int64_t, RequestWaitPtr> RequestWaitMap;
-	AtomicInt64 _id;
-	MutexLock _mutex;
-	RequestWaitMap _requests;
+	void onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp &recvTime);
+	
 	TcpConnectionPtr _conn;
 	std::shared_ptr<TcpClient> _client;
-	NonRpcMsgCallback _nonRpcMsgCallback;
+	RpcClient *_rpcClient;
+	MqManagerPtr _mqManager;
 };
 
 } // namespace thefox

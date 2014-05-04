@@ -10,9 +10,6 @@
     <Filter Include="net\rpc">
       <UniqueIdentifier>{abb25a4d-c98e-4e56-bf35-87128dd4d2ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="net\nonrpc">
-      <UniqueIdentifier>{a22177e2-3095-443a-9fff-7f2dd1c4a056}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\net\EventLoop.h">
@@ -93,17 +90,14 @@
     <ClInclude Include="..\..\net\rpc\RpcService.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\nonrpc\MqManager.h">
-      <Filter>net\nonrpc</Filter>
+    <ClInclude Include="..\..\net\rpc\MqManager.h">
+      <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\nonrpc\MsgBox.h">
-      <Filter>net\nonrpc</Filter>
+    <ClInclude Include="..\..\net\rpc\MsgBox.h">
+      <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\nonrpc\MsgDispatcher.h">
-      <Filter>net\nonrpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\nonrpc\QueueTuple.h">
-      <Filter>net\nonrpc</Filter>
+    <ClInclude Include="..\..\net\rpc\OobDispatcher.h">
+      <Filter>net\rpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -152,8 +146,8 @@
     <ClCompile Include="..\..\net\rpc\RpcService.cc">
       <Filter>net\rpc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\nonrpc\MqManager.cc">
-      <Filter>net\nonrpc</Filter>
+    <ClCompile Include="..\..\net\rpc\MqManager.cc">
+      <Filter>net\rpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
