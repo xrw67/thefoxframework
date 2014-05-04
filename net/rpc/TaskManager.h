@@ -1,5 +1,5 @@
-#ifndef _THEFOX_NET_RPC_MQMANAGER_H_
-#define _THEFOX_NET_RPC_MQMANAGER_H_
+#ifndef _THEFOX_NET_RPC_TASKMANAGER_H_
+#define _THEFOX_NET_RPC_TASKMANAGER_H_
 
 #include <queue>
 #include <base/MutexLock.h>
@@ -45,4 +45,4 @@ typedef std::shared_ptr<TaskManager> TaskManagerPtr;
 
 }// namespace thefox
 
-#endif // _THEFOX_NET_RPC_MQMANAGER_H_
+#endif // _THEFOX_NET_RPC_TASKMANAGER_H_
