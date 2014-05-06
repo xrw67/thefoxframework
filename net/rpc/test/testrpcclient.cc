@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	echo::EchoResponse response;
 
 	echoChannel.echo(NULL, &request, &response, NULL);
-
+	
 	loop.join();
 
 	SocketLibrary::shutdown();

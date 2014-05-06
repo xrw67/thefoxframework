@@ -53,7 +53,7 @@ private:
 	typedef std::map<int64_t, RequestWaitPtr> RequestWaitMap;
 	typedef std::list<RpcChannel *> RpcChannelList;
 
-	AtomicInt64 _id;
+	AtomicInt32 _id;
 	MutexLock _mutex;
 	RequestWaitMap _requests;
 	EventLoop *_loop;

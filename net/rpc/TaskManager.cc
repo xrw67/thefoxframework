@@ -18,7 +18,7 @@ TaskManager::TaskManager(const CallCallback &callCb, const ReplyCallback &replyC
 	: _dispatcher(detail::defaultOobCallback)
 	, _callCallback(callCb)
 	, _replyCallback(replyCb)
-	, _started(false)
+	, _started(true)
 	
 {
 	_msgLoopThread.reset(new Thread(std::bind(&TaskManager::loop, this), "mqmanager.loop"));
