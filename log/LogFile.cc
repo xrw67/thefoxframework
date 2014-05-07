@@ -77,15 +77,17 @@ LogFile::LogFile(const std::string &dir, const std::string& basename, size_t rol
 {
 	makePath(_dir);
 	rollFile();
+	setLogHandler(std::bind(&LogFile::append, this, _1));
 }
 
 LogFile::~LogFile()
 {}
 
-void LogFile::append(const char* logline, int len)
+void LogFile::append(const std::string &message)
 {
 	MutexLockGuard lock(_mutex);
-	_file->append(logline, len);
+	_file->append(message.c_str(), message.length());
+	_file->append("\n", 1);
 
 	if (_file->writtenBytes() > _rollSize) {
 		rollFile();

@@ -12,11 +12,13 @@
 #else
 #include <unistd.h>
 #endif
+
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <base/Types.h>
 #include <base/MutexLock.h>
+#include <log/Logging.h>
 
 namespace thefox
 {
@@ -29,10 +31,10 @@ public:
 
 	LogFile(const std::string &dir,
             const std::string &basename,
-			size_t rollSize);
+			size_t rollSize = 100*1024*1024);
 	~LogFile();
 
-	void append(const char* logline, int len);
+	void append(const std::string &message);
 	void flush();
 
 private:
@@ -44,8 +46,8 @@ private:
 
 	std::string _dir;
 	const std::string _basename;
-	const size_t _rollSize;///< 文件缓冲中达到这么多字节的数据后换一个文件
-
+	size_t _rollSize;
+	
 	MutexLock _mutex;
 	time_t _startOfPeriod;
 	time_t _lastRoll;

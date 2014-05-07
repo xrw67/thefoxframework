@@ -51,16 +51,7 @@
     <ClInclude Include="..\..\net\Endian.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\log\log.h">
-      <Filter>log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\log\LogFile.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log\Logger.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log\LogStream.h">
       <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\RpcChannel.h">
@@ -99,6 +90,9 @@
     <ClInclude Include="..\..\net\rpc\TaskManager.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\log\Logging.h">
+      <Filter>log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\net\EventLoop.cc">
@@ -117,12 +111,6 @@
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\log\LogFile.cc">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log\Logger.cc">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log\LogStream.cc">
       <Filter>log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\RpcChannel.cc">
@@ -148,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="..\..\net\rpc\TaskManager.cc">
       <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log\Logging.cc">
+      <Filter>log</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

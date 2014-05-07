@@ -2,21 +2,20 @@
 //
 
 #include "stdafx.h"
-#include <log/log.h>
-
+#include <log/LogFile.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	thefox::initLog("logs","TestLog");
+	thefox::LogFile log("logs","TestLog");
 	int i=100;
 	while (--i)
 	{
 		Sleep(rand()%50);
-		LOG_TRACE <<"dddddddd" << "dfdfd";
-		LOG_DEBUG << "dfdf" << 12 << -12.23;
-		LOG_INFO << "dfdf";
-		LOG_WARN << "dfdf";
-		LOG_ERROR << "dfdf";
+		THEFOX_LOG(TRACE) <<"dddddddd" << "dfdfd";
+		THEFOX_LOG(DEBUG) << "dfdf" << 12 << -12.23;
+		THEFOX_LOG(INFO) << "dfdf";
+		THEFOX_LOG(WARN) << "dfdf";
+		THEFOX_LOG(ERROR) << "dfdf";
 	}
 	return 0;
 }

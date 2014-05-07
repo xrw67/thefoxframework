@@ -11,10 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\log\log.h" />
     <ClInclude Include="..\..\log\LogFile.h" />
-    <ClInclude Include="..\..\log\Logger.h" />
-    <ClInclude Include="..\..\log\LogStream.h" />
+    <ClInclude Include="..\..\log\Logging.h" />
     <ClInclude Include="..\..\net\Buffer.h" />
     <ClInclude Include="..\..\net\Callbacks.h" />
     <ClInclude Include="..\..\net\CpEvent.h" />
@@ -43,8 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\log\LogFile.cc" />
-    <ClCompile Include="..\..\log\Logger.cc" />
-    <ClCompile Include="..\..\log\LogStream.cc" />
+    <ClCompile Include="..\..\log\Logging.cc" />
     <ClCompile Include="..\..\net\EventLoop.cc" />
     <ClCompile Include="..\..\net\Iocp.cc" />
     <ClCompile Include="..\..\net\rpc\TaskManager.cc" />
