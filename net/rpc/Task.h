@@ -25,10 +25,10 @@ public:
 	TcpConnectionPtr &sender() { return _sender; }
 	bool hasCall() const { return _box->has_call(); }
 	bool hasReply() const { return _box->has_reply(); }
-	bool hasOob() const { return _box->has_oob(); }
+	bool hasOnewayMessage() const { return _box->has_oneway(); }
 	const rpc::Call &call() const { return _box->call(); }
 	const rpc::Reply &reply() const { return _box->reply(); }
-	const rpc::OutOfBand &oob() const { return _box->oob(); }
+	const rpc::OnewayMessage &oneway() const { return _box->oneway(); }
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Task);

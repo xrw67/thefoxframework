@@ -4,6 +4,7 @@
 #include <net/rpc/RpcClient.h>
 #include <net/rpc/RpcCodec.h>
 #include <net/rpc/TaskManager.h>
+#include <net/rpc/RpcController.h>
 
 using namespace thefox;
 
@@ -31,7 +32,7 @@ void RpcChannel::CallMethod(const ::google::protobuf::MethodDescriptor* method,
                             ::google::protobuf::Message* response,
                             ::google::protobuf::Closure* done)
 {
-	_rpcClient->CallMethod(_conn, method, controller, request, response, done);
+	_rpcClient->CallMethod(_conn, method, dynamic_cast<RpcController *>(controller), request, response, done);
 }
 
 void RpcChannel::setTaskManager(const TaskManagerPtr &taskManager)

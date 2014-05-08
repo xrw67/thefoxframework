@@ -47,12 +47,12 @@ TaskPtr TaskManager::popBox()
 	return msg;
 }
 
-void TaskManager::setDefaultOobCallback(const OobCallback &cb)
+void TaskManager::setDefaultOobCallback(const OnewayCallback &cb)
 {
 	_dispatcher.setDefaultOobCallback(cb);
 }
 
-void TaskManager::registerOobCallback(const std::string &type, const OobCallback &cb)
+void TaskManager::registerOobCallback(const std::string &type, const OnewayCallback &cb)
 {
 	_dispatcher.registerOobCallback(type, cb);
 }
@@ -75,8 +75,8 @@ void TaskManager::loop()
 					_callCallback(msg->sender(), msg->call(), msg->time());
 				if (msg->hasReply())
 					_replyCallback(msg->sender(), msg->reply(), msg->time());
-				if (msg->hasOob())
-					_dispatcher.onMessage(msg->sender(), msg->oob(), msg->time());
+				if (msg->hasOnewayMessage())
+					_dispatcher.onMessage(msg->sender(), msg->oneway(), msg->time());
 			}
 				
 		}

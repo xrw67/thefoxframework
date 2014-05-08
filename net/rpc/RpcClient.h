@@ -13,6 +13,7 @@ namespace thefox
 
 class EventLoop;
 class TaskManager;
+class RpcController;
 
 class RpcClient
 {
@@ -31,7 +32,7 @@ private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcClient);
 	void CallMethod(const TcpConnectionPtr &conn,
 					const ::google::protobuf::MethodDescriptor* method,
-				    ::google::protobuf::RpcController* controller,
+				    RpcController *controller,
 				   const ::google::protobuf::Message* request,
 				   ::google::protobuf::Message* response,
 				   ::google::protobuf::Closure* done);

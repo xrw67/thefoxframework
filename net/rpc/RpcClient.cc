@@ -2,6 +2,7 @@
 #include <net/TcpConnection.h>
 #include <net/rpc/RpcChannel.h>
 #include <net/rpc/TaskManager.h>
+#include <net/rpc/RpcController.h>
 
 using namespace thefox;
 
@@ -28,7 +29,7 @@ void RpcClient::unregisterChannel(RpcChannel *channel)
 
 void RpcClient::CallMethod(const TcpConnectionPtr &conn,
 					const ::google::protobuf::MethodDescriptor* method,
-				    ::google::protobuf::RpcController* controller,
+				    RpcController *controller,
 				   const ::google::protobuf::Message* request,
 				   ::google::protobuf::Message* response,
 				   ::google::protobuf::Closure* done)
@@ -40,6 +41,7 @@ void RpcClient::CallMethod(const TcpConnectionPtr &conn,
 	call->set_service(method->service()->name());
 	call->set_method(method->name());
 	call->set_request(request->SerializeAsString());
+	call->set_timeout(controller->timeout());
 
 	RequestWaitPtr reqWait(new RequestWait(response, done));
 	

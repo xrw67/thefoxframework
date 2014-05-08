@@ -4,6 +4,7 @@
 #include <net/SocketOps.h>
 #include <net/rpc/RpcClient.h>
 #include <net/rpc/RpcChannel.h>
+#include <net/rpc/RpcController.h>
 #include <net/rpc/test/echo.pb.h>
 
 using namespace thefox;
@@ -23,8 +24,8 @@ int main(int argc, char **argv)
 	echo::EchoRequest request;
 	request.set_message("hello");
 	echo::EchoResponse response;
-
-	echoChannel.echo(NULL, &request, &response, NULL);
+	RpcController controller;
+	echoChannel.echo(&controller, &request, &response, NULL);
 	
 	loop.join();
 

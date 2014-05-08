@@ -38,7 +38,7 @@ void protobuf_ShutdownFile_rpc_2eproto();
 
 class Call;
 class Reply;
-class OutOfBand;
+class OnewayMessage;
 class Box;
 class Placeholder;
 class HeartBeath;
@@ -49,11 +49,12 @@ enum Reply_Result {
   Reply_Result_kError = 1,
   Reply_Result_kServiceNotFound = 2,
   Reply_Result_kMethodNotFound = 3,
-  Reply_Result_kClientFailed = 4
+  Reply_Result_kClientFailed = 4,
+  Reply_Result_kTimeout = 5
 };
 bool Reply_Result_IsValid(int value);
 const Reply_Result Reply_Result_Result_MIN = Reply_Result_kOk;
-const Reply_Result Reply_Result_Result_MAX = Reply_Result_kClientFailed;
+const Reply_Result Reply_Result_Result_MAX = Reply_Result_kTimeout;
 const int Reply_Result_Result_ARRAYSIZE = Reply_Result_Result_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Reply_Result_descriptor();
@@ -165,6 +166,13 @@ class Call : public ::google::protobuf::Message {
   inline ::std::string* release_request();
   inline void set_allocated_request(::std::string* request);
 
+  // optional int32 timeout = 5 [default = 30000];
+  inline bool has_timeout() const;
+  inline void clear_timeout();
+  static const int kTimeoutFieldNumber = 5;
+  inline ::google::protobuf::int32 timeout() const;
+  inline void set_timeout(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:thefox.rpc.Call)
  private:
   inline void set_has_id();
@@ -175,6 +183,8 @@ class Call : public ::google::protobuf::Message {
   inline void clear_has_method();
   inline void set_has_request();
   inline void clear_has_request();
+  inline void set_has_timeout();
+  inline void clear_has_timeout();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -182,9 +192,10 @@ class Call : public ::google::protobuf::Message {
   ::std::string* service_;
   ::std::string* method_;
   ::std::string* request_;
+  ::google::protobuf::int32 timeout_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_rpc_2eproto();
   friend void protobuf_AssignDesc_rpc_2eproto();
@@ -253,6 +264,7 @@ class Reply : public ::google::protobuf::Message {
   static const Result kServiceNotFound = Reply_Result_kServiceNotFound;
   static const Result kMethodNotFound = Reply_Result_kMethodNotFound;
   static const Result kClientFailed = Reply_Result_kClientFailed;
+  static const Result kTimeout = Reply_Result_kTimeout;
   static inline bool Result_IsValid(int value) {
     return Reply_Result_IsValid(value);
   }
@@ -329,14 +341,14 @@ class Reply : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
-class OutOfBand : public ::google::protobuf::Message {
+class OnewayMessage : public ::google::protobuf::Message {
  public:
-  OutOfBand();
-  virtual ~OutOfBand();
+  OnewayMessage();
+  virtual ~OnewayMessage();
 
-  OutOfBand(const OutOfBand& from);
+  OnewayMessage(const OnewayMessage& from);
 
-  inline OutOfBand& operator=(const OutOfBand& from) {
+  inline OnewayMessage& operator=(const OnewayMessage& from) {
     CopyFrom(from);
     return *this;
   }
@@ -350,17 +362,17 @@ class OutOfBand : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const OutOfBand& default_instance();
+  static const OnewayMessage& default_instance();
 
-  void Swap(OutOfBand* other);
+  void Swap(OnewayMessage* other);
 
   // implements Message ----------------------------------------------
 
-  OutOfBand* New() const;
+  OnewayMessage* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const OutOfBand& from);
-  void MergeFrom(const OutOfBand& from);
+  void CopyFrom(const OnewayMessage& from);
+  void MergeFrom(const OnewayMessage& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -407,7 +419,7 @@ class OutOfBand : public ::google::protobuf::Message {
   inline ::std::string* release_body();
   inline void set_allocated_body(::std::string* body);
 
-  // @@protoc_insertion_point(class_scope:thefox.rpc.OutOfBand)
+  // @@protoc_insertion_point(class_scope:thefox.rpc.OnewayMessage)
  private:
   inline void set_has_type();
   inline void clear_has_type();
@@ -427,7 +439,7 @@ class OutOfBand : public ::google::protobuf::Message {
   friend void protobuf_ShutdownFile_rpc_2eproto();
 
   void InitAsDefaultInstance();
-  static OutOfBand* default_instance_;
+  static OnewayMessage* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -503,14 +515,14 @@ class Box : public ::google::protobuf::Message {
   inline ::thefox::rpc::Reply* release_reply();
   inline void set_allocated_reply(::thefox::rpc::Reply* reply);
 
-  // optional .thefox.rpc.OutOfBand oob = 3;
-  inline bool has_oob() const;
-  inline void clear_oob();
-  static const int kOobFieldNumber = 3;
-  inline const ::thefox::rpc::OutOfBand& oob() const;
-  inline ::thefox::rpc::OutOfBand* mutable_oob();
-  inline ::thefox::rpc::OutOfBand* release_oob();
-  inline void set_allocated_oob(::thefox::rpc::OutOfBand* oob);
+  // optional .thefox.rpc.OnewayMessage oneway = 3;
+  inline bool has_oneway() const;
+  inline void clear_oneway();
+  static const int kOnewayFieldNumber = 3;
+  inline const ::thefox::rpc::OnewayMessage& oneway() const;
+  inline ::thefox::rpc::OnewayMessage* mutable_oneway();
+  inline ::thefox::rpc::OnewayMessage* release_oneway();
+  inline void set_allocated_oneway(::thefox::rpc::OnewayMessage* oneway);
 
   // @@protoc_insertion_point(class_scope:thefox.rpc.Box)
  private:
@@ -518,14 +530,14 @@ class Box : public ::google::protobuf::Message {
   inline void clear_has_call();
   inline void set_has_reply();
   inline void clear_has_reply();
-  inline void set_has_oob();
-  inline void clear_has_oob();
+  inline void set_has_oneway();
+  inline void clear_has_oneway();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::thefox::rpc::Call* call_;
   ::thefox::rpc::Reply* reply_;
-  ::thefox::rpc::OutOfBand* oob_;
+  ::thefox::rpc::OnewayMessage* oneway_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
@@ -1076,6 +1088,28 @@ inline void Call::set_allocated_request(::std::string* request) {
   }
 }
 
+// optional int32 timeout = 5 [default = 30000];
+inline bool Call::has_timeout() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void Call::set_has_timeout() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void Call::clear_has_timeout() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void Call::clear_timeout() {
+  timeout_ = 30000;
+  clear_has_timeout();
+}
+inline ::google::protobuf::int32 Call::timeout() const {
+  return timeout_;
+}
+inline void Call::set_timeout(::google::protobuf::int32 value) {
+  set_has_timeout();
+  timeout_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // Reply
@@ -1197,56 +1231,56 @@ inline void Reply::set_allocated_response(::std::string* response) {
 
 // -------------------------------------------------------------------
 
-// OutOfBand
+// OnewayMessage
 
 // required string type = 1;
-inline bool OutOfBand::has_type() const {
+inline bool OnewayMessage::has_type() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void OutOfBand::set_has_type() {
+inline void OnewayMessage::set_has_type() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void OutOfBand::clear_has_type() {
+inline void OnewayMessage::clear_has_type() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void OutOfBand::clear_type() {
+inline void OnewayMessage::clear_type() {
   if (type_ != &::google::protobuf::internal::kEmptyString) {
     type_->clear();
   }
   clear_has_type();
 }
-inline const ::std::string& OutOfBand::type() const {
+inline const ::std::string& OnewayMessage::type() const {
   return *type_;
 }
-inline void OutOfBand::set_type(const ::std::string& value) {
+inline void OnewayMessage::set_type(const ::std::string& value) {
   set_has_type();
   if (type_ == &::google::protobuf::internal::kEmptyString) {
     type_ = new ::std::string;
   }
   type_->assign(value);
 }
-inline void OutOfBand::set_type(const char* value) {
+inline void OnewayMessage::set_type(const char* value) {
   set_has_type();
   if (type_ == &::google::protobuf::internal::kEmptyString) {
     type_ = new ::std::string;
   }
   type_->assign(value);
 }
-inline void OutOfBand::set_type(const char* value, size_t size) {
+inline void OnewayMessage::set_type(const char* value, size_t size) {
   set_has_type();
   if (type_ == &::google::protobuf::internal::kEmptyString) {
     type_ = new ::std::string;
   }
   type_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* OutOfBand::mutable_type() {
+inline ::std::string* OnewayMessage::mutable_type() {
   set_has_type();
   if (type_ == &::google::protobuf::internal::kEmptyString) {
     type_ = new ::std::string;
   }
   return type_;
 }
-inline ::std::string* OutOfBand::release_type() {
+inline ::std::string* OnewayMessage::release_type() {
   clear_has_type();
   if (type_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
@@ -1256,7 +1290,7 @@ inline ::std::string* OutOfBand::release_type() {
     return temp;
   }
 }
-inline void OutOfBand::set_allocated_type(::std::string* type) {
+inline void OnewayMessage::set_allocated_type(::std::string* type) {
   if (type_ != &::google::protobuf::internal::kEmptyString) {
     delete type_;
   }
@@ -1270,53 +1304,53 @@ inline void OutOfBand::set_allocated_type(::std::string* type) {
 }
 
 // required bytes body = 2;
-inline bool OutOfBand::has_body() const {
+inline bool OnewayMessage::has_body() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void OutOfBand::set_has_body() {
+inline void OnewayMessage::set_has_body() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void OutOfBand::clear_has_body() {
+inline void OnewayMessage::clear_has_body() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void OutOfBand::clear_body() {
+inline void OnewayMessage::clear_body() {
   if (body_ != &::google::protobuf::internal::kEmptyString) {
     body_->clear();
   }
   clear_has_body();
 }
-inline const ::std::string& OutOfBand::body() const {
+inline const ::std::string& OnewayMessage::body() const {
   return *body_;
 }
-inline void OutOfBand::set_body(const ::std::string& value) {
+inline void OnewayMessage::set_body(const ::std::string& value) {
   set_has_body();
   if (body_ == &::google::protobuf::internal::kEmptyString) {
     body_ = new ::std::string;
   }
   body_->assign(value);
 }
-inline void OutOfBand::set_body(const char* value) {
+inline void OnewayMessage::set_body(const char* value) {
   set_has_body();
   if (body_ == &::google::protobuf::internal::kEmptyString) {
     body_ = new ::std::string;
   }
   body_->assign(value);
 }
-inline void OutOfBand::set_body(const void* value, size_t size) {
+inline void OnewayMessage::set_body(const void* value, size_t size) {
   set_has_body();
   if (body_ == &::google::protobuf::internal::kEmptyString) {
     body_ = new ::std::string;
   }
   body_->assign(reinterpret_cast<const char*>(value), size);
 }
-inline ::std::string* OutOfBand::mutable_body() {
+inline ::std::string* OnewayMessage::mutable_body() {
   set_has_body();
   if (body_ == &::google::protobuf::internal::kEmptyString) {
     body_ = new ::std::string;
   }
   return body_;
 }
-inline ::std::string* OutOfBand::release_body() {
+inline ::std::string* OnewayMessage::release_body() {
   clear_has_body();
   if (body_ == &::google::protobuf::internal::kEmptyString) {
     return NULL;
@@ -1326,7 +1360,7 @@ inline ::std::string* OutOfBand::release_body() {
     return temp;
   }
 }
-inline void OutOfBand::set_allocated_body(::std::string* body) {
+inline void OnewayMessage::set_allocated_body(::std::string* body) {
   if (body_ != &::google::protobuf::internal::kEmptyString) {
     delete body_;
   }
@@ -1419,41 +1453,41 @@ inline void Box::set_allocated_reply(::thefox::rpc::Reply* reply) {
   }
 }
 
-// optional .thefox.rpc.OutOfBand oob = 3;
-inline bool Box::has_oob() const {
+// optional .thefox.rpc.OnewayMessage oneway = 3;
+inline bool Box::has_oneway() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Box::set_has_oob() {
+inline void Box::set_has_oneway() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Box::clear_has_oob() {
+inline void Box::clear_has_oneway() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void Box::clear_oob() {
-  if (oob_ != NULL) oob_->::thefox::rpc::OutOfBand::Clear();
-  clear_has_oob();
+inline void Box::clear_oneway() {
+  if (oneway_ != NULL) oneway_->::thefox::rpc::OnewayMessage::Clear();
+  clear_has_oneway();
 }
-inline const ::thefox::rpc::OutOfBand& Box::oob() const {
-  return oob_ != NULL ? *oob_ : *default_instance_->oob_;
+inline const ::thefox::rpc::OnewayMessage& Box::oneway() const {
+  return oneway_ != NULL ? *oneway_ : *default_instance_->oneway_;
 }
-inline ::thefox::rpc::OutOfBand* Box::mutable_oob() {
-  set_has_oob();
-  if (oob_ == NULL) oob_ = new ::thefox::rpc::OutOfBand;
-  return oob_;
+inline ::thefox::rpc::OnewayMessage* Box::mutable_oneway() {
+  set_has_oneway();
+  if (oneway_ == NULL) oneway_ = new ::thefox::rpc::OnewayMessage;
+  return oneway_;
 }
-inline ::thefox::rpc::OutOfBand* Box::release_oob() {
-  clear_has_oob();
-  ::thefox::rpc::OutOfBand* temp = oob_;
-  oob_ = NULL;
+inline ::thefox::rpc::OnewayMessage* Box::release_oneway() {
+  clear_has_oneway();
+  ::thefox::rpc::OnewayMessage* temp = oneway_;
+  oneway_ = NULL;
   return temp;
 }
-inline void Box::set_allocated_oob(::thefox::rpc::OutOfBand* oob) {
-  delete oob_;
-  oob_ = oob;
-  if (oob) {
-    set_has_oob();
+inline void Box::set_allocated_oneway(::thefox::rpc::OnewayMessage* oneway) {
+  delete oneway_;
+  oneway_ = oneway;
+  if (oneway) {
+    set_has_oneway();
   } else {
-    clear_has_oob();
+    clear_has_oneway();
   }
 }
 

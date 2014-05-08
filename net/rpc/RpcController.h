@@ -62,7 +62,8 @@ public:
 	// will be called immediately.
 	//
 	// NotifyOnCancel() must be called no more than once per request.
-	virtual void NotifyOnCancel(google::protobuf::Closure* callback);
+	virtual void NotifyOnCancel(google::protobuf::Closure* callback)
+	{ callback->Run(); }
 
 	int errorCode() const { return _errorCode; }
 	void setErrorCode(int errorCode) { _errorCode = errorCode; }

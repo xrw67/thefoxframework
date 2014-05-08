@@ -7,12 +7,12 @@
 #include <base/Event.h>
 #include <net/rpc/common.h>
 #include <net/rpc/Task.h>
-#include <net/rpc/OobDispatcher.h>
+#include <net/rpc/OnewayDispatcher.h>
 
 namespace thefox
 {
 
-class OobDispatcher;
+class OnewayDispatcher;
 
 class TaskManager
 {
@@ -22,8 +22,8 @@ public:
 
 	void pushBox(const TcpConnectionPtr &sender, const Timestamp &receiveTime, const BoxPtr &msg);
 	TaskPtr popBox();
-	void setDefaultOobCallback(const OobCallback &cb);
-	void registerOobCallback(const std::string &type, const OobCallback &cb);
+	void setDefaultOobCallback(const OnewayCallback &cb);
+	void registerOobCallback(const std::string &type, const OnewayCallback &cb);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TaskManager);
@@ -34,7 +34,7 @@ private:
 	MutexLock _mutex;
 	bool _started;
 	Event _event;
-	OobDispatcher _dispatcher;
+	OnewayDispatcher _dispatcher;
 	std::unique_ptr<Thread> _msgLoopThread;
 
 	CallCallback _callCallback;

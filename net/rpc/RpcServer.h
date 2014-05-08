@@ -20,7 +20,7 @@ public:
 
 	void registerService(gpb::Service *service);
 	bool start(const InetAddress &listen);
-	void sendOob(const TcpConnectionPtr &conn, const gpb::Message *message);
+	void sendOnewayMessage(const TcpConnectionPtr &conn, const gpb::Message *message);
 	void setHearthBeathCallback(const HeartBeathCallback &cb);
 
 private:
@@ -28,6 +28,7 @@ private:
 	void onConnection(const TcpConnectionPtr &conn);
 	void onClose(const TcpConnectionPtr &conn);
 	void onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp recvTime);
+
 	// 服务端：处理请求
 	void handleCallMessage(const TcpConnectionPtr &conn, const rpc::Call &call, Timestamp recvTime);
 

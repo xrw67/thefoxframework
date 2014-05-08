@@ -40,15 +40,15 @@ bool RpcServer::start(const InetAddress &listenAddr)
 	return _server->start(listenAddr);
 }
 
-void RpcServer::sendOob(const TcpConnectionPtr &conn, const gpb::Message *message)
+void RpcServer::sendOnewayMessage(const TcpConnectionPtr &conn, const gpb::Message *message)
 {
 	const std::string& typeName = message->GetTypeName();
-	rpc::OutOfBand *oob = new rpc::OutOfBand();
-    oob->set_type(typeName);
-	oob->set_body(message->SerializeAsString());
+	rpc::OnewayMessage *oneway = new rpc::OnewayMessage();
+    oneway->set_type(typeName);
+	oneway->set_body(message->SerializeAsString());
 
 	rpc::Box box;
-	box.set_allocated_oob(oob);
+	box.set_allocated_oneway(oneway);
 	_server->send(conn, RpcCodec::encode(box));
 }
 

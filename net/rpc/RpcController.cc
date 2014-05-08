@@ -4,7 +4,7 @@
 using namespace thefox;
 
 RpcController::RpcController()
-	: _timeout(30 *1000)
+	: _timeout(30*1000)
 {
 }
 

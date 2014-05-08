@@ -24,7 +24,7 @@
     <ClInclude Include="..\..\net\rpc\common.h" />
     <ClInclude Include="..\..\net\rpc\TaskManager.h" />
     <ClInclude Include="..\..\net\rpc\Task.h" />
-    <ClInclude Include="..\..\net\rpc\OobDispatcher.h" />
+    <ClInclude Include="..\..\net\rpc\OnewayDispatcher.h" />
     <ClInclude Include="..\..\net\rpc\rpc.pb.h" />
     <ClInclude Include="..\..\net\rpc\RpcChannel.h" />
     <ClInclude Include="..\..\net\rpc\RpcClient.h" />

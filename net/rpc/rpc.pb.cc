@@ -28,9 +28,9 @@ const ::google::protobuf::Descriptor* Reply_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Reply_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* Reply_Result_descriptor_ = NULL;
-const ::google::protobuf::Descriptor* OutOfBand_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* OnewayMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  OutOfBand_reflection_ = NULL;
+  OnewayMessage_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Box_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Box_reflection_ = NULL;
@@ -55,11 +55,12 @@ void protobuf_AssignDesc_rpc_2eproto() {
       "rpc.proto");
   GOOGLE_CHECK(file != NULL);
   Call_descriptor_ = file->message_type(0);
-  static const int Call_offsets_[4] = {
+  static const int Call_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Call, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Call, service_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Call, method_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Call, request_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Call, timeout_),
   };
   Call_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -90,27 +91,27 @@ void protobuf_AssignDesc_rpc_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Reply));
   Reply_Result_descriptor_ = Reply_descriptor_->enum_type(0);
-  OutOfBand_descriptor_ = file->message_type(2);
-  static const int OutOfBand_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, body_),
+  OnewayMessage_descriptor_ = file->message_type(2);
+  static const int OnewayMessage_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OnewayMessage, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OnewayMessage, body_),
   };
-  OutOfBand_reflection_ =
+  OnewayMessage_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      OutOfBand_descriptor_,
-      OutOfBand::default_instance_,
-      OutOfBand_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OutOfBand, _unknown_fields_),
+      OnewayMessage_descriptor_,
+      OnewayMessage::default_instance_,
+      OnewayMessage_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OnewayMessage, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OnewayMessage, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(OutOfBand));
+      sizeof(OnewayMessage));
   Box_descriptor_ = file->message_type(3);
   static const int Box_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, call_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, reply_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, oob_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Box, oneway_),
   };
   Box_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -184,7 +185,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Reply_descriptor_, &Reply::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    OutOfBand_descriptor_, &OutOfBand::default_instance());
+    OnewayMessage_descriptor_, &OnewayMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Box_descriptor_, &Box::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -202,8 +203,8 @@ void protobuf_ShutdownFile_rpc_2eproto() {
   delete Call_reflection_;
   delete Reply::default_instance_;
   delete Reply_reflection_;
-  delete OutOfBand::default_instance_;
-  delete OutOfBand_reflection_;
+  delete OnewayMessage::default_instance_;
+  delete OnewayMessage_reflection_;
   delete Box::default_instance_;
   delete Box_reflection_;
   delete Placeholder::default_instance_;
@@ -221,34 +222,35 @@ void protobuf_AddDesc_rpc_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\trpc.proto\022\nthefox.rpc\"D\n\004Call\022\n\n\002id\030\001 "
+    "\n\trpc.proto\022\nthefox.rpc\"\\\n\004Call\022\n\n\002id\030\001 "
     "\002(\003\022\017\n\007service\030\002 \002(\t\022\016\n\006method\030\003 \002(\t\022\017\n\007"
-    "request\030\004 \001(\014\"\254\001\n\005Reply\022\n\n\002id\030\001 \002(\003\022(\n\006r"
-    "esult\030\002 \002(\0162\030.thefox.rpc.Reply.Result\022\020\n"
-    "\010response\030\003 \001(\014\"[\n\006Result\022\007\n\003kOk\020\000\022\n\n\006kE"
-    "rror\020\001\022\024\n\020kServiceNotFound\020\002\022\023\n\017kMethodN"
-    "otFound\020\003\022\021\n\rkClientFailed\020\004\"\'\n\tOutOfBan"
-    "d\022\014\n\004type\030\001 \002(\t\022\014\n\004body\030\002 \002(\014\"k\n\003Box\022\036\n\004"
-    "call\030\001 \001(\0132\020.thefox.rpc.Call\022 \n\005reply\030\002 "
-    "\001(\0132\021.thefox.rpc.Reply\022\"\n\003oob\030\003 \001(\0132\025.th"
-    "efox.rpc.OutOfBand\"\r\n\013Placeholder\"\014\n\nHea"
-    "rtBeath\"\032\n\007RpcList\022\017\n\007service\030\001 \003(\t2\203\001\n\n"
-    "RpcService\022<\n\nheartBeath\022\026.thefox.rpc.He"
-    "artBeath\032\026.thefox.rpc.HeartBeath\0227\n\007list"
-    "Rpc\022\027.thefox.rpc.Placeholder\032\023.thefox.rp"
-    "c.RpcListB\003\200\001\001", 614);
+    "request\030\004 \001(\014\022\026\n\007timeout\030\005 \001(\005:\00530000\"\272\001"
+    "\n\005Reply\022\n\n\002id\030\001 \002(\003\022(\n\006result\030\002 \002(\0162\030.th"
+    "efox.rpc.Reply.Result\022\020\n\010response\030\003 \001(\014\""
+    "i\n\006Result\022\007\n\003kOk\020\000\022\n\n\006kError\020\001\022\024\n\020kServi"
+    "ceNotFound\020\002\022\023\n\017kMethodNotFound\020\003\022\021\n\rkCl"
+    "ientFailed\020\004\022\014\n\010kTimeout\020\005\"+\n\rOnewayMess"
+    "age\022\014\n\004type\030\001 \002(\t\022\014\n\004body\030\002 \002(\014\"r\n\003Box\022\036"
+    "\n\004call\030\001 \001(\0132\020.thefox.rpc.Call\022 \n\005reply\030"
+    "\002 \001(\0132\021.thefox.rpc.Reply\022)\n\006oneway\030\003 \001(\013"
+    "2\031.thefox.rpc.OnewayMessage\"\r\n\013Placehold"
+    "er\"\014\n\nHeartBeath\"\032\n\007RpcList\022\017\n\007service\030\001"
+    " \003(\t2\203\001\n\nRpcService\022<\n\nheartBeath\022\026.thef"
+    "ox.rpc.HeartBeath\032\026.thefox.rpc.HeartBeat"
+    "h\0227\n\007listRpc\022\027.thefox.rpc.Placeholder\032\023."
+    "thefox.rpc.RpcListB\003\200\001\001", 663);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "rpc.proto", &protobuf_RegisterTypes);
   Call::default_instance_ = new Call();
   Reply::default_instance_ = new Reply();
-  OutOfBand::default_instance_ = new OutOfBand();
+  OnewayMessage::default_instance_ = new OnewayMessage();
   Box::default_instance_ = new Box();
   Placeholder::default_instance_ = new Placeholder();
   HeartBeath::default_instance_ = new HeartBeath();
   RpcList::default_instance_ = new RpcList();
   Call::default_instance_->InitAsDefaultInstance();
   Reply::default_instance_->InitAsDefaultInstance();
-  OutOfBand::default_instance_->InitAsDefaultInstance();
+  OnewayMessage::default_instance_->InitAsDefaultInstance();
   Box::default_instance_->InitAsDefaultInstance();
   Placeholder::default_instance_->InitAsDefaultInstance();
   HeartBeath::default_instance_->InitAsDefaultInstance();
@@ -270,6 +272,7 @@ const int Call::kIdFieldNumber;
 const int Call::kServiceFieldNumber;
 const int Call::kMethodFieldNumber;
 const int Call::kRequestFieldNumber;
+const int Call::kTimeoutFieldNumber;
 #endif  // !_MSC_VER
 
 Call::Call()
@@ -292,6 +295,7 @@ void Call::SharedCtor() {
   service_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   method_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   request_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  timeout_ = 30000;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -352,6 +356,7 @@ void Call::Clear() {
         request_->clear();
       }
     }
+    timeout_ = 30000;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -422,6 +427,22 @@ bool Call::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(40)) goto parse_timeout;
+        break;
+      }
+
+      // optional int32 timeout = 5 [default = 30000];
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_timeout:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &timeout_)));
+          set_has_timeout();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -473,6 +494,11 @@ void Call::SerializeWithCachedSizes(
       4, this->request(), output);
   }
 
+  // optional int32 timeout = 5 [default = 30000];
+  if (has_timeout()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->timeout(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -511,6 +537,11 @@ void Call::SerializeWithCachedSizes(
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         4, this->request(), target);
+  }
+
+  // optional int32 timeout = 5 [default = 30000];
+  if (has_timeout()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->timeout(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -552,6 +583,13 @@ int Call::ByteSize() const {
           this->request());
     }
 
+    // optional int32 timeout = 5 [default = 30000];
+    if (has_timeout()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->timeout());
+    }
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -591,6 +629,9 @@ void Call::MergeFrom(const Call& from) {
     if (from.has_request()) {
       set_request(from.request());
     }
+    if (from.has_timeout()) {
+      set_timeout(from.timeout());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -619,6 +660,7 @@ void Call::Swap(Call* other) {
     std::swap(service_, other->service_);
     std::swap(method_, other->method_);
     std::swap(request_, other->request_);
+    std::swap(timeout_, other->timeout_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -647,6 +689,7 @@ bool Reply_Result_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -659,6 +702,7 @@ const Reply_Result Reply::kError;
 const Reply_Result Reply::kServiceNotFound;
 const Reply_Result Reply::kMethodNotFound;
 const Reply_Result Reply::kClientFailed;
+const Reply_Result Reply::kTimeout;
 const Reply_Result Reply::Result_MIN;
 const Reply_Result Reply::Result_MAX;
 const int Reply::Result_ARRAYSIZE;
@@ -967,36 +1011,36 @@ void Reply::Swap(Reply* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int OutOfBand::kTypeFieldNumber;
-const int OutOfBand::kBodyFieldNumber;
+const int OnewayMessage::kTypeFieldNumber;
+const int OnewayMessage::kBodyFieldNumber;
 #endif  // !_MSC_VER
 
-OutOfBand::OutOfBand()
+OnewayMessage::OnewayMessage()
   : ::google::protobuf::Message() {
   SharedCtor();
 }
 
-void OutOfBand::InitAsDefaultInstance() {
+void OnewayMessage::InitAsDefaultInstance() {
 }
 
-OutOfBand::OutOfBand(const OutOfBand& from)
+OnewayMessage::OnewayMessage(const OnewayMessage& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
 }
 
-void OutOfBand::SharedCtor() {
+void OnewayMessage::SharedCtor() {
   _cached_size_ = 0;
   type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-OutOfBand::~OutOfBand() {
+OnewayMessage::~OnewayMessage() {
   SharedDtor();
 }
 
-void OutOfBand::SharedDtor() {
+void OnewayMessage::SharedDtor() {
   if (type_ != &::google::protobuf::internal::kEmptyString) {
     delete type_;
   }
@@ -1007,28 +1051,28 @@ void OutOfBand::SharedDtor() {
   }
 }
 
-void OutOfBand::SetCachedSize(int size) const {
+void OnewayMessage::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* OutOfBand::descriptor() {
+const ::google::protobuf::Descriptor* OnewayMessage::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return OutOfBand_descriptor_;
+  return OnewayMessage_descriptor_;
 }
 
-const OutOfBand& OutOfBand::default_instance() {
+const OnewayMessage& OnewayMessage::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_rpc_2eproto();
   return *default_instance_;
 }
 
-OutOfBand* OutOfBand::default_instance_ = NULL;
+OnewayMessage* OnewayMessage::default_instance_ = NULL;
 
-OutOfBand* OutOfBand::New() const {
-  return new OutOfBand;
+OnewayMessage* OnewayMessage::New() const {
+  return new OnewayMessage;
 }
 
-void OutOfBand::Clear() {
+void OnewayMessage::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (has_type()) {
       if (type_ != &::google::protobuf::internal::kEmptyString) {
@@ -1045,7 +1089,7 @@ void OutOfBand::Clear() {
   mutable_unknown_fields()->Clear();
 }
 
-bool OutOfBand::MergePartialFromCodedStream(
+bool OnewayMessage::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) return false
   ::google::protobuf::uint32 tag;
@@ -1097,7 +1141,7 @@ bool OutOfBand::MergePartialFromCodedStream(
 #undef DO_
 }
 
-void OutOfBand::SerializeWithCachedSizes(
+void OnewayMessage::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // required string type = 1;
   if (has_type()) {
@@ -1120,7 +1164,7 @@ void OutOfBand::SerializeWithCachedSizes(
   }
 }
 
-::google::protobuf::uint8* OutOfBand::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* OnewayMessage::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // required string type = 1;
   if (has_type()) {
@@ -1146,7 +1190,7 @@ void OutOfBand::SerializeWithCachedSizes(
   return target;
 }
 
-int OutOfBand::ByteSize() const {
+int OnewayMessage::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
@@ -1176,10 +1220,10 @@ int OutOfBand::ByteSize() const {
   return total_size;
 }
 
-void OutOfBand::MergeFrom(const ::google::protobuf::Message& from) {
+void OnewayMessage::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const OutOfBand* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const OutOfBand*>(
+  const OnewayMessage* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const OnewayMessage*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1188,7 +1232,7 @@ void OutOfBand::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void OutOfBand::MergeFrom(const OutOfBand& from) {
+void OnewayMessage::MergeFrom(const OnewayMessage& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_type()) {
@@ -1201,25 +1245,25 @@ void OutOfBand::MergeFrom(const OutOfBand& from) {
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void OutOfBand::CopyFrom(const ::google::protobuf::Message& from) {
+void OnewayMessage::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void OutOfBand::CopyFrom(const OutOfBand& from) {
+void OnewayMessage::CopyFrom(const OnewayMessage& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool OutOfBand::IsInitialized() const {
+bool OnewayMessage::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
 
   return true;
 }
 
-void OutOfBand::Swap(OutOfBand* other) {
+void OnewayMessage::Swap(OnewayMessage* other) {
   if (other != this) {
     std::swap(type_, other->type_);
     std::swap(body_, other->body_);
@@ -1229,11 +1273,11 @@ void OutOfBand::Swap(OutOfBand* other) {
   }
 }
 
-::google::protobuf::Metadata OutOfBand::GetMetadata() const {
+::google::protobuf::Metadata OnewayMessage::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = OutOfBand_descriptor_;
-  metadata.reflection = OutOfBand_reflection_;
+  metadata.descriptor = OnewayMessage_descriptor_;
+  metadata.reflection = OnewayMessage_reflection_;
   return metadata;
 }
 
@@ -1243,7 +1287,7 @@ void OutOfBand::Swap(OutOfBand* other) {
 #ifndef _MSC_VER
 const int Box::kCallFieldNumber;
 const int Box::kReplyFieldNumber;
-const int Box::kOobFieldNumber;
+const int Box::kOnewayFieldNumber;
 #endif  // !_MSC_VER
 
 Box::Box()
@@ -1254,7 +1298,7 @@ Box::Box()
 void Box::InitAsDefaultInstance() {
   call_ = const_cast< ::thefox::rpc::Call*>(&::thefox::rpc::Call::default_instance());
   reply_ = const_cast< ::thefox::rpc::Reply*>(&::thefox::rpc::Reply::default_instance());
-  oob_ = const_cast< ::thefox::rpc::OutOfBand*>(&::thefox::rpc::OutOfBand::default_instance());
+  oneway_ = const_cast< ::thefox::rpc::OnewayMessage*>(&::thefox::rpc::OnewayMessage::default_instance());
 }
 
 Box::Box(const Box& from)
@@ -1267,7 +1311,7 @@ void Box::SharedCtor() {
   _cached_size_ = 0;
   call_ = NULL;
   reply_ = NULL;
-  oob_ = NULL;
+  oneway_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1279,7 +1323,7 @@ void Box::SharedDtor() {
   if (this != default_instance_) {
     delete call_;
     delete reply_;
-    delete oob_;
+    delete oneway_;
   }
 }
 
@@ -1312,8 +1356,8 @@ void Box::Clear() {
     if (has_reply()) {
       if (reply_ != NULL) reply_->::thefox::rpc::Reply::Clear();
     }
-    if (has_oob()) {
-      if (oob_ != NULL) oob_->::thefox::rpc::OutOfBand::Clear();
+    if (has_oneway()) {
+      if (oneway_ != NULL) oneway_->::thefox::rpc::OnewayMessage::Clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1349,17 +1393,17 @@ bool Box::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_oob;
+        if (input->ExpectTag(26)) goto parse_oneway;
         break;
       }
 
-      // optional .thefox.rpc.OutOfBand oob = 3;
+      // optional .thefox.rpc.OnewayMessage oneway = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_oob:
+         parse_oneway:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_oob()));
+               input, mutable_oneway()));
         } else {
           goto handle_uninterpreted;
         }
@@ -1397,10 +1441,10 @@ void Box::SerializeWithCachedSizes(
       2, this->reply(), output);
   }
 
-  // optional .thefox.rpc.OutOfBand oob = 3;
-  if (has_oob()) {
+  // optional .thefox.rpc.OnewayMessage oneway = 3;
+  if (has_oneway()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->oob(), output);
+      3, this->oneway(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -1425,11 +1469,11 @@ void Box::SerializeWithCachedSizes(
         2, this->reply(), target);
   }
 
-  // optional .thefox.rpc.OutOfBand oob = 3;
-  if (has_oob()) {
+  // optional .thefox.rpc.OnewayMessage oneway = 3;
+  if (has_oneway()) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        3, this->oob(), target);
+        3, this->oneway(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -1457,11 +1501,11 @@ int Box::ByteSize() const {
           this->reply());
     }
 
-    // optional .thefox.rpc.OutOfBand oob = 3;
-    if (has_oob()) {
+    // optional .thefox.rpc.OnewayMessage oneway = 3;
+    if (has_oneway()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->oob());
+          this->oneway());
     }
 
   }
@@ -1497,8 +1541,8 @@ void Box::MergeFrom(const Box& from) {
     if (from.has_reply()) {
       mutable_reply()->::thefox::rpc::Reply::MergeFrom(from.reply());
     }
-    if (from.has_oob()) {
-      mutable_oob()->::thefox::rpc::OutOfBand::MergeFrom(from.oob());
+    if (from.has_oneway()) {
+      mutable_oneway()->::thefox::rpc::OnewayMessage::MergeFrom(from.oneway());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -1524,8 +1568,8 @@ bool Box::IsInitialized() const {
   if (has_reply()) {
     if (!this->reply().IsInitialized()) return false;
   }
-  if (has_oob()) {
-    if (!this->oob().IsInitialized()) return false;
+  if (has_oneway()) {
+    if (!this->oneway().IsInitialized()) return false;
   }
   return true;
 }
@@ -1534,7 +1578,7 @@ void Box::Swap(Box* other) {
   if (other != this) {
     std::swap(call_, other->call_);
     std::swap(reply_, other->reply_);
-    std::swap(oob_, other->oob_);
+    std::swap(oneway_, other->oneway_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

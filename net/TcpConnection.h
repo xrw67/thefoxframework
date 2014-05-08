@@ -40,6 +40,7 @@ public:
             closesocket(_socket);
             _socket = INVALID_SOCKET;
         }
+
     }
 
     /// @brief 获取连接ID
@@ -61,10 +62,10 @@ public:
     StateT state() const { return _state; }
 
     /// @brief 
-    void *context() const { return _context; }
+    void *arg() const { return _arg; }
 
     /// @brief 
-    void setContext(void *context) { _context = context; }
+    void setArg(void *arg) { _arg = arg; }
 
     //以下为内部使用
     void setState(StateT state) { _state = state; }
@@ -121,7 +122,7 @@ private:
     size_t _pendingEvent; // 未完成的事件
     StateT _state;
     MutexLock _mutex;
-    void *_context;
+    void *_arg;
 
     // 统计信息
     size_t _readBytes;
