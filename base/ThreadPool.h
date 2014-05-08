@@ -1,8 +1,14 @@
+#ifndef _THEFOX_BASE_THREADPOOL_H_
+#define _THEFOX_BASE_THREADPOOL_H_
 
+#include <queue>
 #include <base/Types.h>
 #include <base/MutexLock.h>
 #include <base/Semaphore.h>
 #include <base/Thread.h>
+
+namespace thefox
+{
 
 class ThreadPool
 {
@@ -26,7 +32,7 @@ public:
 	
 	/// @brief 添加线程任务
 	void addTask(const ThreadCallback &task)
-	{ _tasks.push(task); }
+	{ _tasks.put(task); }
 	
 	/// @brief 等待线程池结束
 	void join()
@@ -39,7 +45,7 @@ public:
 	}
 	
 	/// @brief 得到线程个数
-	size_t size() const { return _thread.size(); }
+	size_t size() const { return _threads.size(); }
 	
 	/// @brief 结束线程池
 	void terminate()
@@ -53,16 +59,16 @@ private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ThreadPool);
 	typedef std::vector<std::shared_ptr<Thread>> ThreadVector;
 	
-	class TaskManager
+	class TaskQueue
 	{
 	public:
-		TaskManager() {}
-		~TaskManager() {}
+		TaskQueue() {}
+		~TaskQueue() {}
 		
-		void push(const ThreadCallback &task) 
+		void put(const ThreadCallback &task) 
 		{
 			MutexLockGuard lock(_mutex);
-			_tasks.push_back(task);
+			_tasks.push(task);
 			_sem.signal();
 		}
 		ThreadCallback get()
@@ -71,14 +77,14 @@ private:
 			_sem.wait(Semaphore::kInfinite);
 			MutexLockGuard lock(_mutex);
 			task = _tasks.front();
-			_task.pop_front();
+			_tasks.pop();
 			return task;
 		}
 		
 	private:
-		THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TaskManager);
-		typedef std::vector<ThreadCallback> TaskVector;
-		TaskVector _tasks;
+		THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TaskQueue);
+		typedef std::queue<ThreadCallback> Tasks;
+		Tasks _tasks;
 		MutexLock _mutex;
 		Semaphore _sem;
 	};
@@ -94,14 +100,18 @@ private:
 	void taskRunner()
 	{
 		while(true) {
-			TaskPtr = _tasks.get()
-			if (TaskPtr)
-				(*TaskPtr)();
+			ThreadCallback task = _tasks.get();
+			task();
 		}
 	}
 	
 	bool _inited;
 	ThreadVector _threads;
-	TaskManager _tasks;
+	TaskQueue _tasks;
+
 	static const int32_t kDefaultThreadNum = 10;
 };
+
+} // namespace thefox
+
+#endif // _THEFOX_BASE_THREADPOOL_H_
