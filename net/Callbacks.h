@@ -8,16 +8,16 @@ namespace thefox
 {
     
 class Buffer;
-class TcpConnection;
-typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+class Connection;
+typedef std::shared_ptr<Connection> ConnectionPtr;
 
-typedef std::function<void(const TcpConnectionPtr &conn)> ConnectionCallback;
-typedef std::function<void(const TcpConnectionPtr &conn)> CloseCallback;
-typedef std::function<void(const TcpConnectionPtr &conn, Buffer *buffer, const Timestamp recvTime)> MessageCallback;
-typedef std::function<void(const TcpConnectionPtr &conn)> WriteCompleteCallback;
+typedef std::function<void(const ConnectionPtr &conn)> ConnectionCallback;
+typedef std::function<void(const ConnectionPtr &conn)> CloseCallback;
+typedef std::function<void(const ConnectionPtr &conn, Buffer *buffer, const Timestamp recvTime)> MessageCallback;
+typedef std::function<void(const ConnectionPtr &conn)> WriteCompleteCallback;
 
-void defaultConnectionCallback(const TcpConnectionPtr &conn);
-void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, const Timestamp recvTime);
+void defaultConnectionCallback(const ConnectionPtr &conn);
+void defaultMessageCallback(const ConnectionPtr &conn, Buffer *buffer, const Timestamp recvTime);
 
 } // namespace thefox
 

@@ -20,7 +20,7 @@ public:
 	TaskManager(const CallCallback &callCb, const ReplyCallback &replyCb);
 	~TaskManager();
 
-	void pushBox(const TcpConnectionPtr &sender, const Timestamp &receiveTime, const BoxPtr &msg);
+	void pushBox(const ConnectionPtr &sender, const Timestamp &receiveTime, const BoxPtr &msg);
 	TaskPtr popBox();
 	void setDefaultOobCallback(const OnewayCallback &cb);
 	void registerOobCallback(const std::string &type, const OnewayCallback &cb);

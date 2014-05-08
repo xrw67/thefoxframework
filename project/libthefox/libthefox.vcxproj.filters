@@ -30,9 +30,6 @@
     <ClInclude Include="..\..\net\TcpClient.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\TcpConnection.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\TcpServer.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -92,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\OnewayDispatcher.h">
       <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\Connection.h">
+      <Filter>net</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

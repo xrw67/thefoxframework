@@ -4,17 +4,17 @@
 #include <net/Buffer.h>
 #include <net/CpEvent.h>
 #include <net/EventLoop.h>
-#include <net/TcpConnection.h>
+#include <net/Connection.h>
 
 namespace thefox
 {
 
-void defaultConnectionCallback(const TcpConnectionPtr &conn)
+void defaultConnectionCallback(const ConnectionPtr &conn)
 {
     return;
 }
 
-void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
+void defaultMessageCallback(const ConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
 {
     buffer->retrieveAll();
 }
@@ -84,7 +84,7 @@ bool Iocp::start(const InetAddress &listenAddr)
     return true;
 }
 
-void Iocp::send(const TcpConnectionPtr &conn, const char *data, size_t len)
+void Iocp::send(const ConnectionPtr &conn, const char *data, size_t len)
 {
     if (NULL != conn)
         conn->send(data, len);
@@ -123,7 +123,7 @@ bool Iocp::open(const InetAddress &serverAddr)
 bool Iocp::isOpen()
 {
 	if (_started && !_connections.empty()) {
-		if (TcpConnection::kConnected == _connections.begin()->second->state())
+		if (Connection::kConnected == _connections.begin()->second->state())
 			return true;
 	}
 	return false;
@@ -147,21 +147,21 @@ void Iocp::send(const char *data, size_t len)
 void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 {
 	int32_t connId = _nextConnId.inc();
-    TcpConnectionPtr conn(new TcpConnection(socket, connId, peerAddr));
+    ConnectionPtr conn(new Connection(socket, connId, peerAddr));
 	conn->setPostWriteEventFunction(std::bind(&Iocp::postWriteEvent, this, conn, static_cast<CpEvent *>(NULL)));
-    conn->setState(TcpConnection::kConnecting);
+    conn->setState(Connection::kConnecting);
     _connections[connId] = conn;
     _eventloop->registerHandle((HANDLE)socket);
     
     if (NULL != conn) {
-        conn->setState(TcpConnection::kConnected);
+        conn->setState(Connection::kConnected);
         postZeroByteReadEvent(conn);
         postReadEvent(conn);
         handleConnection(conn);
     }
 }
 
-void Iocp::removeConnection(TcpConnectionPtr conn)
+void Iocp::removeConnection(ConnectionPtr conn)
 {
     if (INVALID_SOCKET != conn->socket()) {
         CancelIo((HANDLE)conn->socket());
@@ -169,16 +169,16 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
     }
 
     if (0 == conn->leaveEventLoop()) {
-        conn->setState(TcpConnection::kDisconnecting);
+        conn->setState(Connection::kDisconnecting);
         handleClose(conn);
-        conn->setState(TcpConnection::kDisconnected);
+        conn->setState(Connection::kDisconnected);
         
         MutexLockGuard lock(_connMutex);
         _connections.erase(conn->connId());
 	}
 }
 
-void Iocp::postReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
+void Iocp::postReadEvent(const ConnectionPtr &conn, CpEvent *e)
 {
     if (NULL == e) {
         conn->enterEventLoop();
@@ -204,7 +204,7 @@ void Iocp::postReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
     }
 }
 
-void Iocp::postWriteEvent(const TcpConnectionPtr &conn, CpEvent *e)
+void Iocp::postWriteEvent(const ConnectionPtr &conn, CpEvent *e)
 {
     size_t writeable = conn->writeBuffer()->readableBytes();
     if (writeable > 0) {
@@ -239,7 +239,7 @@ void Iocp::postWriteEvent(const TcpConnectionPtr &conn, CpEvent *e)
     }
 }
 
-void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
+void Iocp::postZeroByteReadEvent(const ConnectionPtr &conn, CpEvent *e)
 {
     if (NULL == e) {
         conn->enterEventLoop();
@@ -265,7 +265,7 @@ void Iocp::postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e)
     }
 }
 
-void Iocp::postCloseEvent(const TcpConnectionPtr &conn)
+void Iocp::postCloseEvent(const ConnectionPtr &conn)
 {
     conn->enterEventLoop();
     CpEvent *e = CpEventPool::instance()->get(conn);
@@ -287,7 +287,7 @@ void Iocp::handleCpError(IoEvent *evt)
 void Iocp::handleCpRead(IoEvent *evt)
 {
     CpEvent *se = static_cast<CpEvent *>(evt);
-    TcpConnectionPtr conn = se->conn();
+    ConnectionPtr conn = se->conn();
 
     if (0 == se->bytesTransfered()) {
 		removeConnection(conn);

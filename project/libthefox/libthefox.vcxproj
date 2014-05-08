@@ -35,7 +35,7 @@
     <ClInclude Include="..\..\net\rpc\RpcServiceManager.h" />
     <ClInclude Include="..\..\net\SocketOps.h" />
     <ClInclude Include="..\..\net\TcpClient.h" />
-    <ClInclude Include="..\..\net\TcpConnection.h" />
+    <ClInclude Include="..\..\net\Connection.h" />
     <ClInclude Include="..\..\net\TcpServer.h" />
     <ClInclude Include="..\..\net\TimerQueue.h" />
   </ItemGroup>

@@ -18,7 +18,7 @@ public:
 		: _defaultCallback(defaultCb) {}
 	~OnewayDispatcher(void) {}
 
-	void onMessage(const TcpConnectionPtr &sender, const rpc::OnewayMessage &oneway, const Timestamp &recvTime) const
+	void onMessage(const ConnectionPtr &sender, const rpc::OnewayMessage &oneway, const Timestamp &recvTime) const
 	{
 		std::shared_ptr<gpb::Message> message(RpcCodec::createMessage(oneway.type()));
 		if (NULL == message) // oneway消息创建失败
