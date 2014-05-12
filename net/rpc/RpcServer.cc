@@ -40,7 +40,7 @@ bool RpcServer::start(const InetAddress &listenAddr)
 	return _server->start(listenAddr);
 }
 
-void RpcServer::sendOnewayMessage(const ConnectionPtr &conn, const gpb::Message *message)
+void RpcServer::sendOneway(const ConnectionPtr &conn, const gpb::Message *message)
 {
 	const std::string& typeName = message->GetTypeName();
 	rpc::OnewayMessage *oneway = new rpc::OnewayMessage();
