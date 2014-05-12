@@ -33,10 +33,10 @@ public:
 			_defaultCallback(sender, oneway.type(), message.get(), recvTime);
 	}
 
-	void setDefaultOobCallback(const OnewayCallback &cb)
+	void setDefaultCallback(const OnewayCallback &cb)
 	{ _defaultCallback = cb; }
 
-	void registerOobCallback(const std::string type, const OnewayCallback &cb)
+	void registerCallback(const std::string type, const OnewayCallback &cb)
 	{ _callbacks[type] = cb; }
 
 private:

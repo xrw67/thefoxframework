@@ -3,7 +3,7 @@
 namespace thefox {
 namespace detail {
 
-void defaultOobCallback(const TcpConnectionPtr &sender, 
+void defaultOnewayCallback(const TcpConnectionPtr &sender, 
 							const std::string &type, 
 							const gpb::Message *message,
 							const Timestamp &receiveTime)
@@ -15,7 +15,7 @@ void defaultOobCallback(const TcpConnectionPtr &sender,
 using namespace thefox;
 
 TaskManager::TaskManager(const CallCallback &callCb, const ReplyCallback &replyCb)
-	: _dispatcher(detail::defaultOobCallback)
+	: _dispatcher(detail::defaultOnewayCallback)
 	, _callCallback(callCb)
 	, _replyCallback(replyCb)
 	, _started(true)
@@ -47,14 +47,14 @@ TaskPtr TaskManager::popBox()
 	return msg;
 }
 
-void TaskManager::setDefaultOobCallback(const OnewayCallback &cb)
+void TaskManager::setDefaultOnewayCallback(const OnewayCallback &cb)
 {
-	_dispatcher.setDefaultOobCallback(cb);
+	_dispatcher.setDefaultCallback(cb);
 }
 
-void TaskManager::registerOobCallback(const std::string &type, const OnewayCallback &cb)
+void TaskManager::registerOnewayCallback(const std::string &type, const OnewayCallback &cb)
 {
-	_dispatcher.registerOobCallback(type, cb);
+	_dispatcher.registerCallback(type, cb);
 }
 
 void TaskManager::loop()

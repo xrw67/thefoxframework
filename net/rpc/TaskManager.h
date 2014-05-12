@@ -22,8 +22,8 @@ public:
 
 	void pushBox(const TcpConnectionPtr &sender, const Timestamp &receiveTime, const BoxPtr &msg);
 	TaskPtr popBox();
-	void setDefaultOobCallback(const OnewayCallback &cb);
-	void registerOobCallback(const std::string &type, const OnewayCallback &cb);
+	void setDefaultOnewayCallback(const OnewayCallback &cb);
+	void registerOnewayCallback(const std::string &type, const OnewayCallback &cb);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TaskManager);
