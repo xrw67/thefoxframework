@@ -1,5 +1,5 @@
 #include <net/rpc/RpcClient.h>
-#include <net/Connection.h>
+#include <net/TcpConnection.h>
 #include <net/rpc/RpcChannel.h>
 #include <net/rpc/TaskManager.h>
 #include <net/rpc/RpcController.h>
@@ -27,7 +27,7 @@ void RpcClient::unregisterChannel(RpcChannel *channel)
 	_channels.remove(channel);
 }
 
-void RpcClient::CallMethod(const ConnectionPtr &conn,
+void RpcClient::CallMethod(const TcpConnectionPtr &conn,
 					const ::google::protobuf::MethodDescriptor* method,
 				    RpcController *controller,
 				   const ::google::protobuf::Message* request,
@@ -58,7 +58,7 @@ void RpcClient::CallMethod(const ConnectionPtr &conn,
 		reqWait->doneEvent.wait();
 }
 
-void RpcClient::handleReplyMessage(const ConnectionPtr &conn, const rpc::Reply &reply, const Timestamp &recvTime)
+void RpcClient::handleReplyMessage(const TcpConnectionPtr &conn, const rpc::Reply &reply, const Timestamp &recvTime)
 {
 	const int64_t id = reply.id();
 

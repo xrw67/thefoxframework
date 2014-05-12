@@ -1,6 +1,6 @@
 #include <net/rpc/RpcServer.h>
 #include <net/Buffer.h>
-#include <net/Connection.h>
+#include <net/TcpConnection.h>
 #include <net/rpc/RpcCodec.h>
 #include <net/rpc/RpcChannel.h>
 #include <net/rpc/RpcServiceManager.h>
@@ -40,7 +40,7 @@ bool RpcServer::start(const InetAddress &listenAddr)
 	return _server->start(listenAddr);
 }
 
-void RpcServer::sendOneway(const ConnectionPtr &conn, const gpb::Message *message)
+void RpcServer::sendOneway(const TcpConnectionPtr &conn, const gpb::Message *message)
 {
 	const std::string& typeName = message->GetTypeName();
 	rpc::OnewayMessage *oneway = new rpc::OnewayMessage();
@@ -52,13 +52,13 @@ void RpcServer::sendOneway(const ConnectionPtr &conn, const gpb::Message *messag
 	_server->send(conn, RpcCodec::encode(box));
 }
 
-void RpcServer::onConnection(const ConnectionPtr &conn)
+void RpcServer::onConnection(const TcpConnectionPtr &conn)
 {}
 
-void RpcServer::onClose(const ConnectionPtr &conn)
+void RpcServer::onClose(const TcpConnectionPtr &conn)
 {}
 
-void RpcServer::onMessage(const ConnectionPtr &conn, Buffer *buf, const Timestamp recvTime)
+void RpcServer::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp recvTime)
 {
 	while (RpcCodec::isValid(buf->peek(), buf->readableBytes())) {
 		BoxPtr box(new rpc::Box());
@@ -70,7 +70,7 @@ void RpcServer::onMessage(const ConnectionPtr &conn, Buffer *buf, const Timestam
 	}
 }
 
-void RpcServer::handleCallMessage(const ConnectionPtr &conn, const rpc::Call &call, Timestamp receiveTime)
+void RpcServer::handleCallMessage(const TcpConnectionPtr &conn, const rpc::Call &call, Timestamp receiveTime)
 {
 	if (NULL == _serviceManager)
 		return;

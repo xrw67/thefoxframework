@@ -27,16 +27,16 @@ typedef std::shared_ptr<rpc::Box> BoxPtr;
 class TaskManager;
 typedef std::shared_ptr<TaskManager> TaskManagerPtr;
 
-typedef std::function<void(const ConnectionPtr &sender, 
+typedef std::function<void(const TcpConnectionPtr &sender, 
 							const std::string &type, 
 							const gpb::Message *message,
 							const Timestamp &receiveTime)> OnewayCallback;
 
 typedef std::function<void()> HeartBeathCallback;
-typedef std::function<void(const ConnectionPtr &conn, 
+typedef std::function<void(const TcpConnectionPtr &conn, 
 						const rpc::Reply reply, 
 						const Timestamp &recvTime)> ReplyCallback;
-typedef std::function<void(const ConnectionPtr &conn, 
+typedef std::function<void(const TcpConnectionPtr &conn, 
 						const rpc::Call call, 
 						const Timestamp &recvTime)> CallCallback;
 

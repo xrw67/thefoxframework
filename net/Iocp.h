@@ -22,7 +22,7 @@ namespace thefox
 class IoEvent;
 class CpEvent;
 class EventLoop;
-typedef std::map<int32_t, ConnectionPtr> ConnectionMap;
+typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
 
 class Iocp
 {
@@ -34,8 +34,8 @@ public:
     // 服务端方法
     bool start(const InetAddress &listenAddr);
     bool started() { return _started; }
-    void send(const ConnectionPtr &conn, const char *data, size_t len);
-    void removeConnection(ConnectionPtr conn);
+    void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+    void removeConnection(TcpConnectionPtr conn);
 
     // 客户端方法
     bool open(const InetAddress &serverAddr);
@@ -55,21 +55,21 @@ public:
     void setWriteCompleteCallback(const WriteCompleteCallback &cb)
     { _writeCompleteCallback = cb; }
 
-    void handleConnection(const ConnectionPtr &conn)
+    void handleConnection(const TcpConnectionPtr &conn)
     { if (NULL != _connectionCallback) _connectionCallback(conn); }
-    void handleClose(const ConnectionPtr &conn)
+    void handleClose(const TcpConnectionPtr &conn)
     { if (NULL != _closeCallback) _closeCallback(conn); }
-    void handleMessage(const ConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
+    void handleMessage(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
     { if (NULL != _messageCallback) _messageCallback(conn, buffer, recvTime); }
-    void handleWriteComplete(const ConnectionPtr &conn)
+    void handleWriteComplete(const TcpConnectionPtr &conn)
     { if (NULL != _writeCompleteCallback) _writeCompleteCallback(conn); }
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Iocp);
-	void postReadEvent(const ConnectionPtr &conn, CpEvent *e = NULL);
-    void postWriteEvent(const ConnectionPtr &conn, CpEvent *e = NULL);
-    void postZeroByteReadEvent(const ConnectionPtr &conn, CpEvent *e = NULL);
-    void postCloseEvent(const ConnectionPtr &conn);
+	void postReadEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
+    void postWriteEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
+    void postZeroByteReadEvent(const TcpConnectionPtr &conn, CpEvent *e = NULL);
+    void postCloseEvent(const TcpConnectionPtr &conn);
 
 	// cp事件回调函数
 	void handleCpError(IoEvent *evt);

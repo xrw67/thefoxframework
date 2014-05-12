@@ -33,16 +33,16 @@ bool TcpServer::started()
     return _model->started();
 }
 
-void TcpServer::send(const ConnectionPtr &conn, const char *data, size_t len)
+void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
 {
     _model->send(conn, data, len);
 }
-void TcpServer::send(const ConnectionPtr &conn, const std::string &data)
+void TcpServer::send(const TcpConnectionPtr &conn, const std::string &data)
 {
     _model->send(conn, data.c_str(), data.length());
 }
 
-void TcpServer::removeConnection(ConnectionPtr conn)
+void TcpServer::removeConnection(TcpConnectionPtr conn)
 {
     _model->removeConnection(conn);
 }

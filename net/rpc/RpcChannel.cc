@@ -1,5 +1,5 @@
 #include <net/rpc/RpcChannel.h>
-#include <net/Connection.h>
+#include <net/TcpConnection.h>
 #include <net/rpc/RpcServiceManager.h>
 #include <net/rpc/RpcClient.h>
 #include <net/rpc/RpcCodec.h>
@@ -40,15 +40,15 @@ void RpcChannel::setTaskManager(const TaskManagerPtr &taskManager)
 	_taskManager = taskManager; 
 }
 
-void RpcChannel::onConnection(const ConnectionPtr &conn)
+void RpcChannel::onConnection(const TcpConnectionPtr &conn)
 {
 	_conn = conn;
 }
 
-void RpcChannel::onClose(const ConnectionPtr &conn)
+void RpcChannel::onClose(const TcpConnectionPtr &conn)
 {}
 
-void RpcChannel::onMessage(const ConnectionPtr &conn, Buffer *buf, const Timestamp &recvTime)
+void RpcChannel::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp &recvTime)
 {
 	while (RpcCodec::isValid(buf->peek(), buf->readableBytes())) {
 		BoxPtr box(new rpc::Box());

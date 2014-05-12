@@ -37,11 +37,11 @@ public:
     bool started();
     
     /// @brief 发送数据
-    void send(const ConnectionPtr &conn, const char *data, size_t len);
-    void send(const ConnectionPtr &conn, const std::string &data);
+    void send(const TcpConnectionPtr &conn, const char *data, size_t len);
+    void send(const TcpConnectionPtr &conn, const std::string &data);
 
     /// @brief 移除客户连接
-    void removeConnection(ConnectionPtr conn);
+    void removeConnection(TcpConnectionPtr conn);
 
     /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb);

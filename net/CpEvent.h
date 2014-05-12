@@ -19,7 +19,7 @@ class CpEvent : public IoEvent
 public:
     static const int kMaxBufSize = 8192;
 
-    CpEvent(const ConnectionPtr &conn)
+    CpEvent(const TcpConnectionPtr &conn)
         : IoEvent()
         , _conn(conn)
     {
@@ -49,14 +49,14 @@ public:
         _wsabuf.len = 0;
     }
 
-    ConnectionPtr conn() const { return _conn; }
+    TcpConnectionPtr conn() const { return _conn; }
 
     WSABUF wsaBuffer() const { return _wsabuf; }
 
 private:
     char _buf[8192];
     WSABUF _wsabuf;
-    ConnectionPtr _conn;
+    TcpConnectionPtr _conn;
 };
 
 class CpEventPool : public MemPool<CpEvent>
@@ -68,7 +68,7 @@ public:
         return &gCpEventPool;
     }
 
-    CpEvent *get(ConnectionPtr conn)
+    CpEvent *get(TcpConnectionPtr conn)
     {
         CpEvent *ret = MemPool::get();
         new(ret) CpEvent(conn); // placement new

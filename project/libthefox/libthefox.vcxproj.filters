@@ -90,7 +90,7 @@
     <ClInclude Include="..\..\net\rpc\OnewayDispatcher.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\Connection.h">
+    <ClInclude Include="..\..\net\TcpConnection.h">
       <Filter>net</Filter>
     </ClInclude>
   </ItemGroup>
