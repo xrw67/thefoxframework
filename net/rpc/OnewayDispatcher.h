@@ -26,21 +26,26 @@ public:
 
 		message->ParseFromString(oneway.body());
 
-		CallbackMap::const_iterator it = _callbacks.find(oneway.type());
-		if (it != _callbacks.end())
-			it->second(sender, oneway.type(), message.get(), recvTime);
-		else
-			_defaultCallback(sender, oneway.type(), message.get(), recvTime);
+		const gpb::Descriptor* descriptor = 
+			gpb::DescriptorPool::generated_pool()->FindMessageTypeByName(oneway.type());
+		
+		if (descriptor) {
+			CallbackMap::const_iterator it = _callbacks.find(descriptor);
+			if (it != _callbacks.end())
+				it->second(sender, oneway.type(), message.get(), recvTime);
+			else
+				_defaultCallback(sender, oneway.type(), message.get(), recvTime);
+		}
 	}
 
 	void setDefaultCallback(const OnewayCallback &cb)
 	{ _defaultCallback = cb; }
 
-	void registerCallback(const std::string type, const OnewayCallback &cb)
-	{ _callbacks[type] = cb; }
+	void registerCallback(const gpb::Descriptor *desc, const OnewayCallback &cb)
+	{ _callbacks[desc] = cb; }
 
 private:
-	typedef std::map<const std::string, OnewayCallback> CallbackMap;
+	typedef std::map<const gpb::Descriptor *, OnewayCallback> CallbackMap;
 	CallbackMap _callbacks;
 	OnewayCallback _defaultCallback;
 };

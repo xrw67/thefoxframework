@@ -52,9 +52,9 @@ void TaskManager::setDefaultOnewayCallback(const OnewayCallback &cb)
 	_dispatcher.setDefaultCallback(cb);
 }
 
-void TaskManager::registerOnewayCallback(const std::string &type, const OnewayCallback &cb)
+void TaskManager::registerOnewayCallback(const gpb::Descriptor *desc, const OnewayCallback &cb)
 {
-	_dispatcher.registerCallback(type, cb);
+	_dispatcher.registerCallback(desc, cb);
 }
 
 void TaskManager::loop()
@@ -75,7 +75,7 @@ void TaskManager::loop()
 					_callCallback(msg->sender(), msg->call(), msg->time());
 				if (msg->hasReply())
 					_replyCallback(msg->sender(), msg->reply(), msg->time());
-				if (msg->hasOnewayMessage())
+				if (msg->hasOneway())
 					_dispatcher.onMessage(msg->sender(), msg->oneway(), msg->time());
 			}
 				
