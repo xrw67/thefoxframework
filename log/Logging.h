@@ -49,6 +49,8 @@ public:
 	LogMessage &operator<<(unsigned int value);
 	LogMessage &operator<<(long value);
 	LogMessage &operator<<(unsigned long value);
+	LogMessage &operator<<(long long value);
+	LogMessage &operator<<(unsigned long long value);
 	LogMessage &operator<<(double value);
 	LogMessage &operator<<(const void *p);
 
