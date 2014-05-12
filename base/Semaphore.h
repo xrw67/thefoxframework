@@ -11,7 +11,7 @@ class Semaphore
 {
 public:
 #ifdef _WIN32
-	static const unit32_t kInfinite = INFINITE;
+	static const uint32_t kInfinite = INFINITE;
 	typedef HANDLE sem_t;
 #else
 	static const unit32_t kInfinite = UINT_MAX

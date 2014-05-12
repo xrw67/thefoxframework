@@ -10,6 +10,8 @@
 namespace thefox
 {
 
+typedef std::function<void()> TaskMethod;
+
 class ThreadPool
 {
 public:
@@ -31,7 +33,7 @@ public:
 	}
 	
 	/// @brief 添加线程任务
-	void addTask(const ThreadCallback &task)
+	void addTask(const TaskMethod &task)
 	{ _tasks.put(task); }
 	
 	/// @brief 等待线程池结束
@@ -65,7 +67,7 @@ private:
 		TaskQueue() {}
 		~TaskQueue() {}
 		
-		void put(const ThreadCallback &task) 
+		void put(const TaskMethod &task) 
 		{
 			MutexLockGuard lock(_mutex);
 			_tasks.push(task);
@@ -73,7 +75,7 @@ private:
 		}
 		ThreadCallback get()
 		{
-			ThreadCallback task;
+			TaskMethod task;
 			_sem.wait(Semaphore::kInfinite);
 			MutexLockGuard lock(_mutex);
 			task = _tasks.front();
@@ -83,7 +85,7 @@ private:
 		
 	private:
 		THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TaskQueue);
-		typedef std::queue<ThreadCallback> Tasks;
+		typedef std::queue<TaskMethod> Tasks;
 		Tasks _tasks;
 		MutexLock _mutex;
 		Semaphore _sem;
@@ -92,15 +94,20 @@ private:
 	// 添加工作线程
 	void addWorker(int threadNum)
 	{
-		for (int i = 0; i < threadNum; ++i)
-			_threads.push_back(new Thread(taskRunner, "threadpool.taskrunner"));
+		for (int i = 0; i < threadNum; ++i) {
+			std::shared_ptr<Thread> thread(
+				new Thread(std::bind(&ThreadPool::taskRunner, this),
+								"threadpool.taskrunner"));
+			_threads.push_back(thread);					
+			thread->start();
+		}
 	}
 	
 	// 运行任务
 	void taskRunner()
 	{
 		while(true) {
-			ThreadCallback task = _tasks.get();
+			TaskMethod task = _tasks.get();
 			task();
 		}
 	}
