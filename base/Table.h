@@ -3,7 +3,6 @@
 
 #include <assert.h>
 #include <base/Types.h>
-#include <base/Shareable.h>
 
 namespace thefox
 {
