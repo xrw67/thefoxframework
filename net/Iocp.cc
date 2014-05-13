@@ -123,7 +123,7 @@ bool Iocp::open(const InetAddress &serverAddr)
 bool Iocp::isOpen()
 {
 	if (_started && !_connections.empty()) {
-		if (Connection::kConnected == _connections.begin()->second->state())
+		if (TcpConnection::kConnected == _connections.begin()->second->state())
 			return true;
 	}
 	return false;
@@ -147,14 +147,14 @@ void Iocp::send(const char *data, size_t len)
 void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
 {
 	int32_t connId = _nextConnId.inc();
-    TcpConnectionPtr conn(new Connection(socket, connId, peerAddr));
+    TcpConnectionPtr conn(new TcpConnection(socket, connId, peerAddr));
 	conn->setPostWriteEventFunction(std::bind(&Iocp::postWriteEvent, this, conn, static_cast<CpEvent *>(NULL)));
-    conn->setState(Connection::kConnecting);
+    conn->setState(TcpConnection::kConnecting);
     _connections[connId] = conn;
     _eventloop->registerHandle((HANDLE)socket);
     
     if (NULL != conn) {
-        conn->setState(Connection::kConnected);
+        conn->setState(TcpConnection::kConnected);
         postZeroByteReadEvent(conn);
         postReadEvent(conn);
         handleConnection(conn);
@@ -169,9 +169,9 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
     }
 
     if (0 == conn->leaveEventLoop()) {
-        conn->setState(Connection::kDisconnecting);
+        conn->setState(TcpConnection::kDisconnecting);
         handleClose(conn);
-        conn->setState(Connection::kDisconnected);
+        conn->setState(TcpConnection::kDisconnected);
         
         MutexLockGuard lock(_connMutex);
         _connections.erase(conn->connId());

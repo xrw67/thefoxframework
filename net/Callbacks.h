@@ -8,8 +8,8 @@ namespace thefox
 {
     
 class Buffer;
-class Connection;
-typedef std::shared_ptr<Connection> TcpConnectionPtr;
+class TcpConnection;
+typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
 
 typedef std::function<void(const TcpConnectionPtr &conn)> ConnectionCallback;
 typedef std::function<void(const TcpConnectionPtr &conn)> CloseCallback;

@@ -1,11 +1,11 @@
 /*
-* @filename Connection.h
+* @filename TcpConnection.h
 * @brief 表示一个客户连接
 * @author macwe@qq.com
 */
 
-#ifndef _THEFOX_NET_CONNECTION_H_
-#define _THEFOX_NET_CONNECTION_H_
+#ifndef _THEFOX_NET_TCPCONNECTION_H_
+#define _THEFOX_NET_TCPCONNECTION_H_
 
 #include <base/Types.h>
 #include <base/MutexLock.h>
@@ -21,12 +21,12 @@ typedef int SOCKET
 
 typedef std::function<void()> PostEventFunction;
 
-class Connection
+class TcpConnection
 {
 public:
     enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
 
-    Connection(SOCKET socket, int connId, const InetAddress &peerAddr)
+    TcpConnection(SOCKET socket, int connId, const InetAddress &peerAddr)
         : _socket(socket)
         , _connId(connId)
         , _peerAddr(peerAddr)
@@ -34,7 +34,7 @@ public:
         , _readBytes(0)
         , _writeBytes(0)
     {}
-    ~Connection()
+    ~TcpConnection()
     {
         if (INVALID_SOCKET != _socket) {
             closesocket(_socket);
@@ -113,7 +113,7 @@ public:
     void postWriteEvent() { _postWriteEvent(); }
 
 private:
-	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Connection);
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
     int32_t _connId;
     SOCKET _socket;
     InetAddress _peerAddr;
@@ -133,4 +133,4 @@ private:
 
 } // namespace thefox
 
-#endif // _THEFOX_NET_CONNECTION_H_
+#endif // _THEFOX_NET_TCPCONNECTION_H_

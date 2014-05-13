@@ -27,7 +27,7 @@ typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
 class Iocp
 {
 public:
-    friend class Connection;
+    friend class TcpConnection;
     
     Iocp(EventLoop *eventloop, const std::string &nameArg);
     ~Iocp();
