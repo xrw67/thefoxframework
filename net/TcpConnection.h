@@ -33,6 +33,7 @@ public:
         , _pendingEvent(0)
         , _readBytes(0)
         , _writeBytes(0)
+		, _arg(NULL)
     {}
     ~TcpConnection()
     {
