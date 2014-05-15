@@ -7,7 +7,7 @@
 #define _THEFOX_BASE_STACK_H_
 
 #include <vector>
-#include <base/MutexLock.h>
+#include <base/mutex.h>
 
 namespace thefox
 {
@@ -26,14 +26,14 @@ public:
     /// param[in] value 需要入栈的值
     void push(const T &value)
     {
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
 		_data.push_back(value);
 	}
     
     /// @brief 弹出栈顶
     void pop()
     {
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
         if (!_data.empty())
             _data.pop_back();
     }
@@ -43,7 +43,7 @@ public:
     /// @return 成功返回true，否则返回false
     bool getTop(T &value)
     {
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
         if (!_data.empty()) {
             value = _data[_data.size() - 1];
             return true;
@@ -59,7 +59,7 @@ public:
     /// @return 成功返回true，否则返回false
     bool getAt(const int position, T &value)
     {
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
         size_t index = 0;
         if (getIndexByPosition(position, index)) {
             value = _data[index];
@@ -76,7 +76,7 @@ public:
     /// @return 成功返回true，否则返回false
     bool setAt(const int position, const T &value)
     {
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
         size_t index = 0;
         if (getIndexByPosition(position, index)) {
             _data[index] = value;
@@ -89,7 +89,7 @@ public:
     /// @return 返回栈中数据个数
     size_t size()
     {
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
 		return _data.size(); 
 	}
     
@@ -97,7 +97,7 @@ public:
     /// @return 如果栈不为空返回true，否则返回false
     bool empty()
     { 
-		MutexLockGuard lock(_mutex);
+		MutexGuard lock(_mutex);
 		return _data.empty();
 	}
     
@@ -124,7 +124,7 @@ private:
     }
     
     std::vector<T> _data;
-	MutexLock _mutex;
+	Mutex _mutex;
 };
 
 } // namespace thefox

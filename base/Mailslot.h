@@ -1,7 +1,7 @@
 #ifndef _THEFOX_BASE_MAILSLOT_H_
 #define _THEFOX_BASE_MAILSLOT_H_
 
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox {
     

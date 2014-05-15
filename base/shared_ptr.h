@@ -4,10 +4,10 @@
  * @author  macwe@qq.com
  */
 
-#ifndef _THEFOX_BASE_SHAREDPTR_H_ 
-#define _THEFOX_BASE_SHAREDPTR_H_
+#ifndef _THEFOX_BASE_SHARED_PTR_H_ 
+#define _THEFOX_BASE_SHARED_PTR_H_
 
-#include <base/MutexLock.h>
+#include <base/mutex.h>
 
 #ifdef THEFOX_USE_CXX11
 #error "you cann't use this file with define THEFOX_USE_CXX11"
@@ -26,30 +26,30 @@ public:
 
     size_t addSpRef() 
     {
-        mutexLockGuard lock(_mutex);
+        MutexGuard lock(_mutex);
         return ++_spCounter;
     }
     size_t releaseSp()
     {
-        mutexLockGuard lock(_mutex);
+        MutexGuard lock(_mutex);
         return --_spCounter;
     }
     const size_t spCounter() const { return _spCounter; }
 
     size_t addWkRef() 
     {
-        mutexLockGuard lock(_mutex);
+        MutexGuard lock(_mutex);
         return ++_wkCounter;
     }
     size_t releaseWk()
     {
-        mutexLockGuard lock(_mutex);
+        MutexGuard lock(_mutex);
         return --_wkCounter;
     }
     const size_t wkCounter() const { return _wkCounter; }
 
 private:
-    MutecxLock _mutex;
+    Mutecx _mutex;
     size_t _spCounter;
     size_t _wkCounter
 };
@@ -139,4 +139,4 @@ inline SharedPtr<T> make_shared(T *p)
     
 } // namespace thefox;
 
-#endif // _THEFOX_BASE_SHAREDPTR_H_
+#endif // _THEFOX_BASE_SHARED_PTR_H_

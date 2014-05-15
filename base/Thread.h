@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_THREAD_H_
 
 
-#include <base/Types.h>
+#include <base/types.h>
 
 #ifdef WIN32
     #include <Windows.h>

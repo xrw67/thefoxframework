@@ -4,12 +4,12 @@
 * @author macwe@qq.com
 */
 
-#ifndef _THEFOX_BASE_READWRITELOCK_H_
-#define _THEFOX_BASE_READWRITELOCK_H_
+#ifndef _THEFOX_BASE_READ_WRITE_LOCK_H_
+#define _THEFOX_BASE_READ_WRITE_LOCK_H_
 
-#include <base/Types.h>
-#include <base/AtomicInteger.h>
-#include <base/MutexLock.h>
+#include <base/types.h>
+#include <base/atomic_integer.h>
+#include <base/mutex.h>
 
 namespace thefox
 {

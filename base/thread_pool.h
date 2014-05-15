@@ -2,10 +2,10 @@
 #define _THEFOX_BASE_THREADPOOL_H_
 
 #include <queue>
-#include <base/Types.h>
-#include <base/MutexLock.h>
-#include <base/Semaphore.h>
-#include <base/Thread.h>
+#include <base/types.h>
+#include <base/mutex.h>
+#include <base/semaphore.h>
+#include <base/thread.h>
 
 namespace thefox
 {

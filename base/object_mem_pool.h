@@ -4,11 +4,11 @@
  * @author macwe@qq.com
  */
 
-#ifndef _THEFOX_BASE_OBJECTMEMPOOL_H_
-#define _THEFOX_BASE_OBJECTMEMPOOL_H_
+#ifndef _THEFOX_BASE_OBJECT_MEM_POOL_H_
+#define _THEFOX_BASE_OBJECT_MEM_POOL_H_
 
 #include <new>
-#include <base/MemPool.h>
+#include <base/mem_pool.h>
 
 namespace thefox
 {
@@ -34,4 +34,4 @@ public:
     
 } // namespace thefox
 
-#endif // _THEFOX_BASE_OBJECTMEMPOOL_H_
+#endif // _THEFOX_BASE_OBJECT_MEM_POOL_H_

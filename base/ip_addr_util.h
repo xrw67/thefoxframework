@@ -1,7 +1,7 @@
-#ifndef _THEFOX_BASE_IPADDRUTIL_H_
-#define _THEFOX_BASE_IPADDRUTIL_H_
+#ifndef _THEFOX_BASE_IP_ADDR_UTIL_H_
+#define _THEFOX_BASE_IP_ADDR_UTIL_H_
 
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox
 {

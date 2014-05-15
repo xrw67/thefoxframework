@@ -4,11 +4,11 @@
  * @author macwe@qq.com
  */
 
-#ifndef _THEFOX_BASE_MEMPOOL_H_
-#define _THEFOX_BASE_MEMPOOL_H_
+#ifndef _THEFOX_BASE_MEM_POOL_H_
+#define _THEFOX_BASE_MEM_POOL_H_
 
 #include <vector>
-#include <base/Types.h>
+#include <base/types.h>
 #include <base/mutex.h>
 
 namespace thefox

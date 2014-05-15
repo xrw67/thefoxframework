@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <base/Types.h>
-#include <base/MemPool.h>
+#include <base/types.h>
+#include <base/mem_pool.h>
 
 using namespace thefox;
 

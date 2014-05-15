@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include <base/AtomicInteger.h>
+#include <base/atomic_integer.h>
 
 int main(int argc, char *argv[])
 {

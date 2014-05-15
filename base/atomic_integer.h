@@ -4,10 +4,10 @@
 * @author macwe@qq.com
 */
 
-#ifndef _THEFOX_BASE_ATOMIC_H_
-#define _THEFOX_BASE_ATOMIC_H_
+#ifndef _THEFOX_BASE_ATOMIC_INTEGER_H_
+#define _THEFOX_BASE_ATOMIC_INTEGER_H_
 
-#include <base/Types.h>
+#include <base/types.h>
 
 #ifdef WIN32
 #include <Winbase.h>
@@ -86,4 +86,4 @@ typedef AtomicInteger<int64_t> AtomicInt64;
 
 } // namespace thefox
 
-#endif  // _THEFOX_BASE_ATOMIC_H_
+#endif  // _THEFOX_BASE_ATOMIC_INTEGER_H_

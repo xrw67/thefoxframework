@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_TABLE_H_
 
 #include <assert.h>
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox
 {

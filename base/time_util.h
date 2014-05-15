@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_TIME_H_
 
 #include <time.h>
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox
 {

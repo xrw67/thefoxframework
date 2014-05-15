@@ -14,7 +14,7 @@
 #include <pthread.h>
 #endif
 
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox 
 {

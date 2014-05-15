@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox
 {
