@@ -3,10 +3,10 @@
 
 #include <map>
 #include <base/types.h>
-#include <net/rpc/common.h>
-#include <net/rpc/task.h>
-#include <net/rpc/rpc_codec.h>
-#include <net/rpc/rpc.pb.h>
+#include <rpc/common.h>
+#include <rpc/task.h>
+#include <rpc/rpc_codec.h>
+#include <rpc/rpc.pb.h>
 
 namespace thefox
 {

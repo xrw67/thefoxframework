@@ -6,7 +6,7 @@
 #include <base/event.h>
 #include <base/mutex.h>
 #include <base/atomic_integer.h>
-#include <net/rpc/common.h>
+#include <rpc/common.h>
 
 namespace thefox
 {

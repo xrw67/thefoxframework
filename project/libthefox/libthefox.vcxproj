@@ -20,41 +20,42 @@
     <ClInclude Include="..\..\net\inet_address.h" />
     <ClInclude Include="..\..\net\iocp.h" />
     <ClInclude Include="..\..\net\io_event.h" />
-    <ClInclude Include="..\..\net\rpc\common.h" />
-    <ClInclude Include="..\..\net\rpc\task_manager.h" />
-    <ClInclude Include="..\..\net\rpc\task.h" />
-    <ClInclude Include="..\..\net\rpc\oneway_dispatcher.h" />
-    <ClInclude Include="..\..\net\rpc\rpc.pb.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_channel.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_client.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_codec.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_controller.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_server.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_service.h" />
-    <ClInclude Include="..\..\net\rpc\rpc_service_manager.h" />
     <ClInclude Include="..\..\net\socket_ops.h" />
     <ClInclude Include="..\..\net\tcp_client.h" />
     <ClInclude Include="..\..\net\tcp_connection.h" />
     <ClInclude Include="..\..\net\tcp_server.h" />
+    <ClInclude Include="..\..\rpc\common.h" />
+    <ClInclude Include="..\..\rpc\oneway_dispatcher.h" />
+    <ClInclude Include="..\..\rpc\rpc.pb.h" />
+    <ClInclude Include="..\..\rpc\rpc_channel.h" />
+    <ClInclude Include="..\..\rpc\rpc_client.h" />
+    <ClInclude Include="..\..\rpc\rpc_codec.h" />
+    <ClInclude Include="..\..\rpc\rpc_controller.h" />
+    <ClInclude Include="..\..\rpc\rpc_server.h" />
+    <ClInclude Include="..\..\rpc\rpc_service.h" />
+    <ClInclude Include="..\..\rpc\rpc_service_manager.h" />
+    <ClInclude Include="..\..\rpc\task.h" />
+    <ClInclude Include="..\..\rpc\task_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\log\log_file.cc" />
     <ClCompile Include="..\..\log\Logging.cc" />
     <ClCompile Include="..\..\net\event_loop.cc" />
     <ClCompile Include="..\..\net\iocp.cc" />
-    <ClCompile Include="..\..\net\rpc\task_manager.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc.pb.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc_channel.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc_client.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc_controller.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc_server.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc_service.cc" />
-    <ClCompile Include="..\..\net\rpc\rpc_service_manager.cc" />
     <ClCompile Include="..\..\net\tcp_client.cc" />
     <ClCompile Include="..\..\net\tcp_server.cc" />
+    <ClCompile Include="..\..\rpc\rpc.pb.cc" />
+    <ClCompile Include="..\..\rpc\rpc_channel.cc" />
+    <ClCompile Include="..\..\rpc\rpc_client.cc" />
+    <ClCompile Include="..\..\rpc\rpc_controller.cc" />
+    <ClCompile Include="..\..\rpc\rpc_server.cc" />
+    <ClCompile Include="..\..\rpc\rpc_service.cc" />
+    <ClCompile Include="..\..\rpc\rpc_service_manager.cc" />
+    <ClCompile Include="..\..\rpc\task_manager.cc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\net\rpc\rpc.proto" />
+    <None Include="..\..\rpc\README.md" />
+    <None Include="..\..\rpc\rpc.proto" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{77DF8D9B-AE9A-41AB-B798-6205096D3029}</ProjectGuid>

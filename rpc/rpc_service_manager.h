@@ -4,7 +4,7 @@
 #include <map>
 #include <base/types.h>
 #include <base/mutex.h>
-#include <net/rpc/common.h>
+#include <rpc/common.h>
 #include <google/protobuf/service.h>
 
 namespace thefox

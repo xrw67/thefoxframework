@@ -3,8 +3,8 @@
 
 #include <base/timestamp.h>
 #include <net/callbacks.h>
-#include <net/rpc/common.h>
-#include <net/rpc/rpc.pb.h>
+#include <rpc/common.h>
+#include <rpc/rpc.pb.h>
 
 namespace thefox
 {
