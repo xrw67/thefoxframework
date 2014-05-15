@@ -2,8 +2,8 @@
 #define _THEFOX_NET_RPC_RPCSERVICE_H_
 
 #include <base/types.h>
-#include <net/rpc/common.h>
-#include <net/rpc/rpc.pb.h>
+#include <rpc/common.h>
+#include <rpc/rpc.pb.h>
 
 namespace thefox {
 

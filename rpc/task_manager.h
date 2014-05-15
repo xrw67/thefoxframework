@@ -5,9 +5,9 @@
 #include <base/mutex.h>
 #include <base/thread.h>
 #include <base/event.h>
-#include <net/rpc/common.h>
-#include <net/rpc/task.h>
-#include <net/rpc/oneway_dispatcher.h>
+#include <rpc/common.h>
+#include <rpc/task.h>
+#include <rpc/oneway_dispatcher.h>
 
 namespace thefox
 {

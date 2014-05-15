@@ -5,8 +5,8 @@
 #include <base/types.h>
 #include <google/protobuf/service.h>
 #include <net/tcp_client.h>
-#include <net/rpc/common.h>
-#include <net/rpc/rpc.pb.h>
+#include <rpc/common.h>
+#include <rpc/rpc.pb.h>
 
 namespace thefox
 {

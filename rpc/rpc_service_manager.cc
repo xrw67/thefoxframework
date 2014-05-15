@@ -1,6 +1,6 @@
-#include <net/rpc/rpc_service_manager.h>
+#include <rpc/rpc_service_manager.h>
 #include <google/protobuf/descriptor.h>
-#include <net/rpc/rpc.pb.h>
+#include <rpc/rpc.pb.h>
 
 using namespace thefox;
 
