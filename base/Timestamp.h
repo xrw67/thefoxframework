@@ -15,7 +15,7 @@
 #endif
 
 #include <time.h>
-#include <base/Types.h>
+#include <base/types.h>
 
 namespace thefox
 {
