@@ -1,7 +1,7 @@
 #ifndef _THEFOX_RPC_COMMON_H_
 #define _THEFOX_RPC_COMMON_H_
 
-#include <net/Callbacks.h>
+#include <net/callbacks.h>
 #include <net/rpc/rpc.pb.h>
 
 namespace google

@@ -9,12 +9,12 @@
 
 #include <map>
 #include <Winsock2.h>
-#include <base/Types.h>
-#include <base/MutexLock.h>
-#include <base/Thread.h>
-#include <base/AtomicInteger.h>
-#include <net/InetAddress.h>
-#include <net/Callbacks.h>
+#include <base/types.h>
+#include <base/mutex.h>
+#include <base/thread.h>
+#include <base/atomic_integer.h>
+#include <net/inet_address.h>
+#include <net/callbacks.h>
 
 namespace thefox
 {
@@ -92,7 +92,7 @@ private:
     AtomicInt32 _nextConnId;
 
     ConnectionMap _connections;
-    MutexLock _connMutex;
+    Mutex _connMutex;
 
 	std::unique_ptr<Thread> _acceptorThread;
 };

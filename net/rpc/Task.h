@@ -1,8 +1,8 @@
 #ifndef _THEFOX_NET_RPC_TASK_H_
 #define _THEFOX_NET_RPC_TASK_H_
 
-#include <base/Timestamp.h>
-#include <net/Callbacks.h>
+#include <base/timestamp.h>
+#include <net/callbacks.h>
 #include <net/rpc/common.h>
 #include <net/rpc/rpc.pb.h>
 

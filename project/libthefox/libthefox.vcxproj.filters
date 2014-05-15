@@ -12,133 +12,124 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\net\EventLoop.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\InetAddress.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Iocp.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\IoEvent.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\SocketOps.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\TcpClient.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\TcpServer.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\TimerQueue.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Buffer.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Callbacks.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\CpEvent.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\Endian.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log\LogFile.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcChannel.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcClient.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcCodec.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcController.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcServer.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcServiceManager.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\rpc\common.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\rpc\rpc.pb.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\rpc\RpcService.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\Task.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\rpc\TaskManager.h">
-      <Filter>net\rpc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\log\Logging.h">
       <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\rpc\OnewayDispatcher.h">
+    <ClInclude Include="..\..\log\log_file.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\cp_event.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\event_loop.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\inet_address.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\iocp.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\io_event.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\socket_ops.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\tcp_client.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\tcp_connection.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\tcp_server.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\callbacks.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\buffer.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\oneway_dispatcher.h">
       <Filter>net\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\TcpConnection.h">
-      <Filter>net</Filter>
+    <ClInclude Include="..\..\net\rpc\rpc_channel.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc_client.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc_codec.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc_controller.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc_server.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc_service.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\rpc_service_manager.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\task_manager.h">
+      <Filter>net\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\rpc\task.h">
+      <Filter>net\rpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\net\EventLoop.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\Iocp.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\TcpClient.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\TcpServer.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\TimerQueue.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log\LogFile.cc">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\RpcChannel.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\RpcClient.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\RpcController.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\RpcServer.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\RpcServiceManager.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\net\rpc\rpc.pb.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\RpcService.cc">
-      <Filter>net\rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\rpc\TaskManager.cc">
       <Filter>net\rpc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\log\Logging.cc">
       <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log\log_file.cc">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\event_loop.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\iocp.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\tcp_client.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\tcp_server.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc_channel.cc">
+      <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc_client.cc">
+      <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc_controller.cc">
+      <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc_server.cc">
+      <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc_service.cc">
+      <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\rpc_service_manager.cc">
+      <Filter>net\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\rpc\task_manager.cc">
+      <Filter>net\rpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

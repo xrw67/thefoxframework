@@ -1,10 +1,10 @@
 #pragma warning(disable:4996) // 禁用warning 4996
 
-#include <net/Iocp.h>
-#include <net/Buffer.h>
-#include <net/CpEvent.h>
-#include <net/EventLoop.h>
-#include <net/TcpConnection.h>
+#include <net/iocp.h>
+#include <net/buffer.h>
+#include <net/cp_event.h>
+#include <net/event_loop.h>
+#include <net/tcp_connection.h>
 
 namespace thefox
 {
@@ -139,7 +139,7 @@ void Iocp::close()
 
 void Iocp::send(const char *data, size_t len)
 {
-    MutexLockGuard lock(_connMutex);
+    MutexGuard lock(_connMutex);
     if (!_connections.empty())
         send(_connections.begin()->second, data, len);
 }
@@ -173,7 +173,7 @@ void Iocp::removeConnection(TcpConnectionPtr conn)
         handleClose(conn);
         conn->setState(TcpConnection::kDisconnected);
         
-        MutexLockGuard lock(_connMutex);
+        MutexGuard lock(_connMutex);
         _connections.erase(conn->connId());
 	}
 }

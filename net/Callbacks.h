@@ -1,8 +1,8 @@
 #ifndef _THEFOX_NET_CALLBACKS_H_
 #define _THEFOX_NET_CALLBACKS_H_
 
-#include <base/Types.h>
-#include <base/Timestamp.h>
+#include <base/types.h>
+#include <base/timestamp.h>
 
 namespace thefox
 {

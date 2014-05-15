@@ -1,6 +1,6 @@
 #include <algorithm>
-#include <log/Logging.h>
-#include <base/Timestamp.h>
+#include <log/logging.h>
+#include <base/timestamp.h>
 
 #ifdef WIN32
 #else
