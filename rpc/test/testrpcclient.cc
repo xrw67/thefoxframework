@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include <net/InetAddress.h>
-#include <net/EventLoop.h>
-#include <net/SocketOps.h>
-#include <net/rpc/RpcClient.h>
-#include <net/rpc/RpcChannel.h>
-#include <net/rpc/RpcController.h>
-#include <net/rpc/test/echo.pb.h>
+#include <net/inet_Address.h>
+#include <net/event_loop.h>
+#include <net/socket_ops.h>
+#include <rpc/rpc_client.h>
+#include <rpc/rpc_channel.h>
+#include <rpc/rpc_controller.h>
+#include <rpc/test/echo.pb.h>
 
 using namespace thefox;
 

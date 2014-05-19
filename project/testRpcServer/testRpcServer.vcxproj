@@ -11,11 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\net\rpc\test\echo.pb.cc" />
-    <ClCompile Include="..\..\net\rpc\test\testrpcserver.cc" />
+    <ClCompile Include="..\..\rpc\test\echo.pb.cc" />
+    <ClCompile Include="..\..\rpc\test\testrpcserver.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\net\rpc\test\echo.pb.h" />
+    <ClInclude Include="..\..\rpc\test\echo.pb.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{69D6BBB9-14DB-4635-A5CD-00B2FC968CAC}</ProjectGuid>
@@ -46,7 +46,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../..;$(IncludePath)</IncludePath>
+    <IncludePath>../..;../../thirdparty/protobuf;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

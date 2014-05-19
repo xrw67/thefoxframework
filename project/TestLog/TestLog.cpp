@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <log/LogFile.h>
+#include <log/log_file.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {

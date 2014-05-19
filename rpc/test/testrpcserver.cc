@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include <net/InetAddress.h>
-#include <net/EventLoop.h>
-#include <net/SocketOps.h>
-#include <net/rpc/RpcServer.h>
-#include <net/rpc/test/echo.pb.h>
+#include <net/inet_address.h>
+#include <net/event_loop.h>
+#include <net/socket_ops.h>
+#include <rpc/rpc_server.h>
+#include <rpc/test/echo.pb.h>
 
 using namespace thefox;
 

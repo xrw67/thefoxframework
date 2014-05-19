@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <net/Callbacks.h>
-#include <net/InetAddress.h>
-#include <net/Buffer.h>
-#include <net/TcpServer.h>
-#include <net/TcpConnection.h>
-#include <net/EventLoop.h>
+#include <net/callbacks.h>
+#include <net/inet_address.h>
+#include <net/buffer.h>
+#include <net/tcp_server.h>
+#include <net/tcp_connection.h>
+#include <net/event_loop.h>
 
 using namespace thefox;
 
