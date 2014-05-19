@@ -51,18 +51,23 @@ namespace thefox
 
 
 // 安全删除对象
-#define SAFE_DELETE(p) \
-    if (NULL != p) { \
-        delete p;\
-        p = NULL;\
+#define SAFE_DELETE(p)        \
+    if (NULL != p) {          \
+        delete p;             \
+        p = NULL;             \
     }
     
 // 安全删除对象数组
-#define SAFE_DELETE_ARRAY(p) \
-    if (NULL != p) { \
-        delete []p;\
-        p = NULL;\
+#define SAFE_DELETE_ARRAY(p)  \
+    if (NULL != p) {          \
+        delete []p;           \
+        p = NULL;             \
     }
+
+#define MIN(a,b)              \
+	((a)<(b)) ? (a) : (b)
+#define MAX(a,b)              \
+	((a)>(b)) ? (a) : (b)
 
 } // namespace thefox
 
