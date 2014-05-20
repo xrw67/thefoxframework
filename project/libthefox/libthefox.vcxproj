@@ -13,14 +13,16 @@
   <ItemGroup>
     <ClInclude Include="..\..\log\log_file.h" />
     <ClInclude Include="..\..\log\Logging.h" />
+    <ClInclude Include="..\..\net\acceptor.h" />
     <ClInclude Include="..\..\net\buffer.h" />
     <ClInclude Include="..\..\net\callbacks.h" />
     <ClInclude Include="..\..\net\cp_event.h" />
     <ClInclude Include="..\..\net\event_loop.h" />
     <ClInclude Include="..\..\net\inet_address.h" />
     <ClInclude Include="..\..\net\iocp.h" />
-    <ClInclude Include="..\..\net\io_event.h" />
-    <ClInclude Include="..\..\net\socket_ops.h" />
+    <ClInclude Include="..\..\net\iocp_event.h" />
+    <ClInclude Include="..\..\net\event.h" />
+    <ClInclude Include="..\..\net\socket.h" />
     <ClInclude Include="..\..\net\tcp_client.h" />
     <ClInclude Include="..\..\net\tcp_connection.h" />
     <ClInclude Include="..\..\net\tcp_server.h" />
@@ -40,8 +42,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\log\log_file.cc" />
     <ClCompile Include="..\..\log\Logging.cc" />
+    <ClCompile Include="..\..\net\acceptor.cc" />
     <ClCompile Include="..\..\net\event_loop.cc" />
     <ClCompile Include="..\..\net\iocp.cc" />
+    <ClCompile Include="..\..\net\iocp_event.cc" />
+    <ClCompile Include="..\..\net\socket.cc" />
     <ClCompile Include="..\..\net\tcp_client.cc" />
     <ClCompile Include="..\..\net\tcp_server.cc" />
     <ClCompile Include="..\..\rpc\rpc.pb.cc" />

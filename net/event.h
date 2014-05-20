@@ -4,15 +4,28 @@
 * @author macwe@qq.com
 */
 
-#ifndef _THEFOX_NET_IOEVENT_H_
-#define _THEFOX_NET_IOEVENT_H_
+#ifndef _THEFOX_NET_EVENT_H_
+#define _THEFOX_NET_EVENT_H_
 
 #include <base/types.h>
 
 namespace thefox
 {
 
-class IoEvent;
+typedef struct {
+	uint32_t avaliable;
+	*handler;
+}Event;
+
+#ifdef WIN32
+
+typedef struct {
+	WASOVERLAPPED ovlp;
+	Event         *ev;
+	int           error;
+}EventOverLapped;
+
+#endif
 
 /// @brief 事件类型定义
 enum {
@@ -63,8 +76,9 @@ protected:
     EventCallback _eventCallback;
     EventCallback _errorCallback;
     DWORD _bytesTransfered;
+	TcpConnection *_conn;
 };
 
 } // namespace thefox
 
-#endif // _THEFOX_NET_IOEVENT_H_
+#endif // _THEFOX_NET_EVENT_H_

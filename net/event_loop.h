@@ -33,10 +33,6 @@ public:
     /// @brief 退出消息循环
     void stop();
 
-    /// @brief 注册句柄到时间循环上
-    /// @param[in] handle 句柄变量
-    void registerHandle(HANDLE handle);
-
     /// @brief 投递事件到消息循环上
     /// @param[in] 投递的事件指针
     void postEvent(IoEvent *e);
@@ -49,7 +45,7 @@ private:
     typedef std::vector<ThreadPtr> ThreadVector;
 
     void init();
-    int getCpuNum();
+    
 	bool _started;
     HANDLE _hIocp;
     ThreadVector _threads;

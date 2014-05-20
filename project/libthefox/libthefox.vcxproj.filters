@@ -30,12 +30,6 @@
     <ClInclude Include="..\..\net\iocp.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\io_event.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\socket_ops.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\tcp_client.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -87,6 +81,18 @@
     <ClInclude Include="..\..\rpc\oneway_dispatcher.h">
       <Filter>rpc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\net\acceptor.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\socket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\iocp_event.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\event.h">
+      <Filter>net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\log\Logging.cc">
@@ -130,6 +136,15 @@
     </ClCompile>
     <ClCompile Include="..\..\rpc\task_manager.cc">
       <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\acceptor.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\socket.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\iocp_event.cc">
+      <Filter>net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

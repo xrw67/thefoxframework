@@ -48,7 +48,7 @@ public:
     int connId() const { return _connId; }
 
     /// @brief 获取SOCKET句柄
-    SOCKET socket() { return _socket; }
+    SOCKET fd() { return _socket->fd(); }
 
     /// @brief 获取对端ip地址
     const InetAddress &getPeerAddr() const { return _peerAddr; }
@@ -113,10 +113,16 @@ public:
 	{ _postWriteEvent = func; }
     void postWriteEvent() { _postWriteEvent(); }
 
+	void connectEstablished();
+	void connectDestroyed();
+	void handleRead();
+	void handleWrite();
+	void handleClose();
+	void handleError();
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
     int32_t _connId;
-    SOCKET _socket;
+    Socket *_socket;
     InetAddress _peerAddr;
     Buffer _readBuffer;
     Buffer _writeBuffer;

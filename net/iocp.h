@@ -8,7 +8,7 @@
 #define _THEFOX_NET_IOCP_H_
 
 #include <map>
-#include <Winsock2.h>
+
 #include <base/types.h>
 #include <base/mutex.h>
 #include <base/thread.h>
@@ -22,7 +22,7 @@ namespace thefox
 class IoEvent;
 class CpEvent;
 class EventLoop;
-typedef std::map<int32_t, TcpConnectionPtr> ConnectionMap;
+
 
 class Iocp
 {
@@ -79,20 +79,11 @@ private:
 
     void newConnection(SOCKET socket, const InetAddress &peerAddr);
 
-    ConnectionCallback _connectionCallback;
-    CloseCallback _closeCallback;
-    MessageCallback _messageCallback;
-    WriteCompleteCallback _writeCompleteCallback;
 
-    EventLoop *_eventloop;
-    const std::string _name;
+
+    
     SOCKET _socket;
     HANDLE _hAcceptEvent;
-    bool _started;
-    AtomicInt32 _nextConnId;
-
-    ConnectionMap _connections;
-    Mutex _connMutex;
 
 	std::unique_ptr<Thread> _acceptorThread;
 };

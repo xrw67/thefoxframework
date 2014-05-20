@@ -50,34 +50,15 @@ bool Iocp::start(const InetAddress &listenAddr)
     }
     _started = true;
 
-    _socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-    if (INVALID_SOCKET  == _socket) {
-        int errCode = WSAGetLastError();
-        // LOG_ERROR << WSASocket failed!, errcode:<< errCode;
-        _started = false;
-        return false;
-    }
+    _socket = 
+    
 
     _hAcceptEvent = WSACreateEvent();
     WSAEventSelect(_socket, _hAcceptEvent, FD_ACCEPT);
 
-    int ret = bind(_socket, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(struct sockaddr_in));
-    if (SOCKET_ERROR   == ret) {
-        int errCode = WSAGetLastError();
-        // LOG_ERROR << WSASocket failed!, errcode:<< errCode;
-        closesocket(_socket);
-        _started = false;
-        return false;
-    }
+    
 
-    ret = listen(_socket, 200);
-    if (SOCKET_ERROR   == ret) {
-        int errCode = WSAGetLastError();
-        // LOG_ERROR << WSASocket failed!, errcode:<< errCode;
-        closesocket(_socket);
-        _started = false;
-        return false;
-    }
+    
 
 	_acceptorThread->start();
     // LOG_INFO << tcpserver start done;
