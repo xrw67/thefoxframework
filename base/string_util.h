@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
+#include <vector>
 #include <base/types.h>
 
 namespace thefox
@@ -236,6 +237,25 @@ public:
         ls = rs;
         rs = temp;
     }
+	
+	static void strtok(const std::string &str, char separator, std::vector<std::string> &arr)
+	{
+		size_t pos = 0;
+		size_t newPos = 0;
+
+		while (std::string::npos != pos) {
+			pos = str.find_first_of(separator, newPos);
+			if (std::string::npos == pos) { // 结束了
+				if (pos > newPos)
+					arr.push_back(str.substr(newPos, pos - newPos));
+				break;
+			} else {
+				if (pos > newPos)
+					arr.push_back(str.substr(newPos, pos - newPos));
+				newPos = pos + 1;
+			}
+		}
+	}
 };
 
 inline std::string operator+(const char *ls, const std::string &rs)
