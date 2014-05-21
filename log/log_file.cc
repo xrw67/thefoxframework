@@ -74,6 +74,7 @@ LogFile::LogFile(const std::string &dir, const std::string& basename, size_t rol
 	, _rollSize(rollSize)
 	, _startOfPeriod(0)
 	, _lastRoll(0)
+	, _file(NULL)
 {
 	makePath(_dir);
 	rollFile();
@@ -81,7 +82,10 @@ LogFile::LogFile(const std::string &dir, const std::string& basename, size_t rol
 }
 
 LogFile::~LogFile()
-{}
+{
+	if (NULL != _file)
+		delete _file;
+}
 
 void LogFile::append(const std::string &message)
 {
@@ -116,7 +120,9 @@ void LogFile::rollFile()
 	if (now > _lastRoll) {
 		_lastRoll = now;
 		_startOfPeriod = start;
-		_file.reset(new File(filename));
+		if (NULL != _file)
+			delete _file;
+		_file = new File(filename);
 	}
 }
 

@@ -51,7 +51,7 @@ private:
 	Mutex _mutex;
 	time_t _startOfPeriod;
 	time_t _lastRoll;
-	std::unique_ptr<File> _file;
+	File *_file;
 
 	static const int _kRollPerSeconds = 86400;
 };
