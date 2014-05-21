@@ -40,6 +40,7 @@ public:
 	Socket();
 	~Socket();
 
+	void setFd(SOCKET sockfd) { _sockfd = sockfd; }
 	bool create();
 	bool bind(const InetAddress &listenAddr);
 	bool listen();

@@ -102,14 +102,27 @@ bool IocpEvent::processEvents(int32_t timer)
 
 	THEFOX_LOG(ERROR) << "iocp event handler: " << ev->handler;
 
-	ev->handler(ev);
+	handler(ev);
 
 	return true;
 }
 
 bool IocpEvent::postRead(IoEvent *ev)
 {
-	
+	WSABUF wsabuf;
+	wasbuf.buf = ev->buffer;
+	wsabuf.buf = ev->len;
+
+	DWORD nBytes = 0;
+    DWORD flags = 0;
+    int bytesRecv = WSARecv(ev->conn->fd(), &wsabuf, 1, 
+                            &nBytes, &flags, &e->ovlp, 
+                            NULL);
+    if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
+        THEFOX_LOG(ERROR) << "postRead() failed!";
+		return false;
+    }
+	return true;
 }
 
 bool IocpEvent::postWrite(IoEvent *ev)
@@ -131,6 +144,15 @@ bool IocpEvent::postZeroByteRead(IoEvent *ev)
 	return true;
 }
 
+
+void IocpEvent::handler(IoEvent *ev)
+{
+	uint32_t flags = ev->flags;
+	switch (flags) {
+	case EVENT_FLAG_WRITE_PREPARE:
+
+	}
+}
 void IocpEvent::handleRead(IoEvent *ev)
 {
 

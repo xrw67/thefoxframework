@@ -1,5 +1,5 @@
 #include <net/event_loop.h>
-#include <net/io_event.h>
+#include <net/iocp_event.h>
 
 namespace thefox
 {
@@ -29,7 +29,7 @@ EventLoop::~EventLoop()
 
 void EventLoop::init()
 {
-    _hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+    _poller.init();
 	int threads = getCpuNum() * 2;
     for (int i = 0; i < threads; ++i)
 		_threads.push_back(ThreadPtr(new Thread(std::bind(&EventLoop::loop, this), "eventloop.loop")));
@@ -59,53 +59,20 @@ void EventLoop::stop()
 		_threads[i]->stop();
 }
 
-void EventLoop::registerHandle(HANDLE handle)
+bool EventLoop::delConnection(TcpConnection *conn)
 {
-    CreateIoCompletionPort(handle, _hIocp, 0, 0);
-}
-
-void EventLoop::postEvent(IoEvent *e)
-{
-    if (NULL != e) {
-        PostQueuedCompletionStatus(_hIocp, 0, NULL, &e->_overlapped);
-    } else {
-        //LOG_ERROR<<post a NULL event;
-    }
+	_poller.delConnection(conn);
 }
 
 void EventLoop::loop()
 {
-    DWORD bytesTransfered = 0;
-    ULONG_PTR CompletionKey = NULL;
-    OVERLAPPED *overlapped = NULL;
-    BOOL ret = FALSE;
-
-    while (_started) {
-        ret = GetQueuedCompletionStatus(_hIocp, 
-                                        &bytesTransfered, 
-                                        &CompletionKey, 
-                                        &overlapped, 
-                                        1000);
-        if (!ret) {
-            if (overlapped && WAIT_TIMEOUT != GetLastError()) {
-                IoEvent *e = NULL;
-                if ((e = CONTAINING_RECORD(overlapped, IoEvent, _overlapped)) != NULL)
-                    e->handleError();
-            }
-            continue;
-        }
-
-        if (ret && overlapped) {
-            IoEvent *e = NULL;
-            if ((e = CONTAINING_RECORD(overlapped, IoEvent, _overlapped)) != NULL) {
-                e->setBytesTransfered(bytesTransfered);
-                e->handleEvent();
-            }
-        }
-
-        if (0 == bytesTransfered && NULL == CompletionKey && NULL == overlapped)
-            break;
-    }
+	for (;;) {
+		// 计算下一次超时时间
+		unit32_t time;
+		
+		//
+		_poller.processEvents(time);
+	}
 }
 
 int EventLoop::getCpuNum()

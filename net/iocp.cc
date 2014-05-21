@@ -9,67 +9,10 @@
 namespace thefox
 {
 
-void defaultConnectionCallback(const TcpConnectionPtr &conn)
-{
-    return;
-}
 
-void defaultMessageCallback(const TcpConnectionPtr &conn, Buffer *buffer, Timestamp recvTime)
-{
-    buffer->retrieveAll();
-}
-
-} // namespace thefox
 
 using namespace thefox;
 
-Iocp::Iocp(EventLoop *eventloop, const std::string &nameArg)
-    : _eventloop(eventloop)
-    , _name(nameArg)
-    , _started(false)
-    , _connectionCallback(defaultConnectionCallback)
-    , _messageCallback(defaultMessageCallback)
-    , _writeCompleteCallback(NULL)
-    , _closeCallback(NULL)
-{
-	_acceptorThread.reset(
-		new Thread(std::bind(&Iocp::acceptorLoop, this), "acceptorloop"));
-}
-
-Iocp::~Iocp()
-{
-	_acceptorThread->stop();
-    close();
-}
-
-bool Iocp::start(const InetAddress &listenAddr)
-{
-    if (started()) {
-        // LOG_WARN << tcpserver already started;
-        return false;
-    }
-    _started = true;
-
-    _socket = 
-    
-
-    _hAcceptEvent = WSACreateEvent();
-    WSAEventSelect(_socket, _hAcceptEvent, FD_ACCEPT);
-
-    
-
-    
-
-	_acceptorThread->start();
-    // LOG_INFO << tcpserver start done;
-    return true;
-}
-
-void Iocp::send(const TcpConnectionPtr &conn, const char *data, size_t len)
-{
-    if (NULL != conn)
-        conn->send(data, len);
-}
 
 bool Iocp::open(const InetAddress &serverAddr)
 {
@@ -116,30 +59,6 @@ void Iocp::close()
 
     if (!_connections.empty())
         postCloseEvent(_connections.begin()->second);
-}
-
-void Iocp::send(const char *data, size_t len)
-{
-    MutexGuard lock(_connMutex);
-    if (!_connections.empty())
-        send(_connections.begin()->second, data, len);
-}
-
-void Iocp::newConnection(SOCKET socket, const InetAddress &peerAddr)
-{
-	int32_t connId = _nextConnId.inc();
-    TcpConnectionPtr conn(new TcpConnection(socket, connId, peerAddr));
-	conn->setPostWriteEventFunction(std::bind(&Iocp::postWriteEvent, this, conn, static_cast<CpEvent *>(NULL)));
-    conn->setState(TcpConnection::kConnecting);
-    _connections[connId] = conn;
-    _eventloop->registerHandle((HANDLE)socket);
-    
-    if (NULL != conn) {
-        conn->setState(TcpConnection::kConnected);
-        postZeroByteReadEvent(conn);
-        postReadEvent(conn);
-        handleConnection(conn);
-    }
 }
 
 void Iocp::removeConnection(TcpConnectionPtr conn)
@@ -293,23 +212,4 @@ void Iocp::handleCpZeroByteRead(IoEvent *evt)
 {
     CpEvent *se = static_cast<CpEvent *>(evt);
     postZeroByteReadEvent(se->conn(), se);
-}
-
-void Iocp::acceptorLoop()
-{
-    while (started()) {
-        if (WSA_WAIT_TIMEOUT != WSAWaitForMultipleEvents(1,&_hAcceptEvent, FALSE, 100, FALSE)) {
-            WSANETWORKEVENTS events;
-            if (SOCKET_ERROR != WSAEnumNetworkEvents(_socket, _hAcceptEvent, &events)) {
-                if (events.lNetworkEvents & FD_ACCEPT && 0 == events.iErrorCode[FD_ACCEPT_BIT]) {
-                    SOCKET clientSocket = INVALID_SOCKET;
-                    struct sockaddr_in addr;
-                    int len = sizeof(addr);
-                    clientSocket = WSAAccept(_socket, (sockaddr *)&addr, &len, 0, 0);
-                    if (SOCKET_ERROR != clientSocket)
-                        newConnection(clientSocket, InetAddress(addr));
-                }
-            }
-        }
-    }
 }

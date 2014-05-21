@@ -8,14 +8,25 @@
 #define _THEFOX_NET_EVENT_H_
 
 #include <base/types.h>
+#include <base/timestamp.h>
+#include <base/mutex.h>
 
 namespace thefox
 {
+class IoEvent {
+public:
+	IoEvent() {}
+	~IoEvent() {}
 
-typedef struct {
+	TcpConnection *conn;
 	uint32_t avaliable;
-	*handler;
-}Event;
+	int64_t ts; // 时间触发时间
+	int32_t ref;
+	bool write:1;
+	bool read:1;
+	Mutex _mutex;
+	//*handler;
+};
 
 #ifdef WIN32
 
@@ -26,58 +37,6 @@ typedef struct {
 }EventOverLapped;
 
 #endif
-
-/// @brief 事件类型定义
-enum {
-    kEventTypeRead,
-    kEventTypeWrite,
-    kEventTypeZeroByteRead,
-    kEventTypeClose,
-    kEventTypeTimer,
-    kEventTypeUser // 用户自定义事件开始
-};
-
-typedef std::function<void(IoEvent *evt)> EventCallback;
-
-class IoEvent
-{
-public:
-#ifdef WIN32
-    OVERLAPPED _overlapped;
-#endif
-    IoEvent()
-        : _bytesTransfered(0)
-    {
-        // OVERLAPPED需要初始化，否则WSARecv会ERROR_INVALID_HANDLE
-        memset(&_overlapped, 0, sizeof(OVERLAPPED));
-    }
-
-    int32_t eventType() const { return _eventType; }
-
-    void setEventType(int32_t type) { _eventType = type; }
-
-    void setEventCallback(const EventCallback &eventCb, const EventCallback &errorCb)
-    { 
-        _eventCallback = eventCb;
-        _errorCallback = errorCb;
-    }
-
-    void setBytesTransfered(DWORD bytesTransfered)
-    { _bytesTransfered = bytesTransfered;}
-
-    DWORD bytesTransfered() const { return _bytesTransfered; }
-
-    void handleEvent() { _eventCallback(this); }
-
-    void handleError() { _errorCallback(this); }
-
-protected:
-    int32_t _eventType;
-    EventCallback _eventCallback;
-    EventCallback _errorCallback;
-    DWORD _bytesTransfered;
-	TcpConnection *_conn;
-};
 
 } // namespace thefox
 

@@ -12,65 +12,51 @@
 #include <base/types.h>
 #include <base/mutex.h>
 #include <base/Atomic_integer.h>
-#include <net/callbacks.h>
+#include <net/tcp_handler.h>
+#include <net/acceptor.h>
 
 namespace thefox
 {
 
 class EventLoop;
 class InetAddress;
-class Acceptor;
 class TcpConnection;
 
-class TcpServer
+class TcpServer : public TcpHandler
 {
 public:
-    TcpServer(EventLoop *eventloop, const std::string &nameArg);
+	friend class Acceptor;
+
+    TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg);
     ~TcpServer(void);
 
     /// @brief 启动服务
     /// @return 成功返回true，否则返回false
-    bool start(const InetAddress &listenAddr);
+    bool start();
     
     /// @brief 查看服务是否已经启动
     /// @return 已经启动返回true，否则返回false
-    bool started();
+	bool started() const { return _started; }
 
     /// @brief 移除客户连接
-    void removeConnection(TcpConnection *conn);
-
-    /// @brief 设置连接状态改变回调函数
-    void setConnectionCallback(const ConnectionCallback &cb);
-    
-    /// @brief 设置连接关闭回调函数
-    void setCloseCallback(const CloseCallback &cb);
-    
-    /// @brief 设置收到数据的回调函数
-    void setMessageCallback(const MessageCallback &cb);
-
-    /// @brief 设置缓冲区中数据发送完成后的回调函数
-    void setWriteCompleteCallback(const WriteCompleteCallback &cb);
-
+    void delConnection(TcpConnection *conn);
+	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpServer);
+	void handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr);
+
 	typedef std::map<int32_t, TcpConnection *> ConnectionMap;
 	typedef std::list<TcpConnection *> ConnectionList;
 
-	EventLoop *_eventloop; 
-    const std::string _name;
+	const std::string _name;
+	EventLoop *_loop; 
 	Acceptor *_acceptor;
-
 
 	bool _started;
     AtomicInt32 _nextConnId;
     Mutex _mutex;
 	ConnectionMap _connections;
 	ConnectionList _freeConnections;
-
-    ConnectionCallback _connectionCallback;
-    CloseCallback _closeCallback;
-    MessageCallback _messageCallback;
-    WriteCompleteCallback _writeCompleteCallback;
 };
 
 } // namespace thefox

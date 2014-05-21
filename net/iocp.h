@@ -45,15 +45,7 @@ public:
 
     // 接受者循环
     void acceptorLoop();
-    // 回调函数
-    void setConnectionCallback(const ConnectionCallback &cb)
-    { _connectionCallback = cb; }
-    void setCloseCallback(const CloseCallback &cb)
-    { _closeCallback = cb; }
-    void setMessageCallback(const MessageCallback &cb)
-    { _messageCallback = cb; }
-    void setWriteCompleteCallback(const WriteCompleteCallback &cb)
-    { _writeCompleteCallback = cb; }
+    
 
     void handleConnection(const TcpConnectionPtr &conn)
     { if (NULL != _connectionCallback) _connectionCallback(conn); }
@@ -76,16 +68,6 @@ private:
 	void handleCpRead(IoEvent *evt);
 	void handleCpWrite(IoEvent *evt);
 	void handleCpZeroByteRead(IoEvent *evt);
-
-    void newConnection(SOCKET socket, const InetAddress &peerAddr);
-
-
-
-    
-    SOCKET _socket;
-    HANDLE _hAcceptEvent;
-
-	std::unique_ptr<Thread> _acceptorThread;
 };
 
 } // namespace thefox

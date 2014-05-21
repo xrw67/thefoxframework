@@ -28,6 +28,7 @@ public:
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
+	void handler(IoEvent *ev);
 	void handleRead(IoEvent *ev);
 	void handleWrite(IoEvent *ev);
 	void handleClose(IoEvent *ev);

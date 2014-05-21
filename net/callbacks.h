@@ -6,7 +6,7 @@
 
 namespace thefox
 {
-    
+   
 class Buffer;
 class TcpConnection;
 

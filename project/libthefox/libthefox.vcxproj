@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\net\socket.h" />
     <ClInclude Include="..\..\net\tcp_client.h" />
     <ClInclude Include="..\..\net\tcp_connection.h" />
+    <ClInclude Include="..\..\net\tcp_handler.h" />
     <ClInclude Include="..\..\net\tcp_server.h" />
     <ClInclude Include="..\..\rpc\common.h" />
     <ClInclude Include="..\..\rpc\oneway_dispatcher.h" />
@@ -48,6 +49,8 @@
     <ClCompile Include="..\..\net\iocp_event.cc" />
     <ClCompile Include="..\..\net\socket.cc" />
     <ClCompile Include="..\..\net\tcp_client.cc" />
+    <ClCompile Include="..\..\net\tcp_connection.cc" />
+    <ClCompile Include="..\..\net\tcp_handler.cc" />
     <ClCompile Include="..\..\net\tcp_server.cc" />
     <ClCompile Include="..\..\rpc\rpc.pb.cc" />
     <ClCompile Include="..\..\rpc\rpc_channel.cc" />

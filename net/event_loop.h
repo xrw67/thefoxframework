@@ -16,6 +16,8 @@ namespace thefox
 {
 
 class IoEvent;
+class IocpEvent;
+class TcpConnection;
 
 /// @brief 事件循环类
 class EventLoop
@@ -33,9 +35,11 @@ public:
     /// @brief 退出消息循环
     void stop();
 
-    /// @brief 投递事件到消息循环上
-    /// @param[in] 投递的事件指针
-    void postEvent(IoEvent *e);
+    void setTimer(uint32_t time, const TimerCallback &cb);
+
+	void addEvent(SOCKET sockfd);
+	void postEvent(IoEvent *ev);
+	bool delConnection(TcpConnection *conn);
 
     /// @brief 启动一个工作循环. 警告:单线程,不要使用
     void loop();
@@ -45,7 +49,11 @@ private:
     typedef std::vector<ThreadPtr> ThreadVector;
 
     void init();
-    
+#ifdef WIN32
+	IocpEvent _poller;
+#else
+	EpollWvent _poller;
+#endif
 	bool _started;
     HANDLE _hIocp;
     ThreadVector _threads;

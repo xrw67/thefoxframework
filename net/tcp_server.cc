@@ -1,64 +1,57 @@
 #include <net/tcp_server.h>
+#include <log/logging.h>
 #include <net/event_loop.h>
 #include <net/inet_address.h>
-#include <net/acceptor.h>
 #include <net/tcp_connection.h>
 
 using namespace thefox;
 
-TcpServer::TcpServer(EventLoop *eventloop, const std::string &nameArg)
-	: _eventloop(eventloop)
+TcpServer::TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg)
+	: _loop(loop)
 	, _name(nameArg)
-	, _acceptor(new Acceptor())
 {
-
+	_acceptor = new Acceptor(this, listenAddr);
 }
 
 TcpServer::~TcpServer()
 {
 
-    delete _acceptor();
+    delete _acceptor;
 }
 
-bool TcpServer::start(const InetAddress &listenAddr)
+bool TcpServer::start()
 {
-    return _acceptor->listen(listenAddr);
+	if (_started)
+		return true;
+
+	if (_acceptor->listen()) {
+		_started = true;
+		THEFOX_LOG(INFO) << "TcpServer::start() done";
+		return true;
+	} else {
+		THEFOX_LOG(ERROR) << "TcpServer::start() failed";
+		return false;
+	}
 }
 
-bool TcpServer::started()
+void TcpServer::delConnection(TcpConnection *conn)
 {
-    return _model->started();
 }
 
-void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
+void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr)
 {
-    _model->send(conn, data, len);
-}
-void TcpServer::send(const TcpConnectionPtr &conn, const std::string &data)
-{
-    _model->send(conn, data.c_str(), data.length());
-}
+	int32_t id = _nextConnId.inc();
 
-void TcpServer::removeConnection(TcpConnectionPtr conn)
-{
-    _model->removeConnection(conn);
-}
+    TcpConnection *conn = 
+		new TcpConnection((TcpHandler *)this, _loop, socket, id, peerAddr);
+    _connections[id] = conn;
 
-void TcpServer::setConnectionCallback(const ConnectionCallback &cb)
-{
-    _model->setConnectionCallback(cb);
-}
-void TcpServer::setCloseCallback(const CloseCallback &cb)
-{
-    _model->setCloseCallback(cb);
-}
-
-void TcpServer::setMessageCallback(const MessageCallback &cb)
-{
-    _model->setMessageCallback(cb);
-}
-
-void TcpServer::setWriteCompleteCallback(const WriteCompleteCallback &cb)
-{
-    _model->setWriteCompleteCallback(cb);
+    _loop->addEvent(sockfd);
+    
+    if (NULL != conn) {
+        conn->setState(TcpConnection::kConnected);
+        postZeroByteReadEvent(conn);
+        postReadEvent(conn);
+        handleConnection(conn);
+    }
 }

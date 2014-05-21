@@ -1,64 +1,91 @@
-#include <net/tcp_server.h>
+#include <net/acceptor.h>
+#include <log/logging.h>
 #include <net/event_loop.h>
 #include <net/inet_address.h>
-#include <net/acceptor.h>
-#include <net/tcp_connection.h>
+#include <net/tcp_server.h>
+
+#ifdef WIN32
+#include <base/thread.h>
+#endif
 
 using namespace thefox;
 
-TcpServer::TcpServer(EventLoop *eventloop, const std::string &nameArg)
-	: _eventloop(eventloop)
-	, _name(nameArg)
-	, _acceptor(new Acceptor())
+Acceptor::Acceptor(TcpServer *server,const InetAddress& listenAddr)
+	: _server(server)
+	, _listening(false)
 {
+	_acceptSocket.create();
+	_acceptSocket.bind(listenAddr);
+#ifdef WIN32
+	_acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor.acceptloop()");
+#endif
+}
+
+Acceptor::~Acceptor()
+{
+	_listening = false;
+	//remove ioevent
+#ifdef WIN32
+	::CloseHandle(_hAcceptEvent);
+	_acceptThread->stop();
+	delete _acceptThread;
+#else
+
+#endif
 
 }
 
-TcpServer::~TcpServer()
+bool Acceptor::listen()
 {
+	if (_listening)
+		return;
 
-    delete _acceptor();
-}
+	if (_acceptSocket.listen()) {
+		_listening = true;
 
-bool TcpServer::start(const InetAddress &listenAddr)
-{
-    return _acceptor->listen(listenAddr);
-}
+		// set ioevent
+#ifdef WIN32
+		_hAcceptEvent = ::WSACreateEvent();
+		WSAEventSelect(_acceptSocket.fd(), _hAcceptEvent, FD_ACCEPT);
+		_acceptThread->start();
+#else
 
-bool TcpServer::started()
-{
-    return _model->started();
-}
-
-void TcpServer::send(const TcpConnectionPtr &conn, const char *data, size_t len)
-{
-    _model->send(conn, data, len);
-}
-void TcpServer::send(const TcpConnectionPtr &conn, const std::string &data)
-{
-    _model->send(conn, data.c_str(), data.length());
-}
-
-void TcpServer::removeConnection(TcpConnectionPtr conn)
-{
-    _model->removeConnection(conn);
+#endif
+		THEFOX_LOG(INFO) << "Acceptor::listen() done";
+		return true;
+	} else {
+		THEFOX_LOG(ERROR) << "Acceptor::listen() failed";
+		return false;
+	}
 }
 
-void TcpServer::setConnectionCallback(const ConnectionCallback &cb)
+#ifdef WIN32
+void Acceptor::acceptLoop()
 {
-    _model->setConnectionCallback(cb);
-}
-void TcpServer::setCloseCallback(const CloseCallback &cb)
-{
-    _model->setCloseCallback(cb);
-}
+    while (_listening) {
+        if (WSA_WAIT_TIMEOUT != ::WSAWaitForMultipleEvents(1,&_hAcceptEvent, FALSE, 100, FALSE)) {
+            WSANETWORKEVENTS events;
+            if (SOCKET_ERROR != ::WSAEnumNetworkEvents(_acceptSocket.fd(), _hAcceptEvent, &events)) {
+                if (events.lNetworkEvents & FD_ACCEPT && 0 == events.iErrorCode[FD_ACCEPT_BIT]) {
+                    InetAddress peerAddr;
+					SOCKET clientSockfd = _acceptSocket.accept(&peerAddr);
+					if (INVALID_SOCKET == clientSockfd)
+						THEFOX_LOG(ERROR) << "accept a socket error";
 
-void TcpServer::setMessageCallback(const MessageCallback &cb)
-{
-    _model->setMessageCallback(cb);
+					_server->handleNewConnection(clientSockfd, peerAddr);
+                }
+            }
+        }
+    }
 }
+#else
+void Acceptor::handleAccept(IoEvent *ev)
+{
+	InetAddress peerAddr;
+	SOCKET clientSockfd = _acceptSocket.accept(&peerAddr);
+	if (INVALID_SOCKET == clientSockfd)
+		THEFOX_LOG(ERROR) << "accept a socket error";
 
-void TcpServer::setWriteCompleteCallback(const WriteCompleteCallback &cb)
-{
-    _model->setWriteCompleteCallback(cb);
+	_server->handleNewConnection(clientSockfd, peerAddr);
 }
+#endif
