@@ -106,3 +106,52 @@ bool IocpEvent::processEvents(int32_t timer)
 
 	return true;
 }
+
+bool IocpEvent::postRead(IoEvent *ev)
+{
+	
+}
+
+bool IocpEvent::postWrite(IoEvent *ev)
+{
+	
+}
+
+bool IocpEvent::postZeroByteRead(IoEvent *ev)
+{
+	WSABUF wsabuf = {0};
+	DWORD nBytes = 0;
+    DWORD flags = 0;
+	int bytesRecv = ::WSARecv(ev->conn->fd(), &wsabuf, 1, &nBytes,
+							&flags, &ev->_ovlp, NULL);
+	if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
+		THEFOX_LOG(ERROR) << "postZeroByteRead() failed!";
+		return false;
+	}
+	return true;
+}
+
+void IocpEvent::handleRead(IoEvent *ev)
+{
+
+}
+
+void IocpEvent::handleWrite(IoEvent *ev)
+{
+	
+}
+
+void IocpEvent::handleClose(IoEvent *ev)
+{
+	
+}
+
+void IocpEvent::handleError(IoEvent *ev)
+{
+	
+}
+
+void IocpEvent::handleZeroByteRead(IoEvent *ev)
+{
+	postZeroByteRead(ev);
+}

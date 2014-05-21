@@ -22,9 +22,18 @@ public:
 	bool delConnection(TcpConnection *conn);
 	bool processEvents(int32_t timer);
 
+	void postRead(IoEvent *ev);
+	void poseWrite(IoEvent *ev);
+	void poseZeroByteRead(IoEvent *ev);
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
-
+	void handleRead(IoEvent *ev);
+	void handleWrite(IoEvent *ev);
+	void handleClose(IoEvent *ev);
+	void handleError(IoEvent *ev);
+	void handleZeroByteRead(IoEvent *ev);
+	
 	HANDLE _hIocp;
 };
 
