@@ -25,7 +25,32 @@ TcpClient::TcpClient()
 
 bool TcpClient::open(const InetAddress &serverAddr)
 {
-    return _model->open(serverAddr);
+    if (started()) {
+        // LOG_WARN << tcpserver already started;
+        return false;
+    }
+    _started = true;
+
+    _socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+    if (INVALID_SOCKET  == _socket) {
+        int errCode = WSAGetLastError();
+        // LOG_ERROR << WSASocket failed!, errcode:<< errCode;
+        _started = false;
+        return false;
+    }
+
+    int ret = connect(_socket, 
+                      (struct sockaddr *)&serverAddr.getSockAddrInet(), 
+                      sizeof(struct sockaddr_in));
+    if (SOCKET_ERROR == ret && WSAEWOULDBLOCK != WSAGetLastError()) {
+        // LOG_ERROR 
+        closesocket(_socket);
+        _started = false;
+        return false;
+    }
+
+    newConnection(_socket, serverAddr);
+    return true;
 }
 
 void TcpClient::close()

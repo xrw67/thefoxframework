@@ -74,7 +74,10 @@ public:
     size_t prependableBytes() const
     { return _readerPtr - _beginPtr; }
 
-    const char* peek() const
+	char *peek()
+	{ return _readerPtr; }
+
+    const char *peek() const
     { return _readerPtr; }
 
     void retrieve(size_t len)
@@ -233,7 +236,7 @@ public:
         _readerPtr -= len;
         memcpy(_readerPtr, data, len);
     }
-private:
+
 	void ensureWritableBytes(size_t len)
     {
 		if (writableBytes() < len) {
@@ -257,6 +260,7 @@ private:
 		}
     }
 
+private:
 	// buffer
     char *_beginPtr;
 	char *_readerPtr;

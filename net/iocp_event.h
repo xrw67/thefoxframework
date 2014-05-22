@@ -8,6 +8,7 @@
 namespace thefox
 {
 
+class IoEvent;
 class TcpConnection;
 
 class IocpEvent
@@ -17,14 +18,13 @@ public:
 	~IocpEvent();
 
 	bool init();
-	void addEvent();
+	bool addEvent(IoEvent *ev);
 	void addConnection() {}
 	bool delConnection(TcpConnection *conn);
 	bool processEvents(int32_t timer);
 
-	void postRead(IoEvent *ev);
-	void poseWrite(IoEvent *ev);
-	void poseZeroByteRead(IoEvent *ev);
+	bool postRead(IoEvent *ev);
+	bool postWrite(IoEvent *ev);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
@@ -32,10 +32,9 @@ private:
 	void handleRead(IoEvent *ev);
 	void handleWrite(IoEvent *ev);
 	void handleClose(IoEvent *ev);
-	void handleError(IoEvent *ev);
-	void handleZeroByteRead(IoEvent *ev);
 	
 	HANDLE _hIocp;
+	static const size_t kMaxBufSize = 8192;
 };
 
 } // namespace thefox

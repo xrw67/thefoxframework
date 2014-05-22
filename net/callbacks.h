@@ -3,6 +3,7 @@
 
 #include <base/types.h>
 #include <base/timestamp.h>
+#include <base/closure.h>
 
 namespace thefox
 {
@@ -10,13 +11,10 @@ namespace thefox
 class Buffer;
 class TcpConnection;
 
-typedef std::function<void(const TcpConnection *conn)> ConnectionCallback;
-typedef std::function<void(const TcpConnection *conn)> CloseCallback;
-typedef std::function<void(const TcpConnection *conn, Buffer *buffer, const Timestamp recvTime)> MessageCallback;
-typedef std::function<void(const TcpConnection *conn)> WriteCompleteCallback;
-
-void defaultConnectionCallback(const TcpConnection *conn);
-void defaultMessageCallback(const TcpConnection *conn, Buffer *buffer, const Timestamp recvTime);
+typedef Closure<void(const TcpConnection *conn)> ConnectionClosure;
+typedef Closure<void(const TcpConnection *conn)> CloseClosure;
+typedef Closure<void(const TcpConnection *conn, Buffer *buffer, const Timestamp recvTime)> MessageClosure;
+typedef Closure<void(const TcpConnection *conn)> WriteCompleteClosure;
 
 } // namespace thefox
 

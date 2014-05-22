@@ -1,28 +1,27 @@
 #include <net/tcp_connection.h>
-#include <net/tcp_handler.h>
+#include <log/logging.h>
 #include <net/event_loop.h>
 
 using namespace thefox;
 
-TcpConnection::TcpConnection(TcpHandler *handler, EventLoop *loop, SOCKET sockfd,
-							int connId, const InetAddress &peerAddr)
-{
-	: _handler(handler)
-	, _loop(loop)
+TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd,
+							int id, const InetAddress &peerAddr)
+	: _loop(loop)
     , _id(id)
     , _peerAddr(peerAddr)
     , _readBytes(0)
     , _writeBytes(0)
 	, _arg(NULL)
+	, _state(kConnecting)
 {
 	_socket.setFd(sockfd);
-
-	memset(&_ev, 0, sizeof(_ev));
-	_ev.conn = this;
+	_event.init(this);
 }
 
 TcpConnection::~TcpConnection()
 {
+	_arg = NULL;
+	_id = -1;
 }
 
 void TcpConnection::send(const std::string &data)
@@ -34,17 +33,61 @@ void TcpConnection::send(const char *data, size_t len)
 {
 	_writeBuffer.append(data, len);
 
-	MutexGuarg lock(_ev._mutex);
-	if (!ev->write) {
-		ev->write = true;
-		_loop->postEvent(&ev);
+	MutexGuard lock(_mutex);
+	if (!_event.write) {
+		_event.write = true;
+		_loop->postEvent(&_event);
 	}
 }
 
-void TcpConnection::destroy()
+bool TcpConnection::shutdown()
 {
-	_loop->delConnection(this);
-	if (0 == --_ev.ref) {
-		delete this;
+	return _socket.shutdownWrite();
+}
+
+void TcpConnection::setTcpNoDelay(bool on)
+{
+	_socket.setTcpNoDelay(on);
+}
+
+void TcpConnection::forceClose()
+{
+	if (kConnected == _state || kDisconnecting == _state) {
+		setState(kDisconnecting);
+	}
+
+}
+
+void TcpConnection::connectEstablished()
+{
+	THEFOX_LOG(DEBUG) << "TcpConnection::connectEstablished()";
+
+	assert(kConnecting == _state );
+	setState(kConnected);
+	_handler->_connectionCallback(this);
+
+	// 投递读事件
+	_event.read = true;
+	_loop->postEvent(&_event);
+}
+
+void TcpConnection::connectDestroyed()
+{
+	if (kConnected == _state || kDisconnecting == _state) {
+		setState(kDisconnected);
+		THEFOX_LOG(DEBUG) << "connection closed, addr:" << _peerAddr.toIpPort();
+
+		_loop->delConnection(this);
+		_socket.close();
+
+		_handler->_connectionCallback(this);
+	}
+
+	if (0 == _event.refCount()) {
+		_s->_connections.erase(_id);
+		THEFOX_LOG(INFO) << "TcpConnection::destroy(), del connection, addr:" << _peerAddr.toIpPort();
+
+		_server._connectionPool.put(this); // 析构,这是最后一行
+		return;
 	}
 }

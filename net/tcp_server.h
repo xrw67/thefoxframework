@@ -12,7 +12,8 @@
 #include <base/types.h>
 #include <base/mutex.h>
 #include <base/Atomic_integer.h>
-#include <net/tcp_handler.h>
+#include <base/object_pool.h>
+#include <net/callbacks.h>
 #include <net/acceptor.h>
 
 namespace thefox
@@ -22,10 +23,11 @@ class EventLoop;
 class InetAddress;
 class TcpConnection;
 
-class TcpServer : public TcpHandler
+class TcpServer
 {
 public:
 	friend class Acceptor;
+	friend class TcpConnection;
 
     TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg);
     ~TcpServer(void);
@@ -41,12 +43,21 @@ public:
     /// @brief 移除客户连接
     void delConnection(TcpConnection *conn);
 	
+	/// @brief 设置连接状态改变回调函数
+    void setConnectionClosure(const ConnectionCallback &cb)
+    { _connectionCallback = cb; }
+	/// @brief 设置收到数据的回调函数
+    void setMessageClosure(const MessageCallback &cb)
+    { _messageCallback = cb; }
+	/// @brief 设置缓冲区中数据发送完成后的回调函数
+    void setWriteCompleteClosure(const WriteCompleteCallback &cb)
+    { _writeCompleteCallback = cb; }
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpServer);
 	void handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr);
 
 	typedef std::map<int32_t, TcpConnection *> ConnectionMap;
-	typedef std::list<TcpConnection *> ConnectionList;
 
 	const std::string _name;
 	EventLoop *_loop; 
@@ -56,7 +67,11 @@ private:
     AtomicInt32 _nextConnId;
     Mutex _mutex;
 	ConnectionMap _connections;
-	ConnectionList _freeConnections;
+	ObjectPool<TcpConnection> _connectionPool;
+
+	ConnectionClosure _connectionClosure;
+    MessageClosure _messageClosure;
+    WriteCompleteClosure _writeCompleteClosure;
 };
 
 } // namespace thefox

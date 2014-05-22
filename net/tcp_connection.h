@@ -8,8 +8,10 @@
 #define _THEFOX_NET_TCPCONNECTION_H_
 
 #include <base/types.h>
+#include <base/mutex.h>
 #include <net/buffer.h>
 #include <net/inet_address.h>
+#include <net/callbacks.h>
 #include <net/socket.h>
 #include <net/event.h>
 
@@ -20,7 +22,6 @@ namespace thefox
 typedef int SOCKET
 #endif
 
-class TcpHandler;
 class EventLoop;
 
 class TcpConnection
@@ -28,12 +29,12 @@ class TcpConnection
 public:
     enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
 
-    explicit TcpConnection(TcpHandler *handler, EventLoop* loop, SOCKET sockfd,
+    TcpConnection(EventLoop *loop, SOCKET sockfd,
 		int id, const InetAddress &peerAddr);
     ~TcpConnection();
 
     /// @brief 获取连接ID
-    int32_t id() const { return _connId; }
+    int32_t id() const { return _id; }
 
     /// @brief 获取SOCKET句柄
     SOCKET fd() const { return _socket.fd(); }
@@ -49,52 +50,38 @@ public:
 
     /// @brief 获取连接状态
     StateT state() const { return _state; }
+	void setState(StateT state) { _state = state; }
 
     /// @brief 
     void *arg() const { return _arg; }
 
     /// @brief 
-    void setArg(void *arg) { _arg = arg; 
-
-    void enterEventLoop()
-    {
-        MutexGuard lock(_mutex);
-        ++_pendingEvent;
-    }
-    
-    size_t leaveEventLoop()
-    {
-        MutexGuard lock(_mutex);
-        if (_pendingEvent > 0)
-            --_pendingEvent;
-        return _pendingEvent;
-    }
+	void setArg(void *arg) { _arg = arg; }
 
     size_t readBytes() const { return _readBytes; }
     size_t writeBytes() const { return _writeBytes; }
 
 	void send(const std::string &data);
 	void send(const char *data, size_t len);
-	void destroy();
 
+	bool shutdown();
+	void setTcpNoDelay(bool on);
+	void forceClose();
 	void connectEstablished();
 	void connectDestroyed();
-	void handleRead();
-	void handleWrite();
-	void handleClose();
-	void handleError();
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
-	TcpHandler *_handler;
 	EventLoop *_loop;
     int32_t _id;
     Socket _socket;
     InetAddress _peerAddr;
     Buffer _readBuffer;
     Buffer _writeBuffer;
+	Mutex _mutex;
     StateT _state;
 
-	IoEvent _ev;
+	IoEvent _event;
     void *_arg;
 
     // 统计信息

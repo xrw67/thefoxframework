@@ -18,9 +18,6 @@
     <ClInclude Include="..\..\log\log_file.h">
       <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\cp_event.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\event_loop.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -90,9 +87,6 @@
     <ClInclude Include="..\..\net\event.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\tcp_handler.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\callbacks.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -150,9 +144,6 @@
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\tcp_connection.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\tcp_handler.cc">
       <Filter>net</Filter>
     </ClCompile>
   </ItemGroup>

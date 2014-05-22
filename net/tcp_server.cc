@@ -43,7 +43,8 @@ void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr)
 	int32_t id = _nextConnId.inc();
 
     TcpConnection *conn = 
-		new TcpConnection((TcpHandler *)this, _loop, socket, id, peerAddr);
+		_connectionPool.get<TcpHandler *, EventLoop *, SOCKET, int, const InetAddress &>
+							((TcpHandler *)this, _loop, socket, id, peerAddr);
     _connections[id] = conn;
 
     _loop->addEvent(sockfd);
