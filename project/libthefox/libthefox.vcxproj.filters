@@ -24,9 +24,6 @@
     <ClInclude Include="..\..\net\inet_address.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\iocp.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\tcp_client.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -99,9 +96,6 @@
       <Filter>log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\event_loop.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\iocp.cc">
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\tcp_client.cc">

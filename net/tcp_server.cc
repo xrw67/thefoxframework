@@ -34,25 +34,30 @@ bool TcpServer::start()
 	}
 }
 
-void TcpServer::delConnection(TcpConnection *conn)
-{
-}
-
 void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr)
 {
 	int32_t id = _nextConnId.inc();
 
     TcpConnection *conn = 
-		_connectionPool.get<TcpHandler *, EventLoop *, SOCKET, int, const InetAddress &>
-							((TcpHandler *)this, _loop, socket, id, peerAddr);
+		_connectionPool.get<EventLoop *, SOCKET, int32_t, const InetAddress &>
+							(_loop, sockfd, id, peerAddr);
     _connections[id] = conn;
 
-    _loop->addEvent(sockfd);
-    
-    if (NULL != conn) {
-        conn->setState(TcpConnection::kConnected);
-        postZeroByteReadEvent(conn);
-        postReadEvent(conn);
-        handleConnection(conn);
-    }
+	conn->setConnectionCallback(_connectionCallback);
+	conn->setMessageCallback(_messageCallback);
+	conn->setWriteCompleteCallback(_writeCompleteCallback);
+	conn->setRemoveConnectionCallback(std::bind(&TcpServer::removeConnection, this, _1));
+
+	conn->connectEstablished();
+}
+
+void TcpServer::removeConnection(TcpConnection *conn)
+{
+	_connections.erase(conn->id());
+
+	THEFOX_LOG(INFO) << "TcpServer::removeConnection(), addr:" 
+					<< conn->peerAddr().toIpPort();
+
+	_connectionPool.put(conn); // 析构,这是最后一行
+	return;
 }

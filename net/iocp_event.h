@@ -21,7 +21,7 @@ public:
 	bool addEvent(IoEvent *ev);
 	void addConnection() {}
 	bool delConnection(TcpConnection *conn);
-	bool processEvents(int32_t timer);
+	bool processEvents(uint32_t timer);
 
 	bool postRead(IoEvent *ev);
 	bool postWrite(IoEvent *ev);

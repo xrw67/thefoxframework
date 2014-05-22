@@ -38,7 +38,7 @@ Acceptor::~Acceptor()
 bool Acceptor::listen()
 {
 	if (_listening)
-		return;
+		return true;
 
 	if (_acceptSocket.listen()) {
 		_listening = true;

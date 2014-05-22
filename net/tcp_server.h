@@ -39,23 +39,21 @@ public:
     /// @brief 查看服务是否已经启动
     /// @return 已经启动返回true，否则返回false
 	bool started() const { return _started; }
-
-    /// @brief 移除客户连接
-    void delConnection(TcpConnection *conn);
 	
 	/// @brief 设置连接状态改变回调函数
-    void setConnectionClosure(const ConnectionCallback &cb)
+    void setConnectionCallback(const ConnectionCallback &cb)
     { _connectionCallback = cb; }
 	/// @brief 设置收到数据的回调函数
-    void setMessageClosure(const MessageCallback &cb)
+    void setMessageCallback(const MessageCallback &cb)
     { _messageCallback = cb; }
 	/// @brief 设置缓冲区中数据发送完成后的回调函数
-    void setWriteCompleteClosure(const WriteCompleteCallback &cb)
+    void setWriteCompleteCallback(const WriteCompleteCallback &cb)
     { _writeCompleteCallback = cb; }
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpServer);
 	void handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr);
+	void removeConnection(TcpConnection *conn);
 
 	typedef std::map<int32_t, TcpConnection *> ConnectionMap;
 
@@ -69,9 +67,9 @@ private:
 	ConnectionMap _connections;
 	ObjectPool<TcpConnection> _connectionPool;
 
-	ConnectionClosure _connectionClosure;
-    MessageClosure _messageClosure;
-    WriteCompleteClosure _writeCompleteClosure;
+	ConnectionCallback _connectionCallback;
+    MessageCallback _messageCallback;
+    WriteCompleteCallback _writeCompleteCallback;
 };
 
 } // namespace thefox

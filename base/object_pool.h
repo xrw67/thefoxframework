@@ -65,7 +65,7 @@ public:
     // @brief 回收对象
     void put(T *obj)
     {
-        pointer->~T();
+        obj->~T();
         MemPool::put(obj);
     }
 };

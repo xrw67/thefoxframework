@@ -53,7 +53,7 @@ bool IocpEvent::delConnection(TcpConnection *conn)
 	return true;
 }
 
-bool IocpEvent::processEvents(int32_t timer)
+bool IocpEvent::processEvents(uint32_t timer)
 {
 	DWORD err = 0;
 	DWORD bytes = 0;
@@ -169,9 +169,12 @@ void IocpEvent::handler(IoEvent *ev)
 			handleRead(ev);
 		if (ev->write)
 			handleWrite(ev);
-	} else {
+	}
+
+	if (0 == ev->avaliable || ev->close) {
 		ev->leaveIo();
-		handleClose(ev);
+		TcpConnection *conn = ev->conn;
+		conn->connectDestroyed();
 	}
 }
 void IocpEvent::handleRead(IoEvent *ev)
@@ -203,8 +206,3 @@ void IocpEvent::handleWrite(IoEvent *ev)
 		postWrite(ev);
 }
 
-void IocpEvent::handleClose(IoEvent *ev)
-{
-	TcpConnection *conn = ev->conn;
-	conn->handleClose();
-}

@@ -70,6 +70,14 @@ public:
 	void connectEstablished();
 	void connectDestroyed();
 
+    void setConnectionCallback(const ConnectionCallback &cb)
+	{ _connectionCallback = cb; }
+    void setMessageCallback(const MessageCallback &cb)
+    { _messageCallback = cb; }
+    void setWriteCompleteCallback(const WriteCompleteCallback &cb)
+    { _writeCompleteCallback = cb; }
+	void setRemoveConnectionCallback(const RemoveConnectionCallback &cb)
+	{ _removeConnectionCallback = cb; }
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
 	EventLoop *_loop;
@@ -87,6 +95,11 @@ private:
     // 统计信息
     size_t _readBytes;
     size_t _writeBytes;
+
+	ConnectionCallback _connectionCallback;
+    MessageCallback _messageCallback;
+    WriteCompleteCallback _writeCompleteCallback;
+	RemoveConnectionCallback _removeConnectionCallback;
 };
 
 } // namespace thefox

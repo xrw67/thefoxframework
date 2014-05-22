@@ -1,5 +1,5 @@
 /*
-* @filename EventLoop.h
+* @filename event_loop.h
 * @brief 事件循环
 * @author macwe@qq.com
 */
@@ -8,16 +8,21 @@
 #define _THEFOX_NET_EVENTLOOP_H_
 
 #include <vector>
-#include <Windows.h>
 #include <base/types.h>
-#include <base/thread.h>
 
 namespace thefox
 {
 
+class Thread;
 class IoEvent;
-class IocpEvent;
 class TcpConnection;
+
+#ifdef WIN32
+class IocpEvent;
+typedef void *HANDLE;
+#else
+class EpollEvent;
+#endif
 
 /// @brief 事件循环类
 class EventLoop
@@ -35,9 +40,9 @@ public:
     /// @brief 退出消息循环
     void stop();
 
-    void setTimer(uint32_t time, const TimerCallback &cb);
+    //void setTimer(uint32_t time, const TimerCallback &cb);
 
-	void addEvent(SOCKET sockfd);
+	void addEvent(IoEvent *ev);
 	void postEvent(IoEvent *ev);
 	bool delConnection(TcpConnection *conn);
 
@@ -45,18 +50,19 @@ public:
     void loop();
 private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EventLoop);
-	typedef std::shared_ptr<Thread> ThreadPtr;
-    typedef std::vector<ThreadPtr> ThreadVector;
 
     void init();
-#ifdef WIN32
-	IocpEvent _poller;
-#else
-	EpollWvent _poller;
-#endif
+	int getCpuNumber();
+
 	bool _started;
     HANDLE _hIocp;
-    ThreadVector _threads;
+    std::vector<Thread *> _threads;
+
+#ifdef WIN32
+	IocpEvent *_poller;
+#else
+	EpollWvent *_poller;
+#endif
 };
 
 } // namespace thefox

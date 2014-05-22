@@ -18,7 +18,6 @@
     <ClInclude Include="..\..\net\callbacks.h" />
     <ClInclude Include="..\..\net\event_loop.h" />
     <ClInclude Include="..\..\net\inet_address.h" />
-    <ClInclude Include="..\..\net\iocp.h" />
     <ClInclude Include="..\..\net\iocp_event.h" />
     <ClInclude Include="..\..\net\event.h" />
     <ClInclude Include="..\..\net\socket.h" />
@@ -43,7 +42,6 @@
     <ClCompile Include="..\..\log\Logging.cc" />
     <ClCompile Include="..\..\net\acceptor.cc" />
     <ClCompile Include="..\..\net\event_loop.cc" />
-    <ClCompile Include="..\..\net\iocp.cc" />
     <ClCompile Include="..\..\net\iocp_event.cc" />
     <ClCompile Include="..\..\net\socket.cc" />
     <ClCompile Include="..\..\net\tcp_client.cc" />

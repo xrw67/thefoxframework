@@ -54,8 +54,10 @@ void TcpConnection::forceClose()
 {
 	if (kConnected == _state || kDisconnecting == _state) {
 		setState(kDisconnecting);
+		// 投递关闭事件
+		_event.close = true;
+		_loop->postEvent(&_event);
 	}
-
 }
 
 void TcpConnection::connectEstablished()
@@ -64,7 +66,9 @@ void TcpConnection::connectEstablished()
 
 	assert(kConnecting == _state );
 	setState(kConnected);
-	_handler->_connectionCallback(this);
+	_connectionCallback(this);
+
+	_loop->addEvent(&_event);
 
 	// 投递读事件
 	_event.read = true;
@@ -80,14 +84,11 @@ void TcpConnection::connectDestroyed()
 		_loop->delConnection(this);
 		_socket.close();
 
-		_handler->_connectionCallback(this);
+		_connectionCallback(this);
 	}
 
 	if (0 == _event.refCount()) {
-		_s->_connections.erase(_id);
-		THEFOX_LOG(INFO) << "TcpConnection::destroy(), del connection, addr:" << _peerAddr.toIpPort();
-
-		_server._connectionPool.put(this); // 析构,这是最后一行
+		_removeConnectionCallback(this); // 这是最后一行
 		return;
 	}
 }
