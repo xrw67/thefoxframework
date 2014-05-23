@@ -33,9 +33,9 @@ public:
     
     void set() { ::SetEvent(_event); }
     void reset() { ::ResetEvent(_event); }
-    bool wait()
+    bool wait(DWORD dwMilliseconds = INFINITE)
     {
-        ::WaitForSingleObject(_event, INFINITE);
+        ::WaitForSingleObject(_event, dwMilliseconds);
         return true;
     }
 	operator HANDLE() { return _event; }
