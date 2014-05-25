@@ -5,43 +5,43 @@
 #include <net/tcp_server.h>
 #include <net/tcp_connection.h>
 #include <net/event_loop.h>
+#include <log/log_stdout.h>
 
 using namespace thefox;
 
-TcpServer *svr = NULL;
-
-void onConnection(const TcpConnectionPtr &conn)
+void onConnection(TcpConnection *conn)
 {
-	printf("Connection success connID=%d\r\n", conn->connId());
+	printf("Connection success connID=%d\r\n", conn->id());
 }
 
-void onClose(const TcpConnectionPtr &conn)
+void onMessage(TcpConnection *conn, Buffer *buf, Timestamp receiveTime)
 {
-	printf("Connection close connID=%d\r\n", conn->connId());
-}
-
-void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
-{
-	printf("收到数据 总共读:%u 总共写:%u\r\n", conn->readBytes(), conn->writeBytes());
-	svr->send(conn, buf->peek(), buf->readableBytes());
+	printf("收到数据 总共读:%u\r\n", conn->readBytes());
+	conn->send(buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
+}
+
+void onWriteComplete(TcpConnection *conn)
+{
+	printf("写数据完成 总共写:%u\r\n", conn->writeBytes());
 }
 
 int main(int argc, char *argv[])
 {
+	LogStdout log("tcp_server");
+	THEFOX_LOG(INFO) << "tcp_server bigin";
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 
 	EventLoop loop;
-	svr = new TcpServer(&loop, "MyIocpDemo");
+	TcpServer *svr = new TcpServer(&loop, InetAddress(7901), "MyIocpDemo");
 	svr->setConnectionCallback(onConnection);
-	svr->setCloseCallback(onClose);
 	svr->setMessageCallback(onMessage);
-	svr->start(InetAddress(7901));
+	svr->setWriteCompleteCallback(onWriteComplete);
+	svr->start();
 	loop.start();
 	loop.join();
 
 	WSACleanup();
-	delete svr;
 	return 0;
 }

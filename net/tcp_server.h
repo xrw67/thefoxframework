@@ -26,9 +26,6 @@ class TcpConnection;
 class TcpServer
 {
 public:
-	friend class Acceptor;
-	friend class TcpConnection;
-
     TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg);
     ~TcpServer(void);
 
@@ -70,6 +67,9 @@ private:
 	ConnectionCallback _connectionCallback;
     MessageCallback _messageCallback;
     WriteCompleteCallback _writeCompleteCallback;
+	
+	friend class Acceptor;
+	friend class TcpConnection;
 };
 
 } // namespace thefox

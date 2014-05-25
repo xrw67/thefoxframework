@@ -9,13 +9,17 @@ using namespace thefox;
 TcpServer::TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg)
 	: _loop(loop)
 	, _name(nameArg)
+	, _started(false)
+	, _connectionCallback(NULL)
+	, _messageCallback(defaultMessageCallback)
+	, _writeCompleteCallback(NULL)
 {
 	_acceptor = new Acceptor(this, listenAddr);
 }
 
 TcpServer::~TcpServer()
 {
-
+	_started = false;
     delete _acceptor;
 }
 
@@ -27,11 +31,10 @@ bool TcpServer::start()
 	if (_acceptor->listen()) {
 		_started = true;
 		THEFOX_LOG(INFO) << "TcpServer::start() done";
-		return true;
 	} else {
 		THEFOX_LOG(ERROR) << "TcpServer::start() failed";
-		return false;
 	}
+	return _started;
 }
 
 void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr)

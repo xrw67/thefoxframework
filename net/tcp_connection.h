@@ -78,6 +78,12 @@ public:
     { _writeCompleteCallback = cb; }
 	void setRemoveConnectionCallback(const RemoveConnectionCallback &cb)
 	{ _removeConnectionCallback = cb; }
+
+	void addReadBytes(size_t bytes)
+	{ _readBytes += bytes;}
+	void addWriteBytes(size_t bytes)
+	{ _writeBytes += bytes; }
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
 	EventLoop *_loop;
@@ -100,6 +106,12 @@ private:
     MessageCallback _messageCallback;
     WriteCompleteCallback _writeCompleteCallback;
 	RemoveConnectionCallback _removeConnectionCallback;
+
+#ifdef WIN32
+	friend class IocpEvent;
+#else
+	friend class EpollEvent;
+#endif
 };
 
 } // namespace thefox

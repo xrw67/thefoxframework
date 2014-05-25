@@ -21,15 +21,11 @@ class TcpConnection;
 
 class IoEvent {
 public:
-#ifdef WIN32
-	OVERLAPPED ovlp;
-#endif
-
 	TcpConnection *conn;
 	uint32_t avaliable;
 	int64_t ts; // 时间触发时间
-	bool write;
 	bool read;
+	bool write;
 	bool close;
 
 	void init(TcpConnection *c)
@@ -59,6 +55,21 @@ private:
 	Mutex _mutex;
 	int32_t _refCount; //引用计数
 };
+
+#ifdef WIN32
+
+#define OVLP_TYPE_NONE        0
+#define OVLP_TYPE_READ        1
+#define OVLP_TYPE_WRITE       2
+#define OVLP_TYPE_CLOSE       3
+
+typedef struct {
+	OVERLAPPED ovlp;
+	int32_t type;
+	IoEvent *ev;
+} EventOvlp;
+
+#endif
 
 } // namespace thefox
 

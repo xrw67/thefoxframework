@@ -1,7 +1,6 @@
 #include <net/iocp_event.h>
 #include <log/logging.h>
 #include <net/buffer.h>
-#include <net/event.h>
 #include <net/tcp_connection.h>
 
 using namespace thefox;
@@ -24,7 +23,9 @@ IocpEvent::~IocpEvent()
 
 bool IocpEvent::init()
 {
-	if (NULL != _hIocp)
+	THEFOX_TRACE_FUNCTION;
+
+	if (NULL == _hIocp)
 		_hIocp = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
 	if (NULL == _hIocp) {
@@ -36,9 +37,36 @@ bool IocpEvent::init()
 
 bool IocpEvent::addEvent(IoEvent *ev)
 {
-	if (NULL == CreateIoCompletionPort((HANDLE)ev->conn, _hIocp, 0, 0)) {
+	THEFOX_TRACE_FUNCTION;
+
+	TcpConnection *conn = ev->conn;
+	if (NULL == CreateIoCompletionPort((HANDLE)conn->fd(), _hIocp, 0, 0)) {
 		DWORD err = ::GetLastError();
 		THEFOX_LOG(ERROR) << "addEvent() failed, errno=" << err;
+		return false;
+	}
+	return true;
+}
+bool IocpEvent::postClose(IoEvent *ev)
+{
+	THEFOX_TRACE_FUNCTION;
+
+	TcpConnection *conn = ev->conn;
+
+	ev->enterIo();
+
+	EventOvlp *ovlp = _ovlpPool.get();
+	::ZeroMemory(ovlp, sizeof(EventOvlp));
+	ovlp->type = OVLP_TYPE_CLOSE;
+	ovlp->ev = ev;
+
+	if (0 == ::PostQueuedCompletionStatus(_hIocp, ev->avaliable, 
+			NULL, &ovlp->ovlp)) {
+		DWORD err = GetLastError();
+		THEFOX_LOG(ERROR) << "postEvent() failed, errno=" << err;
+		ev->leaveIo();
+		_ovlpPool.put(ovlp);
+		conn->connectDestroyed();
 		return false;
 	}
 	return true;
@@ -46,6 +74,8 @@ bool IocpEvent::addEvent(IoEvent *ev)
 
 bool IocpEvent::delConnection(TcpConnection *conn)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	if (0 == ::CancelIo((HANDLE)conn->fd())) {
 		THEFOX_LOG(ERROR) << "CancelIo() failed";
 		return false;
@@ -59,22 +89,17 @@ bool IocpEvent::processEvents(uint32_t timer)
 	DWORD bytes = 0;
     ULONG_PTR key = NULL;
 	IoEvent *ev = NULL;
+	EventOvlp *ovlp = NULL;
     BOOL ret = FALSE;
     ret = ::GetQueuedCompletionStatus(_hIocp, &bytes, &key, 
-									(LPOVERLAPPED *)&ev, (DWORD)timer);
-    
-	if (0 == bytes && NULL == key && NULL == ev) {
-		THEFOX_LOG(INFO) << "GetQueuedCompletionStatus() quit";
-        return false;
-	}
-
+									(LPOVERLAPPED *)&ovlp, (DWORD)timer);
 	if (0 == ret)
 		err = ::GetLastError();
 	else
 		err = 0;
 
 	if (err) {
-        if (NULL == ev) {
+        if (NULL == ovlp) {
 			if (WAIT_TIMEOUT != ::GetLastError()) {
 				THEFOX_LOG(ERROR) << "GetQueuedCompletionStatus() failed";
 				return false;
@@ -83,9 +108,16 @@ bool IocpEvent::processEvents(uint32_t timer)
         }
     }
 
-	if (NULL == ev) {
+	if (NULL == ovlp) {
 		THEFOX_LOG(WARN) << "GetQueuedCompletionStatus() returned no operation";
 		return true;
+	}
+
+	ev = ovlp->ev;
+
+	if (NULL == ev) {
+		THEFOX_LOG(WARN) << "iocp: error evvnt, err:" << err;
+        return true;
 	}
 
 	if (err == ERROR_NETNAME_DELETED /* the socket was closed */
@@ -102,15 +134,20 @@ bool IocpEvent::processEvents(uint32_t timer)
 	if (err)
 		THEFOX_LOG(ERROR) << "GetQueuedCompletionStatus() returned operation error:" << err;
 
+	int32_t ovlpType = ovlp->type;
+	_ovlpPool.put(ovlp);
+
 	ev->avaliable = bytes;
 
-	handler(ev);
+	handler(ev, ovlpType);
 
 	return true;
 }
 
-bool IocpEvent::postRead(IoEvent *ev)
+bool IocpEvent::updateRead(IoEvent *ev)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	ev->enterIo();
 
 	WSABUF wsabuf[1];
@@ -123,22 +160,30 @@ bool IocpEvent::postRead(IoEvent *ev)
 	wsabuf[0].buf = readbuf->beginWrite();
 	wsabuf[0].len = readbuf->writableBytes();
 
+	EventOvlp *ovlp = _ovlpPool.get();
+	::ZeroMemory(ovlp, sizeof(EventOvlp));
+	ovlp->type = OVLP_TYPE_READ;
+	ovlp->ev = ev;
+
 	DWORD nBytes = 0;
     DWORD flags = 0;
     int bytesRecv = WSARecv(conn->fd(), wsabuf, 1, 
-                            &nBytes, &flags, &ev->ovlp, NULL);
+							&nBytes, &flags, &ovlp->ovlp, NULL);
     if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
         THEFOX_LOG(ERROR) << "postRead() failed!";
 		//  ¹Ø±Õconnection
 		ev->leaveIo();
+		_ovlpPool.put(ovlp);
 		conn->connectDestroyed();
 		return false;
     }
 	return true;
 }
 
-bool IocpEvent::postWrite(IoEvent *ev)
+bool IocpEvent::updateWrite(IoEvent *ev)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	ev->enterIo();
 
 	WSABUF wsabuf[1];
@@ -148,61 +193,90 @@ bool IocpEvent::postWrite(IoEvent *ev)
 	wsabuf[0].buf = writebuf->peek();
 	wsabuf[0].len = writebuf->readableBytes();
 
+	EventOvlp *ovlp = _ovlpPool.get();
+	::ZeroMemory(ovlp, sizeof(EventOvlp));
+	ovlp->type = OVLP_TYPE_WRITE;
+	ovlp->ev = ev;
+
 	DWORD nBytes = 0;
     DWORD flags = 0;
-    int byteSend = WSARecv(conn->fd(), wsabuf, 1, 
-                            &nBytes, &flags, &ev->ovlp, NULL);
+    int byteSend = WSASend(conn->fd(), wsabuf, 1, 
+                            &nBytes, flags, &ovlp->ovlp, NULL);
     if (SOCKET_ERROR == byteSend && WSA_IO_PENDING != WSAGetLastError()) {
         THEFOX_LOG(ERROR) << "postWrite() failed!";
 		//  ¹Ø±Õconnection
 		ev->leaveIo();
+		_ovlpPool.put(ovlp);
 		conn->connectDestroyed();
 		return false;
     }
 	return true;
 }
 
-void IocpEvent::handler(IoEvent *ev)
+void IocpEvent::handler(IoEvent *ev, int32_t ovlpType)
 {
-	if (ev->avaliable > 0) {
-		if (ev->read)
-			handleRead(ev);
-		if (ev->write)
-			handleWrite(ev);
-	}
+	THEFOX_TRACE_FUNCTION;
 
-	if (0 == ev->avaliable || ev->close) {
+	const uint32_t bytes = ev->avaliable;
+
+	if (0 == bytes || ev->close) {
 		ev->leaveIo();
 		TcpConnection *conn = ev->conn;
 		conn->connectDestroyed();
+		return;
+	}
+
+	switch (ovlpType) {
+	case OVLP_TYPE_READ:
+		handleRead(ev);
+		break;
+	case OVLP_TYPE_WRITE:
+		handleWrite(ev);
+		break;
+	default:
+		break;
 	}
 }
 void IocpEvent::handleRead(IoEvent *ev)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	TcpConnection *conn = ev->conn;
 	Buffer *readbuf = conn->readBuffer();
 	
 	readbuf->hasWritten(ev->avaliable);
 	
+	conn->addReadBytes(ev->avaliable);
+
+	if (conn->_messageCallback)
+		conn->_messageCallback(conn, readbuf, Timestamp::now());
+
 	ev->avaliable = 0;
 	ev->leaveIo();
 	
-	postRead(ev);
+	updateRead(ev);
 }
 
 void IocpEvent::handleWrite(IoEvent *ev)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	TcpConnection *conn = ev->conn;
 	Buffer *writebuf = conn->writeBuffer();
 
 	writebuf->retrieve(ev->avaliable);
 	
+	conn->addWriteBytes(ev->avaliable);
+
+	if (conn->_writeCompleteCallback)
+		conn->_writeCompleteCallback(conn);
+
 	ev->avaliable = 0;
 	ev->leaveIo();
 
 	if (0 == writebuf->readableBytes())
 		ev->write = false;
 	else
-		postWrite(ev);
+		updateWrite(ev);
 }
 

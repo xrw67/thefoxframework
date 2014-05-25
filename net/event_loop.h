@@ -42,8 +42,10 @@ public:
 
     //void setTimer(uint32_t time, const TimerCallback &cb);
 
-	void addEvent(IoEvent *ev);
-	void postEvent(IoEvent *ev);
+	bool addEvent(IoEvent *ev);
+	bool postClose(IoEvent *ev);
+	bool updateRead(IoEvent *ev);
+	bool updateWrite(IoEvent *ev);
 	bool delConnection(TcpConnection *conn);
 
     /// @brief 启动一个工作循环. 警告:单线程,不要使用
@@ -55,7 +57,6 @@ private:
 	int getCpuNumber();
 
 	bool _started;
-    HANDLE _hIocp;
     std::vector<Thread *> _threads;
 
 #ifdef WIN32

@@ -8,16 +8,17 @@
 #ifndef _THEFOX_LOGSYSLOG_H_
 #define _THEFOX_LOGSYSLOG_H_
 
-#include <base/types.h>
-#include <base/mutex.h>
-#include <log/logging.h>
-
 #ifdef WIN32
 #include <Winsock2.h>
 #else
 #include <sys/socket.h>
 #define SOCKET int
 #endif
+
+#include <base/types.h>
+#include <base/mutex.h>
+#include <log/logging.h>
+#include <net/inet_address.h>
 
 namespace thefox
 {

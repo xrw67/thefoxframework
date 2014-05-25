@@ -23,11 +23,11 @@ public:
 	{
 		setLogHandler(std::bind(&LogStdout::append, this, _1));
 	}
-	~LogStdout();
+	~LogStdout() {}
 
 	void append(const std::string &message)
 	{
-		std::cout << _basename << " " << message;
+		std::cout << _basename << " " << message << '\n';
 	}
 	
 private:

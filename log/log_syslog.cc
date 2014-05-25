@@ -1,5 +1,4 @@
-#include <log/log_file.h>
-#include <net/socket.h>
+#include <log/log_syslog.h>
 
 using namespace thefox;
 
@@ -20,7 +19,7 @@ void LogSyslog::append(const std::string &message)
 	MutexGuard lock(_mutex);
 	if (_sockfd >= 0) {
 		::sendto(_sockfd, message.c_str(), message.length(), 0, 
-				_serverAddr.getSockAddrInet(), 
+				(struct sockaddr *)&_serverAddr.getSockAddrInet(), 
 				sizeof(struct sockaddr_in));
 	}
 }
@@ -28,5 +27,5 @@ void LogSyslog::append(const std::string &message)
 bool LogSyslog::init()
 {
 	_sockfd = ::socket(AF_INET, SOCK_DGRAM, 0);
-	return _socket >= 0
+	return _sockfd >= 0;
 }

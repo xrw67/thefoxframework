@@ -23,7 +23,6 @@ EventLoop::EventLoop()
 EventLoop::~EventLoop()
 {
     stop();
-    CloseHandle(_hIocp);
 
 	for (size_t i = 0; i < _threads.size(); ++i)
 		delete _threads[i];
@@ -33,7 +32,7 @@ EventLoop::~EventLoop()
 void EventLoop::init()
 {
     _poller->init();
-	int threads = getCpuNumber() * 2;
+	int threads = getCpuNumber()/* * 2*/;
     for (int i = 0; i < threads; ++i)
 		_threads.push_back(new Thread(std::bind(&EventLoop::loop, this), "eventloop.loop"));
 }
@@ -54,12 +53,29 @@ void EventLoop::join()
 void EventLoop::stop()
 {
 	_started = false;
-    int threads = getCpuNumber() * 2;
-    for (int i = 0; i < threads; ++i)
-        PostQueuedCompletionStatus(_hIocp, 0, NULL, NULL);
 
    for (size_t i = 0; i < _threads.size(); ++i)
 		_threads[i]->stop();
+}
+
+bool EventLoop::addEvent(IoEvent *ev)
+{
+	return _poller->addEvent(ev);
+}
+
+bool EventLoop::postClose(IoEvent *ev)
+{
+	return _poller->postClose(ev);
+}
+
+bool EventLoop::updateRead(IoEvent *ev)
+{
+	return _poller->updateRead(ev);
+}
+
+bool EventLoop::updateWrite(IoEvent *ev)
+{
+	return _poller->updateWrite(ev);
 }
 
 bool EventLoop::delConnection(TcpConnection *conn)
@@ -80,6 +96,7 @@ void EventLoop::loop()
 
 int EventLoop::getCpuNumber()
 {
+	return 1;
 #ifdef WIN32
     SYSTEM_INFO si;
     GetSystemInfo(&si);

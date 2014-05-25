@@ -4,6 +4,13 @@
 
 using namespace thefox;
 
+void thefox::defaultMessageCallback(TcpConnection *conn,
+                                Buffer* buf,
+                                Timestamp recvTime)
+{
+	buf->retrieveAll();
+}
+
 TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd,
 							int id, const InetAddress &peerAddr)
 	: _loop(loop)
@@ -20,8 +27,6 @@ TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd,
 
 TcpConnection::~TcpConnection()
 {
-	_arg = NULL;
-	_id = -1;
 }
 
 void TcpConnection::send(const std::string &data)
@@ -36,7 +41,7 @@ void TcpConnection::send(const char *data, size_t len)
 	MutexGuard lock(_mutex);
 	if (!_event.write) {
 		_event.write = true;
-		_loop->postEvent(&_event);
+		_loop->updateWrite(&_event);
 	}
 }
 
@@ -56,7 +61,7 @@ void TcpConnection::forceClose()
 		setState(kDisconnecting);
 		// 投递关闭事件
 		_event.close = true;
-		_loop->postEvent(&_event);
+		_loop->postClose(&_event);
 	}
 }
 
@@ -66,13 +71,15 @@ void TcpConnection::connectEstablished()
 
 	assert(kConnecting == _state );
 	setState(kConnected);
-	_connectionCallback(this);
+
+	if (_connectionCallback)
+		_connectionCallback(this);
 
 	_loop->addEvent(&_event);
 
 	// 投递读事件
 	_event.read = true;
-	_loop->postEvent(&_event);
+	_loop->updateRead(&_event);
 }
 
 void TcpConnection::connectDestroyed()
@@ -84,11 +91,13 @@ void TcpConnection::connectDestroyed()
 		_loop->delConnection(this);
 		_socket.close();
 
-		_connectionCallback(this);
+		if (_connectionCallback)
+			_connectionCallback(this);
 	}
 
 	if (0 == _event.refCount()) {
-		_removeConnectionCallback(this); // 这是最后一行
+		if (_removeConnectionCallback)
+			_removeConnectionCallback(this); // 这是最后一行
 		return;
 	}
 }
