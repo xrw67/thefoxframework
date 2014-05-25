@@ -6,6 +6,7 @@
 #endif
 
 #include <base/thread.h>
+#include <log/logging.h>
 
 using namespace thefox;
 
@@ -31,14 +32,18 @@ EventLoop::~EventLoop()
 
 void EventLoop::init()
 {
+	THEFOX_TRACE_FUNCTION;
+
     _poller->init();
-	int threads = getCpuNumber()/* * 2*/;
+	int threads = getCpuNumber() * 2;
     for (int i = 0; i < threads; ++i)
 		_threads.push_back(new Thread(std::bind(&EventLoop::loop, this), "eventloop.loop"));
 }
 
 void EventLoop::start()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	_started = true;
     for (size_t i = 0; i < _threads.size(); ++i)
 		_threads[i]->start();
@@ -46,12 +51,16 @@ void EventLoop::start()
 
 void EventLoop::join()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	for (size_t i = 0; i < _threads.size(); ++i)
 		_threads[i]->join();
 }
 
 void EventLoop::stop()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	_started = false;
 
    for (size_t i = 0; i < _threads.size(); ++i)
@@ -96,7 +105,8 @@ void EventLoop::loop()
 
 int EventLoop::getCpuNumber()
 {
-	return 1;
+	THEFOX_TRACE_FUNCTION;
+
 #ifdef WIN32
     SYSTEM_INFO si;
     GetSystemInfo(&si);

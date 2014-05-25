@@ -27,7 +27,7 @@ void RpcClient::unregisterChannel(RpcChannel *channel)
 	_channels.remove(channel);
 }
 
-void RpcClient::CallMethod(const TcpConnectionPtr &conn,
+void RpcClient::CallMethod(TcpConnection *conn,
 					const ::google::protobuf::MethodDescriptor* method,
 				    RpcController *controller,
 				   const ::google::protobuf::Message* request,
@@ -58,7 +58,7 @@ void RpcClient::CallMethod(const TcpConnectionPtr &conn,
 		reqWait->doneEvent.wait();
 }
 
-void RpcClient::handleReplyMessage(const TcpConnectionPtr &conn, const rpc::Reply &reply, const Timestamp &recvTime)
+void RpcClient::handleReplyMessage(TcpConnection *conn, const rpc::Reply &reply, Timestamp recvTime)
 {
 	const int64_t id = reply.id();
 

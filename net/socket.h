@@ -37,17 +37,20 @@ class InetAddress;
 class Socket
 {
 public:
-	Socket();
+	explicit Socket(SOCKET sockfd);
 	~Socket();
 
-	void setFd(SOCKET sockfd) { _sockfd = sockfd; }
-	bool create();
+	static InetAddress getLocalAddr(SOCKET sockfd);
+	static SOCKET create();
+	static bool connect(SOCKET sockfd, const InetAddress &serverAddr);
+	static bool close(SOCKET sockfd);
+	
 	bool bind(const InetAddress &listenAddr);
 	bool listen();
 	SOCKET accept(InetAddress *peerAddr);
-	bool connect(const InetAddress &serverAddr);
-	bool close();
+	
 	bool shutdownWrite();
+	// È¡ÏûnagleËã·¨
 	void setTcpNoDelay(bool on);
 	void setKeepAlive(bool on);
 

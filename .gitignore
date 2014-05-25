@@ -15,4 +15,5 @@
 *.suo
 *.manifest
 *.dep
+*.log
 .DS_Store

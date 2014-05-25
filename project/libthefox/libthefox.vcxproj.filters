@@ -8,7 +8,7 @@
       <UniqueIdentifier>{07e1d8f6-b463-4363-ad4b-81a3a4a2352e}</UniqueIdentifier>
     </Filter>
     <Filter Include="rpc">
-      <UniqueIdentifier>{8ea0a354-751e-4aab-bafb-6c1febcbee77}</UniqueIdentifier>
+      <UniqueIdentifier>{281c66db-8e2f-49e0-9406-a232f0ebf884}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,9 +24,6 @@
     <ClInclude Include="..\..\net\inet_address.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\tcp_client.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\tcp_connection.h">
       <Filter>net</Filter>
     </ClInclude>
@@ -34,6 +31,30 @@
       <Filter>net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\buffer.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\acceptor.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\socket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\iocp_event.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\event.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\callbacks.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log\log_syslog.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log\log_stdout.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\tcp_client.h">
       <Filter>net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\rpc\rpc.pb.h">
@@ -66,26 +87,11 @@
     <ClInclude Include="..\..\rpc\task_manager.h">
       <Filter>rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rpc\common.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\rpc\oneway_dispatcher.h">
       <Filter>rpc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\acceptor.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\socket.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\iocp_event.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\event.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\callbacks.h">
-      <Filter>net</Filter>
+    <ClInclude Include="..\..\rpc\common.h">
+      <Filter>rpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,10 +104,25 @@
     <ClCompile Include="..\..\net\event_loop.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\tcp_client.cc">
+    <ClCompile Include="..\..\net\tcp_server.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\tcp_server.cc">
+    <ClCompile Include="..\..\net\acceptor.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\socket.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\iocp_event.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\tcp_connection.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log\log_syslog.cc">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\tcp_client.cc">
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\rpc\rpc.pb.cc">
@@ -128,24 +149,9 @@
     <ClCompile Include="..\..\rpc\task_manager.cc">
       <Filter>rpc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\acceptor.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\socket.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\iocp_event.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\tcp_connection.cc">
-      <Filter>net</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\rpc\rpc.proto">
-      <Filter>rpc</Filter>
-    </None>
-    <None Include="..\..\rpc\README.md">
       <Filter>rpc</Filter>
     </None>
   </ItemGroup>

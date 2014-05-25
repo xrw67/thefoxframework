@@ -16,7 +16,6 @@ RpcChannel::RpcChannel(RpcClient *rpcClient, const InetAddress &serverAddr)
 
 	_client->setConnectionCallback(std::bind(&RpcChannel::onConnection, this, _1));
 	_client->setMessageCallback(std::bind(&RpcChannel::onMessage, this, _1, _2, _3));
-	_client->setCloseCallback(std::bind(&RpcChannel::onClose, this, _1));
 	_client->open(serverAddr);
 }
 
@@ -40,15 +39,12 @@ void RpcChannel::setTaskManager(const TaskManagerPtr &taskManager)
 	_taskManager = taskManager; 
 }
 
-void RpcChannel::onConnection(const TcpConnectionPtr &conn)
+void RpcChannel::onConnection(TcpConnection *conn)
 {
 	_conn = conn;
 }
 
-void RpcChannel::onClose(const TcpConnectionPtr &conn)
-{}
-
-void RpcChannel::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp &recvTime)
+void RpcChannel::onMessage(TcpConnection *conn, Buffer *buf, Timestamp recvTime)
 {
 	while (RpcCodec::isValid(buf->peek(), buf->readableBytes())) {
 		BoxPtr box(new rpc::Box());

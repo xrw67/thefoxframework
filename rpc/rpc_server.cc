@@ -9,8 +9,8 @@
 
 using namespace thefox;
 
-RpcServer::RpcServer(EventLoop *loop)
-	: _server(new TcpServer(loop, "thefoxRpcServer"))
+RpcServer::RpcServer(EventLoop *loop, const InetAddress &listenAddr)
+	: _server(new TcpServer(loop, listenAddr, "thefoxRpcServer"))
 	, _serviceManager(new RpcServiceManager())
 	, _rpcServiceImpl(new RpcServiceImpl(_serviceManager))
 {
@@ -31,16 +31,15 @@ void RpcServer::setHearthBeathCallback(const HeartBeathCallback &cb)
 	_rpcServiceImpl->setHearthBeathCallback(cb); 
 }
 
-bool RpcServer::start(const InetAddress &listenAddr)
+bool RpcServer::start()
 {
 	_server->setConnectionCallback(std::bind(&RpcServer::onConnection, this, _1));
 	_server->setMessageCallback(std::bind(&RpcServer::onMessage, this, _1, _2, _3));
-	_server->setCloseCallback(std::bind(&RpcServer::onClose, this, _1));
 
-	return _server->start(listenAddr);
+	return _server->start();
 }
 
-void RpcServer::sendOneway(const TcpConnectionPtr &conn, const gpb::Message *message)
+void RpcServer::sendOneway(TcpConnection *conn, const gpb::Message *message)
 {
 	const std::string& typeName = message->GetTypeName();
 	rpc::OnewayMessage *oneway = new rpc::OnewayMessage();
@@ -49,16 +48,13 @@ void RpcServer::sendOneway(const TcpConnectionPtr &conn, const gpb::Message *mes
 
 	rpc::Box box;
 	box.set_allocated_oneway(oneway);
-	_server->send(conn, RpcCodec::encode(box));
+	conn->send(RpcCodec::encode(box));
 }
 
-void RpcServer::onConnection(const TcpConnectionPtr &conn)
+void RpcServer::onConnection(TcpConnection *conn)
 {}
 
-void RpcServer::onClose(const TcpConnectionPtr &conn)
-{}
-
-void RpcServer::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp recvTime)
+void RpcServer::onMessage(TcpConnection *conn, Buffer *buf, const Timestamp recvTime)
 {
 	while (RpcCodec::isValid(buf->peek(), buf->readableBytes())) {
 		BoxPtr box(new rpc::Box());
@@ -70,7 +66,7 @@ void RpcServer::onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Times
 	}
 }
 
-void RpcServer::handleCallMessage(const TcpConnectionPtr &conn, const rpc::Call &call, Timestamp receiveTime)
+void RpcServer::handleCallMessage(TcpConnection *conn, const rpc::Call &call, Timestamp receiveTime)
 {
 	if (NULL == _serviceManager)
 		return;
@@ -97,7 +93,7 @@ void RpcServer::handleCallMessage(const TcpConnectionPtr &conn, const rpc::Call 
 
 			rpc::Box box;
 			box.set_allocated_reply(reply);
-			_server->send(conn, RpcCodec::encode(box));
+			conn->send(RpcCodec::encode(box));
 			
 			delete request;
 			delete response;

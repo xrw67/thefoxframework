@@ -27,18 +27,18 @@ typedef std::shared_ptr<rpc::Box> BoxPtr;
 class TaskManager;
 typedef std::shared_ptr<TaskManager> TaskManagerPtr;
 
-typedef std::function<void(const TcpConnectionPtr &sender, 
+typedef std::function<void(TcpConnection *sender, 
 							const std::string &type, 
 							const gpb::Message *message,
 							const Timestamp &receiveTime)> OnewayCallback;
 
 typedef std::function<void()> HeartBeathCallback;
-typedef std::function<void(const TcpConnectionPtr &conn, 
+typedef std::function<void(TcpConnection *conn, 
 						const rpc::Reply reply, 
-						const Timestamp &recvTime)> ReplyCallback;
-typedef std::function<void(const TcpConnectionPtr &conn, 
+						Timestamp recvTime)> ReplyCallback;
+typedef std::function<void(TcpConnection *conn, 
 						const rpc::Call call, 
-						const Timestamp &recvTime)> CallCallback;
+						Timestamp recvTime)> CallCallback;
 
 } //namespace thefox;
 

@@ -1,5 +1,5 @@
 /*
- * @filename Acceptor.h
+ * @filename acceptor.h
  * @brief tcp acceptor
  * @author macwe@qq.com
  */
@@ -11,6 +11,7 @@
 #include <net/callbacks.h>
 #include <net/socket.h>
 #include <net/event.h>
+#include <net/inet_address.h>
 
 namespace thefox
 {
@@ -37,6 +38,7 @@ private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Acceptor);
 
 	TcpServer *_server;
+	const InetAddress _listenAddr;
 	Socket _acceptSocket;
 	bool _listening;
 

@@ -8,10 +8,13 @@ using namespace thefox;
 IocpEvent::IocpEvent()
 	: _hIocp(NULL)
 {
+	THEFOX_TRACE_FUNCTION;
 }
 
 IocpEvent::~IocpEvent()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	if (NULL != _hIocp) {
 		if (0 == ::CloseHandle(_hIocp)) {
 			DWORD err = ::GetLastError();
@@ -37,7 +40,7 @@ bool IocpEvent::init()
 
 bool IocpEvent::addEvent(IoEvent *ev)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "event=" << ev;
 
 	TcpConnection *conn = ev->conn;
 	if (NULL == CreateIoCompletionPort((HANDLE)conn->fd(), _hIocp, 0, 0)) {
@@ -49,7 +52,7 @@ bool IocpEvent::addEvent(IoEvent *ev)
 }
 bool IocpEvent::postClose(IoEvent *ev)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "event=" << ev;
 
 	TcpConnection *conn = ev->conn;
 
@@ -60,7 +63,7 @@ bool IocpEvent::postClose(IoEvent *ev)
 	ovlp->type = OVLP_TYPE_CLOSE;
 	ovlp->ev = ev;
 
-	if (0 == ::PostQueuedCompletionStatus(_hIocp, ev->avaliable, 
+	if (0 == ::PostQueuedCompletionStatus(_hIocp, 0, 
 			NULL, &ovlp->ovlp)) {
 		DWORD err = GetLastError();
 		THEFOX_LOG(ERROR) << "postEvent() failed, errno=" << err;
@@ -74,7 +77,7 @@ bool IocpEvent::postClose(IoEvent *ev)
 
 bool IocpEvent::delConnection(TcpConnection *conn)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "conn_id" << conn->id();
 
 	if (0 == ::CancelIo((HANDLE)conn->fd())) {
 		THEFOX_LOG(ERROR) << "CancelIo() failed";
@@ -88,7 +91,6 @@ bool IocpEvent::processEvents(uint32_t timer)
 	DWORD err = 0;
 	DWORD bytes = 0;
     ULONG_PTR key = NULL;
-	IoEvent *ev = NULL;
 	EventOvlp *ovlp = NULL;
     BOOL ret = FALSE;
     ret = ::GetQueuedCompletionStatus(_hIocp, &bytes, &key, 
@@ -113,7 +115,10 @@ bool IocpEvent::processEvents(uint32_t timer)
 		return true;
 	}
 
-	ev = ovlp->ev;
+	int32_t ovlpType = ovlp->type;
+	IoEvent *ev = ovlp->ev;
+
+	_ovlpPool.put(ovlp);
 
 	if (NULL == ev) {
 		THEFOX_LOG(WARN) << "iocp: error evvnt, err:" << err;
@@ -134,19 +139,14 @@ bool IocpEvent::processEvents(uint32_t timer)
 	if (err)
 		THEFOX_LOG(ERROR) << "GetQueuedCompletionStatus() returned operation error:" << err;
 
-	int32_t ovlpType = ovlp->type;
-	_ovlpPool.put(ovlp);
-
-	ev->avaliable = bytes;
-
-	handler(ev, ovlpType);
+	handler(ev, ovlpType, bytes);
 
 	return true;
 }
 
 bool IocpEvent::updateRead(IoEvent *ev)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "event=" << ev;
 
 	ev->enterIo();
 
@@ -182,7 +182,7 @@ bool IocpEvent::updateRead(IoEvent *ev)
 
 bool IocpEvent::updateWrite(IoEvent *ev)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "event=" << ev;
 
 	ev->enterIo();
 
@@ -213,13 +213,11 @@ bool IocpEvent::updateWrite(IoEvent *ev)
 	return true;
 }
 
-void IocpEvent::handler(IoEvent *ev, int32_t ovlpType)
+void IocpEvent::handler(IoEvent *ev, int32_t ovlpType, uint32_t avaliable)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "type=" << ovlpType << " avaliable=" << avaliable;
 
-	const uint32_t bytes = ev->avaliable;
-
-	if (0 == bytes || ev->close) {
+	if (0 == avaliable || ev->close) {
 		ev->leaveIo();
 		TcpConnection *conn = ev->conn;
 		conn->connectDestroyed();
@@ -228,50 +226,48 @@ void IocpEvent::handler(IoEvent *ev, int32_t ovlpType)
 
 	switch (ovlpType) {
 	case OVLP_TYPE_READ:
-		handleRead(ev);
+		handleRead(ev, avaliable);
 		break;
 	case OVLP_TYPE_WRITE:
-		handleWrite(ev);
+		handleWrite(ev, avaliable);
 		break;
 	default:
 		break;
 	}
 }
-void IocpEvent::handleRead(IoEvent *ev)
+void IocpEvent::handleRead(IoEvent *ev, uint32_t avaliable)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "event=" << ev << " avaliable=" << avaliable;
 
 	TcpConnection *conn = ev->conn;
 	Buffer *readbuf = conn->readBuffer();
 	
-	readbuf->hasWritten(ev->avaliable);
+	readbuf->hasWritten(avaliable);
 	
-	conn->addReadBytes(ev->avaliable);
+	conn->addReadBytes(avaliable);
 
 	if (conn->_messageCallback)
 		conn->_messageCallback(conn, readbuf, Timestamp::now());
 
-	ev->avaliable = 0;
 	ev->leaveIo();
 	
 	updateRead(ev);
 }
 
-void IocpEvent::handleWrite(IoEvent *ev)
+void IocpEvent::handleWrite(IoEvent *ev, uint32_t avaliable)
 {
-	THEFOX_TRACE_FUNCTION;
+	THEFOX_TRACE_FUNCTION << "event=" << ev << " avaliable=" << avaliable;
 
 	TcpConnection *conn = ev->conn;
 	Buffer *writebuf = conn->writeBuffer();
 
-	writebuf->retrieve(ev->avaliable);
+	writebuf->retrieve(avaliable);
 	
-	conn->addWriteBytes(ev->avaliable);
+	conn->addWriteBytes(avaliable);
 
 	if (conn->_writeCompleteCallback)
 		conn->_writeCompleteCallback(conn);
 
-	ev->avaliable = 0;
 	ev->leaveIo();
 
 	if (0 == writebuf->readableBytes())
@@ -279,4 +275,3 @@ void IocpEvent::handleWrite(IoEvent *ev)
 	else
 		updateWrite(ev);
 }
-

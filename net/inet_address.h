@@ -63,6 +63,9 @@ public:
     uint32_t ipNetEndian() const { return _addr.sin_addr.s_addr; }
     uint16_t portNetEndian() const { return _addr.sin_port; }
 
+	void operator=(struct sockaddr_in addr)
+	{ _addr = addr; }
+
 private:
     struct sockaddr_in _addr;
 };

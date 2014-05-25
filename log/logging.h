@@ -56,6 +56,7 @@ public:
 
 private:
 	friend class LogFinisher;
+	friend class LogTraceFunction;
 	void Finish();
 
 	LogLevel _level;
@@ -66,6 +67,19 @@ class LogFinisher
 {
 public:
 	void operator=(LogMessage &other);
+};
+
+// 跟踪函数的开头和结束, 放在函数的第一行
+class LogTraceFunction {
+public:
+	LogTraceFunction(char *func, char *file, int line);
+	~LogTraceFunction();
+	
+	void operator=(LogMessage &other);
+private:
+	const char *_func;
+	const char *_file;
+	int _line;
 };
 
 } // namespace detail
@@ -104,40 +118,17 @@ T* checkNotNull(const char *name, T* val)
 	return val;
 }
 
-// 跟踪函数的开头和结束, 放在函数的第一行
-class LogTraceFunction {
-public:
-	LogTraceFunction(char *func, char *file, int line)
-		: _func(func)
-		, _file(getFileNameFromPath(file))
-		, _line(line)
-	{ 
-		if (thefox::logLevel() <= thefox::LOGLEVEL_TRACE)
-			LogFinisher() = LogMessage(LOGLEVEL_TRACE, _file, _line) 
-								<< _func << "() begin";
-	}
-
-	~LogTraceFunction()
-	{ 
-		if (thefox::logLevel() <= thefox::LOGLEVEL_TRACE)
-			LogFinisher() = LogMessage(LOGLEVEL_TRACE, _file, _line) 
-								<< _func << "() end";
-	}
-private:
-	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogTraceFunction);
-	const char *_func;
-	const char *_file;
-	int _line;
-};
-
 }  // namespace detail
 
 #define THEFOX_CHECK_NOTNULL(A) \
   thefox::detail::checkNotNull("'" #A "' must not be NULL", (A))
 
 #define THEFOX_TRACE_FUNCTION  \
-	thefox::detail::LogTraceFunction LogTraceFunction(__FUNCTION__, __FILE__, __LINE__)
-
+	thefox::detail::LogTraceFunction LogTraceFunction(__FUNCTION__, __FILE__, __LINE__); \
+	if (thefox::logLevel() <= thefox::LOGLEVEL_TRACE)	                                 \
+		LogTraceFunction = thefox::detail::LogMessage(LOGLEVEL_TRACE,                    \
+			thefox::detail::getFileNameFromPath(__FILE__), __LINE__)                     \
+			<< __FUNCTION__ << "() begin "
 } // namespace thefox
 
 #endif // _THEFOX_LOG_LOGMESSAGE_H_

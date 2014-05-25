@@ -157,6 +157,24 @@ void LogFinisher::operator=(LogMessage& other)
 	other.Finish();
 }
 
+LogTraceFunction::LogTraceFunction(char *func, char *file, int line)
+	: _func(func)
+	, _file(getFileNameFromPath(file))
+	, _line(line)
+{}
+
+LogTraceFunction::~LogTraceFunction()
+{ 
+	if (thefox::logLevel() <= LOGLEVEL_TRACE)
+		*this = LogMessage(LOGLEVEL_TRACE, _file, _line) 
+							<< _func << "() end";
+}
+
+void LogTraceFunction::operator=(LogMessage& other)
+{
+	other.Finish();
+}
+
 } // namespace detail
 
 // 设置日志写函数

@@ -6,12 +6,23 @@
 #include <net/tcp_connection.h>
 #include <net/event_loop.h>
 #include <log/log_stdout.h>
+#include <log/log_file.h>
 
 using namespace thefox;
 
 void onConnection(TcpConnection *conn)
 {
-	printf("Connection success connID=%d\r\n", conn->id());
+	switch (conn->state()) {
+	case TcpConnection::kConnected:
+		printf("Connection success connID=%d\r\n", conn->id());
+		break;
+	case TcpConnection::kDisconnected:
+		printf("Connection disconnect connID=%d\r\n", conn->id());
+		break;
+	default:
+		printf("Connection connection state=%d connID=%d\r\n", conn->state(), conn->id());
+		break;
+	}
 }
 
 void onMessage(TcpConnection *conn, Buffer *buf, Timestamp receiveTime)
@@ -28,7 +39,9 @@ void onWriteComplete(TcpConnection *conn)
 
 int main(int argc, char *argv[])
 {
-	LogStdout log("tcp_server");
+	//LogStdout log("tcp_server");
+	LogFile log(".", "iocp");
+
 	THEFOX_LOG(INFO) << "tcp_server bigin";
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);

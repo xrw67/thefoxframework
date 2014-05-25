@@ -1,7 +1,6 @@
 #include <net/acceptor.h>
 #include <log/logging.h>
 #include <net/event_loop.h>
-#include <net/inet_address.h>
 #include <net/tcp_server.h>
 
 #ifdef WIN32
@@ -12,9 +11,12 @@ using namespace thefox;
 
 Acceptor::Acceptor(TcpServer *server,const InetAddress& listenAddr)
 	: _server(server)
+	, _listenAddr(listenAddr)
 	, _listening(false)
+	, _acceptSocket(Socket::create())
 {
-	_acceptSocket.create();
+	assert(_acceptSocket.fd() >= 0);
+
 	_acceptSocket.bind(listenAddr);
 #ifdef WIN32
 	_acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor.acceptloop()");
@@ -37,6 +39,8 @@ Acceptor::~Acceptor()
 
 bool Acceptor::listen()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	if (_listening)
 		return true;
 
@@ -72,7 +76,7 @@ void Acceptor::acceptLoop()
 					if (INVALID_SOCKET == clientSockfd)
 						THEFOX_LOG(ERROR) << "accept a socket error";
 
-					_server->handleNewConnection(clientSockfd, peerAddr);
+					_server->handleNewConnection(clientSockfd, _listenAddr, peerAddr);
                 }
             }
         }
@@ -81,11 +85,13 @@ void Acceptor::acceptLoop()
 #else
 void Acceptor::handleAccept(IoEvent *ev)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	InetAddress peerAddr;
 	SOCKET clientSockfd = _acceptSocket.accept(&peerAddr);
 	if (INVALID_SOCKET == clientSockfd)
 		THEFOX_LOG(ERROR) << "accept a socket error";
 
-	_server->handleNewConnection(clientSockfd, peerAddr);
+	_server->handleNewConnection(clientSockfd, _listenAddr, peerAddr);
 }
 #endif

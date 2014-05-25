@@ -8,8 +8,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRpcClient", "testRpcClient\testRpcClient.vcxproj", "{D16166D7-B504-45A3-9FA7-6348FD3AF0CB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IocpDemo", "IocpDemo\IocpDemo.vcxproj", "{F11C017B-D665-4E5B-942C-4791ECE52DCC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{77DF8D9B-AE9A-41AB-B798-6205096D3029} = {77DF8D9B-AE9A-41AB-B798-6205096D3029}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetClient", "NetClient\NetClient.vcxproj", "{ED5F747A-580C-498D-A86A-29A6EADE83EC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{77DF8D9B-AE9A-41AB-B798-6205096D3029} = {77DF8D9B-AE9A-41AB-B798-6205096D3029}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLog", "TestLog\TestLog.vcxproj", "{06038EFF-4A50-41DB-B39C-E350E58EAB43}"
 EndProject

@@ -13,6 +13,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\log\log_file.h" />
     <ClInclude Include="..\..\log\Logging.h" />
+    <ClInclude Include="..\..\log\log_stdout.h" />
+    <ClInclude Include="..\..\log\log_syslog.h" />
     <ClInclude Include="..\..\net\acceptor.h" />
     <ClInclude Include="..\..\net\buffer.h" />
     <ClInclude Include="..\..\net\callbacks.h" />
@@ -40,6 +42,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\log\log_file.cc" />
     <ClCompile Include="..\..\log\Logging.cc" />
+    <ClCompile Include="..\..\log\log_syslog.cc" />
     <ClCompile Include="..\..\net\acceptor.cc" />
     <ClCompile Include="..\..\net\event_loop.cc" />
     <ClCompile Include="..\..\net\iocp_event.cc" />
@@ -57,7 +60,6 @@
     <ClCompile Include="..\..\rpc\task_manager.cc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\rpc\README.md" />
     <None Include="..\..\rpc\rpc.proto" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

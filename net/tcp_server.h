@@ -48,8 +48,12 @@ public:
     { _writeCompleteCallback = cb; }
 
 private:
+	friend class Acceptor;
+	friend class TcpConnection;
+
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpServer);
-	void handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr);
+
+	void handleNewConnection(SOCKET sockfd, const InetAddress &localAddr, const InetAddress &peerAddr);
 	void removeConnection(TcpConnection *conn);
 
 	typedef std::map<int32_t, TcpConnection *> ConnectionMap;
@@ -67,9 +71,6 @@ private:
 	ConnectionCallback _connectionCallback;
     MessageCallback _messageCallback;
     WriteCompleteCallback _writeCompleteCallback;
-	
-	friend class Acceptor;
-	friend class TcpConnection;
 };
 
 } // namespace thefox

@@ -20,7 +20,7 @@ public:
 	TaskManager(const CallCallback &callCb, const ReplyCallback &replyCb);
 	~TaskManager();
 
-	void pushBox(const TcpConnectionPtr &sender, const Timestamp &receiveTime, const BoxPtr &msg);
+	void pushBox(TcpConnection *sender, const Timestamp &receiveTime, const BoxPtr &msg);
 	TaskPtr popBox();
 	void setDefaultOnewayCallback(const OnewayCallback &cb);
 	void registerOnewayCallback(const gpb::Descriptor *desc, const OnewayCallback &cb);

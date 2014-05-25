@@ -71,8 +71,8 @@ public:
 	int32_t timeout() const { return _timeout; }
 	void setTimeout(int32_t timeout) { _timeout = timeout; }
 
-	TcpConnectionPtr connection() const { return _conn; }
-	void setConnection(TcpConnectionPtr conn) { _conn = conn; }
+	TcpConnection *connection() const { return _conn; }
+	void setConnection(TcpConnection *conn) { _conn = conn; }
 
 	const Timestamp &receiveTime() const { return _receiveTime; }
 	void setReceiveTime(const Timestamp &receiveTime) { _receiveTime = receiveTime; }
@@ -82,7 +82,7 @@ private:
 	int32_t _timeout;
 	Timestamp _receiveTime;
 	std::string _reason;
-	TcpConnectionPtr _conn;
+	TcpConnection *_conn;
 };
 
 } // namespace thefox

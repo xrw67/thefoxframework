@@ -30,15 +30,15 @@ public:
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcClient);
-	void CallMethod(const TcpConnectionPtr &conn,
+	void CallMethod(TcpConnection *conn,
 					const ::google::protobuf::MethodDescriptor* method,
 				    RpcController *controller,
 				   const ::google::protobuf::Message* request,
 				   ::google::protobuf::Message* response,
 				   ::google::protobuf::Closure* done);
-	void handleReplyMessage(const TcpConnectionPtr &conn, 
+	void handleReplyMessage(TcpConnection *conn, 
 							const rpc::Reply &reply, 
-							const Timestamp &recvTime);
+							Timestamp recvTime);
 	class RequestWait
 	{
 	public:

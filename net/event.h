@@ -22,8 +22,6 @@ class TcpConnection;
 class IoEvent {
 public:
 	TcpConnection *conn;
-	uint32_t avaliable;
-	int64_t ts; // 时间触发时间
 	bool read;
 	bool write;
 	bool close;
@@ -31,11 +29,9 @@ public:
 	void init(TcpConnection *c)
 	{
 		conn = c;
-		avaliable = 0;
-		ts = 0;
-		write = 0;
-		read = 0;
-		close = 0;
+		write = false;
+		read = false;
+		close = false;
 		_refCount = 0;
 	}
 	void enterIo() 

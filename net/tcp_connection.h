@@ -29,8 +29,8 @@ class TcpConnection
 public:
     enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
 
-    TcpConnection(EventLoop *loop, SOCKET sockfd,
-		int id, const InetAddress &peerAddr);
+    TcpConnection(EventLoop *loop, SOCKET sockfd, int id, 
+		const InetAddress& localAddr, const InetAddress &peerAddr);
     ~TcpConnection();
 
     /// @brief 获取连接ID
@@ -89,7 +89,8 @@ private:
 	EventLoop *_loop;
     int32_t _id;
     Socket _socket;
-    InetAddress _peerAddr;
+	const InetAddress _localAddr;
+    const InetAddress _peerAddr;
     Buffer _readBuffer;
     Buffer _writeBuffer;
 	Mutex _mutex;

@@ -1,93 +1,93 @@
 #include <net/tcp_client.h>
-#include <base/types.h>
-
-#ifdef WIN32
-#include <net/iocp.h>
-#else
-#include <net/epoll.h>
-#endif
+#include <log/logging.h>
+#include <net/socket.h>
+#include <net/tcp_connection.h>
 
 using namespace thefox;
 
-TcpClient::TcpClient(EventLoop *eventloop, const std::string &nameArg)
+TcpClient::TcpClient(EventLoop *loop, const std::string &nameArg)
+	: _loop(loop)
+	, _name(nameArg)
+	, _conn(NULL)
+	, _connectionCallback(NULL)
+	, _messageCallback(defaultMessageCallback)
+	, _writeCompleteCallback(NULL)
 {
-#ifdef WIN32
-    _model = new Iocp(eventloop, nameArg);
-#else
-    _model = new Epoll(eventloop, nameArg);
-#endif
+
 }
 
 TcpClient::TcpClient()
 {
-    delete _model;
+    close();
 }
 
 bool TcpClient::open(const InetAddress &serverAddr)
 {
-    if (started()) {
-        // LOG_WARN << tcpserver already started;
-        return false;
-    }
-    _started = true;
-
-    _socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-    if (INVALID_SOCKET  == _socket) {
-        int errCode = WSAGetLastError();
-        // LOG_ERROR << WSASocket failed!, errcode:<< errCode;
-        _started = false;
+	THEFOX_TRACE_FUNCTION << "addr:" << serverAddr.toIpPort();
+    if (opened()) {
+        THEFOX_LOG(WARN) << "server:"<< serverAddr.toIpPort() << "opened";
         return false;
     }
 
-    int ret = connect(_socket, 
-                      (struct sockaddr *)&serverAddr.getSockAddrInet(), 
-                      sizeof(struct sockaddr_in));
-    if (SOCKET_ERROR == ret && WSAEWOULDBLOCK != WSAGetLastError()) {
-        // LOG_ERROR 
-        closesocket(_socket);
-        _started = false;
+    SOCKET sockfd = Socket::create();
+    if (sockfd < 0) {
         return false;
     }
 
-    newConnection(_socket, serverAddr);
+	if (!Socket::connect(sockfd, serverAddr)) {
+		Socket::close(sockfd);
+		return false;
+	}
+
+    handleNewConnection(sockfd, serverAddr);
     return true;
 }
 
 void TcpClient::close()
 {
-    _model->close();
+	if (_conn)
+		_conn->forceClose();
 }
 
-bool TcpClient::isOpen()
+bool TcpClient::opened()
 {
-    return _model->isOpen();
+	if (NULL != _conn) {
+		if (TcpConnection::kConnected == _conn->state())
+			return true;
+	}
+	return false;
 }
 
 void TcpClient::send(const char *data, size_t len)
 {
-    _model->send(data, len);
+	if (_conn)
+		_conn->send(data, len);
 }
 
 void TcpClient::send(const std::string &data)
 {
-    _model->send(data.c_str(), data.length());
-}
-void TcpClient::setConnectionCallback(const ConnectionCallback &cb)
-{
-    _model->setConnectionCallback(cb);
+	if (_conn)
+		_conn->send(data);
 }
 
-void TcpClient::setCloseCallback(const CloseCallback &cb)
+void TcpClient::handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr)
 {
-    _model->setCloseCallback(cb);
+	THEFOX_TRACE_FUNCTION;
+
+	InetAddress localAddr(Socket::getLocalAddr(sockfd));
+    _conn = new TcpConnection(_loop, sockfd, 0, localAddr, peerAddr);
+
+	_conn->setConnectionCallback(_connectionCallback);
+	_conn->setMessageCallback(_messageCallback);
+	_conn->setWriteCompleteCallback(_writeCompleteCallback);
+	_conn->setRemoveConnectionCallback(std::bind(&TcpClient::removeConnection, this, _1));
+
+	_conn->connectEstablished();
 }
 
-void TcpClient::setMessageCallback(const MessageCallback &cb)
+void TcpClient::removeConnection(TcpConnection *conn)
 {
-    _model->setMessageCallback(cb);
-}
+	THEFOX_TRACE_FUNCTION;
 
-void TcpClient::setWriteCompleteCallback(const WriteCompleteCallback &cb)
-{
-    _model->setWriteCompleteCallback(cb);
+	SAFE_DELETE(_conn);
 }

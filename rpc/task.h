@@ -13,7 +13,7 @@ namespace thefox
 class Task
 {
 public:
-	explicit Task(const TcpConnectionPtr &sender, 
+	explicit Task(TcpConnection *sender, 
 					const Timestamp &receiveTime, 
 					const BoxPtr &msg)
 		: _sender(sender) 
@@ -22,7 +22,7 @@ public:
 	{}
 
 	const Timestamp &time() const { return _time; }
-	TcpConnectionPtr &sender() { return _sender; }
+	TcpConnection *sender() { return _sender; }
 	bool hasCall() const { return _box->has_call(); }
 	bool hasReply() const { return _box->has_reply(); }
 	bool hasOneway() const { return _box->has_oneway(); }
@@ -39,7 +39,7 @@ public:
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Task);
 	const Timestamp _time;
-	TcpConnectionPtr _sender;
+	TcpConnection *_sender;
 	const BoxPtr _box;
 };
 

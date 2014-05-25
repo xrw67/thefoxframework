@@ -29,11 +29,10 @@ public:
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(RpcChannel);
-	void onConnection(const TcpConnectionPtr &conn);
-	void onClose(const TcpConnectionPtr &conn);
-	void onMessage(const TcpConnectionPtr &conn, Buffer *buf, const Timestamp &recvTime);
+	void onConnection(TcpConnection *conn);
+	void onMessage(TcpConnection *conn, Buffer *buf, Timestamp recvTime);
 	
-	TcpConnectionPtr _conn;
+	TcpConnection *_conn;
 	std::shared_ptr<TcpClient> _client;
 	RpcClient *_rpcClient;
 	TaskManagerPtr _taskManager;

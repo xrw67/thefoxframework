@@ -5,42 +5,59 @@
 #include <net/tcp_client.h>
 #include <net/tcp_connection.h>
 #include <net/event_loop.h>
+#include <log/log_stdout.h>
+#include <log/log_file.h>
 
 using namespace thefox;
 
 
-TcpClient *client = NULL;
-
-void onConnection(const TcpConnectionPtr &conn)
+void onConnection(TcpConnection *conn)
 {
-	printf("Connection success\r\n");
-	client->send("Hello!", strlen("Hello!"));
+	switch (conn->state()) {
+	case TcpConnection::kConnected:
+		printf("Connection success connID=%d\r\n", conn->id());
+		conn->send("ping!", strlen("ping!"));
+		break;
+	case TcpConnection::kDisconnected:
+		printf("Connection disconnect connID=%d\r\n", conn->id());
+		break;
+	default:
+		printf("Connection connection state=%d connID=%d\r\n", conn->state(), conn->id());
+		break;
+	}
 }
 
-void onClose(const TcpConnectionPtr &conn)
+void onMessage(TcpConnection *conn, Buffer *buf, Timestamp receiveTime)
 {
-	printf("Connection close\r\n");
-}
-
-void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
-{
-	printf("%s Message come, size=%u\r\n", receiveTime.toFormatString().c_str(), buf->readableBytes());
-	client->send(buf->peek(), buf->readableBytes());
+	printf("收到数据 总共读:%u\r\n", conn->readBytes());
+	conn->send(buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
+}
+
+void onWriteComplete(TcpConnection *conn)
+{
+	printf("写数据完成 总共写:%u\r\n", conn->writeBytes());
 }
 
 int main(int argc, char *argv[])
 {
+	//LogStdout log("tcp_server");
+	LogFile log(".", "iocp");
+
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 
 	EventLoop loop;
-	client = new TcpClient(&loop, "MyIocpClientDemo");
+	TcpClient *client = new TcpClient(&loop, "MyIocpClientDemo");
 	client->setConnectionCallback(onConnection);
-	client->setCloseCallback(onClose);
 	client->setMessageCallback(onMessage);
-	client->open(InetAddress("127.0.0.1", 7901));
+	client->setWriteCompleteCallback(onWriteComplete);
+
 	loop.start();
+
+	client->open(InetAddress("127.0.0.1", 7901));
+	client->close();
+	
 	loop.join();
 
 	WSACleanup();

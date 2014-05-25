@@ -29,9 +29,9 @@ public:
 	bool updateWrite(IoEvent *ev);
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
-	void handler(IoEvent *ev, int32_t ovlpType);
-	void handleRead(IoEvent *ev);
-	void handleWrite(IoEvent *ev);
+	void handler(IoEvent *ev, int32_t ovlpType, uint32_t avaliable);
+	void handleRead(IoEvent *ev, uint32_t avaliable);
+	void handleWrite(IoEvent *ev, uint32_t avaliable);
 	void handleClose(IoEvent *ev);
 
 	HANDLE _hIocp;

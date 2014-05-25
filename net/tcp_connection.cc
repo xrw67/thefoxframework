@@ -11,22 +11,26 @@ void thefox::defaultMessageCallback(TcpConnection *conn,
 	buf->retrieveAll();
 }
 
-TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd,
-							int id, const InetAddress &peerAddr)
+TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd, int id, 
+			const InetAddress& localAddr, const InetAddress &peerAddr)
 	: _loop(loop)
+	, _socket(sockfd)
     , _id(id)
+	, _localAddr(localAddr)
     , _peerAddr(peerAddr)
     , _readBytes(0)
     , _writeBytes(0)
 	, _arg(NULL)
 	, _state(kConnecting)
 {
-	_socket.setFd(sockfd);
+	THEFOX_TRACE_FUNCTION;
+
 	_event.init(this);
 }
 
 TcpConnection::~TcpConnection()
 {
+	THEFOX_TRACE_FUNCTION;
 }
 
 void TcpConnection::send(const std::string &data)
@@ -47,16 +51,22 @@ void TcpConnection::send(const char *data, size_t len)
 
 bool TcpConnection::shutdown()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	return _socket.shutdownWrite();
 }
 
 void TcpConnection::setTcpNoDelay(bool on)
 {
+	THEFOX_TRACE_FUNCTION << "on=" << on;
+
 	_socket.setTcpNoDelay(on);
 }
 
 void TcpConnection::forceClose()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	if (kConnected == _state || kDisconnecting == _state) {
 		setState(kDisconnecting);
 		// 投递关闭事件
@@ -67,29 +77,31 @@ void TcpConnection::forceClose()
 
 void TcpConnection::connectEstablished()
 {
-	THEFOX_LOG(DEBUG) << "TcpConnection::connectEstablished()";
+	THEFOX_TRACE_FUNCTION;
 
 	assert(kConnecting == _state );
 	setState(kConnected);
-
-	if (_connectionCallback)
-		_connectionCallback(this);
 
 	_loop->addEvent(&_event);
 
 	// 投递读事件
 	_event.read = true;
 	_loop->updateRead(&_event);
+
+	if (_connectionCallback)
+		_connectionCallback(this);
 }
 
 void TcpConnection::connectDestroyed()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	if (kConnected == _state || kDisconnecting == _state) {
 		setState(kDisconnected);
 		THEFOX_LOG(DEBUG) << "connection closed, addr:" << _peerAddr.toIpPort();
 
 		_loop->delConnection(this);
-		_socket.close();
+		Socket::close(_socket.fd());
 
 		if (_connectionCallback)
 			_connectionCallback(this);

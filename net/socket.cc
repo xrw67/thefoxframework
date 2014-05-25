@@ -4,37 +4,95 @@
 
 using namespace thefox;
 
-Socket::Socket()
-	: _sockfd(INVALID_SOCKET)
+Socket::Socket(SOCKET sockfd)
+	: _sockfd(sockfd)
 {
+	THEFOX_TRACE_FUNCTION;
 }
 
 Socket::~Socket()
 {
-	this->close();
+	THEFOX_TRACE_FUNCTION;
+
+	Socket::close(_sockfd);
 }
 
-bool Socket::create()
+InetAddress Socket::getLocalAddr(SOCKET sockfd)
 {
+	THEFOX_TRACE_FUNCTION;
+
+	struct sockaddr_in localaddr;
+	memset(&localaddr, 0, sizeof(localaddr));
+	socklen_t addrlen = static_cast<socklen_t>(sizeof localaddr);
+	if (::getsockname(sockfd, (sockaddr *)&localaddr, &addrlen) < 0) {
+		
+	}
+	return localaddr;
+}
+
+SOCKET Socket::create()
+{
+	THEFOX_TRACE_FUNCTION;
+
+	SOCKET sockfd = INVALID_SOCKET;
 #ifdef WIN32
-	_sockfd = ::WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-	if (INVALID_SOCKET == _sockfd) {
+	sockfd = ::WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	if (INVALID_SOCKET == sockfd) {
         int errCode = ::WSAGetLastError();
         THEFOX_LOG(ERROR) << "WSASocket failed, errcode:"<< errCode;
-        return false;
     }
 #else
-	_sockfd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (SOCKET_ERROR == _sockfd) {
+	sockfd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (SOCKET_ERROR == sockfd) {
 		THEFOX_LOG(ERROR) << "create socket failed";
-		return false;
 	}
 #endif
+	return sockfd;
+}
+
+bool Socket::connect(SOCKET sockfd, const InetAddress &serverAddr)
+{
+	THEFOX_TRACE_FUNCTION << "sockfd=" << sockfd << "server:" << serverAddr.toIpPort();
+
+	int ret = ::connect(sockfd, 
+                      (struct sockaddr *)&serverAddr.getSockAddrInet(), 
+                      sizeof(struct sockaddr_in));
+
+    if (INVALID_SOCKET == ret  
+#ifdef WIN32
+		&& WSAEWOULDBLOCK != ::WSAGetLastError()
+#endif
+		) {
+		THEFOX_LOG(ERROR) << "server connection failed, addr="<< serverAddr.toIpPort();
+        
+		return false;
+	}
+	return true;
+}
+
+bool Socket::close(SOCKET sockfd)
+{
+	THEFOX_TRACE_FUNCTION << "sockfd=" << sockfd;
+
+	if (INVALID_SOCKET != sockfd) {
+#ifdef WIN32
+		::shutdown(sockfd, SD_BOTH);
+		if (SOCKET_ERROR == ::closesocket(sockfd)) {
+#else
+		::shutdown(_sockfd, SHUT_RDWR);
+		if (-1 == ::close(sockfd)) {
+#endif
+			return false;
+		}
+		sockfd = INVALID_SOCKET;
+	}
 	return true;
 }
 
 bool Socket::bind(const InetAddress &listenAddr)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	int ret = ::bind(_sockfd, (struct sockaddr *)&listenAddr.getSockAddrInet(), sizeof(struct sockaddr_in));
     
 	if (SOCKET_ERROR == ret) {
@@ -44,7 +102,7 @@ bool Socket::bind(const InetAddress &listenAddr)
 #else
 		THEFOX_LOG(ERROR) << "socket bind failed";
 #endif
-        this->close();
+        Socket::close(_sockfd);
         return false;
     }
 	return true;
@@ -52,6 +110,8 @@ bool Socket::bind(const InetAddress &listenAddr)
 
 bool Socket::listen()
 {
+	THEFOX_TRACE_FUNCTION;
+
 	int ret = ::listen(_sockfd, SOMAXCONN);
     if (SOCKET_ERROR == ret) {
 #ifdef WIN32
@@ -60,7 +120,7 @@ bool Socket::listen()
 #else
 		THEFOX_LOG(ERROR) << "socket listen failed";
 #endif
-        this->close();
+        Socket::close(_sockfd);
         return false;
     }
 	return true;
@@ -68,6 +128,8 @@ bool Socket::listen()
 
 SOCKET Socket::accept(InetAddress *peerAddr)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	SOCKET clientSockfd = INVALID_SOCKET;
 	struct sockaddr_in addr;
     int len = sizeof(addr);
@@ -84,43 +146,10 @@ SOCKET Socket::accept(InetAddress *peerAddr)
 	return clientSockfd;
 }
 
-bool Socket::connect(const InetAddress &serverAddr)
-{
-	int ret = ::connect(_sockfd, 
-                      (struct sockaddr *)&serverAddr.getSockAddrInet(), 
-                      sizeof(struct sockaddr_in));
-
-    if (INVALID_SOCKET == ret  
-#ifdef WIN32
-		&& WSAEWOULDBLOCK != ::WSAGetLastError()
-#endif
-		) {
-		THEFOX_LOG(ERROR) << "server connection failed, addr="<< serverAddr.toIpPort();
-        this->close();
-        return false;
-	}
-	return true;
-}
-
-bool Socket::close()
-{
-	if (INVALID_SOCKET != _sockfd) {
-#ifdef WIN32
-		::shutdown(_sockfd, SD_BOTH);
-		if (SOCKET_ERROR == ::closesocket(_sockfd)) {
-#else
-		::shutdown(_sockfd, SHUT_RDWR);
-		if (-1 == ::close(_sockfd)) {
-#endif
-			return false;
-		}
-		_sockfd = INVALID_SOCKET;
-	}
-	return true;
-}
-
 bool Socket::shutdownWrite()
 {
+	THEFOX_TRACE_FUNCTION;
+
 #ifdef WIN32
 	if (SOCKET_ERROR == ::shutdown(_sockfd, SD_SEND)) {
 #else
@@ -133,6 +162,8 @@ bool Socket::shutdownWrite()
 
 void Socket::setTcpNoDelay(bool on)
 {
+	THEFOX_TRACE_FUNCTION << "on=" << on;
+
 	char optval = on ? 1 : 0;
 	::setsockopt(_sockfd, SOL_SOCKET, TCP_NODELAY,
                &optval, static_cast<socklen_t>(sizeof optval));
@@ -140,6 +171,8 @@ void Socket::setTcpNoDelay(bool on)
 
 void Socket::setKeepAlive(bool on)
 {
+	THEFOX_TRACE_FUNCTION << "on=" << on;
+
 	char optval = on ? 1 : 0;
 	::setsockopt(_sockfd, SOL_SOCKET, SO_KEEPALIVE,
                &optval, static_cast<socklen_t>(sizeof optval));

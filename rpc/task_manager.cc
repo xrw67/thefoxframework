@@ -3,7 +3,7 @@
 namespace thefox {
 namespace detail {
 
-void defaultOnewayCallback(const TcpConnectionPtr &sender, 
+void defaultOnewayCallback(TcpConnection *sender, 
 							const std::string &type, 
 							const gpb::Message *message,
 							const Timestamp &receiveTime)
@@ -31,7 +31,7 @@ TaskManager::~TaskManager()
 	_msgLoopThread->stop();
 }
 
-void TaskManager::pushBox(const TcpConnectionPtr &sender, const Timestamp &receiveTime, const BoxPtr &msg)
+void TaskManager::pushBox(TcpConnection *sender, const Timestamp &receiveTime, const BoxPtr &msg)
 {
 	MutexGuard lock(_mutex);
 	TaskPtr box(new Task(sender,receiveTime, msg));
