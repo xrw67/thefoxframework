@@ -1,5 +1,6 @@
 # 日志操作库
 
+supported for windows and linux
 使用：
 
 	#include "stdafx.h"
