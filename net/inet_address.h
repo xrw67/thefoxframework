@@ -7,6 +7,7 @@
 #include <Winsock2.h>
 #else
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #endif
 
 namespace thefox
@@ -51,7 +52,7 @@ public:
     std::string toIpPort() const
     {
         char buf[32];
-        _snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));
+        snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));
         return buf;
     }
 

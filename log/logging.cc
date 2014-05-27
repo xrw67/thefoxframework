@@ -108,7 +108,7 @@ LogMessage &LogMessage::operator<<(const char* value)
 	LogMessage& LogMessage::operator<<(TYPE value)         \
 	{                                                      \
 		char buffer[128];                                  \
-		size_t len = convert<TYPE>(buffer, value);     \
+		convert<TYPE>(buffer, value);     \
 		buffer[sizeof(buffer) - 1] = '\0';                 \
 		_message += buffer;                                \
 		return *this;                                      \
@@ -138,7 +138,7 @@ LogMessage &LogMessage::operator<<(const void* p)
 	char buffer[128];
 	buffer[0] = '0';
 	buffer[1] = 'x';
-	size_t len  = convertHex(buffer + 2, v);
+	convertHex(buffer + 2, v);
 	buffer[sizeof(buffer) - 1] = '\0';
 	_message += buffer;
 	return *this;

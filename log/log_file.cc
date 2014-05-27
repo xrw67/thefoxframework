@@ -56,7 +56,7 @@ public:
 	size_t writtenBytes() const { return _writtenBytes; }
 
 private:
-	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogFile::File);
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(File);
 	size_t write(const char* logline, size_t len)
 	{
 		return ::fwrite(logline, 1, len, _fp);
