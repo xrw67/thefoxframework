@@ -1,20 +1,15 @@
-all:libthefox_log.a
-
 CC = g++
 CFLAGS = -Wall -std=c++0x -fPIC -shared
 INCLUDE = ..
 
-libthefox_log.a: logging.o log_file.o log_syslog.o
-	ar cr libthefox_log.a $@
+logging.o: logging.cc
+	$(CC) $(CFLAGS) -I$(INCLUDE) -o $@ -c $^
 
-logging.o: logging.cc logging.h
-	$(CC) $(CFLAGS) -I$(INCLUDE) -o $@ $<
+log_file.o: log_file.cc
+	$(CC) $(CFLAGS) -I$(INCLUDE) -o $@ -c $^
 
-log_file.o: log_file.cc log_file.h
-	$(CC) $(CFLAGS) -I$(INCLUDE) -o $@ $<
-
-log_syslog.o: log_syslog.cc log_syslog.h
-	$(CC) $(CFLAGS) -I$(INCLUDE) -o $@ $<
+log_syslog.o: log_syslog.cc
+	$(CC) $(CFLAGS) -I$(INCLUDE) -o $@ -c $^
 
 clean:
-	rm *.o *.a
+	rm -rf *.o *.a

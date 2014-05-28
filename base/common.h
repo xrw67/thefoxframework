@@ -49,6 +49,12 @@ namespace thefox
   TypeName(const TypeName&);                           \
   void operator=(const TypeName&)
 
+// 声明隐私转换
+template<typedef T>
+inline T implicit_cast(T const &x) 
+{
+	return x;
+}
 
 // 安全删除对象
 #define SAFE_DELETE(p)        \
