@@ -11,7 +11,7 @@
 #include <WinBase.h>
 #endif
 
-#include <base/types.h>
+#include <base/common.h>
 #include <base/timestamp.h>
 #include <base/mutex.h>
 

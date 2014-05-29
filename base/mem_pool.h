@@ -8,7 +8,7 @@
 #define _THEFOX_BASE_MEM_POOL_H_
 
 #include <vector>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 
 namespace thefox

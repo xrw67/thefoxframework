@@ -2,7 +2,7 @@
 #define _THEFOX_NET_RPC_ONEWAYDISPATCHER_H_
 
 #include <map>
-#include <base/types.h>
+#include <base/common.h>
 #include <rpc/common.h>
 #include <rpc/task.h>
 #include <rpc/rpc_codec.h>

@@ -7,7 +7,7 @@
 #ifndef _THEFOX_BASE_FILE_H_
 #define _THEFOX_BASE_FILE_H_
 
-#include <base/types.h>
+#include <base/common.h>
 
 namespace thefox 
 {

@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_INI_FILE_H_
 
 #include <Winbase.h>
-#include <base/types.h>
+#include <base/common.h>
 
 namespace thefox
 {

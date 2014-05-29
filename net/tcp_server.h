@@ -9,7 +9,7 @@
 
 #include <map>
 #include <list>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 #include <base/Atomic_integer.h>
 #include <base/object_pool.h>

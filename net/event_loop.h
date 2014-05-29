@@ -8,7 +8,7 @@
 #define _THEFOX_NET_EVENTLOOP_H_
 
 #include <vector>
-#include <base/types.h>
+#include <base/common.h>
 
 namespace thefox
 {

@@ -1,7 +1,7 @@
 #ifndef _THEFOX_NET_INETADDRESS_H
 #define _THEFOX_NET_INETADDRESS_H
 
-#include <base/types.h>
+#include <base/common.h>
 
 #ifdef WIN32
 #include <Winsock2.h>

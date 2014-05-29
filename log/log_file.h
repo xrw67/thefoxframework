@@ -16,7 +16,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 #include <log/logging.h>
 

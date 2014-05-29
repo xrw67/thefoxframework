@@ -7,7 +7,7 @@
 #ifndef _THEFOX_NET_TCPCLIENT_H_
 #define _THEFOX_NET_TCPCLIENT_H_
 
-#include <base/types.h>
+#include <base/common.h>
 #include <net/callbacks.h>
 #include <net/socket.h>
 

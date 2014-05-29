@@ -1,7 +1,7 @@
 #ifndef _THEFOX_NET_SEMAPHORE_H_
 #define _THEFOX_NET_SEMAPHORE_H_
 
-#include <base/types.h>
+#include <base/common.h>
 #include <base/time_util.h>
 
 namespace thefox

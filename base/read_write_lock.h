@@ -7,7 +7,7 @@
 #ifndef _THEFOX_BASE_READ_WRITE_LOCK_H_
 #define _THEFOX_BASE_READ_WRITE_LOCK_H_
 
-#include <base/types.h>
+#include <base/common.h>
 #include <base/atomic_integer.h>
 #include <base/mutex.h>
 

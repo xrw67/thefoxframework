@@ -7,7 +7,7 @@
 #ifndef _THEFOX_NET_TCPCONNECTION_H_
 #define _THEFOX_NET_TCPCONNECTION_H_
 
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 #include <net/buffer.h>
 #include <net/inet_address.h>

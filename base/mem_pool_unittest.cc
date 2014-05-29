@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mem_pool.h>
 
 using namespace thefox;

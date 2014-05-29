@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <base/types.h>
+#include <base/common.h>
 
 namespace thefox
 {

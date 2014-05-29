@@ -2,7 +2,7 @@
 #define _THEFOX_RPC_RPCSERVICEMANAGER_H_
 
 #include <map>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 #include <rpc/common.h>
 #include <google/protobuf/service.h>

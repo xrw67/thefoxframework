@@ -27,7 +27,7 @@ public:
 #define SOCKET_ERROR -1
 #endif
 
-#include <base/types.h>
+#include <base/common.h>
 
 namespace thefox
 {

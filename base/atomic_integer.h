@@ -7,7 +7,7 @@
 #ifndef _THEFOX_BASE_ATOMIC_INTEGER_H_
 #define _THEFOX_BASE_ATOMIC_INTEGER_H_
 
-#include <base/types.h>
+#include <base/common.h>
 
 #ifdef WIN32
 #include <Winbase.h>

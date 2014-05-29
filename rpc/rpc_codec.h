@@ -14,7 +14,7 @@
 #define _THEFOX_RPC_RPCCODEC_H_
 
 #include <winsock2.h>
-#include <base/types.h>
+#include <base/common.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 #include <rpc/rpc.pb.h>

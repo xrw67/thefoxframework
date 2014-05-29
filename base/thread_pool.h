@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_THREADPOOL_H_
 
 #include <queue>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 #include <base/semaphore.h>
 #include <base/thread.h>

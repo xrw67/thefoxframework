@@ -2,7 +2,7 @@
 #define _THEFOX_RPC_RPCCLIENT_H_
 
 #include <list>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/event.h>
 #include <base/mutex.h>
 #include <base/atomic_integer.h>

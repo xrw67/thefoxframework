@@ -2,7 +2,7 @@
 #define _THEFOX_RPC_RPCCHANNEL_H_
 
 #include <map>
-#include <base/types.h>
+#include <base/common.h>
 #include <google/protobuf/service.h>
 #include <net/tcp_client.h>
 #include <rpc/common.h>

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <Winsock2.h>
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mem_pool.h>
 #include <net/event.h>
 

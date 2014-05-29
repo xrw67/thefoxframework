@@ -1,7 +1,7 @@
 #ifndef _THEFOX_RPC_RPCSERVER_H_
 #define _THEFOX_RPC_RPCSERVER_H_
 
-#include <base/types.h>
+#include <base/common.h>
 #include <net/tcp_server.h>
 #include <rpc/common.h>
 #include <rpc/rpc.pb.h>

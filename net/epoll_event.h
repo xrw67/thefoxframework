@@ -1,7 +1,7 @@
 #ifndef _THEFOX_NET_EPOLL_H_
 #define _THEFOX_NET_EPOLL_H_
 
-#include <base/types.h>
+#include <base/common.h>
 #include <net/event.h>
 
 namespace thefox

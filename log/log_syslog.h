@@ -15,7 +15,7 @@
 #define SOCKET int
 #endif
 
-#include <base/types.h>
+#include <base/common.h>
 #include <base/mutex.h>
 #include <log/logging.h>
 #include <net/inet_address.h>

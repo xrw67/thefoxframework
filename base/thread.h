@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_THREAD_H_
 
 
-#include <base/types.h>
+#include <base/common.h>
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
