@@ -10,6 +10,7 @@
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+typedef CRITICAL_SECTION pthread_mutex_t;
 #else
 #include <pthread.h>
 #endif
@@ -26,22 +27,24 @@ public:
         : _threadId(0)
     {
 #ifdef WIN32
-        InitializeCriticalSection(&_cs);
+        InitializeCriticalSection(&_mutex);
 #else
-        _mutex = PTHREAD_MUTEX_INITIALIZER;
+        pthread_mutex_init(&_mutex, NULL);
 #endif
     }
     ~Mutex()
     {
 #ifdef WIN32
-        DeleteCriticalSection(&_cs);
+        DeleteCriticalSection(&_mutex);
+#else
+		pthread_mutex_destroy(&_mutex);
 #endif
     }
     
     void lock()
     {
 #ifdef WIN32
-        EnterCriticalSection(&_cs);
+        EnterCriticalSection(&_mutex);
         _threadId = static_cast<uint32_t>(GetCurrentThreadId());
 #else
         pthread_mutex_lock(&_mutex);
@@ -53,20 +56,22 @@ public:
     {
         _threadId = 0;
 #ifdef WIN32
-        LeaveCriticalSection(&_cs);
+        LeaveCriticalSection(&_mutex);
 #else
         pthread_mutex_unlock(&_mutex);
 #endif
     }
     
+	pthread_mutex_t *getMutex()
+	{
+		return &_mutex;
+	}
+	
 private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Mutex);
+	
     uint32_t _threadId;
-#ifdef WIN32
-    CRITICAL_SECTION _cs;
-#else
     pthread_mutex_t _mutex;
-#endif
 };
 
 class MutexGuard
