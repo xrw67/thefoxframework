@@ -50,7 +50,7 @@ namespace thefox
   void operator=(const TypeName&)
 
 // 声明隐私转换
-template<typedef T>
+template<typename T>
 inline T implicit_cast(T const &x) 
 {
 	return x;

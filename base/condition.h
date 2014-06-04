@@ -31,7 +31,7 @@ public:
 #endif
     {
 #ifdef WIN32
-       _sem = ::CreateSemaphore(NULL, num, LONG_MAX, NULL);
+       _sem = ::CreateSemaphore(NULL, 0, LONG_MAX, NULL);
 #else
         pthread_cond_init(&_cond, NULL);
 #endif
