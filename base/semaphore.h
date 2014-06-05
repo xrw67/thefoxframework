@@ -44,6 +44,7 @@ public:
 #endif    
     }
     
+	// P
     bool wait(uint32_t millisecond = kInfinite)
     {
 #ifdef _WIN32
@@ -70,6 +71,7 @@ public:
 #endif
     }
     
+	// V
     bool signal()
     {
 #ifdef _WIN32

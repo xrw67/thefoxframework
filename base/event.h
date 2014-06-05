@@ -4,12 +4,8 @@
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#else
-
-#endif
 
 #include <base/common.h>
-
 
 namespace thefox
 {
@@ -17,6 +13,7 @@ namespace thefox
 class Event
 {
 public:
+    static const uint32_t kInfinite = INFINITE;
     Event()
         : _event(NULL)
     {
@@ -33,7 +30,7 @@ public:
     
     void set() { ::SetEvent(_event); }
     void reset() { ::ResetEvent(_event); }
-    bool wait(DWORD dwMilliseconds = INFINITE)
+    bool wait(DWORD dwMilliseconds = kInfinite)
     {
         ::WaitForSingleObject(_event, dwMilliseconds);
         return true;
@@ -45,5 +42,9 @@ private:
 };
 
 } // namespace thefox
+
+#else // #ifdef WIN32
+#error "class Event use in Windows only"
+#endif
 
 #endif // _THEFOX_BASE_EVENT_H_

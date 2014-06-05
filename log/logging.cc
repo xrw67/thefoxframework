@@ -1,11 +1,7 @@
-#include <algorithm>
 #include <log/logging.h>
+#include <algorithm>
 #include <base/timestamp.h>
-
-#ifdef WIN32
-#else
-#include <pthread.h>
-#endif
+#include <base/thread_util.h>
 
 namespace thefox
 {
@@ -78,11 +74,7 @@ LogMessage::LogMessage(LogLevel level, const char *filename, int line)
 {
 	*this << "[" 
 		<< Timestamp::now().toFormatString() << " "
-#ifdef WIN32
-		<< (unsigned int)::GetCurrentThreadId() << " "
-#else
-		<< (unsigned int)pthread_self() << " "
-#endif
+		<< currentThreadId() << " "
 		<< LogLevelName[level] << " " 
 		<< filename << ":" << line 
 		<< "] ";
