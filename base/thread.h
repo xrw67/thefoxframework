@@ -145,7 +145,7 @@ public:
 			delete _threads[i];
 		}
 		
-		_thread.clear();
+		_threads.clear();
 	}
 	
 	Thread *createThread(const ThreadCallback &threadfunc)
@@ -163,25 +163,22 @@ public:
 	void startAll()
 	{
 		for (size_t i = 0; i < _threads.size(); ++i) {
-			_threads[i].start();
+			_threads[i]->start();
 		}
 	}
 	
 	void joinAll()
 	{
 		for (size_t i = 0; i < _threads.size(); ++i) {
-			_threads[i].join();
+			_threads[i]->join();
 		}
 	}
 	
-	size_t size() const
-	{ 
-		return _threads.size(); 
-	}
+	size_t size() const { return _threads.size(); }
 	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ThreadGroup);
-	std::vector<thread *> _threads;
+	std::vector<Thread *> _threads;
 };
 
 } // namespace thefox

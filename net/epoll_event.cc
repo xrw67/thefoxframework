@@ -45,6 +45,8 @@ bool EpollEvent::addEvent(Event *ev)
 	
 	assert(NULL != ev);
 
+	ev->handler = std::bind(&EpollEvent::handler, this, _1, _2);
+
 	struct epoll_event event;
 	event.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP;
 	event.data.ptr = ev;
@@ -145,9 +147,14 @@ void EpollEvent::handler(Event *ev, void *arg)
 
 	if (revents & (EPOLLERR | EPOLLHUP)) {
 		THEFOX_LOG(ERROR) << "error on		";
+		onClose(ev, revents);
 	}
-	
-
+	if (revents & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
+		onRead(ev);
+	}
+	if (revents & EPOLLOUT) {
+		onWrite(ev);
+	}
 }
 
 bool EpollEvent::onRead(Event *ev)
@@ -180,7 +187,7 @@ bool EpollEvent::onWrite(Event *ev)
 	Buffer *buffer = conn->writeBuffer();
 
 	while (buffer->readableBytes() > 0) {
-		ret = write(conn->fd(), buffer->peek(), buffer->readableBytes());
+		ret = ::write(conn->fd(), buffer->peek(), buffer->readableBytes());
 		if (-1 == ret && EAGAIN != errno) {
 			THEFOX_LOG(ERROR) << "write error";
 			return false;
@@ -188,5 +195,17 @@ bool EpollEvent::onWrite(Event *ev)
 
 		buffer->retrieve(ret);
 	}
+	return true;
+}
+
+bool EpollEvent::onClose(Event *ev, uint32_t revents)
+{
+	TcpConnection *conn = ev->conn;
+
+	if (NULL == conn) {
+		return false;
+	}
+
+	conn->connectDestroyed();
 	return true;
 }

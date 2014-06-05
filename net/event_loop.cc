@@ -52,7 +52,7 @@ void EventLoop::start()
 	_started = true;
 
     for (int i = 0; i < _threadNum; ++i) {
-        Thread *thread = new Thread(std::bind(&EventLoop::loop, this), "EventLoop::loop");
+        Thread *thread = new Thread(std::bind(&EventLoop::loop, this));
         _threads.push_back(thread);
         thread->start();
     }

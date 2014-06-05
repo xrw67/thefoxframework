@@ -10,7 +10,7 @@ TcpServer::TcpServer(EventLoop *loop, const InetAddress &listenAddr, const strin
 	, _name(nameArg)
 	, _started(false)
     , _messageCallback(defaultMessageCallback)
-    , _acceptor(new Acceptor(listenAddr))
+    , _acceptor(new Acceptor(loop, listenAddr))
 {
     _acceptor->init();
 }

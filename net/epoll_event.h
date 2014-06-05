@@ -35,6 +35,7 @@ private:
     void handler(Event *ev, void *arg);
     bool onRead(Event *ev);
     bool onWrite(Event *ev);
+	bool onClose(Event *ev, uint32_t revents);
 
 	typedef std::vector<struct epoll_event> EventList;
 	int _epollfd;

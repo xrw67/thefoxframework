@@ -36,6 +36,7 @@ public:
 
 	static InetAddress getLocalAddr(SOCKET sockfd);
 	static SOCKET create();
+	static bool setNonBlock(SOCKET sockfd);
 	static bool connect(SOCKET sockfd, const InetAddress &serverAddr);
 	static bool close(SOCKET sockfd);
 	

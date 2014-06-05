@@ -1,14 +1,19 @@
 #include <net/acceptor.h>
 #include <log/logging.h>
-
+#include <net/event_loop.h>
+#ifndef WIN32
+#include <sys/epoll.h>
+#endif
 using namespace thefox;
 using namespace thefox::net;
 
-Acceptor::Acceptor(const InetAddress& listenAddr)
-	: _listenAddr(listenAddr)
+Acceptor::Acceptor(EventLoop *loop, const InetAddress& listenAddr)
+	: _loop(loop)
+	, _listenAddr(listenAddr)
 	, _listening(false)
 	, _acceptSocket(Socket::create())
 {
+	Socket::setNonBlock(_acceptSocket.fd());
 }
 
 Acceptor::~Acceptor()
@@ -33,10 +38,9 @@ bool Acceptor::init()
     bool ret = _acceptSocket.bind(_listenAddr);
 
 #ifdef WIN32
-    _acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor::acceptloop");
+    _acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this));
 #else
 	_event.fd = _acceptSocket.fd();
-	_event.handler = std::bind(&Acceptor::onAccept, this, _1, _2);
 #endif
 
 	return ret;
@@ -58,6 +62,7 @@ bool Acceptor::listen()
 		_acceptThread->start();
 #else
 		_loop->addEvent(&_event);
+		_event.handler = std::bind(&Acceptor::onAccept, this, _1, _2);
 #endif
 
 		THEFOX_LOG(INFO) << "Acceptor::listen() done";
@@ -100,7 +105,9 @@ void Acceptor::onAccept(Event *ev, void *arg)
 {
 	THEFOX_TRACE_FUNCTION;
 
-	if (ev->in) {
+	uint32_t revents = (uint32_t)arg;
+
+	if (revents & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
 		InetAddress peerAddr;
 		SOCKET clientSockfd = _acceptSocket.accept(&peerAddr);
 		if (INVALID_SOCKET == clientSockfd) {

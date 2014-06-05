@@ -6,6 +6,7 @@
     #define socklen_t int
 #else
 	#include <unistd.h>
+	#include <fcntl.h>
 	#include <netinet/tcp.h>
 	#include <sys/types.h>
 	#include <sys/socket.h>
@@ -64,6 +65,22 @@ SOCKET Socket::create()
 	}
 #endif
 	return sockfd;
+}
+
+bool Socket::setNonBlock(SOCKET sockfd)
+{
+#ifndef WIN32
+	int flags = 0;
+	if ((flags = ::fcntl(sockfd, F_GETFL, 0)) != -1) {
+		flags |= O_NONBLOCK;
+		if (::fcntl(sockfd, F_SETFL, flags) != -1) { // set non-blocking
+			return true;
+		}
+	}
+	return false;
+#else
+	return true;
+#endif
 }
 
 bool Socket::connect(SOCKET sockfd, const InetAddress &serverAddr)

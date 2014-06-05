@@ -24,6 +24,8 @@ TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd, int id,
     , _pendingEvents(0)
 {
 	THEFOX_TRACE_FUNCTION;
+
+	Socket::setNonBlock(sockfd);
 }
 
 TcpConnection::~TcpConnection()
