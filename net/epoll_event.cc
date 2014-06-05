@@ -37,23 +37,13 @@ bool EpollEvent::init()
 	return true;
 }
 
-bool EpollEvent::addEvent(IoEvent *ev)
-{
-	THEFOX_TRACE_FUNCTION;
-	int op;
-	struct epoll_event event;
-	TcpConnection *conn = ev->conn;
-
-	if (-1 == ::epoll_ctl(_epollfd, op, conn->fd(),
-}
-
-bool EpollEvent::postClose(IoEvent *ev)
+bool EpollEvent::postClose(const TcpConnectionPtr &conn)
 {
 	THEFOX_TRACE_FUNCTION;
 	
 }
 
-bool EpollEvent::addConnection(TcpConnection *conn)
+bool EpollEvent::registerConnection(Tconst TcpConnectionPtr &conn)
 {
 	THEFOX_TRACE_FUNCTION;
 	
@@ -61,7 +51,7 @@ bool EpollEvent::addConnection(TcpConnection *conn)
 
 	struct epoll_event event;
 	event.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP;
-	event.data.prt = conn;
+	event.data.ptr = &*conn;
 
 	THEFOX_LOG(DEBUG) << "epoll add connection: fd:" << conn->fd() << "ev:" << event.events;
 
@@ -72,7 +62,7 @@ bool EpollEvent::addConnection(TcpConnection *conn)
 	return true;
 }
 
-bool EpollEvent::delConnection(TcpConnection *conn)
+bool EpollEvent::unregisterConnection(const TcpConnectionPtr &conn)
 {
 	THEFOX_TRACE_FUNCTION;
 
@@ -119,6 +109,7 @@ bool EpollEvent::processEvents(uint32_t timer)
 		_events.resize(events.size() * 2);
 	
 	for (int i = 0; i < numEvents; ++i) {
+		TcpConnectionPtr conn = 
 		handler(static_cast<IoEvent *>(_events[i].data.ptr), _events[i].events);
 	}
 }
@@ -133,6 +124,37 @@ bool EpollEvent::updateWrite(IoEvent *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
+	ev->enterIo();
+
+	TcpConnection
+	Socket::write(ev->conn->fd(), )
+
+
+	WSABUF wsabuf[1];
+	TcpConnection *conn = ev->conn;
+	Buffer *writebuf = conn->writeBuffer();
+
+	wsabuf[0].buf = writebuf->peek();
+	wsabuf[0].len = writebuf->readableBytes();
+
+	EventOvlp *ovlp = _ovlpPool.get();
+	::ZeroMemory(ovlp, sizeof(EventOvlp));
+	ovlp->type = OVLP_TYPE_WRITE;
+	ovlp->ev = ev;
+
+	DWORD nBytes = 0;
+    DWORD flags = 0;
+    int byteSend = WSASend(conn->fd(), wsabuf, 1, 
+                            &nBytes, flags, &ovlp->ovlp, NULL);
+    if (SOCKET_ERROR == byteSend && WSA_IO_PENDING != WSAGetLastError()) {
+        THEFOX_LOG(ERROR) << "postWrite() failed!";
+		//  ¹Ø±Õconnection
+		ev->leaveIo();
+		_ovlpPool.put(ovlp);
+		conn->connectDestroyed();
+		return false;
+    }
+	return true;
 
 }
 
@@ -141,9 +163,24 @@ void EpollEvent::handler(IoEvent *ev, uint32_t revents)
 	THEFOX_TRACE_FUNCTION;
 
 	if (revents & (EPOLLERR | EPOLLHUP)) {
-		THEFOX_LOG(ERROR) << "error on		
+		THEFOX_LOG(ERROR) << "error on		";
 	}
 	
 
 }
 
+void EpollEvent::handleRead(IoEvent *ev)
+{
+
+}
+
+void EpollEvent::handleWrite(IoEvent *ev)
+{
+
+}
+
+void EpollEvent::handleClose(IoEvent *ev)
+{
+
+
+}

@@ -18,21 +18,26 @@ class EpollEvent
 	~EpollEvent();
 
 	bool init();
-	bool addEvent(IoEvent *ev);
-	bool postClose(IoEvent *ev);
-	bool addConnection(TcpConnection *conn);
-	bool delConnection(TcpConnection *conn);
 	bool processEvents(uint32_t timer);
+	bool postClose(const TcpConnectionPtr &conn);
 
-	bool updateRead(IoEvent *ev);
-	bool updateWrite(IoEvent *ev);
+	bool registerConnection(const TcpConnectionPtr &conn);
+	bool unregisterConnection(const TcpConnectionPtr &conn);
+
+	bool updateRead(const TcpConnectionPtr &conn);
+	bool updateWrite(const TcpConnectionPtr &conn);
+	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EpollEvent);
-	void handler(IoEvent *ev, uint32_t revents);
+	void handler(const TcpConnectionPtr &conn, uint32_t revents);
+	void handleRead(const TcpConnectionPtr &conn);
+	void handleWrite(const TcpConnectionPtr &conn);
 
 	typedef std::vector<struct epoll_event> EventList;
 	int _epollfd;
 	EventList _events;
 };
+
 } // namespace thefox
+
 #endif // _THEFOX_NET_EPOLL_H_

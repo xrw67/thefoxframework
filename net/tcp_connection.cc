@@ -31,13 +31,6 @@ TcpConnection::~TcpConnection()
 	THEFOX_TRACE_FUNCTION;
 }
 
-bool TcpConnection::init()
-{
-	THEFOX_TRACE_FUNCTION;
-	
-	_event.init(this);
-}
-
 void TcpConnection::send(const std::string &data)
 {
 	this->send(data.c_str(), data.length());
@@ -75,7 +68,6 @@ void TcpConnection::forceClose()
 	if (kConnected == _state || kDisconnecting == _state) {
 		setState(kDisconnecting);
 		// 投递关闭事件
-		_event.close = true;
 		_loop->postClose(&_event);
 	}
 }
@@ -112,9 +104,8 @@ void TcpConnection::connectDestroyed()
 			_connectionCallback(this);
 	}
 
-	if (0 == _event.refCount()) {
-		if (_removeConnectionCallback)
-			_removeConnectionCallback(this); // 这是最后一行
-		return;
+	if (_removeConnectionCallback)
+		_removeConnectionCallback(this); // 这是最后一行
+	return;
 	}
 }

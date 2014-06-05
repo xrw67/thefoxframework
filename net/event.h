@@ -15,42 +15,12 @@
 #include <base/timestamp.h>
 #include <base/mutex.h>
 
+typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+typedef std::weak_ptr<TcpConnection> TcpConnectionWeakPtr;
 namespace thefox
 {
 class TcpConnection;
 
-class IoEvent {
-public:
-	TcpConnection *conn;
-	bool read;
-	bool write;
-	bool close;
-
-	void init(TcpConnection *c)
-	{
-		conn = c;
-		write = false;
-		read = false;
-		close = false;
-		_refCount = 0;
-	}
-	void enterIo() 
-	{ 
-		MutexGuard lock(_mutex);
-		++_refCount;
-	}
-	int32_t leaveIo()
-	{ 
-		MutexGuard lock(_mutex);
-		return --_refCount;
-	}
-	uint32_t refCount() const 
-	{ return _refCount; }
-
-private:
-	Mutex _mutex;
-	int32_t _refCount; //引用计数
-};
 
 #ifdef WIN32
 
@@ -62,7 +32,7 @@ private:
 typedef struct {
 	OVERLAPPED ovlp;
 	int32_t type;
-	IoEvent *ev;
+	TcpConnectionWeakPtr conn; // 弱引用
 } EventOvlp;
 
 #endif

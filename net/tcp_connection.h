@@ -13,7 +13,6 @@
 #include <net/inet_address.h>
 #include <net/callbacks.h>
 #include <net/socket.h>
-#include <net/event.h>
 
 namespace thefox
 {
@@ -32,9 +31,6 @@ public:
     TcpConnection(EventLoop *loop, SOCKET sockfd, int id, 
 		const InetAddress& localAddr, const InetAddress &peerAddr);
     ~TcpConnection();
-	
-	/// @brief 初始化connection，内部调用
-	bool init();
 	
     /// @brief 获取连接ID
     int32_t id() const { return _id; }
@@ -99,7 +95,6 @@ private:
 	Mutex _mutex;
     StateT _state;
 
-	IoEvent _event;
     void *_arg;
 
     // 统计信息

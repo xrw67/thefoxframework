@@ -67,11 +67,6 @@ void EventLoop::stop()
 		_threads[i]->stop();
 }
 
-bool EventLoop::addEvent(IoEvent *ev)
-{
-	return _poller->addEvent(ev);
-}
-
 bool EventLoop::postClose(IoEvent *ev)
 {
 	return _poller->postClose(ev);
@@ -85,6 +80,11 @@ bool EventLoop::updateRead(IoEvent *ev)
 bool EventLoop::updateWrite(IoEvent *ev)
 {
 	return _poller->updateWrite(ev);
+}
+
+bool EventLoop::addConnection(TcpConnection *conn)
+{
+	return _poller->addConnection(conn);
 }
 
 bool EventLoop::delConnection(TcpConnection *conn)

@@ -19,20 +19,20 @@ public:
 	~IocpEvent();
 
 	bool init();
-	bool addEvent(IoEvent *ev);
-	bool postClose(IoEvent *ev);
-	void addConnection() {}
-	bool delConnection(TcpConnection *conn);
 	bool processEvents(uint32_t timer);
+	bool postClose(const TcpConnectionPtr &conn);
 
-	bool updateRead(IoEvent *ev);
-	bool updateWrite(IoEvent *ev);
+	void registerConnection(const TcpConnectionPtr &conn);
+	bool unregisterConnection(const TcpConnectionPtr &conn);
+
+	bool updateRead(const TcpConnectionPtr &conn);
+	bool updateWrite(const TcpConnectionPtr &conn);
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
-	void handler(IoEvent *ev, int32_t ovlpType, uint32_t avaliable);
-	void handleRead(IoEvent *ev, uint32_t avaliable);
-	void handleWrite(IoEvent *ev, uint32_t avaliable);
-	void handleClose(IoEvent *ev);
+	void handler(const TcpConnectionPtr &conn, int32_t ovlpType, uint32_t avaliable);
+	void handleRead(const TcpConnectionPtr &conn, uint32_t avaliable);
+	void handleWrite(const TcpConnectionPtr &conn, uint32_t avaliable);
 
 	HANDLE _hIocp;
 	MemPool<EventOvlp> _ovlpPool;
