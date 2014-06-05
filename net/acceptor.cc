@@ -15,12 +15,6 @@ Acceptor::Acceptor(TcpServer *server,const InetAddress& listenAddr)
 	, _listening(false)
 	, _acceptSocket(Socket::create())
 {
-	assert(_acceptSocket.fd() >= 0);
-
-	_acceptSocket.bind(listenAddr);
-#ifdef WIN32
-	_acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor.acceptloop()");
-#endif
 }
 
 Acceptor::~Acceptor()
@@ -35,6 +29,21 @@ Acceptor::~Acceptor()
 
 #endif
 
+}
+
+bool Acceptor::init()
+{
+	THEFOX_TRACE_FUNCTION;
+
+	assert(_acceptSocket.fd() >= 0);
+
+	bool ret = _acceptSocket.bind(listenAddr);
+	
+#ifdef WIN32
+	_acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor.acceptloop()");
+#endif
+	
+	return ret;
 }
 
 bool Acceptor::listen()

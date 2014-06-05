@@ -28,7 +28,11 @@ class TcpServer
 public:
     TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg);
     ~TcpServer(void);
-
+	
+	/// @brief 初始化
+	/// @return 成功返回true，否则返回false
+	bool init();
+	
     /// @brief 启动服务
     /// @return 成功返回true，否则返回false
     bool start();

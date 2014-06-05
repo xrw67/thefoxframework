@@ -27,6 +27,19 @@ TcpServer::~TcpServer()
     delete _acceptor;
 }
 
+bool TcpServer::init()
+{
+	THEFOX_TRACE_FUNCTION;
+
+	try {
+		_acceptor = new Acceptor(this, listenAddr);
+		_acceptor->init();
+	} catch (const std::bad_alloc &ex) {
+		return false;
+	}
+	return true;
+}
+
 bool TcpServer::start()
 {
 	THEFOX_TRACE_FUNCTION;
@@ -52,8 +65,10 @@ void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &localAddr,
     TcpConnection *conn = 
 		_connectionPool.get<EventLoop *, SOCKET, int32_t, const InetAddress &, const InetAddress &>
 							(_loop, sockfd, id, localAddr, peerAddr);
-    _connections[id] = conn;
-
+    
+	conn->init();
+	_connections[id] = conn;
+	
 	conn->setConnectionCallback(_connectionCallback);
 	conn->setMessageCallback(_messageCallback);
 	conn->setWriteCompleteCallback(_writeCompleteCallback);

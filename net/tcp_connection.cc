@@ -24,13 +24,18 @@ TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd, int id,
 	, _state(kConnecting)
 {
 	THEFOX_TRACE_FUNCTION;
-
-	_event.init(this);
 }
 
 TcpConnection::~TcpConnection()
 {
 	THEFOX_TRACE_FUNCTION;
+}
+
+bool TcpConnection::init()
+{
+	THEFOX_TRACE_FUNCTION;
+	
+	_event.init(this);
 }
 
 void TcpConnection::send(const std::string &data)

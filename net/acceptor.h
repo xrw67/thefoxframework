@@ -27,6 +27,7 @@ public:
     Acceptor(TcpServer *server, const InetAddress& listenAddr);
     ~Acceptor(void);
 
+	bool init();
 	bool listen();
 	bool listening() const { return _listening; }
 
