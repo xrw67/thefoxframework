@@ -1,6 +1,7 @@
 #ifndef _THEFOX_NET_INETADDRESS_H
 #define _THEFOX_NET_INETADDRESS_H
 
+#include <string.h>
 #include <base/common.h>
 
 #ifdef WIN32

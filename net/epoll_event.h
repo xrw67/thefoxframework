@@ -18,6 +18,7 @@ class TcpConnection;
 
 class EpollEvent
 {
+public:
 	EpollEvent();
 	~EpollEvent();
 
@@ -31,7 +32,7 @@ class EpollEvent
 	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EpollEvent);
-    bool handler(Event *ev, void *arg);
+    void handler(Event *ev, void *arg);
     bool onRead(Event *ev);
     bool onWrite(Event *ev);
 

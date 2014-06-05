@@ -1,7 +1,7 @@
 CC = g++
-CFLAGS = -std=c++0x -g
-INCLUDE = ..
-LIBRARY = -l pthread
+CFLAGS = -std=c++0x -g -fPIC -shared
+INCLUDE = -I..
+LIBRARY = -lpthread
 
 all:libthefox.so
 

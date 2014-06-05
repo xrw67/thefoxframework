@@ -1,4 +1,5 @@
 #include <net/epoll_event.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <log/logging.h>
@@ -30,7 +31,7 @@ bool EpollEvent::init()
 	if (-1 == _epollfd) {
 		_epollfd = ::epoll_create1(EPOLL_CLOEXEC);
 		
-		if (-1 == _epollfd {
+		if (-1 == _epollfd) {
 			THEFOX_LOG(ERROR) << "epoll_create() failed";
 			return false;
 		}
@@ -82,7 +83,7 @@ bool EpollEvent::processEvents(uint32_t timer)
 	THEFOX_TRACE_FUNCTION;
 
 	int numEvents = ::epoll_wait(_epollfd, &*_events.begin(),
-								static_cast<int>(_events,size()),
+								static_cast<int>(_events.size()),
 								timer);
 	int err = (-1 == numEvents) ? errno : 0;
 
@@ -100,25 +101,26 @@ bool EpollEvent::processEvents(uint32_t timer)
 	}
 	
 	// resize max num of wait events;
-	if (implicit_cast<size_t>(numEvents) == _events.size()) {
-		_events.resize(events.size() * 2);
+	if (static_cast<size_t>(numEvents) == _events.size()) {
+		_events.resize(_events.size() * 2);
 	}
 	
 	for (int i = 0; i < numEvents; ++i) {
-		
-		ev->handler(reinterpret_cast<Event *>(_events[i].data.ptr), (void *)_events[i].events);
+		Event *ev = reinterpret_cast<Event *>(_events[i].data.ptr);
+		ev->handler(ev, (void *)_events[i].events);
 	}
 }
 
-bool EpollEvent::updateWrite(const TcpConnectionPtr &conn)
+bool EpollEvent::updateWrite(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
 	int ret;
+	TcpConnection *conn = ev->conn;
 	Buffer *buffer = conn->writeBuffer();
 
 	while (buffer->readableBytes() > 0) {
-		ret = write(conn->fd(), buffer->peek(), buffer->readableBytes());
+		ret = write(ev->fd, buffer->peek(), buffer->readableBytes());
 		
 		if (-1 == ret && EAGAIN != errno) {
 			THEFOX_LOG(ERROR) << "write error";
@@ -135,7 +137,7 @@ bool EpollEvent::updateWrite(const TcpConnectionPtr &conn)
 	return true;
 }
 
-void EpollEvent::handler(IoEvent *ev, void *arg)
+void EpollEvent::handler(Event *ev, void *arg)
 {
 	THEFOX_TRACE_FUNCTION;
 
@@ -148,27 +150,28 @@ void EpollEvent::handler(IoEvent *ev, void *arg)
 
 }
 
-bool EpollEvent::onRead(IoEvent *ev)
+bool EpollEvent::onRead(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
 	int ret;
+	TcpConnection *conn = ev->conn;
 	Buffer *buffer = conn->readBuffer();
 
 	buffer->ensureWritableBytes(kDefaultBufferSize);
 
-	while ((ret = ::read(conn->fd(), buffer->beginWrite(), kDefaultBufferSize)) > 0) {
+	while ((ret = ::read(ev->fd, buffer->beginWrite(), kDefaultBufferSize)) > 0) {
 		conn->addReadBytes(ret);
 	}
 
-	if (-1 == ret && EAGAIN != error) {
+	if (-1 == ret && EAGAIN != errno) {
 		THEFOX_LOG(ERROR) << "read error";
 		return false;
 	} // else 读完成
 	return true;
 }
 
-bool EpollEvent::onWrite(IoEvent *ev)
+bool EpollEvent::onWrite(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 

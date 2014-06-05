@@ -1,6 +1,5 @@
 #include <net/acceptor.h>
 #include <log/logging.h>
-#include <net/event_loop.h>
 
 using namespace thefox;
 using namespace thefox::net;
@@ -56,11 +55,11 @@ bool Acceptor::listen()
 #ifdef WIN32
 		_hAcceptEvent = ::WSACreateEvent();
 		WSAEventSelect(_acceptSocket.fd(), _hAcceptEvent, FD_ACCEPT);
+		_acceptThread->start();
 #else
 		_loop->addEvent(&_event);
 #endif
 
-		_acceptThread->start();
 		THEFOX_LOG(INFO) << "Acceptor::listen() done";
 		return true;
 	} else {

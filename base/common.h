@@ -38,12 +38,6 @@ using namespace std::placeholders; // for std::bind
     TypeName(const TypeName&);                         \
     void operator=(const TypeName&)
 
-template<typename T>
-inline implicit_cast(const T &x)
-{
-    return x;
-}
-
 // delete object safe
 #define SAFE_DELETE(p)        \
     if (NULL != p) {          \

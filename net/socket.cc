@@ -5,6 +5,7 @@
 #ifdef WIN32
     #define socklen_t int
 #else
+	#include <unistd.h>
 	#include <netinet/tcp.h>
 	#include <sys/types.h>
 	#include <sys/socket.h>
@@ -34,8 +35,12 @@ InetAddress Socket::getLocalAddr(SOCKET sockfd)
 	memset(&localaddr, 0, sizeof(localaddr));
     socklen_t addrlen = static_cast<socklen_t>(sizeof(localaddr));
     if (::getsockname(sockfd, (sockaddr *)&localaddr, &addrlen) < 0) {
+#ifdef WIN32
         int errCode = ::WSAGetLastError();
         THEFOX_LOG(ERROR) << "getsockname() failed, errcode:" << errCode;
+#else
+	THEFOX_LOG(ERROR) << "getsockname() failed";
+#endif
     }
 
 	return localaddr;

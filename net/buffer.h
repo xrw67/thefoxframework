@@ -8,7 +8,7 @@
 #else
 #include <arpa/inet.h>
 #endif
-
+#include <string.h>
 #include <base/common.h>
 
 namespace thefox {
