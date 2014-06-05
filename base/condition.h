@@ -15,7 +15,7 @@ namespace thefox
 class Condition
 {
 public:
-    static const uint32_t kInfinite = UINT_MAX;
+    static const uint32_t kInfinite = 0xffffffff;
 
     Condition(Mutex &mutex)
         : _mutex(mutex)

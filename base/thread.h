@@ -47,7 +47,7 @@ public:
         _handle = ::CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadProc, (LPVOID)this, 0, &_threadId);
         result = (NULL != _handle);
 #else
-        int ret = pthread_create(&_thread, NULL, _cb, (void *)_arg);
+        int ret = pthread_create(&_thread, NULL, threadProc, (void *)this);
         result = (0 == ret);
 #endif
         _state = kStart;
@@ -111,7 +111,7 @@ private:
 #ifdef WIN32
     static DWORD WINAPI threadProc(LPVOID param)
 #else
-	static void threadProc(void *param)
+	static void *threadProc(void *param)
 #endif
     {
         Thread *pThis = reinterpret_cast<Thread *>(param);
