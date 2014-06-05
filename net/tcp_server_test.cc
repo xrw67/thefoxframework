@@ -28,14 +28,14 @@ void onConnection(TcpConnection *conn)
 
 void onMessage(TcpConnection *conn, Buffer *buf, Timestamp receiveTime)
 {
-	printf("收到数据 总共读:%u\r\n", conn->readBytes());
+	printf("onMessage readBytes: %u\r\n", conn->readBytes());
 	conn->send(buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }
 
 void onWriteComplete(TcpConnection *conn)
 {
-	printf("写数据完成 总共写:%u\r\n", conn->writeBytes());
+	printf("onWriteComplete writeBytes: %u\r\n", conn->writeBytes());
 }
 
 int main(int argc, char **argv)

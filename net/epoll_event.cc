@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <log/logging.h>
+#include <base/timestamp.h>
 #include <net/buffer.h>
 #include <net/tcp_connection.h>
 
@@ -163,11 +164,12 @@ bool EpollEvent::onRead(Event *ev)
 
 	int ret;
 	TcpConnection *conn = ev->conn;
-	Buffer *buffer = conn->readBuffer();
+	Buffer *readbuf = conn->readBuffer();
 
-	buffer->ensureWritableBytes(kDefaultBufferSize);
+	readbuf->ensureWritableBytes(kDefaultBufferSize);
 
-	while ((ret = ::read(ev->fd, buffer->beginWrite(), kDefaultBufferSize)) > 0) {
+	while ((ret = ::read(ev->fd, readbuf->beginWrite(), kDefaultBufferSize)) > 0) {
+		readbuf->hasWritten(ret);
 		conn->addReadBytes(ret);
 	}
 
@@ -175,6 +177,11 @@ bool EpollEvent::onRead(Event *ev)
 		THEFOX_LOG(ERROR) << "read error";
 		return false;
 	} // else 读完成
+	
+	if (conn->_messageCallback) {
+		conn->_messageCallback(conn, readbuf, Timestamp(Timestamp::now()));
+	}
+
 	return true;
 }
 
@@ -184,17 +191,23 @@ bool EpollEvent::onWrite(Event *ev)
 
 	int ret;
 	TcpConnection *conn = ev->conn;
-	Buffer *buffer = conn->writeBuffer();
+	Buffer *writebuf = conn->writeBuffer();
 
-	while (buffer->readableBytes() > 0) {
-		ret = ::write(conn->fd(), buffer->peek(), buffer->readableBytes());
+	while (writebuf->readableBytes() > 0) {
+		ret = ::write(conn->fd(), writebuf->peek(), writebuf->readableBytes());
 		if (-1 == ret && EAGAIN != errno) {
 			THEFOX_LOG(ERROR) << "write error";
 			return false;
 		}
 
-		buffer->retrieve(ret);
+		writebuf->retrieve(ret);
+		conn->addWriteBytes(ret);
 	}
+
+	if (conn->_writeCompleteCallback) {
+		conn->_writeCompleteCallback(conn);
+	}
+
 	return true;
 }
 

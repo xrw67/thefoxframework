@@ -102,7 +102,7 @@ void EventLoop::loop()
 {
 	for (;;) {
 		// 计算下一次超时时间
-		uint32_t time = 1000;
+		uint32_t time = 10000000;
 		
 		//
 		_poller->processEvents(time);
