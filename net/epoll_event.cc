@@ -120,17 +120,18 @@ bool EpollEvent::updateWrite(Event *ev)
 
 	int ret;
 	TcpConnection *conn = ev->conn;
-	Buffer *buffer = conn->writeBuffer();
+	Buffer *writebuf = conn->writeBuffer();
 
-	while (buffer->readableBytes() > 0) {
-		ret = write(ev->fd, buffer->peek(), buffer->readableBytes());
+	while (writebuf->readableBytes() > 0) {
+		ret = write(ev->fd, writebuf->peek(), writebuf->readableBytes());
 		
 		if (-1 == ret && EAGAIN != errno) {
 			THEFOX_LOG(ERROR) << "write error";
 			return false;
 		}
 
-		buffer->retrieve(ret);
+		writebuf->retrieve(ret);
+		conn->addWriteBytes(ret);
 	}
 
 	if (conn->_writeCompleteCallback) {

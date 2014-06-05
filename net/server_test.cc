@@ -40,8 +40,8 @@ void onWriteComplete(TcpConnection *conn)
 
 int main(int argc, char **argv)
 {
-	//LogStdout log("tcp_server");
-	LogFile log(".", "iocp");
+	//LogStdout log("server_test");
+	LogFile log(".", "server_test");
 
 	THEFOX_LOG(INFO) << "tcp_server bigin";
 
