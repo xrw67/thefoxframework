@@ -1,7 +1,6 @@
 /*
- * @filename MemPool.h
  * @brief 可存放固定大小元素的内存池
- * @author macwe@qq.com
+ * @author macwe1024 at gmail dot com
  */
 
 #ifndef _THEFOX_BASE_MEM_POOL_H_
@@ -14,7 +13,7 @@
 namespace thefox
 {
 
-template<typename T, int kBlockSize = 32>
+template<typename T>
 class MemPool
 {
 public:
@@ -36,6 +35,7 @@ public:
     }
     
     /// @brief 获取分配的内存
+	/// @raturn 分配的内存的指针
     T *get()
     {
         T *ret = NULL;
@@ -45,7 +45,7 @@ public:
             ret = _freeBlocks.back();
             _freeBlocks.pop_back();
         } else {
-            if (_freeHead == (_chunks.back() + (_chunks.size() * kBlockSize))) {
+            if (_freeHead == (_chunks.back() + (_chunks.size() * kDefaultBlockSize))) {
                 addChunk();
                 _freeHead = _chunks.back();
             }
@@ -65,14 +65,16 @@ private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MemPool);
     void addChunk()
     {
-        size_t blockSize = (_chunks.size() + 1) * kBlockSize;
-        _chunks.push_back(reinterpret_cast<T *>(malloc(sizeof(T) * blockSize)));
+        size_t blockSize = (_chunks.size() + 1) * kDefaultBlockSize;
+        _chunks.push_back(reinterpret_cast<T *>(malloc(sizeof(T)* kDefaultBlockSize)));
     }
     
+	Mutex _mutex;
+	T *_freeHead;
     std::vector<T *> _chunks;
-    T *_freeHead;
     std::vector<T *> _freeBlocks;
-    Mutex _mutex;
+    
+    static const size_t kDefaultBlockSize = 128;
 };
     
 } // namespace thefox

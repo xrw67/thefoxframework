@@ -5,8 +5,7 @@
 using namespace thefox;
 
 void thefox::defaultMessageCallback(TcpConnection *conn,
-                                Buffer* buf,
-                                Timestamp recvTime)
+                                Buffer* buf, const Timestamp recvTime)
 {
 	buf->retrieveAll();
 }
@@ -22,6 +21,8 @@ TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd, int id,
     , _writeBytes(0)
 	, _arg(NULL)
 	, _state(kConnecting)
+    , _pendingIo(0)
+    , _write(false)
 {
 	THEFOX_TRACE_FUNCTION;
 }
@@ -40,11 +41,9 @@ void TcpConnection::send(const char *data, size_t len)
 {
 	_writeBuffer.append(data, len);
 
-	MutexGuard lock(_mutex);
-	if (!_event.write) {
-		_event.write = true;
-		_loop->updateWrite(&_event);
-	}
+    if (!testAndSetWrite()) {
+        _loop->updateWrite(this);
+    }
 }
 
 bool TcpConnection::shutdown()
@@ -67,8 +66,7 @@ void TcpConnection::forceClose()
 
 	if (kConnected == _state || kDisconnecting == _state) {
 		setState(kDisconnecting);
-		// 投递关闭事件
-		_loop->postClose(&_event);
+        connectDestroyed();
 	}
 }
 
@@ -77,16 +75,17 @@ void TcpConnection::connectEstablished()
 	THEFOX_TRACE_FUNCTION;
 
 	assert(kConnecting == _state );
+
 	setState(kConnected);
 
-	_loop->addEvent(&_event);
+    _loop->registerConnection(this);
 
 	// 投递读事件
-	_event.read = true;
-	_loop->updateRead(&_event);
+	_loop->updateRead(this);
 
-	if (_connectionCallback)
-		_connectionCallback(this);
+    if (_connectionCallback) {
+        _connectionCallback(this);
+    }
 }
 
 void TcpConnection::connectDestroyed()
@@ -97,15 +96,43 @@ void TcpConnection::connectDestroyed()
 		setState(kDisconnected);
 		THEFOX_LOG(DEBUG) << "connection closed, addr:" << _peerAddr.toIpPort();
 
-		_loop->delConnection(this);
+        _loop->unregisterConnection(this);
 		Socket::close(_socket.fd());
 
-		if (_connectionCallback)
-			_connectionCallback(this);
+        if (_connectionCallback) {
+            _connectionCallback(this);
+        }
 	}
 
-	if (_removeConnectionCallback)
-		_removeConnectionCallback(this); // 这是最后一行
-	return;
-	}
+    if (0 == pendingIo() && _removeConnectionCallback) {
+        _removeConnectionCallback(this); // 这是最后一行
+        return;
+    }
+}
+
+bool TcpConnection::testAndSetWrite()
+{
+    MutexGuard lock(_writemutex);
+    bool ret = _write;
+    _write = true;
+    return ret;
+}
+
+void TcpConnection::resetWrite()
+{
+    MutexGuard lock(_writemutex);
+    _write = false;
+}
+
+void TcpConnection::enterIo()
+{
+    MutexGuard lock(_iomutex);
+    ++_pendingIo;
+}
+
+size_t TcpConnection::leaveIo()
+{
+    MutexGuard lock(_iomutex);
+    --_pendingIo;
+    return _pendingIo;
 }

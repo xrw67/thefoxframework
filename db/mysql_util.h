@@ -1,7 +1,7 @@
 ﻿/*
 * @filename MySqlUtil.h
 * @brief mysql的一些好用的辅助函数，支持Windows和Linux
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_DB_MYSQL_UTIL_H_

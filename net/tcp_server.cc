@@ -1,7 +1,5 @@
 #include <net/tcp_server.h>
 #include <log/logging.h>
-#include <net/event_loop.h>
-#include <net/inet_address.h>
 #include <net/tcp_connection.h>
 
 using namespace thefox;
@@ -10,13 +8,10 @@ TcpServer::TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::
 	: _loop(loop)
 	, _name(nameArg)
 	, _started(false)
-	, _connectionCallback(NULL)
-	, _messageCallback(defaultMessageCallback)
-	, _writeCompleteCallback(NULL)
+    , _messageCallback(defaultMessageCallback)
+    , _acceptor(new Acceptor(listenAddr))
 {
-	THEFOX_TRACE_FUNCTION;
-
-	_acceptor = new Acceptor(this, listenAddr);
+    _acceptor->init();
 }
 
 TcpServer::~TcpServer()
@@ -27,25 +22,15 @@ TcpServer::~TcpServer()
     delete _acceptor;
 }
 
-bool TcpServer::init()
-{
-	THEFOX_TRACE_FUNCTION;
-
-	try {
-		_acceptor = new Acceptor(this, listenAddr);
-		_acceptor->init();
-	} catch (const std::bad_alloc &ex) {
-		return false;
-	}
-	return true;
-}
-
 bool TcpServer::start()
 {
 	THEFOX_TRACE_FUNCTION;
 
 	if (_started)
 		return true;
+
+    _acceptor->setNewConnectionCallback(
+        std::bind(&TcpServer::onNewConnection, this, _1, _2, _3));
 
 	if (_acceptor->listen()) {
 		_started = true;
@@ -56,7 +41,7 @@ bool TcpServer::start()
 	return _started;
 }
 
-void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &localAddr, const InetAddress &peerAddr)
+void TcpServer::onNewConnection(SOCKET sockfd, const InetAddress &localAddr, const InetAddress &peerAddr)
 {
 	THEFOX_TRACE_FUNCTION << "peerAddr:" << peerAddr.toIpPort();
 
@@ -66,20 +51,21 @@ void TcpServer::handleNewConnection(SOCKET sockfd, const InetAddress &localAddr,
 		_connectionPool.get<EventLoop *, SOCKET, int32_t, const InetAddress &, const InetAddress &>
 							(_loop, sockfd, id, localAddr, peerAddr);
     
-	conn->init();
 	_connections[id] = conn;
 	
 	conn->setConnectionCallback(_connectionCallback);
 	conn->setMessageCallback(_messageCallback);
 	conn->setWriteCompleteCallback(_writeCompleteCallback);
-	conn->setRemoveConnectionCallback(std::bind(&TcpServer::removeConnection, this, _1));
+	conn->setRemoveConnectionCallback(std::bind(&TcpServer::onRemoveConnection, this, _1));
 
 	conn->connectEstablished();
 }
 
-void TcpServer::removeConnection(TcpConnection *conn)
+void TcpServer::onRemoveConnection(TcpConnection *conn)
 {
 	THEFOX_TRACE_FUNCTION << "id=" << conn->id() << "addr=" << conn->peerAddr().toIpPort();
+
+    assert(0 == conn->pendingIo());
 
 	_connections.erase(conn->id());
 

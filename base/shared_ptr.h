@@ -1,7 +1,7 @@
 /*
  * @filename shared_ptr.h
  * @brief 基于引用计数的智能指针
- * @author  macwe@qq.com
+ * @author  macwe1024 at gmail dot com
  */
 
 #ifndef _THEFOX_BASE_SHARED_PTR_H_ 

@@ -1,7 +1,7 @@
 /*
 * @filename ReadWriteLock.h
 * @brief 读写锁
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_BASE_READ_WRITE_LOCK_H_

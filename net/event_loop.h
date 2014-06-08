@@ -1,7 +1,6 @@
 /*
-* @filename event_loop.h
 * @brief 事件循环
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_NET_EVENTLOOP_H_
@@ -14,58 +13,51 @@ namespace thefox
 {
 
 class Thread;
-class IoEvent;
 class TcpConnection;
 
 #ifdef WIN32
-class IocpEvent;
-typedef void *HANDLE;
+    class IocpEvent;
+    typedef IocpEvent Poller;
+    typedef void *HANDLE;
 #else
-class EpollEvent;
+    class EpollEvent;
+    typedef EpollEvent Poller;
 #endif
 
-/// @brief 事件循环类
 class EventLoop
 {
 public:
     EventLoop();
     ~EventLoop();
 
-    /// @brief 开始消息循环(多线程)
+    // for user
+
+    /// @brief start event loop
     void start();
 
-    /// @brief 阻塞并等待时间循环退出
+    /// @brief blocking and wait thread quit
     void join();
 
-    /// @brief 退出消息循环
+    /// @brief quit thread
     void stop();
 
     //void setTimer(uint32_t time, const TimerCallback &cb);
 
-	bool postClose(const TcpConnectionPtr &conn);
+    // for internal
+    bool updateRead(TcpConnection *conn);
+    bool updateWrite(TcpConnection *conn);
+    bool registerConnection(TcpConnection *conn);
+    bool unregisterConnection(TcpConnection *conn);
 
-	bool updateRead(const TcpConnectionPtr &conn);
-	bool updateWrite(const TcpConnectionPtr &conn);
-
-    bool registerConnection(const TcpConnectionPtr &conn);
-	bool unregisterConnection(const TcpConnectionPtr &conn);
-
-    /// @brief 启动一个工作循环. 警告:单线程,不要使用
-    void loop();
 private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EventLoop);
 
-    void init();
-	int getCpuNumber();
+    void loop();
 
-	bool _started;
+    Poller *_poller;
+    bool _started;
+    const int _threadNum; // number of threads
     std::vector<Thread *> _threads;
-
-#ifdef WIN32
-	IocpEvent *_poller;
-#else
-	EpollWvent *_poller;
-#endif
 };
 
 } // namespace thefox

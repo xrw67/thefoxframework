@@ -1,7 +1,7 @@
 /*
 * @filename Mutex.h
 * @brief 互斥量操作类, 支持Windows和Linux
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_BASE_MUTEX_H_

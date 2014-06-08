@@ -2,7 +2,7 @@
 * @file LogFile.h
 * @brief log to file
 *
-* @ahthor macwe@qq.com
+* @ahthor macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_LOGFILE_H_

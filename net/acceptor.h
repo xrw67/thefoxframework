@@ -1,7 +1,7 @@
 /*
  * @filename acceptor.h
  * @brief tcp acceptor
- * @author macwe@qq.com
+ * @author macwe1024 at gmail dot com
  */
 
 #ifndef _THEFOX_NET_ACCEPTOR_H_
@@ -16,20 +16,23 @@
 namespace thefox
 {
 
-class TcpServer;
 #ifdef WIN32
 class Thread;
 #endif
 
+typedef std::function<void(SOCKET, const InetAddress &, const InetAddress &)> NewConnectionCallback;
+
 class Acceptor
 {
 public:
-    Acceptor(TcpServer *server, const InetAddress& listenAddr);
+    Acceptor(const InetAddress& listenAddr);
     ~Acceptor(void);
 
 	bool init();
 	bool listen();
 	bool listening() const { return _listening; }
+    void setNewConnectionCallback(const NewConnectionCallback &cb)
+    { _newConnectionCallback = cb; }
 
 #ifndef WIN32
 	void handleAccept(IoEvent *ev);
@@ -38,10 +41,10 @@ public:
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Acceptor);
 
-	TcpServer *_server;
 	const InetAddress _listenAddr;
 	Socket _acceptSocket;
 	bool _listening;
+    NewConnectionCallback _newConnectionCallback;
 
 #ifdef WIN32
 	void acceptLoop();

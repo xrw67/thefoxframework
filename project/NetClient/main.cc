@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
 	loop.start();
 
 	client->open(InetAddress("127.0.0.1", 7901));
-	client->close();
 	
 	loop.join();
 

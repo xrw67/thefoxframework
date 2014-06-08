@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <functional>
 #include <base/common.h>
 
 namespace thefox
@@ -91,6 +92,8 @@ void setLogHandler(const LogHandler &newFunc);
 
 void setLogLevel(LogLevel level);
 LogLevel logLevel();
+
+#undef ERROR
 
 #define THEFOX_LOG(LEVEL) if (thefox::logLevel() <= thefox::LOGLEVEL_##LEVEL) \
 	thefox::detail::LogFinisher() =                                           \

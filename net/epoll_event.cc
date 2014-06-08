@@ -1,6 +1,7 @@
 #include <net/epoll_event.h>
 #include <sys/epoll.h>
 #include <log/logging.h>
+#include <net/buffer.h>
 #include <net/tcp_connection.h>
 
 using namespace thefox;
@@ -114,48 +115,31 @@ bool EpollEvent::processEvents(uint32_t timer)
 	}
 }
 
-bool EpollEvent::updateRead(IoEvent *ev)
+bool EpollEvent::updateRead(const TcpConnectionPtr &conn)
 {
 	THEFOX_TRACE_FUNCTION;
 
 }
 
-bool EpollEvent::updateWrite(IoEvent *ev)
+bool EpollEvent::updateWrite(const TcpConnectionPtr &conn)
 {
 	THEFOX_TRACE_FUNCTION;
 
-	ev->enterIo();
+	int ret;
+	Buffer *buffer = conn->writeBuffer();
 
-	TcpConnection
-	Socket::write(ev->conn->fd(), )
+	while (buffer->readableBytes() > 0) {
+		ret = write(conn->fd(), buffer->peek(), buffer->readableBytes());
+		
+		if (-1 == ret && EAGAIN != errno) {
+			THEFOX_LOG(ERROR) << "write error";
+			return false;
+		}
 
+		buffer->retrieve(ret);
+	}
 
-	WSABUF wsabuf[1];
-	TcpConnection *conn = ev->conn;
-	Buffer *writebuf = conn->writeBuffer();
-
-	wsabuf[0].buf = writebuf->peek();
-	wsabuf[0].len = writebuf->readableBytes();
-
-	EventOvlp *ovlp = _ovlpPool.get();
-	::ZeroMemory(ovlp, sizeof(EventOvlp));
-	ovlp->type = OVLP_TYPE_WRITE;
-	ovlp->ev = ev;
-
-	DWORD nBytes = 0;
-    DWORD flags = 0;
-    int byteSend = WSASend(conn->fd(), wsabuf, 1, 
-                            &nBytes, flags, &ovlp->ovlp, NULL);
-    if (SOCKET_ERROR == byteSend && WSA_IO_PENDING != WSAGetLastError()) {
-        THEFOX_LOG(ERROR) << "postWrite() failed!";
-		//  ¹Ø±Õconnection
-		ev->leaveIo();
-		_ovlpPool.put(ovlp);
-		conn->connectDestroyed();
-		return false;
-    }
 	return true;
-
 }
 
 void EpollEvent::handler(IoEvent *ev, uint32_t revents)
@@ -169,17 +153,29 @@ void EpollEvent::handler(IoEvent *ev, uint32_t revents)
 
 }
 
-void EpollEvent::handleRead(IoEvent *ev)
+bool EpollEvent::handleRead(const TcpConnectionPtr &conn)
 {
+	int ret;
+	Buffer *buffer = conn->readBuffer();
 
+	buffer->ensureWritableBytes(kDefaultBufferSize);
+	while ((ret = read(conn->fd(), buffer->beginWrite(), kDefaultBufferSize)) > 0) {
+		conn->addReadBytes(ret);
+	}
+
+	if (-1 == ret && EAGAIN != error) {
+		THEFOX_LOG(ERROR) << "read error";
+		return false;
+	} // else 读完成
+	return true;
 }
 
-void EpollEvent::handleWrite(IoEvent *ev)
+bool EpollEvent::handleWrite(const TcpConnectionPtr &conn)
 {
-
+	
 }
 
-void EpollEvent::handleClose(IoEvent *ev)
+bool EpollEvent::handleClose(const TcpConnectionPtr &conn)
 {
 
 

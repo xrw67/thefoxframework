@@ -1,5 +1,20 @@
-#ifndef _THEFOX_BASE_TYPES_H_
-#define _THEFOX_BASE_TYPES_H_
+/*
+ * @brief 这里放一些最常用的头文件、宏、函数等，需要C++11的支持才行
+ * @author macwe1024 at gmail dot com
+ *
+ */
+
+#ifndef _THEFOX_BASE_COMMON_H_
+#define _THEFOX_BASE_COMMON_H_
+
+#include <stdint.h>
+#include <string>
+#include <memory>
+#include <functional>
+
+#ifndef NDEBUG
+#include <assert.h>
+#endif
 
 #ifdef WIN32
 	#pragma warning(disable:4819)
@@ -11,50 +26,17 @@
 	#endif
 #endif
 
-// 简单类型定义
-#if defined WIN32 && _MSC_VER < 1600 // MSVC 2010
-	typedef __int8 int8_t;
-	typedef __int16 int16_t;
-	typedef __int32 int32_t;
-	typedef __int64 int64_t;
-	typedef unsigned __int8 uint8_t;
-	typedef unsigned __int16 uint16_t;
-	typedef unsigned __int32 uint32_t;
-	typedef unsigned __int64 uint63_t;
-#else
-	#include <stdint.h>
-	#define THEFOX_USE_CXX11
-#endif
-
-#include <assert.h>
-#include <string>
-
-#ifdef THEFOX_USE_CXX11
-	#include <memory>
-	#include <functional>
-	using namespace std::placeholders; //std::bind可替换参数的占位符
-#else
-	#include <base/shared_ptr.h>
-	#include <base/weak_ptr.h>
-	#include <base/scoped_ptr.h>
-	#include <base/function.h>
-#endif
-
 namespace thefox 
 {
+
+using std::string;
+using namespace std::placeholders; //std::bind可替换参数的占位符
 
 // 指定是否允许copy ctor 和 assign opt.
 #undef THEFOX_DISALLOW_EVIL_CONSTRUCTORS
 #define THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TypeName)    \
-  TypeName(const TypeName&);                           \
-  void operator=(const TypeName&)
-
-// 声明隐私转换
-template<typename T>
-inline T implicit_cast(T const &x) 
-{
-	return x;
-}
+    TypeName(const TypeName&);                         \
+    void operator=(const TypeName&)
 
 // 安全删除对象
 #define SAFE_DELETE(p)        \
@@ -75,4 +57,4 @@ inline T implicit_cast(T const &x)
 
 } // namespace thefox
 
-#endif // _THEFOX_BASE_TYPES_H_
+#endif // _THEFOX_BASE_COMMON_H_

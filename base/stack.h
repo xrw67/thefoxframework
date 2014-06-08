@@ -1,7 +1,7 @@
 /*
  * @filename Stack.h
  * @brief 使用数组实现的栈
- * @author macwe@qq.com
+ * @author macwe1024 at gmail dot com
  */
 #ifndef _THEFOX_BASE_STACK_H_
 #define _THEFOX_BASE_STACK_H_

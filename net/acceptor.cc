@@ -9,9 +9,8 @@
 
 using namespace thefox;
 
-Acceptor::Acceptor(TcpServer *server,const InetAddress& listenAddr)
-	: _server(server)
-	, _listenAddr(listenAddr)
+Acceptor::Acceptor(const InetAddress& listenAddr)
+	: _listenAddr(listenAddr)
 	, _listening(false)
 	, _acceptSocket(Socket::create())
 {
@@ -37,7 +36,7 @@ bool Acceptor::init()
 
 	assert(_acceptSocket.fd() >= 0);
 
-	bool ret = _acceptSocket.bind(listenAddr);
+	bool ret = _acceptSocket.bind(_listenAddr);
 	
 #ifdef WIN32
 	_acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor.acceptloop()");
@@ -85,7 +84,8 @@ void Acceptor::acceptLoop()
 					if (INVALID_SOCKET == clientSockfd)
 						THEFOX_LOG(ERROR) << "accept a socket error";
 
-					_server->handleNewConnection(clientSockfd, _listenAddr, peerAddr);
+                    if (_newConnectionCallback)
+                        _newConnectionCallback(clientSockfd, _listenAddr, peerAddr);
                 }
             }
         }

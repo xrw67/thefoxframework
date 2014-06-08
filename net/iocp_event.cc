@@ -7,9 +7,7 @@ using namespace thefox;
 
 IocpEvent::IocpEvent()
 	: _hIocp(NULL)
-{
-	THEFOX_TRACE_FUNCTION;
-}
+{}
 
 IocpEvent::~IocpEvent()
 {
@@ -38,32 +36,13 @@ bool IocpEvent::init()
 	return (NULL == _hIocp);
 }
 
-bool IocpEvent::postClose(const TcpConnectionPtr &conn)
+bool IocpEvent::registerConnection(TcpConnection *conn)
 {
 	THEFOX_TRACE_FUNCTION;
 
-	EventOvlp *ovlp = _ovlpPool.get();
-	::ZeroMemory(ovlp, sizeof(EventOvlp));
-	ovlp->type = OVLP_TYPE_CLOSE;
-	ovlp->conn = conn;
+	assert(NULL != conn);
 
-	if (0 == ::PostQueuedCompletionStatus(_hIocp, 0, NULL, &ovlp->ovlp)) {
-		DWORD err = GetLastError();
-		THEFOX_LOG(ERROR) << "postEvent() failed, errno=" << err;
-		_ovlpPool.put(ovlp);
-		conn->connectDestroyed();
-		return false;
-	}
-	return true;
-}
-
-bool IocpEvent::registerConnection(const TcpConnectionPtr &conn)
-{
-	THEFOX_TRACE_FUNCTION << "event=" << ev;
-
-	assert(NULL == conn);
-
-	if (NULL == CreateIoCompletionPort((HANDLE)conn->fd(), _hIocp, 0, 0)) {
+	if (NULL == ::CreateIoCompletionPort((HANDLE)conn->fd(), _hIocp, 0, 0)) {
 		DWORD err = ::GetLastError();
 		THEFOX_LOG(ERROR) << "addEvent() failed, errno=" << err;
 		return false;
@@ -71,7 +50,7 @@ bool IocpEvent::registerConnection(const TcpConnectionPtr &conn)
 	return true;
 }
 
-bool IocpEvent::unregisterConnection(const TcpConnectionPtr &conn)
+bool IocpEvent::unregisterConnection(TcpConnection *conn)
 {
 	THEFOX_TRACE_FUNCTION << "conn_id" << conn->id();
 
@@ -112,7 +91,7 @@ bool IocpEvent::processEvents(uint32_t timer)
 	}
 
 	int32_t ovlpType = ovlp->type;
-	TcpConnectionPtr conn = ovlp->conn.lock();
+	TcpConnection *conn = ovlp->conn;
 
 	_ovlpPool.put(ovlp);
 
@@ -121,17 +100,17 @@ bool IocpEvent::processEvents(uint32_t timer)
         return true;
 	}
 
-	if (err == ERROR_NETNAME_DELETED /* the socket was closed */
-            || err == ERROR_OPERATION_ABORTED /* the operation was canceled */) {
-        /*
-         * the WSA_OPERATION_ABORTED completion notification
-         * for a file descriptor that was closed
-         */
+	//if (err == ERROR_NETNAME_DELETED /* the socket was closed */
+ //           || err == ERROR_OPERATION_ABORTED /* the operation was canceled */) {
+ //       /*
+ //        * the WSA_OPERATION_ABORTED completion notification
+ //        * for a file descriptor that was closed
+ //        */
 
-        THEFOX_LOG(WARN) << "iocp: aborted event, type: " <<  ovlpType 
-        				<< ", fd: "<< conn->fd() << ", err:" << err;
-        return true;
-    }
+ //       THEFOX_LOG(WARN) << "iocp: aborted event, type: " <<  ovlpType 
+ //       				<< ", fd: "<< conn->fd() << ", err:" << err;
+ //       return true;
+ //   }
 
 	if (err)
 		THEFOX_LOG(ERROR) << "GetQueuedCompletionStatus() returned operation error:" << err;
@@ -141,9 +120,17 @@ bool IocpEvent::processEvents(uint32_t timer)
 	return true;
 }
 
-bool IocpEvent::updateRead(const TcpConnectionPtr &conn)
+bool IocpEvent::updateRead(TcpConnection *conn)
 {
 	THEFOX_TRACE_FUNCTION;
+
+    if (NULL == conn)
+        return false;
+
+    conn->enterIo();
+
+    if (NULL == conn)
+        return false;
 
 	WSABUF wsabuf[1];
 	Buffer *readbuf = conn->readBuffer();
@@ -164,18 +151,27 @@ bool IocpEvent::updateRead(const TcpConnectionPtr &conn)
     int bytesRecv = WSARecv(conn->fd(), wsabuf, 1, 
 							&nBytes, &flags, &ovlp->ovlp, NULL);
     if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
-        THEFOX_LOG(ERROR) << "postRead() failed!";
+        THEFOX_LOG(ERROR) << "updateRead() failed!";
 		//  ¹Ø±Õconnection
 		_ovlpPool.put(ovlp);
+        conn->leaveIo();
 		conn->connectDestroyed();
 		return false;
     }
 	return true;
 }
 
-bool IocpEvent::updateWrite(const TcpConnectionPtr &conn)
+bool IocpEvent::updateWrite(TcpConnection *conn)
 {
 	THEFOX_TRACE_FUNCTION;
+
+    if (NULL == conn)
+        return false;
+
+    conn->enterIo();
+
+    if (NULL == conn)
+        return false;
 
 	WSABUF wsabuf[1];
 	Buffer *writebuf = conn->writeBuffer();
@@ -193,37 +189,38 @@ bool IocpEvent::updateWrite(const TcpConnectionPtr &conn)
     int byteSend = WSASend(conn->fd(), wsabuf, 1, 
                             &nBytes, flags, &ovlp->ovlp, NULL);
     if (SOCKET_ERROR == byteSend && WSA_IO_PENDING != WSAGetLastError()) {
-        THEFOX_LOG(ERROR) << "postWrite() failed!";
+        THEFOX_LOG(ERROR) << "updateWrite() failed!";
 		//  ¹Ø±Õconnection
 		_ovlpPool.put(ovlp);
+        conn->leaveIo();
 		conn->connectDestroyed();
 		return false;
     }
 	return true;
 }
 
-void IocpEvent::handler(const TcpConnectionPtr &conn, int32_t ovlpType, uint32_t avaliable)
+void IocpEvent::handler(TcpConnection *conn, int32_t ovlpType, uint32_t avaliable)
 {
 	THEFOX_TRACE_FUNCTION << "type=" << ovlpType << " avaliable=" << avaliable;
 
-	if (0 == avaliable || OVLP_TYPE_CLOSE = ovlpType) {
-		ev->leaveIo();
+    if (0 == avaliable || OVLP_TYPE_CLOSE == ovlpType) {
+		conn->leaveIo();
 		conn->connectDestroyed();
 		return;
 	}
 
 	switch (ovlpType) {
 	case OVLP_TYPE_READ:
-		handleRead(conn, avaliable);
+		onRead(conn, avaliable);
 		break;
 	case OVLP_TYPE_WRITE:
-		handleWrite(conn, avaliable);
+		onWrite(conn, avaliable);
 		break;
 	default:
 		break;
 	}
 }
-void IocpEvent::handleRead(const TcpConnectionPtr &conn, uint32_t avaliable)
+void IocpEvent::onRead(TcpConnection *conn, uint32_t avaliable)
 {
 	THEFOX_TRACE_FUNCTION << " avaliable=" << avaliable;
 
@@ -236,10 +233,11 @@ void IocpEvent::handleRead(const TcpConnectionPtr &conn, uint32_t avaliable)
 	if (conn->_messageCallback)
 		conn->_messageCallback(conn, readbuf, Timestamp::now());
 	
+    conn->leaveIo();
 	updateRead(conn);
 }
 
-void IocpEvent::handleWrite(const TcpConnectionPtr &conn, uint32_t avaliable)
+void IocpEvent::onWrite(TcpConnection *conn, uint32_t avaliable)
 {
 	THEFOX_TRACE_FUNCTION << " avaliable=" << avaliable;
 
@@ -252,9 +250,9 @@ void IocpEvent::handleWrite(const TcpConnectionPtr &conn, uint32_t avaliable)
 	if (conn->_writeCompleteCallback)
 		conn->_writeCompleteCallback(conn);
 
-
+    conn->leaveIo();
 	if (0 == writebuf->readableBytes())
-		ev->write = false;
+        conn->resetWrite();
 	else
 		updateWrite(conn);
 }

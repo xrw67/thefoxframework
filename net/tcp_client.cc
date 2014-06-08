@@ -9,12 +9,8 @@ TcpClient::TcpClient(EventLoop *loop, const std::string &nameArg)
 	: _loop(loop)
 	, _name(nameArg)
 	, _conn(NULL)
-	, _connectionCallback(NULL)
 	, _messageCallback(defaultMessageCallback)
-	, _writeCompleteCallback(NULL)
-{
-
-}
+{}
 
 TcpClient::TcpClient()
 {

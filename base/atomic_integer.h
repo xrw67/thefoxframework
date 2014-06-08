@@ -1,7 +1,7 @@
 /*
 * @filename Atomic.h
 * @brief 原子的数字类
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_BASE_ATOMIC_INTEGER_H_

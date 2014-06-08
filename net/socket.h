@@ -1,30 +1,27 @@
-#ifndef _THEFOX_NET_SOCKET_H_
+ï»¿#ifndef _THEFOX_NET_SOCKET_H_
 #define _THEFOX_NET_SOCKET_H_
 
 #ifdef WIN32
 #include <Winsock2.h>
 #define socklen_t int
 
-class SocketLibrary
-{
-public:
-	/// @breaf socket¿â³õÊ¼»¯
-    static void startup()
-	{
-        WSADATA wsd;
-        ::WSAStartup(MAKEWORD(2, 2), &wsd);
-    }
+/// @breaf socketåº“åˆå§‹åŒ–
+#define THEFOX_SOCKET_STARTUP               \
+	WSADATA wsd;                            \
+	::WSAStartup(MAKEWORD(2, 2), &wsd);
 
-	/// @breaf socket¿â×¢Ïú
-    static void cleanup() { ::WSACleanup(); }
-};
+/// @breaf socketåº“æ³¨é”€
+#define THEFOX_SOCKET_CLEANUP               \
+	::WSACleanup();
 
 #else
-#include <sys/types.h>
-#include <sys/socket.h>
-#define SOCKET int
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
+	#include <sys/types.h>
+	#include <sys/socket.h>
+    typedef int SOCKET
+	#define INVALID_SOCKET -1
+	#define SOCKET_ERROR -1
+	#define THEFOX_SOCKET_STARTUP
+	#define THEFOX_SOCKET_CLEANUP
 #endif
 
 #include <base/common.h>
@@ -50,7 +47,7 @@ public:
 	SOCKET accept(InetAddress *peerAddr);
 	
 	bool shutdownWrite();
-	// È¡ÏûnagleËã·¨
+	// å–æ¶ˆnagleç®—æ³•
 	void setTcpNoDelay(bool on);
 	void setKeepAlive(bool on);
 

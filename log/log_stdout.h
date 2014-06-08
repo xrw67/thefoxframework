@@ -2,7 +2,7 @@
 * @file log_syslog.h
 * @brief log to syslog server
 *
-* @ahthor macwe@qq.com
+* @ahthor macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_LOGSYSLOG_H_

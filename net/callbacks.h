@@ -11,15 +11,12 @@ class Buffer;
 class TcpConnection;
 
 typedef std::function<void(TcpConnection *conn)> ConnectionCallback;
-typedef std::function<void(TcpConnection *conn)> RemoveConnectionCallback;
 typedef std::function<void(TcpConnection *conn, 
-							Buffer *buffer, 
-							Timestamp recvTime)> MessageCallback;
+                           Buffer *buffer, const Timestamp recvTime)> MessageCallback;
 typedef std::function<void(TcpConnection *conn)> WriteCompleteCallback;
 
 void defaultMessageCallback(TcpConnection *conn, 
-							Buffer *buffer, 
-							Timestamp recvTime);
+							Buffer *buffer, const Timestamp recvTime);
 
 } // namespace thefox
 

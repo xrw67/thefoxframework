@@ -1,7 +1,7 @@
 /*
 * @filename TcpConnection.h
 * @brief 表示一个客户连接
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_NET_TCPCONNECTION_H_
@@ -17,11 +17,9 @@
 namespace thefox
 {
 
-#ifndef WIN32
-typedef int SOCKET
-#endif
-
 class EventLoop;
+class TcpConnection;
+typedef std::function<void(TcpConnection *conn)> RemoveConnectionCallback;
 
 class TcpConnection
 {
@@ -29,25 +27,22 @@ public:
     enum StateT { kDisconnected, kConnecting, kConnected, kDisconnecting };
 
     TcpConnection(EventLoop *loop, SOCKET sockfd, int id, 
-		const InetAddress& localAddr, const InetAddress &peerAddr);
+                  const InetAddress &localAddr, const InetAddress &peerAddr);
     ~TcpConnection();
 	
-    /// @brief 获取连接ID
+    /// @brief get conn id
     int32_t id() const { return _id; }
 
-    /// @brief 获取SOCKET句柄
+    /// @brief get socket handle
     SOCKET fd() const { return _socket.fd(); }
 
-    /// @brief 获取对端ip地址
+    /// @brief get peer address
     const InetAddress &peerAddr() const { return _peerAddr; }
 
-    /// @brief 获取Read缓冲区指针
     Buffer *readBuffer() { return &_readBuffer; }
-
-    /// @brief 获取Write缓冲区指针
     Buffer *writeBuffer() { return &_writeBuffer; }
 
-    /// @brief 获取连接状态
+    /// @brief get connection state
     StateT state() const { return _state; }
 	void setState(StateT state) { _state = state; }
 
@@ -67,7 +62,12 @@ public:
 	void setTcpNoDelay(bool on);
 	void forceClose();
 	void connectEstablished();
-	void connectDestroyed();
+
+    size_t pendingIo()
+    {
+        MutexGuard lock(_iomutex);
+        return _pendingIo;
+    }
 
     void setConnectionCallback(const ConnectionCallback &cb)
 	{ _connectionCallback = cb; }
@@ -78,13 +78,20 @@ public:
 	void setRemoveConnectionCallback(const RemoveConnectionCallback &cb)
 	{ _removeConnectionCallback = cb; }
 
-	void addReadBytes(size_t bytes)
-	{ _readBytes += bytes;}
-	void addWriteBytes(size_t bytes)
-	{ _writeBytes += bytes; }
-
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
+
+    void connectDestroyed();
+
+    bool testAndSetWrite();
+    void resetWrite();
+
+    void enterIo();
+    size_t leaveIo();
+
+    void addReadBytes(size_t bytes) { _readBytes += bytes; }
+    void addWriteBytes(size_t bytes) { _writeBytes += bytes; }
+
 	EventLoop *_loop;
     int32_t _id;
     Socket _socket;
@@ -92,12 +99,11 @@ private:
     const InetAddress _peerAddr;
     Buffer _readBuffer;
     Buffer _writeBuffer;
-	Mutex _mutex;
     StateT _state;
 
     void *_arg;
 
-    // 统计信息
+    // io transfer counter
     size_t _readBytes;
     size_t _writeBytes;
 
@@ -105,6 +111,12 @@ private:
     MessageCallback _messageCallback;
     WriteCompleteCallback _writeCompleteCallback;
 	RemoveConnectionCallback _removeConnectionCallback;
+
+    Mutex _writemutex;
+    bool _write;
+
+    Mutex _iomutex;
+    size_t _pendingIo;
 
 #ifdef WIN32
 	friend class IocpEvent;

@@ -1,7 +1,6 @@
 /*
- * @filename tcp_client.h
- * @brief tcp客户端连接类
- * @author macwe@qq.com
+ * @brief tcp client
+ * @author macwe1024 at gmail dot com
  */
 
 #ifndef _THEFOX_NET_TCPCLIENT_H_
@@ -24,28 +23,25 @@ public:
     TcpClient(EventLoop *loop, const std::string &nameArg);
     TcpClient(void);
         
-    /// @brief 连接服务器
-    /// @return 成功返回true，否则返回false
+    /// @brief connect to server
+    /// @return return true if success，then return false
     bool open(const InetAddress &serverAddr);
         
-    /// @brief 关闭连接
+    /// @brief close the client
     void close();
         
-    /// @brief 查看是否已经连接
-    /// @return 已经连接返回true，否则返回false
+    /// @brief check if connection is opened
+    /// @return return true if success，then return false
     bool opened();
     
-    /// @brief 发送数据
+    /// @brief send data
     void send(const char *data, size_t len);
     void send(const std::string &data);
 
-    /// @brief 设置连接状态改变回调函数
     void setConnectionCallback(const ConnectionCallback &cb)
     { _connectionCallback = cb; }
-	/// @brief 设置收到数据的回调函数
     void setMessageCallback(const MessageCallback &cb)
     { _messageCallback = cb; }
-	/// @brief 设置缓冲区中数据发送完成后的回调函数
     void setWriteCompleteCallback(const WriteCompleteCallback &cb)
     { _writeCompleteCallback = cb; }
 

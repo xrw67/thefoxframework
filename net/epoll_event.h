@@ -5,6 +5,10 @@
 #include <base/common.h>
 #include <net/event.h>
 
+#ifdef WIN32
+#error "class EpollEvent run in Linux only"
+#else
+
 struct epoll_event;
 
 namespace thefox
@@ -19,25 +23,28 @@ class EpollEvent
 
 	bool init();
 	bool processEvents(uint32_t timer);
-	bool postClose(const TcpConnectionPtr &conn);
 
-	bool registerConnection(const TcpConnectionPtr &conn);
-	bool unregisterConnection(const TcpConnectionPtr &conn);
-
-	bool updateRead(const TcpConnectionPtr &conn);
-	bool updateWrite(const TcpConnectionPtr &conn);
+    bool registerConnection(TcpConnection *conn);
+    bool unregisterConnection(TcpConnection *conn);
+    void closeConnection(TcpConnection *conn);
+    bool updateRead(TcpConnection *conn);
+    bool updateWrite(TcpConnection *conn);
 	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EpollEvent);
-	void handler(const TcpConnectionPtr &conn, uint32_t revents);
-	void handleRead(const TcpConnectionPtr &conn);
-	void handleWrite(const TcpConnectionPtr &conn);
+    bool handler(TcpConnection *conn, uint32_t revents);
+    bool onRead(TcpConnection *conn);
+    bool onWrite(TcpConnection *conn);
 
 	typedef std::vector<struct epoll_event> EventList;
 	int _epollfd;
 	EventList _events;
+
+	static const size_t kDefaultBufferSize = 8192;
 };
 
 } // namespace thefox
+
+#endif // WIN32
 
 #endif // _THEFOX_NET_EPOLL_H_

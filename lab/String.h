@@ -1,7 +1,7 @@
 /**
 * @file String.h
 * @brief 字符串类
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 #ifndef _THEFOX_STRING_H_
 #define _THEFOX_STRING_H_

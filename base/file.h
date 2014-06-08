@@ -1,7 +1,7 @@
 /*
  * @filename File.h
  * @brief 文件指针包装类
- * @author macwe@qq.com
+ * @author macwe1024 at gmail dot com
  */
 
 #ifndef _THEFOX_BASE_FILE_H_

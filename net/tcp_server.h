@@ -1,7 +1,6 @@
 /*
- * @filename TcpServer.h
- * @brief tcp服务器类
- * @author macwe@qq.com
+ * @brief tcp server
+ * @author macwe1024 at gmail dot com
  */
 
 #ifndef _THEFOX_NET_TCPSERVER_H_
@@ -14,6 +13,7 @@
 #include <base/Atomic_integer.h>
 #include <base/object_pool.h>
 #include <net/callbacks.h>
+#include <net/inet_address.h>
 #include <net/acceptor.h>
 
 namespace thefox
@@ -29,36 +29,32 @@ public:
     TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg);
     ~TcpServer(void);
 	
-	/// @brief 初始化
-	/// @return 成功返回true，否则返回false
-	bool init();
-	
-    /// @brief 启动服务
-    /// @return 成功返回true，否则返回false
+    /// @brief start the server
+    /// @return return true if success，then return false
     bool start();
     
-    /// @brief 查看服务是否已经启动
-    /// @return 已经启动返回true，否则返回false
+    /// @brief check if the server started
+    /// @return return true if success，then return false
 	bool started() const { return _started; }
-	
-	/// @brief 设置连接状态改变回调函数
+
     void setConnectionCallback(const ConnectionCallback &cb)
-    { _connectionCallback = cb; }
-	/// @brief 设置收到数据的回调函数
+    { 
+        _connectionCallback = cb; 
+    }
     void setMessageCallback(const MessageCallback &cb)
-    { _messageCallback = cb; }
-	/// @brief 设置缓冲区中数据发送完成后的回调函数
+    {
+        _messageCallback = cb;
+    }
     void setWriteCompleteCallback(const WriteCompleteCallback &cb)
-    { _writeCompleteCallback = cb; }
+    {
+        _writeCompleteCallback = cb; 
+    }
 
 private:
-	friend class Acceptor;
-	friend class TcpConnection;
-
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpServer);
 
-	void handleNewConnection(SOCKET sockfd, const InetAddress &localAddr, const InetAddress &peerAddr);
-	void removeConnection(TcpConnection *conn);
+	void onNewConnection(SOCKET sockfd, const InetAddress &localAddr, const InetAddress &peerAddr);
+	void onRemoveConnection(TcpConnection *conn);
 
 	typedef std::map<int32_t, TcpConnection *> ConnectionMap;
 

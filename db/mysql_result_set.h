@@ -1,7 +1,7 @@
 /*
 * @filename MySqlResultSet.h
 * @brief libmysql结果集的C++封装类，支持Windows和Linux
-* @author macwe@qq.com
+* @author macwe1024 at gmail dot com
 */
 
 #ifndef _THEFOX_DB_MYSQL_RESULTSET_H_

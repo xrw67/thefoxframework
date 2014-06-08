@@ -1,43 +1,47 @@
 #include <net/event_loop.h>
-#ifdef WIN32
-#include <net/iocp_event.h>
-#else
-#include <net/epoll_event.h>
-#endif
-
 #include <base/thread.h>
 #include <log/logging.h>
+
+#ifdef WIN32
+    #include <net/iocp_event.h>
+#else
+    #include <net/epoll_event.h>
+#endif
+
+namespace thefox
+{
+
+inline int getThreadNum()
+{
+#ifdef WIN32
+    SYSTEM_INFO si;
+    GetSystemInfo(&si);
+    return static_cast<int>(si.dwNumberOfProcessors) * 2;
+#else
+    return 1;
+#endif
+}
+
+} // namespace thefox
 
 using namespace thefox;
 
 EventLoop::EventLoop()
-	: _started(false)
-#ifdef WIN32
-	, _poller(new IocpEvent())
-#else
-	, _poller(new EpollEvent())
-#endif
+    : _started(false)
+    , _poller(new Poller())
+    , _threadNum(getThreadNum())
 {
-    init();
+    _poller->init();
 }
 
 EventLoop::~EventLoop()
 {
     stop();
 
-	for (size_t i = 0; i < _threads.size(); ++i)
-		delete _threads[i];
+    for (size_t i = 0; i < _threads.size(); ++i) {
+        delete _threads[i];
+    }
 	_threads.clear();
-}
-
-void EventLoop::init()
-{
-	THEFOX_TRACE_FUNCTION;
-
-    _poller->init();
-	int threads = getCpuNumber() * 2;
-    for (int i = 0; i < threads; ++i)
-		_threads.push_back(new Thread(std::bind(&EventLoop::loop, this), "eventloop.loop"));
 }
 
 void EventLoop::start()
@@ -45,16 +49,21 @@ void EventLoop::start()
 	THEFOX_TRACE_FUNCTION;
 
 	_started = true;
-    for (size_t i = 0; i < _threads.size(); ++i)
-		_threads[i]->start();
+
+    for (int i = 0; i < _threadNum; ++i) {
+        Thread *thread = new Thread(std::bind(&EventLoop::loop, this), "EventLoop::loop");
+        _threads.push_back(thread);
+        thread->start();
+    }
 }
 
 void EventLoop::join()
 {
 	THEFOX_TRACE_FUNCTION;
 
-	for (size_t i = 0; i < _threads.size(); ++i)
-		_threads[i]->join();
+    for (size_t i = 0; i < _threads.size(); ++i) {
+        _threads[i]->join();
+    }
 }
 
 void EventLoop::stop()
@@ -63,33 +72,29 @@ void EventLoop::stop()
 
 	_started = false;
 
-   for (size_t i = 0; i < _threads.size(); ++i)
-		_threads[i]->stop();
+    for (size_t i = 0; i < _threads.size(); ++i) {
+        _threads[i]->stop();
+    }
 }
 
-bool EventLoop::postClose(IoEvent *ev)
+bool EventLoop::updateRead(TcpConnection *conn)
 {
-	return _poller->postClose(ev);
+	return _poller->updateRead(conn);
 }
 
-bool EventLoop::updateRead(IoEvent *ev)
+bool EventLoop::updateWrite(TcpConnection *conn)
 {
-	return _poller->updateRead(ev);
+	return _poller->updateWrite(conn);
 }
 
-bool EventLoop::updateWrite(IoEvent *ev)
+bool EventLoop::registerConnection(TcpConnection *conn)
 {
-	return _poller->updateWrite(ev);
+	return _poller->registerConnection(conn);
 }
 
-bool EventLoop::addConnection(TcpConnection *conn)
+bool EventLoop::unregisterConnection(TcpConnection *conn)
 {
-	return _poller->addConnection(conn);
-}
-
-bool EventLoop::delConnection(TcpConnection *conn)
-{
-	return _poller->delConnection(conn);
+	return _poller->unregisterConnection(conn);
 }
 
 void EventLoop::loop()
@@ -101,17 +106,4 @@ void EventLoop::loop()
 		//
 		_poller->processEvents(time);
 	}
-}
-
-int EventLoop::getCpuNumber()
-{
-	THEFOX_TRACE_FUNCTION;
-
-#ifdef WIN32
-    SYSTEM_INFO si;
-    GetSystemInfo(&si);
-    return si.dwNumberOfProcessors;
-#else
-	return 2;
-#endif
 }

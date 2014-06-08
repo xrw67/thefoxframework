@@ -7,9 +7,6 @@
     <Filter Include="net">
       <UniqueIdentifier>{07e1d8f6-b463-4363-ad4b-81a3a4a2352e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rpc">
-      <UniqueIdentifier>{281c66db-8e2f-49e0-9406-a232f0ebf884}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\log\Logging.h">
@@ -57,42 +54,6 @@
     <ClInclude Include="..\..\net\tcp_client.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc.pb.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_channel.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_client.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_codec.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_controller.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_server.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_service.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\rpc_service_manager.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\task.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\task_manager.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\oneway_dispatcher.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\rpc\common.h">
-      <Filter>rpc</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\log\Logging.cc">
@@ -125,34 +86,5 @@
     <ClCompile Include="..\..\net\tcp_client.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc.pb.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc_channel.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc_client.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc_controller.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc_server.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc_service.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\rpc_service_manager.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\rpc\task_manager.cc">
-      <Filter>rpc</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\rpc\rpc.proto">
-      <Filter>rpc</Filter>
-    </None>
   </ItemGroup>
 </Project>
