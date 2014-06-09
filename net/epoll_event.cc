@@ -1,4 +1,5 @@
 #include <net/epoll_event.h>
+#include <sys/socket.h>
 #include <sys/epoll.h>
 #include <log/logging.h>
 #include <net/buffer.h>
@@ -10,9 +11,7 @@ using namespace thefox::net;
 EpollEvent::EpollEvent()
 	: _epollfd(-1)
 	, _events(32)
-{
-	THEFOX_TRACE_FUNCTION;
-}
+{}
 
 EpollEvent::~EpollEvent()
 {
@@ -101,19 +100,14 @@ bool EpollEvent::processEvents(uint32_t timer)
 	}
 	
 	// resize max num of wait events;
-	if (implicit_cast<size_t>(numEvents) == _events.size())
+	if (implicit_cast<size_t>(numEvents) == _events.size()) {
 		_events.resize(events.size() * 2);
+	}
 	
 	for (int i = 0; i < numEvents; ++i) {
 		
-		ev->handler(static_cast<Event *>(_events[i].data.ptr), _events[i].events);
+		ev->handler(reinterpret_cast<Event *>(_events[i].data.ptr), (void *)_events[i].events);
 	}
-}
-
-bool EpollEvent::updateRead(const TcpConnectionPtr &conn)
-{
-	THEFOX_TRACE_FUNCTION;
-
 }
 
 bool EpollEvent::updateWrite(const TcpConnectionPtr &conn)
@@ -134,12 +128,18 @@ bool EpollEvent::updateWrite(const TcpConnectionPtr &conn)
 		buffer->retrieve(ret);
 	}
 
+	if (conn->_writeCompleteCallback) {
+		conn->_writeCompleteCallback(conn);
+	}
+
 	return true;
 }
 
-void EpollEvent::handler(IoEvent *ev, uint32_t revents)
+void EpollEvent::handler(IoEvent *ev, void *arg)
 {
 	THEFOX_TRACE_FUNCTION;
+
+	uint32_t revents = (uint32_t)arg;
 
 	if (revents & (EPOLLERR | EPOLLHUP)) {
 		THEFOX_LOG(ERROR) << "error on		";
@@ -148,13 +148,16 @@ void EpollEvent::handler(IoEvent *ev, uint32_t revents)
 
 }
 
-bool EpollEvent::handleRead(const TcpConnectionPtr &conn)
+bool EpollEvent::onRead(IoEvent *ev)
 {
+	THEFOX_TRACE_FUNCTION;
+
 	int ret;
 	Buffer *buffer = conn->readBuffer();
 
 	buffer->ensureWritableBytes(kDefaultBufferSize);
-	while ((ret = read(conn->fd(), buffer->beginWrite(), kDefaultBufferSize)) > 0) {
+
+	while ((ret = ::read(conn->fd(), buffer->beginWrite(), kDefaultBufferSize)) > 0) {
 		conn->addReadBytes(ret);
 	}
 
@@ -165,7 +168,7 @@ bool EpollEvent::handleRead(const TcpConnectionPtr &conn)
 	return true;
 }
 
-bool EpollEvent::handleWrite(IoEvent *ev)
+bool EpollEvent::onWrite(IoEvent *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
@@ -183,10 +186,4 @@ bool EpollEvent::handleWrite(IoEvent *ev)
 		buffer->retrieve(ret);
 	}
 	return true;
-}
-
-bool EpollEvent::handleClose(const TcpConnectionPtr &conn)
-{
-
-
 }

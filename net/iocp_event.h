@@ -30,7 +30,7 @@ public:
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
-    void handler(Event *ev, void *ovlp);
+    void handler(Event *ev, void *arg);
     void onRead(Event *ev, uint32_t avaliable);
     void onWrite(Event *ev, uint32_t avaliable);
 

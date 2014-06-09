@@ -200,13 +200,13 @@ bool IocpEvent::updateWrite(Event *ev)
 	return true;
 }
 
-void IocpEvent::handler(Event *ev, void *ovlp)
+void IocpEvent::handler(Event *ev, void *arg)
 {
     THEFOX_TRACE_FUNCTION;
    
-    EventOvlp *evol = (EventOvlp *)ovlp;
-    int32_t type = evol->type;
-    uint32_t avaliable = evol->avaliable;
+    EventOvlp *ovlp = (EventOvlp *)arg;
+    int32_t type = ovlp->type;
+    uint32_t avaliable = ovlp->avaliable;
     TcpConnection *conn = ev->conn;
 
     if (0 == avaliable || true == ev->error) {

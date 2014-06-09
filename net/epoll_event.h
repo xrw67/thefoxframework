@@ -1,5 +1,5 @@
-#ifndef _THEFOX_NET_EPOLL_H_
-#define _THEFOX_NET_EPOLL_H_
+#ifndef _THEFOX_NET_EPOLL_EVENT_H_
+#define _THEFOX_NET_EPOLL_EVENT_H_
 
 #include <vector>
 #include <base/common.h>
@@ -26,12 +26,12 @@ class EpollEvent
 
     bool addEvent(Event *ev);
     bool delEvent(Event *ev);
-    bool updateRead(Event *ev);
+    bool updateRead(Event *ev) { return true; }
     bool updateWrite(Event *ev);
 	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EpollEvent);
-    bool handler(Event *ev, uint32_t revents);
+    bool handler(Event *ev, void *arg);
     bool onRead(Event *ev);
     bool onWrite(Event *ev);
 
@@ -47,4 +47,4 @@ private:
 
 #endif // WIN32
 
-#endif // _THEFOX_NET_EPOLL_H_
+#endif // _THEFOX_NET_EPOLL_EVENT_H_
