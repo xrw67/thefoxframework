@@ -22,7 +22,7 @@ enum LogLevel {
 namespace detail
 {
 
-// ´ÓÂ·¾¶ÖĞµÃµ½ÎÄ¼şÃû
+// ä»è·¯å¾„ä¸­å¾—åˆ°æ–‡ä»¶å
 inline const char *getFileNameFromPath(char *pathName)
 {
 	char *data = pathName;
@@ -70,7 +70,7 @@ public:
 	void operator=(LogMessage &other);
 };
 
-// ¸ú×Ùº¯ÊıµÄ¿ªÍ·ºÍ½áÊø, ·ÅÔÚº¯ÊıµÄµÚÒ»ĞĞ
+// è·Ÿè¸ªå‡½æ•°çš„å¼€å¤´å’Œç»“æŸ, æ”¾åœ¨å‡½æ•°çš„ç¬¬ä¸€è¡Œ
 class LogTraceFunction {
 public:
 	LogTraceFunction(char *func, char *file, int line);
@@ -85,7 +85,7 @@ private:
 
 } // namespace detail
 
-// Ğ´ÈÕÖ¾º¯Êı
+// å†™æ—¥å¿—å‡½æ•°
 typedef std::function<void(const std::string &message)> LogHandler;
 
 void setLogHandler(const LogHandler &newFunc);

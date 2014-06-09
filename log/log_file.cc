@@ -37,7 +37,7 @@ public:
 			if (x == 0) {
 				int err = ferror(_fp);
 				if (err) {
-					//TODO::´íÎó´¦Àí
+					//TODO::é”™è¯¯å¤„ç†
 				}
 				break;
 			}

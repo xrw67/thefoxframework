@@ -7,7 +7,7 @@ namespace thefox
 {
 namespace detail
 {
-// ÈÕÖ¾¼¶±ð
+// æ—¥å¿—çº§åˆ«
 const char* LogLevelName[LOGLEVEL_NUM_LOG_LEVELS] =
 {
 	"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL",
@@ -18,7 +18,7 @@ LogLevel initLogLevel()
     return LOGLEVEL_TRACE;
 }
 
-//Ä¬ÈÏµÄÈÕÖ¾Êä³öº¯Êý
+//é»˜è®¤çš„æ—¥å¿—è¾“å‡ºå‡½æ•°
 void nullLogHandler(const std::string &message)
 {
 	// Nothing.
@@ -27,7 +27,7 @@ void nullLogHandler(const std::string &message)
 static LogLevel g_logLevel = initLogLevel();
 static LogHandler g_logHandler = nullLogHandler;
 
-// ¸ßÐ§µÄÕûÐÍ×ª×Ö·û´®Ëã·¨ by Matthew Wilson.
+// é«˜æ•ˆçš„æ•´åž‹è½¬å­—ç¬¦ä¸²ç®—æ³• by Matthew Wilson.
 const char digits[] = "9876543210123456789";
 const char* zero = digits + 9;
 const char digitsHex[] = "0123456789ABCDEF";
@@ -169,13 +169,13 @@ void LogTraceFunction::operator=(LogMessage& other)
 
 } // namespace detail
 
-// ÉèÖÃÈÕÖ¾Ð´º¯Êý
+// è®¾ç½®æ—¥å¿—å†™å‡½æ•°
 void setLogHandler(const LogHandler &newFunc)
 {
 	detail::g_logHandler = newFunc;
 }
 
-// ÉèÖÃÈÕÖ¾¼¶±ð
+// è®¾ç½®æ—¥å¿—çº§åˆ«
 void setLogLevel(LogLevel level)
 {
 	detail::g_logLevel = level;
