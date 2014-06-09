@@ -2,7 +2,7 @@
 
 using namespace thefox;
 
-LogSyslog::LogSyslog(const std::string& basename, const InetAddress &serverAddr)
+LogSyslog::LogSyslog(const string& basename, const net::InetAddress &serverAddr)
 	: _basename(basename)
 	, _serverAddr(serverAddr)
 
@@ -14,7 +14,7 @@ LogSyslog::~LogSyslog()
 {
 }
 
-void LogSyslog::append(const std::string &message)
+void LogSyslog::append(const string &message)
 {
 	MutexGuard lock(_mutex);
 	if (_sockfd >= 0) {

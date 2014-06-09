@@ -11,8 +11,8 @@
 
 struct epoll_event;
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class TcpConnection;
 
@@ -24,17 +24,16 @@ class EpollEvent
 	bool init();
 	bool processEvents(uint32_t timer);
 
-    bool registerConnection(TcpConnection *conn);
-    bool unregisterConnection(TcpConnection *conn);
-    void closeConnection(TcpConnection *conn);
-    bool updateRead(TcpConnection *conn);
-    bool updateWrite(TcpConnection *conn);
+    bool addEvent(Event *ev);
+    bool delEvent(Event *ev);
+    bool updateRead(Event *ev);
+    bool updateWrite(Event *ev);
 	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EpollEvent);
-    bool handler(TcpConnection *conn, uint32_t revents);
-    bool onRead(TcpConnection *conn);
-    bool onWrite(TcpConnection *conn);
+    bool handler(Event *ev, uint32_t revents);
+    bool onRead(Event *ev);
+    bool onWrite(Event *ev);
 
 	typedef std::vector<struct epoll_event> EventList;
 	int _epollfd;
@@ -43,6 +42,7 @@ private:
 	static const size_t kDefaultBufferSize = 8192;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif // WIN32

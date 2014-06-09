@@ -2,15 +2,16 @@
 #include <log/logging.h>
 #include <net/inet_address.h>
 
-#ifndef WIN32
+#ifdef WIN32
+    #define socklen_t int
+#else
 	#include <netinet/tcp.h>
 	#include <sys/types.h>
 	#include <sys/socket.h>
-	#define INVALID_SOCKET -1
-	#define SOCKET_ERROR -1
 #endif
 
 using namespace thefox;
+using namespace thefox::net;
 
 Socket::Socket(SOCKET sockfd)
 	: _sockfd(sockfd)
@@ -31,10 +32,12 @@ InetAddress Socket::getLocalAddr(SOCKET sockfd)
 
 	struct sockaddr_in localaddr;
 	memset(&localaddr, 0, sizeof(localaddr));
-	socklen_t addrlen = static_cast<socklen_t>(sizeof localaddr);
-	if (::getsockname(sockfd, (sockaddr *)&localaddr, &addrlen) < 0) {
-		
-	}
+    socklen_t addrlen = static_cast<socklen_t>(sizeof(localaddr));
+    if (::getsockname(sockfd, (sockaddr *)&localaddr, &addrlen) < 0) {
+        int errCode = ::WSAGetLastError();
+        THEFOX_LOG(ERROR) << "getsockname() failed, errcode:" << errCode;
+    }
+
 	return localaddr;
 }
 
@@ -140,7 +143,7 @@ SOCKET Socket::accept(InetAddress *peerAddr)
 
 	SOCKET clientSockfd = INVALID_SOCKET;
 	struct sockaddr_in addr;
-    socklen_t len = sizeof(addr);
+    socklen_t len = static_cast<socklen_t>(sizeof(addr));
 #ifdef WIN32
     clientSockfd = ::WSAAccept(_sockfd, (sockaddr *)&addr, &len, 0, 0);
 #else

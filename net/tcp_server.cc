@@ -3,8 +3,9 @@
 #include <net/tcp_connection.h>
 
 using namespace thefox;
+using namespace thefox::net;
 
-TcpServer::TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg)
+TcpServer::TcpServer(EventLoop *loop, const InetAddress &listenAddr, const string &nameArg)
 	: _loop(loop)
 	, _name(nameArg)
 	, _started(false)
@@ -64,8 +65,6 @@ void TcpServer::onNewConnection(SOCKET sockfd, const InetAddress &localAddr, con
 void TcpServer::onRemoveConnection(TcpConnection *conn)
 {
 	THEFOX_TRACE_FUNCTION << "id=" << conn->id() << "addr=" << conn->peerAddr().toIpPort();
-
-    assert(0 == conn->pendingIo());
 
 	_connections.erase(conn->id());
 

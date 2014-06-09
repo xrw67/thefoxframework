@@ -29,23 +29,23 @@ class LogFile
 public:
 	class File;
 
-	LogFile(const std::string &dir,
-            const std::string &basename,
+	LogFile(const string &dir,
+            const string &basename,
 			size_t rollSize = 100*1024*1024);
 	~LogFile();
 
-	void append(const std::string &message);
+	void append(const string &message);
 	void flush();
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogFile);
 
-	static std::string getLogFileName(const std::string &dir, const std::string& basename, time_t* now);
+	static string getLogFileName(const string &dir, const string& basename, time_t* now);
 	void rollFile();
-    void makePath(std::string &dir);
+    void makePath(string &dir);
 
-	std::string _dir;
-	const std::string _basename;
+	string _dir;
+	const string _basename;
 	size_t _rollSize;
 	
 	Mutex _mutex;

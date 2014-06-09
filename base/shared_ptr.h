@@ -9,11 +9,6 @@
 
 #include <base/mutex.h>
 
-#ifdef THEFOX_USE_CXX11
-#error "you cann't use this file with define THEFOX_USE_CXX11"
-#undef THEFOX_USE_CXX11
-#endif
-
 namespace thefox  
 {
 
@@ -64,22 +59,25 @@ public:
     shared_ptr(T *p)
     : _pointer(p) , _counter(new PtrCounter())
     {
-        if (NULL != _pointer)
+        if (NULL != _pointer) {
             _counter->addSpRef();
+        }
     }
     
     shared_ptr(const shared_ptr &rsp)
     : _pointer(rsp._pointer), _counter(rps._counter)
     {
-        if (NULL != _counter)
+        if (NULL != _counter) {
             _counter->addSpRef();
+        }
     }
     
     ~shared_ptr()
     {
         if (NULL != _pointer) {
-            if (0 == _pointer->release())
+            if (0 == _pointer->release()) {
                 SAFE_DELETE(_pointer);
+            }
         }
     }
     
@@ -87,8 +85,9 @@ public:
     {
         if (_pointer != rsp._pointer) {
             if (NULL != _pointer) {
-                if (0 == _pointer->release())
+                if (0 == _pointer->release()) {
                     SAFE_DELETE(_pointer);
+                }
             }
             _pointer = rsp._pointer;
             _pointer->addRef();
@@ -114,17 +113,19 @@ public:
 private:
     addRef()
     {
-        if (NULL == _counter)
+        if (NULL == _counter) {
             _counter = new PtrCounter();
+        }
         _counter->addSpRef();
     }
 
     size_t release()
     {
-        if (NULL == _counter)
+        if (NULL == _counter) {
             return 0;
-        else
+        } else {
             return _counter->releaseSp();
+        }
     }
 
     T *_pointer;

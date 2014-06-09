@@ -21,40 +21,41 @@ public:
 	~ThreadPool()
 	{}
 	
-	/// @brief ³õÊ¼»¯Ïß³Ì³Ø
-	/// @param[in] threadNum Ïß³Ì¸öÊý
+	/// @brief åˆå§‹åŒ–çº¿ç¨‹æ± 
+	/// @param[in] threadNum çº¿ç¨‹ä¸ªæ•°
 	bool init(int threadNum = kDefaultThreadNum)
 	{
-		if (_inited)
+		if (_inited) {
 			return false;
+		}
 		_inited = true;
 		addWorker(threadNum);
 		return _inited;
 	}
 	
-	/// @brief Ìí¼ÓÏß³ÌÈÎÎñ
+	/// @brief æ·»åŠ çº¿ç¨‹ä»»åŠ¡
 	void addTask(const TaskMethod &task)
 	{ _tasks.put(task); }
 	
-	/// @brief µÈ´ýÏß³Ì³Ø½áÊø
+	/// @brief ç­‰å¾…çº¿ç¨‹æ± ç»“æŸ
 	void join()
 	{
-		for (ThreadVector::const_iterator it = _threads.begin(); 
-				it != _threads.end(); ++it)
+		for (ThreadVector::const_iterator it = _threads.begin(); it != _threads.end(); ++it) {
 			(*it)->join();
+		}
 			
 		_threads.clear();
 	}
 	
-	/// @brief µÃµ½Ïß³Ì¸öÊý
+	/// @brief å¾—åˆ°çº¿ç¨‹ä¸ªæ•°
 	size_t size() const { return _threads.size(); }
 	
-	/// @brief ½áÊøÏß³Ì³Ø
+	/// @brief ç»“æŸçº¿ç¨‹æ± 
 	void terminate()
 	{
-		for (ThreadVector::const_iterator it = _threads.begin(); 
-				it != _threads.end(); ++it)
+		for (ThreadVector::const_iterator it = _threads.begin(); it != _threads.end(); ++it) {
 			(*it)->stop();
+		}
 	}
 
 private:
@@ -91,7 +92,7 @@ private:
 		Semaphore _sem;
 	};
 	
-	// Ìí¼Ó¹¤×÷Ïß³Ì
+	// æ·»åŠ å·¥ä½œçº¿ç¨‹
 	void addWorker(int threadNum)
 	{
 		for (int i = 0; i < threadNum; ++i) {
@@ -103,7 +104,7 @@ private:
 		}
 	}
 	
-	// ÔËÐÐÈÎÎñ
+	// è¿è¡Œä»»åŠ¡
 	void taskRunner()
 	{
 		while(true) {

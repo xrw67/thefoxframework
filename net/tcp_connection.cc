@@ -1,10 +1,10 @@
 #include <net/tcp_connection.h>
 #include <log/logging.h>
-#include <net/event_loop.h>
 
 using namespace thefox;
+using namespace thefox::net;
 
-void thefox::defaultMessageCallback(TcpConnection *conn,
+void thefox::net::defaultMessageCallback(TcpConnection *conn,
                                 Buffer* buf, const Timestamp recvTime)
 {
 	buf->retrieveAll();
@@ -21,8 +21,7 @@ TcpConnection::TcpConnection(EventLoop *loop, SOCKET sockfd, int id,
     , _writeBytes(0)
 	, _arg(NULL)
 	, _state(kConnecting)
-    , _pendingIo(0)
-    , _write(false)
+    , _pendingEvents(0)
 {
 	THEFOX_TRACE_FUNCTION;
 }
@@ -32,7 +31,7 @@ TcpConnection::~TcpConnection()
 	THEFOX_TRACE_FUNCTION;
 }
 
-void TcpConnection::send(const std::string &data)
+void TcpConnection::send(const string &data)
 {
 	this->send(data.c_str(), data.length());
 }
@@ -41,8 +40,8 @@ void TcpConnection::send(const char *data, size_t len)
 {
 	_writeBuffer.append(data, len);
 
-    if (!testAndSetWrite()) {
-        _loop->updateWrite(this);
+    if (!_event.testAndSetWrite()) {
+        _loop->updateWrite(&_event);
     }
 }
 
@@ -78,10 +77,13 @@ void TcpConnection::connectEstablished()
 
 	setState(kConnected);
 
-    _loop->registerConnection(this);
+    _event.fd = fd();
+    _event.conn = this;
 
-	// 投递读事件
-	_loop->updateRead(this);
+    _loop->addEvent(&_event);
+
+	// set read
+	_loop->updateRead(&_event);
 
     if (_connectionCallback) {
         _connectionCallback(this);
@@ -92,11 +94,13 @@ void TcpConnection::connectDestroyed()
 {
 	THEFOX_TRACE_FUNCTION;
 
+    _event.error = true;
+
 	if (kConnected == _state || kDisconnecting == _state) {
 		setState(kDisconnected);
 		THEFOX_LOG(DEBUG) << "connection closed, addr:" << _peerAddr.toIpPort();
 
-        _loop->unregisterConnection(this);
+        _loop->delEvent(&_event);
 		Socket::close(_socket.fd());
 
         if (_connectionCallback) {
@@ -104,35 +108,25 @@ void TcpConnection::connectDestroyed()
         }
 	}
 
-    if (0 == pendingIo() && _removeConnectionCallback) {
-        _removeConnectionCallback(this); // 这是最后一行
-        return;
+    if (0 == leaveEvent()) {
+        if (_removeConnectionCallback) {
+            _removeConnectionCallback(this); // it's last line, connection is over
+            return;
+        }
     }
 }
 
-bool TcpConnection::testAndSetWrite()
+void TcpConnection::enterEvent()
 {
-    MutexGuard lock(_writemutex);
-    bool ret = _write;
-    _write = true;
-    return ret;
+    MutexGuard lock(_eventmutex);
+    ++_pendingEvents;
 }
 
-void TcpConnection::resetWrite()
+size_t TcpConnection::leaveEvent()
 {
-    MutexGuard lock(_writemutex);
-    _write = false;
-}
-
-void TcpConnection::enterIo()
-{
-    MutexGuard lock(_iomutex);
-    ++_pendingIo;
-}
-
-size_t TcpConnection::leaveIo()
-{
-    MutexGuard lock(_iomutex);
-    --_pendingIo;
-    return _pendingIo;
+    MutexGuard lock(_eventmutex);
+    if (0 != _pendingEvents) {
+       --_pendingEvents;
+    }
+    return _pendingEvents;
 }

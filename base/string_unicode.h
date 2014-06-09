@@ -6,23 +6,23 @@
 namespace thefox
 {
 
-inline String bgkToUtf8(const String &str)
+inline string bgkToUtf8(const string &str)
 {
 
 }
 
-inline String utf8ToGbk(const String &str)
+inline string utf8ToGbk(const string &str)
 {
 
 }
 
-inline String gbkToUnicode(const String &str)
+inline string gbkToUnicode(const string &str)
 {
 
 
 }
 
-inline String unicodeToGbk(const String &str)
+inline string unicodeToGbk(const string &str)
 {
     
 }

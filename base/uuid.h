@@ -14,7 +14,7 @@
 namespace thefox
 {
 	
-inline std::string createUuid()
+inline string createUuid()
 {
 
 	char buf[64] = {0};

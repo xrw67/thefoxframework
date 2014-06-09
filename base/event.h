@@ -18,14 +18,13 @@ public:
         : _event(NULL)
     {
         _event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-        if (NULL == _event) {
-            // 
-        }
+        assert (NULL != _event);
     }
     ~Event()
     {
-        if (NULL != _event)
+        if (NULL != _event) {
             CloseHandle(_event);
+        }
     }
     
     void set() { ::SetEvent(_event); }
@@ -44,7 +43,7 @@ private:
 } // namespace thefox
 
 #else // #ifdef WIN32
-#error "class Event use in Windows only"
+#error "class Event use for Windows only"
 #endif
 
 #endif // _THEFOX_BASE_EVENT_H_

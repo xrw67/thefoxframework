@@ -5,6 +5,7 @@
 #include <net/tcp_connection.h>
 
 using namespace thefox;
+using namespace thefox::net;
 
 EpollEvent::EpollEvent()
 	: _epollfd(-1)
@@ -38,46 +39,40 @@ bool EpollEvent::init()
 	return true;
 }
 
-bool EpollEvent::postClose(const TcpConnectionPtr &conn)
+bool EpollEvent::addEvent(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 	
-}
-
-bool EpollEvent::registerConnection(Tconst TcpConnectionPtr &conn)
-{
-	THEFOX_TRACE_FUNCTION;
-	
-	assert(NULL != conn);
+	assert(NULL != ev);
 
 	struct epoll_event event;
 	event.events = EPOLLIN | EPOLLOUT | EPOLLET | EPOLLRDHUP;
-	event.data.ptr = &*conn;
+	event.data.ptr = ev;
 
-	THEFOX_LOG(DEBUG) << "epoll add connection: fd:" << conn->fd() << "ev:" << event.events;
+	THEFOX_LOG(DEBUG) << "epoll add connection: fd:" << ev->fd << "ev:" << event.events;
 
-	if (-1 == ::epoll_ctl(_epollfd, EPOLL_CTL_ADD, conn->fd(), &event)) {
-		THEFOX_LOG(ERROR) << "epoll_ctl(EPOLL_CTL_ADD, " << conn->fd() << ") failed";
+	if (-1 == ::epoll_ctl(_epollfd, EPOLL_CTL_ADD, ev->fd, &event)) {
+		THEFOX_LOG(ERROR) << "epoll_ctl(EPOLL_CTL_ADD, " << ev->fd << ") failed";
 		return false;
 	}
 	return true;
 }
 
-bool EpollEvent::unregisterConnection(const TcpConnectionPtr &conn)
+bool EpollEvent::delEvent(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
-	assert(NULL != conn);
+	assert(NULL != ev);
 
 	struct epoll_event event;
 
-	THEFOX_LOG(DEBUG) << "epoll del connection: fd:" << conn->fd();
+	THEFOX_LOG(DEBUG) << "epoll del connection: fd:" << ev->fd;
 
 	event.events = 0;
 	event.data.ptr = NULL;
 
-	if (-1 == ::epoll_ctl(_epollfd, EPOLL_CTL_DEL, conn->fd(), &event)) {
-		THEFOX_LOG(ERROR) << "epoll_ctl(EPOLL_CTL_DEL, " << conn->fd() << ") failed";
+	if (-1 == ::epoll_ctl(_epollfd, EPOLL_CTL_DEL, ev->fd, &event)) {
+		THEFOX_LOG(ERROR) << "epoll_ctl(EPOLL_CTL_DEL, " << ev->fd << ") failed";
 		return false;
 	}
 	return true;
@@ -110,8 +105,8 @@ bool EpollEvent::processEvents(uint32_t timer)
 		_events.resize(events.size() * 2);
 	
 	for (int i = 0; i < numEvents; ++i) {
-		TcpConnectionPtr conn = 
-		handler(static_cast<IoEvent *>(_events[i].data.ptr), _events[i].events);
+		
+		ev->handler(static_cast<Event *>(_events[i].data.ptr), _events[i].events);
 	}
 }
 
@@ -170,9 +165,24 @@ bool EpollEvent::handleRead(const TcpConnectionPtr &conn)
 	return true;
 }
 
-bool EpollEvent::handleWrite(const TcpConnectionPtr &conn)
+bool EpollEvent::handleWrite(IoEvent *ev)
 {
-	
+	THEFOX_TRACE_FUNCTION;
+
+	int ret;
+	TcpConnection *conn = ev->conn;
+	Buffer *buffer = conn->writeBuffer();
+
+	while (buffer->readableBytes() > 0) {
+		ret = write(conn->fd(), buffer->peek(), buffer->readableBytes());
+		if (-1 == ret && EAGAIN != errno) {
+			THEFOX_LOG(ERROR) << "write error";
+			return false;
+		}
+
+		buffer->retrieve(ret);
+	}
+	return true;
 }
 
 bool EpollEvent::handleClose(const TcpConnectionPtr &conn)

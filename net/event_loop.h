@@ -8,20 +8,20 @@
 
 #include <vector>
 #include <base/common.h>
+#include <base/thread.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
-class Thread;
-class TcpConnection;
+class Event;
 
 #ifdef WIN32
     class IocpEvent;
-    typedef IocpEvent Poller;
+    #define Poller IocpEvent
     typedef void *HANDLE;
 #else
     class EpollEvent;
-    typedef EpollEvent Poller;
+    #define Poller EpollEvent
 #endif
 
 class EventLoop
@@ -44,10 +44,10 @@ public:
     //void setTimer(uint32_t time, const TimerCallback &cb);
 
     // for internal
-    bool updateRead(TcpConnection *conn);
-    bool updateWrite(TcpConnection *conn);
-    bool registerConnection(TcpConnection *conn);
-    bool unregisterConnection(TcpConnection *conn);
+    bool updateRead(Event *ev);
+    bool updateWrite(Event *ev);
+    bool addEvent(Event *ev);
+    bool delEvent(Event *ev);
 
 private:
     THEFOX_DISALLOW_EVIL_CONSTRUCTORS(EventLoop);
@@ -60,6 +60,7 @@ private:
     std::vector<Thread *> _threads;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_EVENTLOOP_H_

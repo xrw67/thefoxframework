@@ -4,8 +4,9 @@
 #include <net/tcp_connection.h>
 
 using namespace thefox;
+using namespace thefox::net;
 
-TcpClient::TcpClient(EventLoop *loop, const std::string &nameArg)
+TcpClient::TcpClient(EventLoop *loop, const string &nameArg)
 	: _loop(loop)
 	, _name(nameArg)
 	, _conn(NULL)
@@ -60,7 +61,7 @@ void TcpClient::send(const char *data, size_t len)
 		_conn->send(data, len);
 }
 
-void TcpClient::send(const std::string &data)
+void TcpClient::send(const string &data)
 {
 	if (_conn)
 		_conn->send(data);

@@ -64,7 +64,9 @@ public:
         return obj;
     }
     
-    // @brief 回收对象
+    /*
+     * @brief recover object
+     */
     void put(T *obj)
     {
         obj->~T();

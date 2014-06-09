@@ -9,6 +9,7 @@
 #include <log/log_file.h>
 
 using namespace thefox;
+using namespace thefox::net;
 
 void onConnection(TcpConnection *conn)
 {

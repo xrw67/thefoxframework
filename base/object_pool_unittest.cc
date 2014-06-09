@@ -6,12 +6,12 @@ using namespace thefox;
 class TestA
 {
 public:
-	TestA(const std::string &str)
+	TestA(const string &str)
 		: _str(str) {}
 	~TestA() {}
-	std::string str() const { return _str; }
+	string str() const { return _str; }
 private:
-	std::string _str;
+	string _str;
 };
 
 int main(int argc, char *argv[])

@@ -12,7 +12,6 @@
 namespace thefox 
 {
 
-// 包装FILE指针，符合RAII原则
 class FileHandle
 {
 public:
@@ -21,8 +20,9 @@ public:
     {}
     ~FileHandle()
     {
-        if (_fp)
+        if (_fp) {
             fclose(_fp);
+        }
     }
     
     FILE *handle() const { return _fp; }

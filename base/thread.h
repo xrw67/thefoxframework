@@ -21,7 +21,7 @@ class Thread
 public:
     enum StateT { kInit, kStart, kJoined, kStop };
 
-    explicit Thread(const ThreadCallback &cb, const std::string &name)
+    explicit Thread(const ThreadCallback &cb, const string &name)
         : _cb(cb)
         , _name(name)
         , _state(kInit)
@@ -39,8 +39,9 @@ public:
 
     bool start()
     {
-        if (kInit != _state)
+        if (kInit != _state) {
             return false;
+        }
 
         bool result = false;
 #ifdef WIN32
@@ -56,27 +57,32 @@ public:
     
     bool stop()
     {
-        if (kStop == _state || kInit == _state)
+        if (kStop == _state || kInit == _state) {
             return true;
+        }
 
         bool result = true;
 #ifdef WIN32
-        if(0 == ::TerminateThread(_handle, 0))
+        if(0 == ::TerminateThread(_handle, 0)) {
             result = false;
+        }
 #else
-        if (0 != pthread_cancel(_thread))
+        if (0 != pthread_cancel(_thread)) {
             result = false;
+        }
 #endif
-        if (result)
+        if (result) {
             _state = kStop;
+        }
 
         return result;
     }
 
     bool join()
     {
-        if (kStart != _state)
+        if (kStart != _state) {
             return false;
+        }
         bool result = false;
 #ifdef WIN32
         if (NULL != _handle) {
@@ -88,21 +94,21 @@ public:
         }
 #else
         int ret = pthread_join(_thread, NULL);
-        if (0 == ret)
+        if (0 == ret) {
             result = true;
+        }
 #endif
         _state = kJoined;
         return result;
     }
 
-    const std::string &name() const { return _name; }
+    const string &name() const { return _name; }
 
 #ifdef WIN32
     DWORD tid() const { return _threadId; }
     operator HANDLE() { return _handle; }
 #else
-    pthread_t tid() const
-    {}
+    pthread_t tid() const { return _thread; }
 #endif
 
 private:
@@ -120,7 +126,7 @@ private:
     }
 
     ThreadCallback _cb;
-    const std::string _name;
+    const string _name;
     StateT _state;
 
 #ifdef _WIN32

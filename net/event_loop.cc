@@ -1,5 +1,4 @@
 #include <net/event_loop.h>
-#include <base/thread.h>
 #include <log/logging.h>
 
 #ifdef WIN32
@@ -8,8 +7,8 @@
     #include <net/epoll_event.h>
 #endif
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 inline int getThreadNum()
 {
@@ -22,9 +21,11 @@ inline int getThreadNum()
 #endif
 }
 
+} // namespace net
 } // namespace thefox
 
 using namespace thefox;
+using namespace thefox::net;
 
 EventLoop::EventLoop()
     : _started(false)
@@ -77,24 +78,24 @@ void EventLoop::stop()
     }
 }
 
-bool EventLoop::updateRead(TcpConnection *conn)
+bool EventLoop::updateRead(Event *ev)
 {
-	return _poller->updateRead(conn);
+	return _poller->updateRead(ev);
 }
 
-bool EventLoop::updateWrite(TcpConnection *conn)
+bool EventLoop::updateWrite(Event *ev)
 {
-	return _poller->updateWrite(conn);
+	return _poller->updateWrite(ev);
 }
 
-bool EventLoop::registerConnection(TcpConnection *conn)
+bool EventLoop::addEvent(Event *ev)
 {
-	return _poller->registerConnection(conn);
+	return _poller->addEvent(ev);
 }
 
-bool EventLoop::unregisterConnection(TcpConnection *conn)
+bool EventLoop::delEvent(Event *ev)
 {
-	return _poller->unregisterConnection(conn);
+	return _poller->delEvent(ev);
 }
 
 void EventLoop::loop()

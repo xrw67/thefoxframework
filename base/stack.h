@@ -105,8 +105,9 @@ private:
     // 通过Position得到在vector中的索引
     bool getIndexByPosition(const int position, size_t &index) const
     {
-        if (_data.empty())
+        if (_data.empty()) {
             return false;
+        }
         
         if (position > 0) { // 从栈顶向下遍历
             int i = static_cast<int>(_data.size() - position);

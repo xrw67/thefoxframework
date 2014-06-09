@@ -10,8 +10,8 @@
 #include <net/callbacks.h>
 #include <net/socket.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class EventLoop;
 class InetAddress;
@@ -20,7 +20,7 @@ class TcpConnection;
 class TcpClient
 {
 public:
-    TcpClient(EventLoop *loop, const std::string &nameArg);
+    TcpClient(EventLoop *loop, const string &nameArg);
     TcpClient(void);
         
     /// @brief connect to server
@@ -36,7 +36,7 @@ public:
     
     /// @brief send data
     void send(const char *data, size_t len);
-    void send(const std::string &data);
+    void send(const string &data);
 
     void setConnectionCallback(const ConnectionCallback &cb)
     { _connectionCallback = cb; }
@@ -51,7 +51,7 @@ private:
 	void handleNewConnection(SOCKET sockfd, const InetAddress &peerAddr);
 	void removeConnection(TcpConnection *conn);
 
-	const std::string _name;
+	const string _name;
 	EventLoop *_loop;
 	TcpConnection *_conn;
 
@@ -60,6 +60,7 @@ private:
     WriteCompleteCallback _writeCompleteCallback;
 };
     
+} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_TCPCLIENT_H_

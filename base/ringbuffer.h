@@ -19,8 +19,9 @@ public:
 		, _out(0)
 	{
 		// 调整size到2的n次幂大小
-		if (size & (size - 1))
+		if (size & (size - 1)) {
 			size = roundupPowOfTwo(size);
+		}
 
 		_size = size;
 
@@ -56,7 +57,7 @@ public:
 		unit32_t l = min(len, _size - (_out & (size - 1)));
 		memcpy(buffer, _buffer + (_out & (_size - 1)), l);
 
-		// 拷贝剩余的
+		//拷贝剩余的
 		memcpy(_buffer + l, _buffer, len - l);
 
 		_out += len;
@@ -81,7 +82,7 @@ private:
 	char *_buffer;
 	unit32_t _size; // ringbuffer的总大小
 	uint32_t _in; // 写数据的位置
-	uint32_t _out; //读数据的位置
+	uint32_t _out; // 读数据的位置
 };
 
 } // namespace thefox

@@ -104,8 +104,9 @@ DROWD WINAPI MailslotThreadProc(LPVOID lpParameter)
         cbMessage = cMessage = cbRead = 0; 
         GetMailslotInfo(svr->m_hSlot, (LPDWORD)NULL, &cbMessage, &cMessage, (LPDWORD)NULL);
         
-        if (cMessage > 0)
+        if (cMessage > 0) {
             svr->OnRead(cMessage);
+        }
     }
     return 0;
 }

@@ -16,8 +16,8 @@
 #include <net/inet_address.h>
 #include <net/acceptor.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class EventLoop;
 class InetAddress;
@@ -26,7 +26,7 @@ class TcpConnection;
 class TcpServer
 {
 public:
-    TcpServer(EventLoop *loop, const InetAddress &listenAddr, const std::string &nameArg);
+    TcpServer(EventLoop *loop, const InetAddress &listenAddr, const string &nameArg);
     ~TcpServer(void);
 	
     /// @brief start the server
@@ -58,7 +58,7 @@ private:
 
 	typedef std::map<int32_t, TcpConnection *> ConnectionMap;
 
-	const std::string _name;
+	const string _name;
 	EventLoop *_loop; 
 	Acceptor *_acceptor;
 
@@ -73,6 +73,7 @@ private:
     WriteCompleteCallback _writeCompleteCallback;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_TCPSERVER_H_

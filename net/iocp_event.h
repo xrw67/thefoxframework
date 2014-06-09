@@ -9,8 +9,8 @@
 #include <base/mem_pool.h>
 #include <net/event.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class TcpConnection;
 
@@ -23,22 +23,23 @@ public:
 	bool init();
 	bool processEvents(uint32_t timer);
 
-    bool registerConnection(TcpConnection *conn);
-    bool unregisterConnection(TcpConnection *conn);
-    bool updateRead(TcpConnection *conn);
-    bool updateWrite(TcpConnection *conn);
+    bool addEvent(Event *ev);
+    bool delEvent(Event *ev);
+    bool updateRead(Event *ev);
+    bool updateWrite(Event *ev);
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(IocpEvent);
-    void handler(TcpConnection *conn, int32_t ovlpType, uint32_t avaliable);
-    void onRead(TcpConnection *conn, uint32_t avaliable);
-    void onWrite(TcpConnection *conn, uint32_t avaliable);
+    void handler(Event *ev, void *ovlp);
+    void onRead(Event *ev, uint32_t avaliable);
+    void onWrite(Event *ev, uint32_t avaliable);
 
 	HANDLE _hIocp;
 	MemPool<EventOvlp> _ovlpPool;
 	static const size_t kMaxBufSize = 8192;
 };
 
+} // namespace net
 } // namespace thefox
 
 #else 

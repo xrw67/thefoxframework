@@ -5,11 +5,6 @@
 #ifndef _THEFOX_BASE_SCOPED_PTR_H_
 #define _THEFOX_BASE_SCOPED_PTR_H_
 
-#ifdef THEFOX_USE_CXX11
-#error "you cann't use this file with define THEFOX_USE_CXX11"
-#undef THEFOX_USE_CXX11
-#endif
-
 namespace thefox
 {
 
@@ -40,8 +35,9 @@ public:
 
     ~scoped_ptr() // never throws
     {
-        if (0 != ptr)
+        if (0 != ptr) {
             delete ptr;
+        }
     }
 
     void reset(T * p = 0) // never throws
@@ -89,6 +85,6 @@ template<class T> inline T * get_pointer(scoped_ptr<T> const & p)
     return p.get();
 }
 
-}
+} // namespace thefox
 
 #endif // _THEFOX_BASE_SCOPEDPTR_H_

@@ -16,7 +16,7 @@ using namespace thefox;
 class LogFile::File
 {
 public:
-	explicit File(const std::string& filename)
+	explicit File(const string& filename)
 		: _fp(fopen(filename.data(), "a"))
 		, _writtenBytes(0)
 	{
@@ -68,7 +68,7 @@ private:
 };
 
 
-LogFile::LogFile(const std::string &dir, const std::string& basename, size_t rollSize)
+LogFile::LogFile(const string &dir, const string& basename, size_t rollSize)
 	: _dir(dir)
 	, _basename(basename)
 	, _rollSize(rollSize)
@@ -87,7 +87,7 @@ LogFile::~LogFile()
 		delete _file;
 }
 
-void LogFile::append(const std::string &message)
+void LogFile::append(const string &message)
 {
 	MutexGuard lock(_mutex);
 	_file->append(message.c_str(), message.length());
@@ -114,7 +114,7 @@ void LogFile::flush()
 void LogFile::rollFile()
 {
 	time_t now = 0;
-	std::string filename = getLogFileName(_dir, _basename, &now);
+	string filename = getLogFileName(_dir, _basename, &now);
 	time_t start = now / _kRollPerSeconds * _kRollPerSeconds;
 
 	if (now > _lastRoll) {
@@ -126,9 +126,9 @@ void LogFile::rollFile()
 	}
 }
 
-std::string LogFile::getLogFileName(const std::string &dir, const std::string& basename, time_t *now)
+string LogFile::getLogFileName(const string &dir, const string& basename, time_t *now)
 {
-    std::string filename;
+    string filename;
     
     filename.reserve(dir.size() + basename.size() + 64);
     filename = dir + basename;
@@ -155,13 +155,13 @@ std::string LogFile::getLogFileName(const std::string &dir, const std::string& b
     return filename;
 }
 
-void LogFile::makePath(std::string &dir)
+void LogFile::makePath(string &dir)
 {   
     char filePath[1000] = {0};
     bool bAbsolutePath = true;
 
 #ifdef WIN32
-	if (std::string::npos == dir.find(':'))
+	if (string::npos == dir.find(':'))
         bAbsolutePath = false;
 #else
     if ('/' != dir[0])

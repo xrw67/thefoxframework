@@ -34,8 +34,8 @@ public:
         _freeHead = NULL;
     }
     
-    /// @brief 获取分配的内存
-	/// @raturn 分配的内存的指针
+    /// @brief alloc memory
+	/// @raturn pointer to allocated memory
     T *get()
     {
         T *ret = NULL;

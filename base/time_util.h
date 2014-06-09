@@ -15,7 +15,7 @@ namespace thefox
 class TimeUtil
 {
 public:
-	static std::string fromUnixTime(time_t t)
+	static string fromUnixTime(time_t t)
 	{
 		char buf[32] = {0};
 		tm *tm_time = localtime(&t);
@@ -25,7 +25,7 @@ public:
 		return buf;
 	}
 
-	static time_t unixTimestamp(const std::string &timeStr)
+	static time_t unixTimestamp(const string &timeStr)
 	{
 		tm tm_time;
 		memset(&tm_time, 0, sizeof(tm_time));

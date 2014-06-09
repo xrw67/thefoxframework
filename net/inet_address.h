@@ -1,7 +1,6 @@
 #ifndef _THEFOX_NET_INETADDRESS_H
 #define _THEFOX_NET_INETADDRESS_H
 
-#include <string.h>
 #include <base/common.h>
 
 #ifdef WIN32
@@ -11,8 +10,8 @@
 #include <arpa/inet.h>
 #endif
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class InetAddress
 {
@@ -29,7 +28,7 @@ public:
         _addr.sin_port = htons(port);
     }
 
-    InetAddress(const std::string &ip, uint16_t port)
+    InetAddress(const string &ip, uint16_t port)
     {
         memset(&_addr, 0, sizeof(_addr));
         _addr.sin_family = AF_INET;
@@ -41,7 +40,7 @@ public:
     : _addr(addr)
     {}
 
-    std::string toIp() const
+    string toIp() const
     {
         char *host = inet_ntoa(_addr.sin_addr);
         if (NULL != host)
@@ -50,7 +49,7 @@ public:
             return "INVALID";
     }
     
-    std::string toIpPort() const
+    string toIpPort() const
     {
         char buf[32];
         snprintf(buf, sizeof(buf), "%s:%u", toIp().c_str(), ntohs(_addr.sin_port));
@@ -72,6 +71,7 @@ private:
     struct sockaddr_in _addr;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif  // _THEFOX_NET_INETADDRESS_H

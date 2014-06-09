@@ -30,22 +30,22 @@ namespace thefox
 {
 
 using std::string;
-using namespace std::placeholders; //std::bind可替换参数的占位符
+using namespace std::placeholders; // for std::bind
 
-// 指定是否允许copy ctor 和 assign opt.
+// disallow copy ctor and assign opt
 #undef THEFOX_DISALLOW_EVIL_CONSTRUCTORS
 #define THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TypeName)    \
     TypeName(const TypeName&);                         \
     void operator=(const TypeName&)
 
-// 安全删除对象
+// delete object safe
 #define SAFE_DELETE(p)        \
     if (NULL != p) {          \
         delete p;             \
         p = NULL;             \
     }
     
-// 安全删除对象数组
+// delete object array safe
 #define SAFE_DELETE_ARRAY(p)  \
     if (NULL != p) {          \
         delete []p;           \

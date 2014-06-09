@@ -33,8 +33,9 @@ public:
 
 	int fieldCount() const
 	{
-		if (!_table.empty())
+		if (!_table.empty()) {
 			return _table[0].size();
+		}
 		return 0;
 	}
 
@@ -43,12 +44,14 @@ public:
 
 	bool fetchRow()
 	{
-		if (_table.empty())
+		if (_table.empty()) {
 			return false;
-		if (++_rowIndex >= _table.size())
+		}
+		if (++_rowIndex >= _table.size()) {
 			return false;
-		else
+		} else {
 			return true;
+		}
 	}
 
 	const T &operator[](const int index) const

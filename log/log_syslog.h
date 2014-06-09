@@ -26,17 +26,17 @@ namespace thefox
 class LogSyslog
 {
 public:
-	LogSyslog(const std::string& basename, const InetAddress &serverAddr);
+	LogSyslog(const string& basename, const net::InetAddress &serverAddr);
 	~LogSyslog();
 
-	void append(const std::string &message);
+	void append(const string &message);
 	bool init();
 	
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogSyslog);
 
-	const std::string _basename;
-	InetAddress _serverAddr;
+	const string _basename;
+	net::InetAddress _serverAddr;
 	SOCKET _sockfd;
 	Mutex _mutex;
 };

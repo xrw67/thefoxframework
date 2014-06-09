@@ -19,7 +19,7 @@ LogLevel initLogLevel()
 }
 
 //默认的日志输出函数
-void nullLogHandler(const std::string &message)
+void nullLogHandler(const string &message)
 {
 	// Nothing.
 }
@@ -83,7 +83,7 @@ LogMessage::LogMessage(LogLevel level, const char *filename, int line)
 LogMessage::~LogMessage()
 {}
 
-LogMessage &LogMessage::operator<<(const std::string &value)
+LogMessage &LogMessage::operator<<(const string &value)
 {
 	_message += value;
 	return *this;

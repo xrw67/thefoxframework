@@ -2,7 +2,7 @@
 #define _THEFOX_BASE_CONDITION_H_
 
 #ifdef WIN32
-#error "this class use in linux only"
+#error "class condition use for linux only"
 #else
 #include <pthread.h>
 #include <base/common.h>

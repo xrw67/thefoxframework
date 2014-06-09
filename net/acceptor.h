@@ -13,10 +13,12 @@
 #include <net/event.h>
 #include <net/inet_address.h>
 
-namespace thefox
-{
+#ifdef WIN32
+#include <base/thread.h>
+#endif
 
-class Thread;
+namespace thefox {
+namespace net {
 
 typedef std::function<void(SOCKET, const InetAddress &, const InetAddress &)> NewConnectionCallback;
 
@@ -32,6 +34,11 @@ public:
     void setNewConnectionCallback(const NewConnectionCallback &cb)
     { _newConnectionCallback = cb; }
 
+    // for epoll
+ #ifndef WIN32
+    void setEventLoop(EventLoop *loop) { _loop = loop; }
+ #endif
+
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Acceptor);
 
@@ -40,13 +47,18 @@ private:
 	bool _listening;
     NewConnectionCallback _newConnectionCallback;
 
+#ifdef WIN32
 	void acceptLoop();
 	Thread *_acceptThread;
-#ifdef WIN32
 	HANDLE _hAcceptEvent;
+#else
+	void onAccept(Event *ev, void *arg);
+	Event _event;
+	EventLoop *_loop;
 #endif
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_ACCEPTOR_H_

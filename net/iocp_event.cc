@@ -4,6 +4,7 @@
 #include <net/tcp_connection.h>
 
 using namespace thefox;
+using namespace thefox::net;
 
 IocpEvent::IocpEvent()
 	: _hIocp(NULL)
@@ -36,25 +37,28 @@ bool IocpEvent::init()
 	return (NULL == _hIocp);
 }
 
-bool IocpEvent::registerConnection(TcpConnection *conn)
+bool IocpEvent::addEvent(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
-	assert(NULL != conn);
+	assert(ev->fd >= 0);
 
-	if (NULL == ::CreateIoCompletionPort((HANDLE)conn->fd(), _hIocp, 0, 0)) {
+	ev->handler = std::bind(&IocpEvent::handler, this, _1, _2);
+
+	if (NULL == ::CreateIoCompletionPort((HANDLE)ev->fd, _hIocp, 0, 0)) {
 		DWORD err = ::GetLastError();
 		THEFOX_LOG(ERROR) << "addEvent() failed, errno=" << err;
 		return false;
 	}
+
 	return true;
 }
 
-bool IocpEvent::unregisterConnection(TcpConnection *conn)
+bool IocpEvent::delEvent(Event *ev)
 {
-	THEFOX_TRACE_FUNCTION << "conn_id" << conn->id();
+	THEFOX_TRACE_FUNCTION;
 
-	if (0 == ::CancelIo((HANDLE)conn->fd())) {
+	if (0 == ::CancelIo((HANDLE)ev->fd)) {
 		THEFOX_LOG(ERROR) << "CancelIo() failed";
 		return false;
 	}
@@ -90,13 +94,11 @@ bool IocpEvent::processEvents(uint32_t timer)
 		return true;
 	}
 
-	int32_t ovlpType = ovlp->type;
-	TcpConnection *conn = ovlp->conn;
+    ovlp->avaliable = bytes;
+	Event *ev = ovlp->ev;
 
-	_ovlpPool.put(ovlp);
-
-	if (NULL == conn) {
-		THEFOX_LOG(WARN) << "iocp: error connection, err:" << err;
+	if (NULL == ev) {
+		THEFOX_LOG(WARN) << "iocp: error evvnt, err:" << err;
         return true;
 	}
 
@@ -115,27 +117,29 @@ bool IocpEvent::processEvents(uint32_t timer)
 	if (err)
 		THEFOX_LOG(ERROR) << "GetQueuedCompletionStatus() returned operation error:" << err;
 
-	handler(conn, ovlpType, bytes);
+    ev->handler(ev, (void *)ovlp);
+
+    _ovlpPool.put(ovlp);
 
 	return true;
 }
 
-bool IocpEvent::updateRead(TcpConnection *conn)
+bool IocpEvent::updateRead(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
-    if (NULL == conn)
-        return false;
-
-    conn->enterIo();
+	TcpConnection *conn = ev->conn;
 
     if (NULL == conn)
         return false;
+
+    conn->enterEvent();
+    ev->in = true;
 
 	WSABUF wsabuf[1];
-	Buffer *readbuf = conn->readBuffer();
+	Buffer *readbuf = ev->conn->readBuffer();
 
-	// 设置读缓冲区大小
+	// set writable bytes
 	readbuf->ensureWritableBytes(kMaxBufSize);
 
 	wsabuf[0].buf = readbuf->beginWrite();
@@ -144,7 +148,7 @@ bool IocpEvent::updateRead(TcpConnection *conn)
 	EventOvlp *ovlp = _ovlpPool.get();
 	::ZeroMemory(ovlp, sizeof(EventOvlp));
 	ovlp->type = OVLP_TYPE_READ;
-	ovlp->conn = conn;
+	ovlp->ev = ev;
 
 	DWORD nBytes = 0;
     DWORD flags = 0;
@@ -152,26 +156,24 @@ bool IocpEvent::updateRead(TcpConnection *conn)
 							&nBytes, &flags, &ovlp->ovlp, NULL);
     if (SOCKET_ERROR == bytesRecv && WSA_IO_PENDING != WSAGetLastError()) {
         THEFOX_LOG(ERROR) << "updateRead() failed!";
-		//  关闭connection
+		// close connection
 		_ovlpPool.put(ovlp);
-        conn->leaveIo();
 		conn->connectDestroyed();
 		return false;
     }
 	return true;
 }
 
-bool IocpEvent::updateWrite(TcpConnection *conn)
+bool IocpEvent::updateWrite(Event *ev)
 {
 	THEFOX_TRACE_FUNCTION;
 
-    if (NULL == conn)
-        return false;
-
-    conn->enterIo();
+	TcpConnection *conn = ev->conn;
 
     if (NULL == conn)
         return false;
+
+    conn->enterEvent();
 
 	WSABUF wsabuf[1];
 	Buffer *writebuf = conn->writeBuffer();
@@ -182,7 +184,7 @@ bool IocpEvent::updateWrite(TcpConnection *conn)
 	EventOvlp *ovlp = _ovlpPool.get();
 	::ZeroMemory(ovlp, sizeof(EventOvlp));
 	ovlp->type = OVLP_TYPE_WRITE;
-	ovlp->conn = conn;
+	ovlp->ev = ev;
 
 	DWORD nBytes = 0;
     DWORD flags = 0;
@@ -190,69 +192,80 @@ bool IocpEvent::updateWrite(TcpConnection *conn)
                             &nBytes, flags, &ovlp->ovlp, NULL);
     if (SOCKET_ERROR == byteSend && WSA_IO_PENDING != WSAGetLastError()) {
         THEFOX_LOG(ERROR) << "updateWrite() failed!";
-		//  关闭connection
+		// close connection
 		_ovlpPool.put(ovlp);
-        conn->leaveIo();
 		conn->connectDestroyed();
 		return false;
     }
 	return true;
 }
 
-void IocpEvent::handler(TcpConnection *conn, int32_t ovlpType, uint32_t avaliable)
+void IocpEvent::handler(Event *ev, void *ovlp)
 {
-	THEFOX_TRACE_FUNCTION << "type=" << ovlpType << " avaliable=" << avaliable;
+    THEFOX_TRACE_FUNCTION;
+   
+    EventOvlp *evol = (EventOvlp *)ovlp;
+    int32_t type = evol->type;
+    uint32_t avaliable = evol->avaliable;
+    TcpConnection *conn = ev->conn;
 
-    if (0 == avaliable || OVLP_TYPE_CLOSE == ovlpType) {
-		conn->leaveIo();
+    if (0 == avaliable || true == ev->error) {
 		conn->connectDestroyed();
 		return;
 	}
 
-	switch (ovlpType) {
+    switch (type) {
 	case OVLP_TYPE_READ:
-		onRead(conn, avaliable);
+        onRead(ev, avaliable);
 		break;
 	case OVLP_TYPE_WRITE:
-		onWrite(conn, avaliable);
+        onWrite(ev, avaliable);
 		break;
 	default:
 		break;
 	}
 }
-void IocpEvent::onRead(TcpConnection *conn, uint32_t avaliable)
+void IocpEvent::onRead(Event *ev, uint32_t avaliable)
 {
 	THEFOX_TRACE_FUNCTION << " avaliable=" << avaliable;
+	
+	assert(NULL != ev);
 
+	TcpConnection *conn = ev->conn;
+	assert(NULL != conn);
 	Buffer *readbuf = conn->readBuffer();
 	
 	readbuf->hasWritten(avaliable);
-	
 	conn->addReadBytes(avaliable);
 
 	if (conn->_messageCallback)
 		conn->_messageCallback(conn, readbuf, Timestamp::now());
 	
-    conn->leaveIo();
-	updateRead(conn);
+    conn->leaveEvent();
+
+	updateRead(ev);
 }
 
-void IocpEvent::onWrite(TcpConnection *conn, uint32_t avaliable)
+void IocpEvent::onWrite(Event *ev, uint32_t avaliable)
 {
 	THEFOX_TRACE_FUNCTION << " avaliable=" << avaliable;
 
+	assert(NULL != ev);
+
+	TcpConnection *conn = ev->conn;
+	assert(NULL != conn);
 	Buffer *writebuf = conn->writeBuffer();
 
 	writebuf->retrieve(avaliable);
-	
 	conn->addWriteBytes(avaliable);
 
 	if (conn->_writeCompleteCallback)
 		conn->_writeCompleteCallback(conn);
 
-    conn->leaveIo();
+    conn->leaveEvent();
+
 	if (0 == writebuf->readableBytes())
-        conn->resetWrite();
+        ev->resetWrite();
 	else
-		updateWrite(conn);
+		updateWrite(ev);
 }

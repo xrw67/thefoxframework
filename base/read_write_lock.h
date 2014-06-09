@@ -39,8 +39,9 @@ public:
     void writeLock()
     {
         _enterLock.lock();
-        while (_reads > 0)
+        while (_reads > 0) {
             Sleep(0);
+        }
     }
     
     void writeUnlock()

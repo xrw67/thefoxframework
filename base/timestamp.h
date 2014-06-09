@@ -33,7 +33,7 @@ public:
         : _usTimestamp(ts._usTimestamp)
     {}
 
-    std::string toString()
+    string toString()
     {
         char buf[32] = {0};
         int64_t seconds = _usTimestamp / kMicroSecondsPerSecond;
@@ -42,7 +42,7 @@ public:
         return buf;
     }
 
-    std::string toFormatString()
+    string toFormatString()
     {
         char buf[32] = {0};
         time_t seconds = static_cast<time_t>(_usTimestamp / kMicroSecondsPerSecond);

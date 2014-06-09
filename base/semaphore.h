@@ -36,8 +36,9 @@ public:
     {
 #ifdef _WIN32
         if (NULL != _sem) {
-            if (0 != ::CloseHandle(_sem))
+            if (0 != ::CloseHandle(_sem)) {
                 _sem = NULL;
+            }
         }
 #else
         sem_destroy(&_sem);
@@ -52,10 +53,11 @@ public:
             return false;
 
         DWORD ret = ::WaitForSingleObject(_sem, millisecond);
-        if (WAIT_OBJECT_0 == ret || WAIT_ABANDONED == ret)
+        if (WAIT_OBJECT_0 == ret || WAIT_ABANDONED == ret) {
             return true;
-        else
+        } else {
             return false;
+        }
 #else
         int32_t ret = 0;
 
@@ -77,8 +79,9 @@ public:
 #ifdef _WIN32
         BOOL ret = FALSE;
         
-        if (NULL != _sem)
+        if (NULL != _sem) {
             ret = ::ReleaseSemaphore(_sem, 1, NULL);
+        }
         return TRUE == ret;
 #else
         return -1 != sem_post(&_sem);

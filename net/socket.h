@@ -15,14 +15,16 @@
 
 #else
 	#define SOCKET int
+    #define INVALID_SOCKET -1
+    #define SOCKET_ERROR -1
 	#define THEFOX_SOCKET_STARTUP
 	#define THEFOX_SOCKET_CLEANUP
 #endif
 
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class InetAddress;
 
@@ -52,6 +54,7 @@ private:
 	SOCKET _sockfd;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_SOCKET_H_

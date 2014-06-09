@@ -45,7 +45,7 @@ public:
 	LogMessage(LogLevel level, const char *filename, int line);
 	~LogMessage();
 
-	LogMessage &operator<<(const std::string &value);
+	LogMessage &operator<<(const string &value);
 	LogMessage &operator<<(const char *value);
 	LogMessage &operator<<(char value);
 	LogMessage &operator<<(int value);
@@ -63,7 +63,7 @@ private:
 	void Finish();
 
 	LogLevel _level;
-	std::string _message;
+	string _message;
 };
 
 class LogFinisher
@@ -88,7 +88,7 @@ private:
 } // namespace detail
 
 // 写日志函数
-typedef std::function<void(const std::string &message)> LogHandler;
+typedef std::function<void(const string &message)> LogHandler;
 
 void setLogHandler(const LogHandler &newFunc);
 

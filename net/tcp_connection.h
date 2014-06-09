@@ -13,9 +13,11 @@
 #include <net/inet_address.h>
 #include <net/callbacks.h>
 #include <net/socket.h>
+#include <net/event.h>
+#include <net/event_loop.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 class EventLoop;
 class TcpConnection;
@@ -55,19 +57,13 @@ public:
     size_t readBytes() const { return _readBytes; }
     size_t writeBytes() const { return _writeBytes; }
 
-	void send(const std::string &data);
+	void send(const string &data);
 	void send(const char *data, size_t len);
 
 	bool shutdown();
 	void setTcpNoDelay(bool on);
 	void forceClose();
 	void connectEstablished();
-
-    size_t pendingIo()
-    {
-        MutexGuard lock(_iomutex);
-        return _pendingIo;
-    }
 
     void setConnectionCallback(const ConnectionCallback &cb)
 	{ _connectionCallback = cb; }
@@ -83,11 +79,8 @@ private:
 
     void connectDestroyed();
 
-    bool testAndSetWrite();
-    void resetWrite();
-
-    void enterIo();
-    size_t leaveIo();
+    void enterEvent();
+    size_t leaveEvent();
 
     void addReadBytes(size_t bytes) { _readBytes += bytes; }
     void addWriteBytes(size_t bytes) { _writeBytes += bytes; }
@@ -112,19 +105,14 @@ private:
     WriteCompleteCallback _writeCompleteCallback;
 	RemoveConnectionCallback _removeConnectionCallback;
 
-    Mutex _writemutex;
-    bool _write;
+    Event _event;
+    Mutex _eventmutex;
+    size_t _pendingEvents;
 
-    Mutex _iomutex;
-    size_t _pendingIo;
-
-#ifdef WIN32
-	friend class IocpEvent;
-#else
-	friend class EpollEvent;
-#endif
+	friend class Poller;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif // _THEFOX_NET_TCPCONNECTION_H_

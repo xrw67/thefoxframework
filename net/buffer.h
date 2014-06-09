@@ -11,8 +11,8 @@
 
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
+namespace net {
 
 ///
 /// +-------------------+------------------+------------------+
@@ -114,14 +114,14 @@ public:
         _writerPtr = _beginPtr + kCheapPrepend;
     }
 
-    std::string retrieveAllAsString()
+    string retrieveAllAsString()
     {
         return retrieveAsString(readableBytes());
     }
 
-    std::string retrieveAsString(size_t len)
+    string retrieveAsString(size_t len)
     {
-        std::string result(peek(), len);
+        string result(peek(), len);
         retrieve(len);
         return result;
     }
@@ -268,6 +268,7 @@ private:
 	char *_endPtr;
 };
 
+} // namespace net
 } // namespace thefox
 
 #endif  // _THEFOX_NET_BUFFER_H_
