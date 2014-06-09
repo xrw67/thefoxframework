@@ -16,9 +16,7 @@
 namespace thefox
 {
 
-#ifdef WIN32
 class Thread;
-#endif
 
 typedef std::function<void(SOCKET, const InetAddress &, const InetAddress &)> NewConnectionCallback;
 
@@ -34,10 +32,6 @@ public:
     void setNewConnectionCallback(const NewConnectionCallback &cb)
     { _newConnectionCallback = cb; }
 
-#ifndef WIN32
-	void handleAccept(IoEvent *ev);
-#endif
-
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(Acceptor);
 
@@ -46,12 +40,10 @@ private:
 	bool _listening;
     NewConnectionCallback _newConnectionCallback;
 
-#ifdef WIN32
 	void acceptLoop();
 	Thread *_acceptThread;
+#ifdef WIN32
 	HANDLE _hAcceptEvent;
-#else
-	IoEvent _acceptEvent;
 #endif
 };
 

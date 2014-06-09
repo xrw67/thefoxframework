@@ -3,7 +3,6 @@
 
 #ifdef WIN32
 #include <Winsock2.h>
-#define socklen_t int
 
 /// @breaf socket库初始化
 #define THEFOX_SOCKET_STARTUP               \
@@ -15,11 +14,7 @@
 	::WSACleanup();
 
 #else
-	#include <sys/types.h>
-	#include <sys/socket.h>
-    typedef int SOCKET
-	#define INVALID_SOCKET -1
-	#define SOCKET_ERROR -1
+	#define SOCKET int
 	#define THEFOX_SOCKET_STARTUP
 	#define THEFOX_SOCKET_CLEANUP
 #endif

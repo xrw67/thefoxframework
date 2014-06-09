@@ -10,7 +10,7 @@
 #include <list>
 #include <base/common.h>
 #include <base/mutex.h>
-#include <base/Atomic_integer.h>
+#include <base/atomic_integer.h>
 #include <base/object_pool.h>
 #include <net/callbacks.h>
 #include <net/inet_address.h>

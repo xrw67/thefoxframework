@@ -149,7 +149,7 @@ void LogFinisher::operator=(LogMessage& other)
 	other.Finish();
 }
 
-LogTraceFunction::LogTraceFunction(char *func, char *file, int line)
+LogTraceFunction::LogTraceFunction(const char *func, const char *file, int line)
 	: _func(func)
 	, _file(getFileNameFromPath(file))
 	, _line(line)

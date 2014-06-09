@@ -23,16 +23,18 @@ namespace detail
 {
 
 // 从路径中得到文件名
-inline const char *getFileNameFromPath(char *pathName)
+inline const char *getFileNameFromPath(const char *pathName)
 {
-	char *data = pathName;
-	char* slash = strrchr(pathName, '/');
-	if (0 == slash)
-		slash = strrchr(data, '\\');
-	if (slash)
-		data = slash + 1;
-
-	return data;
+	const char* slash = strrchr(pathName, '/');
+	if (slash) {
+		return slash + 1;
+	} else {
+		const char *bslash = strrchr(pathName, '\\');
+		if (bslash) {
+			return bslash + 1;
+		}
+	}
+	return pathName;
 }
 
 class LogFinisher;
@@ -73,7 +75,7 @@ public:
 // 跟踪函数的开头和结束, 放在函数的第一行
 class LogTraceFunction {
 public:
-	LogTraceFunction(char *func, char *file, int line);
+	LogTraceFunction(const char *func, const char *file, int line);
 	~LogTraceFunction();
 	
 	void operator=(LogMessage &other);

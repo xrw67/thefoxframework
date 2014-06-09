@@ -2,10 +2,7 @@
 #include <log/logging.h>
 #include <net/event_loop.h>
 #include <net/tcp_server.h>
-
-#ifdef WIN32
 #include <base/thread.h>
-#endif
 
 using namespace thefox;
 
@@ -19,15 +16,11 @@ Acceptor::Acceptor(const InetAddress& listenAddr)
 Acceptor::~Acceptor()
 {
 	_listening = false;
-	//remove ioevent
-#ifdef WIN32
-	::CloseHandle(_hAcceptEvent);
 	_acceptThread->stop();
 	delete _acceptThread;
-#else
-
+#ifdef WIN32
+	::CloseHandle(_hAcceptEvent);
 #endif
-
 }
 
 bool Acceptor::init()
@@ -38,9 +31,7 @@ bool Acceptor::init()
 
 	bool ret = _acceptSocket.bind(_listenAddr);
 	
-#ifdef WIN32
 	_acceptThread = new Thread(std::bind(&Acceptor::acceptLoop, this), "acceptor.acceptloop()");
-#endif
 	
 	return ret;
 }
@@ -55,14 +46,11 @@ bool Acceptor::listen()
 	if (_acceptSocket.listen()) {
 		_listening = true;
 
-		// set ioevent
 #ifdef WIN32
 		_hAcceptEvent = ::WSACreateEvent();
 		WSAEventSelect(_acceptSocket.fd(), _hAcceptEvent, FD_ACCEPT);
-		_acceptThread->start();
-#else
-
 #endif
+		_acceptThread->start();
 		THEFOX_LOG(INFO) << "Acceptor::listen() done";
 		return true;
 	} else {
@@ -92,7 +80,7 @@ void Acceptor::acceptLoop()
     }
 }
 #else
-void Acceptor::handleAccept(IoEvent *ev)
+void Acceptor::acceptLoop()
 {
 	THEFOX_TRACE_FUNCTION;
 

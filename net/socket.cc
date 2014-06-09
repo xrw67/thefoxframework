@@ -2,6 +2,14 @@
 #include <log/logging.h>
 #include <net/inet_address.h>
 
+#ifndef WIN32
+	#include <netinet/tcp.h>
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#define INVALID_SOCKET -1
+	#define SOCKET_ERROR -1
+#endif
+
 using namespace thefox;
 
 Socket::Socket(SOCKET sockfd)
@@ -79,7 +87,7 @@ bool Socket::close(SOCKET sockfd)
 		::shutdown(sockfd, SD_BOTH);
 		if (SOCKET_ERROR == ::closesocket(sockfd)) {
 #else
-		::shutdown(_sockfd, SHUT_RDWR);
+		::shutdown(sockfd, SHUT_RDWR);
 		if (-1 == ::close(sockfd)) {
 #endif
 			return false;
@@ -132,7 +140,7 @@ SOCKET Socket::accept(InetAddress *peerAddr)
 
 	SOCKET clientSockfd = INVALID_SOCKET;
 	struct sockaddr_in addr;
-    int len = sizeof(addr);
+    socklen_t len = sizeof(addr);
 #ifdef WIN32
     clientSockfd = ::WSAAccept(_sockfd, (sockaddr *)&addr, &len, 0, 0);
 #else
