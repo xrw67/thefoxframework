@@ -160,6 +160,13 @@ public:
 		_threads.push_back(thread);
 	}
 	
+	void startAll()
+	{
+		for (size_t i = 0; i < _threads.size(); ++i) {
+			_threads[i].start();
+		}
+	}
+	
 	void joinAll()
 	{
 		for (size_t i = 0; i < _threads.size(); ++i) {
