@@ -1,7 +1,7 @@
 #ifndef _THEFOX_BASE_THREAD_H_
 #define _THEFOX_BASE_THREAD_H_
 
-
+#include <vector>
 #include <base/common.h>
 
 #ifdef WIN32
@@ -21,9 +21,8 @@ class Thread
 public:
     enum StateT { kInit, kStart, kJoined, kStop };
 
-    explicit Thread(const ThreadCallback &cb, const string &name)
+    explicit Thread(const ThreadCallback &cb)
         : _cb(cb)
-        , _name(name)
         , _state(kInit)
     #ifdef WIN32
         , _handle(NULL)
@@ -102,8 +101,6 @@ public:
         return result;
     }
 
-    const string &name() const { return _name; }
-
 #ifdef WIN32
     DWORD tid() const { return _threadId; }
     operator HANDLE() { return _handle; }
@@ -126,7 +123,6 @@ private:
     }
 
     ThreadCallback _cb;
-    const string _name;
     StateT _state;
 
 #ifdef _WIN32
@@ -135,6 +131,50 @@ private:
 #else
     pthread_t _thread;
 #endif
+};
+
+/// @breaf Ïß³Ì×é
+class ThreadGroup
+{
+public:
+	ThreadGroup()
+	{}
+	~ThreadGroup()
+	{
+		for (size_t i = 0; i < _threads.size(); ++i) {
+			delete _threads[i];
+		}
+		
+		_thread.clear();
+	}
+	
+	Thread *createThread(const ThreadCallback &threadfunc)
+	{
+		Thread *thread = new Thread(threadfunc);
+		_threads.push_back(thread);
+		return thread;
+	}
+	
+	void addThread(Thread *thread) 
+	{
+		_threads.push_back(thread);
+	}
+	
+	void joinAll()
+	{
+		for (size_t i = 0; i < _threads.size(); ++i) {
+			_threads[i].join();
+		}
+	}
+	
+	size_t size() const
+	{ 
+		return _threads.size(); 
+	}
+	
+private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ThreadGroup);
+	std::vector<thread *> _threads;
 };
 
 } // namespace thefox
