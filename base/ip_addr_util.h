@@ -25,6 +25,11 @@ public:
 		ip = (((((d0<<8)+d1)<<8)+d2)<<8)+d3;
 		return ip;
 	}
+	
+	static uint32_t stoi(const string &ipStr)
+	{
+		return stoi(ipStr.c_str());
+	}
 };
 
 } // namespace thefox
