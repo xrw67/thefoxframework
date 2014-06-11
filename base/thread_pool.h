@@ -96,9 +96,7 @@ private:
 	void addWorker(int threadNum)
 	{
 		for (int i = 0; i < threadNum; ++i) {
-			std::shared_ptr<Thread> thread(
-				new Thread(std::bind(&ThreadPool::taskRunner, this),
-								"threadpool.taskrunner"));
+			std::shared_ptr<Thread> thread(new Thread(std::bind(&ThreadPool::taskRunner, this)));
 			_threads.push_back(thread);					
 			thread->start();
 		}
