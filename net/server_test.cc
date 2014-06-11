@@ -5,7 +5,6 @@
 #include <net/tcp_server.h>
 #include <net/tcp_connection.h>
 #include <net/event_loop.h>
-#include <log/log_stdout.h>
 #include <log/log_file.h>
 
 using namespace thefox;
@@ -40,10 +39,9 @@ void onWriteComplete(TcpConnection *conn)
 
 int main(int argc, char **argv)
 {
-	//LogStdout log("server_test");
-	LogFile log(".", "server_test");
+	LogFile log("./logs", "server_test");
 
-	THEFOX_LOG(INFO) << "tcp_server bigin";
+	THEFOX_LOG(INFO) << "tcp_server begin";
 
 	THEFOX_SOCKET_STARTUP;
 
@@ -57,5 +55,6 @@ int main(int argc, char **argv)
 	loop.join();
 
 	THEFOX_SOCKET_CLEANUP;
+
 	return 0;
 }
