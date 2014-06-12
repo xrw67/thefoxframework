@@ -14,7 +14,7 @@ public:
 		char buf[32] = {0};
 		uint8_t* ptr = (uint8_t*)&ip;
 		snprintf(buf, sizeof(buf) - 1, "%u.%u.%u.%u", ptr[3], ptr[2], ptr[1], ptr[0]);
-		buf[strlen(buf) - 1] = '\0';
+		buf[sizeof(buf) - 1] = '\0';
 		return buf;
 	}
 
