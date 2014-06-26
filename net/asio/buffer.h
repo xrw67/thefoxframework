@@ -1,6 +1,6 @@
 
-#ifndef _THEFOX_NET_BUFFER_H_
-#define _THEFOX_NET_BUFFER_H_
+#ifndef _THEFOX_NET_ASIO_BUFFER_H_
+#define _THEFOX_NET_ASIO_BUFFER_H_
 
 #ifdef WIN32
 #pragma warning(disable:4996)
@@ -271,4 +271,4 @@ private:
 } // namespace net_asio
 } // namespace thefox
 
-#endif  // _THEFOX_NET_BUFFER_H_
+#endif  // _THEFOX_NET_ASIO_BUFFER_H_

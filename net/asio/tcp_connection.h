@@ -4,8 +4,8 @@
 * @author macwe1024 at gmail dot com
 */
 
-#ifndef _THEFOX_NET_TCPCONNECTION_H_
-#define _THEFOX_NET_TCPCONNECTION_H_
+#ifndef _THEFOX_NET_ASIO_TCPCONNECTION_H_
+#define _THEFOX_NET_ASIO_TCPCONNECTION_H_
 
 #include <net/asio/net_asio.h>
 
@@ -94,4 +94,4 @@ private:
 } // namespace net_asio
 } // namespace thefox
 
-#endif // _THEFOX_NET_TCPCONNECTION_H_
+#endif // _THEFOX_NET_ASIO_TCPCONNECTION_H_

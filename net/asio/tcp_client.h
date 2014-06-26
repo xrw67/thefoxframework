@@ -3,8 +3,8 @@
  * @author macwe1024 at gmail dot com
  */
 
-#ifndef _THEFOX_NET_TCPCLIENT_H_
-#define _THEFOX_NET_TCPCLIENT_H_
+#ifndef _THEFOX_NET_ASIO_TCPCLIENT_H_
+#define _THEFOX_NET_ASIO_TCPCLIENT_H_
 
 #include <net/asio/net_asio.h>
 
@@ -55,4 +55,4 @@ private:
 } // namespace net_asio
 } // namespace thefox
 
-#endif // _THEFOX_NET_TCPCLIENT_H_
+#endif // _THEFOX_NET_ASIO_TCPCLIENT_H_

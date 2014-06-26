@@ -1,5 +1,5 @@
-#ifndef _THEFOX_NET_CALLBACKS_H_
-#define _THEFOX_NET_CALLBACKS_H_
+#ifndef _THEFOX_NET_ASIO_CALLBACKS_H_
+#define _THEFOX_NET_ASIO_CALLBACKS_H_
 
 #include <base/timestamp.h>
 
@@ -21,4 +21,4 @@ void defaultMessageCallback(const TcpConnectionPtr &conn,
 } // namespace net_asio
 } // namespace thefox
 
-#endif // _THEFOX_NET_CALLBACKS_H_
+#endif // _THEFOX_NET_ASIO_CALLBACKS_H_

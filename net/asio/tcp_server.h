@@ -3,8 +3,8 @@
  * @author macwe1024 at gmail dot com
  */
 
-#ifndef _THEFOX_NET_TCPSERVER_H_
-#define _THEFOX_NET_TCPSERVER_H_
+#ifndef _THEFOX_NET_ASIO_TCPSERVER_H_
+#define _THEFOX_NET_ASIO_TCPSERVER_H_
 
 #include <map>
 #include <base/mutex.h>
@@ -68,4 +68,4 @@ private:
 } // namespace net_asio
 } // namespace thefox
 
-#endif // _THEFOX_NET_TCPSERVER_H_
+#endif // _THEFOX_NET_ASIO_TCPSERVER_H_
