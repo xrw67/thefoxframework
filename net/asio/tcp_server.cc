@@ -8,7 +8,7 @@ TcpServer::TcpServer(io_service &io,
 					boost::asio::ip::tcp::endpoint listenAddr, 
 					const string &nameArg)
 	: _io(io)
-	,_name(nameArg)
+	, _name(nameArg)
 	, _started(false)
     , _messageCallback(defaultMessageCallback)
 	, _acceptor(io, listenAddr)
@@ -17,15 +17,16 @@ TcpServer::TcpServer(io_service &io,
 
 TcpServer::~TcpServer()
 {
-	THEFOX_TRACE_FUNCTION;
-
 	_started = false;
+
+	for (ConnectionMap::iterator it(_connections.begin()); it != _connections.end(); ++it) {
+		TcpConnectionPtr conn = it->second;
+		conn->forceClose();
+	}
 }
 
 bool TcpServer::start()
 {
-	THEFOX_TRACE_FUNCTION;
-
 	if (_started)
 		return true;
 	

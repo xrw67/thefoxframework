@@ -1,5 +1,4 @@
 /*
-* @filename MySqlResultSet.h
 * @brief libmysql结果集的C++封装类，支持Windows和Linux
 * @author macwe1024 at gmail dot com
 */
@@ -8,17 +7,13 @@
 #define _THEFOX_DB_MYSQL_RESULTSET_H_
 
 #include <mysql/mysql.h>
-#include <base/Types.h>
-#include <base/noncopyable.h>
+#include <base/common.h>
 
-namespace thefox
-{
-
-namespace db
-{
+namespace thefox {
+namespace db {
 
 /// @beirf 结果集类
-class MySqlResultSet :noncopyable
+class MySqlResultSet
 {
 public:
     MySqlResultSet()
@@ -79,7 +74,7 @@ public:
     {
         if (!_res || !_row)
             return "";
-        if (index < 0 || index >= rowCount())
+        if (index < 0 || index >= fieldCount())
             return "";
         return _row[index] ? _row[index] : "";
     }
@@ -100,7 +95,14 @@ public:
     /// @return 返回对应的值
     int getInt(const int index) const
     { return atoi(getString(index)); }
-    
+
+    int64_t getInt64(const int index) const
+	{ 
+		int64_t v = 0;
+		sscanf(getString(index), "%lld", &v);
+		return v;
+	}
+
     /// @beirf 根据索引得到int类型的值
     /// @param[in] fiendName 字段的名称
     /// @return 返回对应的值
@@ -140,6 +142,8 @@ public:
     }
 
 private:
+	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(MySqlResultSet);
+
     int getFieldIndex(const string &fieldName) const
     {
         for (int i = 0; i < _res->field_count; ++i) {

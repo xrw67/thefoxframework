@@ -68,6 +68,10 @@ public:
 	void operator=(struct sockaddr_in addr)
 	{ _addr = addr; }
 
+#ifdef THEFOX_USE_BOOST_ASIO
+    tcp::endpoint()
+#endif
+
 private:
     struct sockaddr_in _addr;
 };

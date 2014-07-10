@@ -7,17 +7,11 @@
 #ifndef _THEFOX_DB_MYSQL_CONNECTION_H_
 #define _THEFOX_DB_MYSQL_CONNECTION_H_
 
-#include <mysql/mysql.h>
-#include <base/Types.h>
-#include <base/MutexLock.h>
-//#include <log/Logger.h>
-#include <db/MySqlResultSet.h>
+#include <base/mutex.h>
+#include <db/mysql_result_set.h>
 
-namespace thefox
-{
-
-namespace db
-{
+namespace thefox {
+namespace db {
 
 /// @beirf mysql数据库连接类
 class MySqlConnection
@@ -35,18 +29,25 @@ public:
         , _port(port)
         , _dbName(dbName)
     {}
+
     ~MySqlConnection()
-    {
-        close();
-    }
-    
+	{ 
+		this->close(); 
+	}
+
+    MySqlConnection(const MySqlConnection &db)
+		: _connPtr(NULL)
+	{
+		setParam(db._host, db._user, db._passwd, db._port, db._dbName);
+	}
+
     /// @brief 设置数据库连接参数
     /// @param[in] host 主机名或ip地址
     /// @param[in] user 用户名
     /// @param[in] passwd 密码
     /// @param[in] port 主机端口号
     /// @param[in] dbName 数据库名
-    void setParam(const string &host, const string &user, const string &passwd, const int port, const string &dbName)
+    void setParam(const string &host, const string &user, const string &passwd, int port, const string &dbName)
     {
         _host = host;
         _user = user;
@@ -59,55 +60,68 @@ public:
     /// @return 连接成功返回true，连接失败返回false
     bool open()
     { 
-        if (isConnected())
-            close();
-            
-        if (NULL == (_connPtr = mysql_init(&_conn))) 
-        {
-//            LOG_ERROR << "mysql_init error, not enough memory!";
-            return false;
-        }
+		this->close();
+		_connPtr = &_conn;        
+        mysql_init(_connPtr);
 
-        if (NULL == mysql_real_connect(_connPtr, 
-                                    _host.c_str(), 
-                                    _user.c_str(), 
-                                    _passwd.c_str(), 
-                                    _dbName.c_str(), 
-                                    _port, 
-                                    NULL, 
-                                    CLIENT_MULTI_STATEMENTS)) 
-        {
-//            LOG_ERROR << "Failed to connect to database, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
-            return false;
-        }
+		unsigned int timeout = 3;
+		mysql_options(_connPtr, MYSQL_OPT_CONNECT_TIMEOUT, (char*)&(timeout));//设置连接超时
+       
+		if (!mysql_real_connect(_connPtr, _host.c_str(), _user.c_str(), _passwd.c_str(), 
+				0, _port, NULL, CLIENT_MULTI_QUERIES)) {
+			this->close();
+			return false;
+		}
 
-        return true;
+		if (!_dbName.empty()) {
+			mysql_select_db(_connPtr, _dbName.c_str());
+		}
+		return true;
     }
     
     /// @beirf 关闭数据库连接
     void close()
     {
-        if (isConnected()) {
+        if (_connPtr) {
             mysql_close(_connPtr);
-            _connPtr = NULL;
         }
+
+		_connPtr = NULL;
     }
     
-    /// @brief 返回数据库是否已经连接
-    /// @return 已经连接返回true，未连接返回false
-    bool isConnected() const 
-    { return NULL != _connPtr; }
+	bool reopen()
+	{
+		if(_connPtr) {
+			mysql_close(_connPtr);
+		}
+		
+		if (!mysql_real_connect(_connPtr, _host.c_str(), _user.c_str(), _passwd.c_str(), 
+				0, _port, NULL, CLIENT_MULTI_QUERIES)) {
+			return false;
+		}
+
+		if (!_dbName.empty()) {
+			mysql_select_db(_connPtr, _dbName.c_str());
+		}
+
+		return true;
+	}
     
+	bool ping()
+	{
+		if(!_connPtr) {
+			return false;
+		}
+
+		return (0 == mysql_ping(_connPtr));
+	}
+
     /// @brief 选择数据库
     /// @return 设置成功返回true，否则返回false
     bool selectDb(const string &dbName) 
     { 
         _dbName = dbName; 
-        if (0 != mysql_select_db(_connPtr, _dbName.c_str())) {
-//            LOG_ERROR << "select database failed, Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
-            return false;
-        }
-        return true;
+        return (0 != mysql_select_db(_connPtr, _dbName.c_str()));
     }
     
     /// @brief 执行无返回结果集的查询语句
@@ -117,19 +131,18 @@ public:
     /// @return 执行成功返回true, 否则返回false
     bool exec(const string &sql, uint32_t *insertId = NULL)
     {
-        if (!isConnected()) {
-//            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
+        if (NULL == _connPtr) {
             return false;
         }
         
-        MutexLockGuard lock(_lock);
+        MutexGuard lock(_lock);
         if (0 != mysql_real_query(_connPtr, sql.c_str(), (unsigned long)sql.length())) {
-//            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
-        if (insertId)
+
+        if (insertId) {
             *insertId = (uint32_t)mysql_insert_id(_connPtr);
-            
+		}
         return true;
     }
     
@@ -140,30 +153,31 @@ public:
     /// @sa resultSet
     bool query(const string &sql, MySqlResultSet &resultSet)
     {
-        if (!isConnected()) {
-//            LOG_ERROR << "mysql query failed, database not connected! sql=" << sql;
+        if (NULL == _connPtr) {
             return false;
         }
         
-        MutexLockGuard lock(_lock);
+        MutexGuard lock(_lock);
         if (0 != mysql_real_query(_connPtr, sql.c_str(), sql.length())) {
-//            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
             return false;
         }
         
-        if (resultSet)
+        if (resultSet) {
             mysql_free_result(resultSet);
-        if (resultSet = mysql_store_result(_connPtr)) {
-//            LOG_ERROR << "mysql query failed, sql=" << sql <<", Error" << mysql_errno(_connPtr) <<": " << mysql_error(_connPtr);
-        }
+		}
+
+        resultSet = mysql_store_result(_connPtr);
+
         return true;
     }
         
 private:
+	const MySqlConnection &operator=(const MySqlConnection &);
+
     MYSQL _conn;
     MYSQL *_connPtr;
-    MutexLock _lock;
-    
+    Mutex _lock;
+
     string _host;
     string _user;
     string _passwd;

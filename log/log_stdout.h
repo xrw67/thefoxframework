@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <log/logging.h>
-
+#include <base/common.h>
 
 namespace thefox
 {
@@ -18,21 +18,23 @@ namespace thefox
 class LogStdout
 {
 public:
-	LogStdout(const string& basename)
+	LogStdout(const string& basename = "")
 		: _basename(basename)
 	{
-		setLogHandler(std::bind(&LogStdout::append, this, _1));
+		setLogHandler(std::bind(&LogStdout::append, this, std::placeholders::_1));
 	}
 	~LogStdout() {}
 
 	void append(const string &message)
 	{
-		std::cout << _basename << " " << message << '\n';
+		if (message.empty()) {
+			std::cout << message << '\n';
+		} else {
+			std::cout << _basename << " " << message << '\n';
+		}
 	}
 	
 private:
-	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(LogStdout);
-
 	const string _basename;
 };
 

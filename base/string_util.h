@@ -112,6 +112,23 @@ public:
         return str;
     }
 
+	/// @brief 格式化字符串
+    static string format(const char *format, ...)
+    {
+        va_list ap;
+        va_start(ap, format);
+		string str;
+		
+        char *buf = (char *)malloc(kMaxStringLen);
+        if (buf) {
+            vsnprintf(buf, kMaxStringLen, format, ap);
+            str = buf;
+            free(buf);
+            va_end(ap);
+        }
+        return str;
+    }
+	
     /// @brief 移除左侧的空格、换行符和制表符
     static string trimLeft(const string &str)
     {
@@ -255,7 +272,7 @@ public:
 	{
 		size_t pos = 0;
 		size_t newPos = 0;
-
+		
 		while (string::npos != pos) {
 			pos = str.find_first_of(separator, newPos);
 			if (string::npos == pos) { // 结束了
@@ -270,6 +287,29 @@ public:
 				newPos = pos + 1;
 			}
 		}
+	}
+	
+	static std::vector<string> strtok(const string &str, char separator)
+	{
+		size_t pos = 0;
+		size_t newPos = 0;
+		std::vector<string> arr;
+		
+		while (string::npos != pos) {
+			pos = str.find_first_of(separator, newPos);
+			if (string::npos == pos) { // 结束了
+				if (pos > newPos) {
+					arr.push_back(str.substr(newPos, pos - newPos));
+                }
+				break;
+			} else {
+				if (pos > newPos) {
+					arr.push_back(str.substr(newPos, pos - newPos));
+                }
+				newPos = pos + 1;
+			}
+		}
+		return arr;
 	}
 };
 

@@ -8,7 +8,6 @@ using namespace thefox::net_asio;
 TcpClient::TcpClient(io_service &io, const string &nameArg)
 	: _io(io)
 	, _name(nameArg)
-	, _conn(new TcpConnection(io, 1))
 	, _messageCallback(defaultMessageCallback)
 {
 }
@@ -20,10 +19,11 @@ TcpClient::~TcpClient()
 
 bool TcpClient::open(ip::tcp::endpoint endpoint)
 {
-	THEFOX_TRACE_FUNCTION;
     if (opened()) {
         return false;
     }
+
+	_conn = std::make_shared<TcpConnection>(_io, 1);
 
 	_conn->socket().async_connect(endpoint,
 		[this](const boost::system::error_code &ec) {
@@ -31,6 +31,7 @@ bool TcpClient::open(ip::tcp::endpoint endpoint)
 			_conn->setConnectionCallback(_connectionCallback);
 			_conn->setMessageCallback(_messageCallback);
 			_conn->setWriteCompleteCallback(_writeCompleteCallback);
+			_conn->setRemoveConnectionCallback(std::bind(&TcpClient::removeConnection, this, _1));
 			_conn->connectEstablished();
 		}
 	});
@@ -39,23 +40,37 @@ bool TcpClient::open(ip::tcp::endpoint endpoint)
 
 void TcpClient::close()
 {
-	_io.post([this](){ _conn->forceClose(); });
+	if (_conn) {
+		_conn->forceClose();
+	}
 }
 
 bool TcpClient::opened()
 {
-	if (TcpConnection::kConnected == _conn->state()) {
+	if (_conn) {
+		if (TcpConnection::kConnected == _conn->state()) {
 			return true;
+		}
 	}
+	
 	return false;
 }
 
 void TcpClient::send(const char *data, size_t len)
 {
-	_conn->send(data, len);
+	if (_conn) {
+		_conn->send(data, len);
+	}
 }
 
 void TcpClient::send(const string &data)
 {
-	_conn->send(data);
+	if (_conn) {
+		_conn->send(data);
+	}
+}
+
+void TcpClient::removeConnection(const TcpConnectionPtr &conn)
+{
+	_conn.reset();
 }

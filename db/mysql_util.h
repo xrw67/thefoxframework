@@ -7,48 +7,88 @@
 #ifndef _THEFOX_DB_MYSQL_UTIL_H_
 #define _THEFOX_DB_MYSQL_UTIL_H_
 
-#include <base/Types.h>
-#include <db/MySqlConnection.h>
+#include <map>
+#include <base/common.h>
+#include <db/mysql_connection.h>
 
-namespace thefox
-{
-
-namespace db
+namespace thefox {
+namespace db {
 
 class MysqlUtil
 {
 public:
+	typedef std::map<string, string> VariableMap;
+	typedef std::map<string, string> StatusMap;
+	
     static bool isTableExist(MySqlConnection &conn, const string &tableName)
     {
         MySqlResultSet resultSet;
         string sql("SHOW TABLES LIKE '"+ tableName+"'");
         conn.query(sql, resultSet);
-        if (0 == resultSet.rowCount())
+        if (0 == resultSet.rowCount()) {
             return false;
-        else
+        } else {
             return true;
+		}
     }
 
     static bool isQueryNotRecord(MySqlConnection &conn, const string &selectSql)
     {
         MySqlResultSet resultSet;
         conn.query(selectSql, resultSet);
-        if (0 == resultSet.rowCount())
+        if (0 == resultSet.rowCount()) {
             return false;
-        else
+        } else {
             return true;
+		}
     }
 
-    static bool setNames(const string &csName)
+    static bool setNames(MySqlConnection &conn, const string &csName)
     {
         string sql("SET NAMES '"+ csName+"'");
         return conn.exec(sql);
     }
 
+	static VariableMap getVariable(MySqlConnection &conn, const string &keys)
+	{
+		VariableMap result;
+		MySqlResultSet rs;
+		string strsql("show variables");
+		if (!keys.empty()) {
+			strsql += " where Variable_name in (";
+			strsql += keys;
+			strsql += ")";
+		}
+		
+		conn.query(strsql, rs);
+		while (rs.fetchRow()) {
+			result[rs.getString(0)] = rs.getString(1);
+		}
+		
+		return result;
+	}
+	
+	static StatusMap getGlobalStatus(MySqlConnection &conn, const string &keys)
+	{
+		StatusMap result;
+		MySqlResultSet rs;
+		string strsql("show global status");
+		if (!keys.empty()) {
+			strsql += " where Variable_name in (";
+			strsql += keys;
+			strsql += ")";
+		}
+		
+		conn.query(strsql, rs);
+		while (rs.fetchRow()) {
+			result[rs.getString(0)] = rs.getString(1);
+		}
+		
+		return result;
+	}
 };
 
 } // nsmespace db
-
 } // namespace thefox
 
 #endif // _THEFOX_DB_MYSQL_UTIL_H_
