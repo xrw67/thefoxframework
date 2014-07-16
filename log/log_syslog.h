@@ -43,4 +43,6 @@ private:
 
 } // namespace thefox
 
+void THEFOX_SET_LOG_SYSLOG(const string& basename, const net::InetAddress &serverAddr);
+
 #endif // _THEFOX_LOGSYSLOG_H_

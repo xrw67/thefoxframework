@@ -7,8 +7,8 @@
 #include <functional>
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
+
 enum LogLevel {
 	LOGLEVEL_TRACE,
 	LOGLEVEL_DEBUG,
@@ -88,9 +88,9 @@ private:
 } // namespace detail
 
 // 写日志函数
-typedef std::function<void(const string &message)> LogHandler;
+typedef void (*ThefoxLogHandler)(const string &message);
 
-void setLogHandler(const LogHandler &newFunc);
+void thefoxSetLogHandler(ThefoxLogHandler newFunc);
 
 void setLogLevel(LogLevel level);
 LogLevel logLevel();

@@ -3,10 +3,9 @@
 #include <base/timestamp.h>
 #include <base/thread_util.h>
 
-namespace thefox
-{
-namespace detail
-{
+namespace thefox {
+namespace detail {
+
 // 日志级别
 const char* LogLevelName[LOGLEVEL_NUM_LOG_LEVELS] =
 {
@@ -25,7 +24,7 @@ void nullLogHandler(const string &message)
 }
 
 static LogLevel g_logLevel = initLogLevel();
-static LogHandler g_logHandler = nullLogHandler;
+static ThefoxLogHandler g_logHandler = nullLogHandler;
 
 // 高效的整型转字符串算法 by Matthew Wilson.
 const char digits[] = "9876543210123456789";
@@ -170,9 +169,13 @@ void LogTraceFunction::operator=(LogMessage& other)
 } // namespace detail
 
 // 设置日志写函数
-void setLogHandler(const LogHandler &newFunc)
+void thefoxSetLogHandler(ThefoxLogHandler newFunc)
 {
-	detail::g_logHandler = newFunc;
+	if (NULL == newFunc) {
+		detail::g_logHandler = detail::nullLogHandler;
+	} else {
+		detail::g_logHandler = newFunc;
+	}
 }
 
 // 设置日志级别

@@ -12,6 +12,22 @@
 
 using namespace thefox;
 
+static LogFile *g_logFile = NULL;
+
+void THEFOX_SET_LOG_FILE(const string &dir, const string &basename, size_t rollSize)
+{
+	if (!g_logFile) {
+		g_logFile = new LogFile(dir, basename, rollSize);
+	}
+}
+
+void logFileAppend(const string &message)
+{
+	if (g_logFile) {
+		g_logFile->append(message);
+	}
+}
+
 // not thread safe
 class LogFile::File
 {
@@ -67,7 +83,6 @@ private:
 	size_t _writtenBytes;
 };
 
-
 LogFile::LogFile(const string &dir, const string& basename, size_t rollSize)
 	: _dir(dir)
 	, _basename(basename)
@@ -78,11 +93,13 @@ LogFile::LogFile(const string &dir, const string& basename, size_t rollSize)
 {
 	makePath(_dir);
 	rollFile();
-	setLogHandler(std::bind(&LogFile::append, this, _1));
+	thefoxSetLogHandler(logFileAppend);
 }
 
 LogFile::~LogFile()
 {
+	thefoxSetLogHandler(NULL);
+
 	if (NULL != _file)
 		delete _file;
 }
@@ -91,7 +108,7 @@ void LogFile::append(const string &message)
 {
 	MutexGuard lock(_mutex);
 	_file->append(message.c_str(), message.length());
-	_file->append("\n", 1);
+	_file->append("\r\n", 2);
 
 	if (_file->writtenBytes() > _rollSize) {
 		rollFile();

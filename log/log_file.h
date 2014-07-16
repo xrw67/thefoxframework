@@ -20,20 +20,17 @@
 #include <base/mutex.h>
 #include <log/logging.h>
 
-namespace thefox
-{
-
+namespace thefox {
 
 class LogFile
 {
 public:
 	class File;
 
-	LogFile(const string &dir,
-            const string &basename,
-			size_t rollSize = 100*1024*1024);
+	LogFile(const string &dir, const string &basename, size_t rollSize);
 	~LogFile();
 
+	void init();
 	void append(const string &message);
 	void flush();
 
@@ -56,6 +53,9 @@ private:
 	static const int _kRollPerSeconds = 86400;
 };
 
-}
+} // namespace thefox
 
+void THEFOX_SET_LOG_FILE(const thefox::string &dir,
+							const thefox::string &basename,
+							size_t rollSize = 100*1024*1024);
 #endif // _THEFOX_LOGFILE_H_

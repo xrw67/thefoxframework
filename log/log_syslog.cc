@@ -2,6 +2,22 @@
 
 using namespace thefox;
 
+static LogSyslog *g_logSyslog = NULL;
+
+void THEFOX_SET_LOG_STDOUT(const string& basename, const net::InetAddress &serverAddr)
+{
+	if (!g_logSyslog) {
+		g_logSyslog = new LogSyslog(basename, serverAddr);
+	}
+}
+
+void logSyslogAppend(const string &message)
+{
+	if (g_logSyslog) {
+		g_logSyslog->append(message);
+	}
+}
+
 LogSyslog::LogSyslog(const string& basename, const net::InetAddress &serverAddr)
 	: _basename(basename)
 	, _serverAddr(serverAddr)

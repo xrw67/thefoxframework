@@ -1,12 +1,11 @@
 #include <stdio.h>
-#include <log/LogFile.h>
-#include <base/Types.h>
+#include <log/log_file.h>
 
 using namespace thefox;
 
 int main(int argc,char * argv[])
 {
-	thefox::LogFile log("logs","TestLog");
+	THEFOX_SET_LOG_FILE("logs","TestLog");
 	int i=100;
 	while (--i)
 	{
