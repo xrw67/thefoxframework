@@ -33,6 +33,7 @@ LogStdout::~LogStdout()
 
 void LogStdout::append(const string &message)
 {
+	MutexGuard lock(_mutex);
 	if (message.empty()) {
 		std::cout << message << '\n';
 	} else {

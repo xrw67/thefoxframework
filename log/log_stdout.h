@@ -11,6 +11,7 @@
 #include <iostream>
 #include <log/logging.h>
 #include <base/common.h>
+#include <base/mutex.h>
 
 namespace thefox {
 
@@ -23,6 +24,7 @@ public:
 	void append(const string &message);
 	
 private:
+	Mutex _mutex;
 	const string _basename;
 };
 
