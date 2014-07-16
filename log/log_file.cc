@@ -16,9 +16,11 @@ static LogFile *g_logFile = NULL;
 
 void THEFOX_SET_LOG_FILE(const string &dir, const string &basename, size_t rollSize)
 {
-	if (!g_logFile) {
-		g_logFile = new LogFile(dir, basename, rollSize);
+	if (g_logFile) {
+		delete g_logFile;
+		g_logFile = NULL;
 	}
+	g_logFile = new LogFile(dir, basename, rollSize);
 }
 
 void logFileAppend(const string &message)

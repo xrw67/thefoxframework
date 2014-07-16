@@ -6,9 +6,11 @@ static LogSyslog *g_logSyslog = NULL;
 
 void THEFOX_SET_LOG_STDOUT(const string& basename, const net::InetAddress &serverAddr)
 {
-	if (!g_logSyslog) {
-		g_logSyslog = new LogSyslog(basename, serverAddr);
+	if (g_logSyslog) {
+		delete g_logSyslog;
+		g_logSyslog = NULL;
 	}
+	g_logSyslog = new LogSyslog(basename, serverAddr);
 }
 
 void logSyslogAppend(const string &message)
