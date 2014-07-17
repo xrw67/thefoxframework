@@ -110,7 +110,7 @@ void LogFile::append(const string &message)
 {
 	MutexGuard lock(_mutex);
 	_file->append(message.c_str(), message.length());
-	_file->append("\r\n", 2);
+	_file->append("\n", 1);
 
 	if (_file->writtenBytes() > _rollSize) {
 		rollFile();
