@@ -4,7 +4,7 @@
 using namespace thefox;
 using namespace thefox::net_asio;
 
-void thefox::defaultMessageCallback(const TcpConnectionPtr &conn,
+void thefox::net_asio::defaultMessageCallback(const TcpConnectionPtr &conn,
 							Buffer *buf, Timestamp recvTime)
 {
 	buf->retrieveAll();
@@ -34,8 +34,12 @@ void TcpConnection::send(const string &data)
 
 void TcpConnection::send(const char *data, size_t len)
 {
-	bool writeInProgress = (_writeBuffer.readableBytes() > 0);
+	bool writeInProgress;
+	{
+	MutexGuard lock(_writeMutex);
+	writeInProgress = (_writeBuffer.readableBytes() > 0);
 	_writeBuffer.append(data, len);
+	}
 
 	enterIo();
 	_io.post([this, writeInProgress]() {
@@ -109,6 +113,9 @@ void TcpConnection::doRead()
 
 				doRead();
 			} else {
+				int errCode = ec.value();
+				string errText = ec.message();
+				THEFOX_LOG(ERROR) << "connection failed, id="<< id() <<" [" << errCode <<"]" << errText;
 				connectDestroyed();
 			}
 			leaveIo();
@@ -119,24 +126,39 @@ void TcpConnection::doWrite()
 {
 	enterIo();
 
+	
 	auto self(shared_from_this());
 
+	// 控制发送的速度
+	size_t totalLength = _writeBuffer.readableBytes();
+	size_t lengthToWrite = totalLength > kDefaultSizeToWrite ? kDefaultSizeToWrite : totalLength;
+
 	async_write(_socket, 
-		boost::asio::buffer(_writeBuffer.peek(), _writeBuffer.readableBytes()),
+		boost::asio::buffer(_writeBuffer.peek(), lengthToWrite),
 		[this, self](const boost::system::error_code &ec, size_t length) {
 		if (!ec) {
-			_writeBuffer.retrieve(length);
 			_writeBytes += length;
+
+			{
+			MutexGuard lock(_writeMutex);
+			_writeBuffer.retrieve(length);
+			}
 
 			if (0 == _writeBuffer.readableBytes() && _writeCompleteCallback) {
 				_writeCompleteCallback(self);
 			} 
 
+			_writeMutex.lock();
 			if (_writeBuffer.readableBytes() > 0) {
+				_writeMutex.unlock();
 				doWrite();
 			}
+			_writeMutex.unlock();
 		}
 		else {
+			int errCode = ec.value();
+			string errText = ec.message();
+			THEFOX_LOG(ERROR) << "connection failed, id="<< id() <<" [" << errCode <<"]" << errText;
 			connectDestroyed();
 		}
 		leaveIo();

@@ -7,6 +7,7 @@
 #ifndef _THEFOX_NET_ASIO_TCPCONNECTION_H_
 #define _THEFOX_NET_ASIO_TCPCONNECTION_H_
 
+#include <base/mutex.h>
 #include <net/asio/net_asio.h>
 
 namespace thefox {
@@ -65,23 +66,24 @@ public:
 
 private:
 	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(TcpConnection);
-    void doRead();
-    void doWrite();
+	void doRead();
+	void doWrite();
 
     void connectDestroyed();
 
-    void enterIo();
-    void leaveIo();
+	void enterIo();
+	void leaveIo();
 
-    int32_t _pendingIo;
-    Mutex _ioMutex;
+	int32_t _pendingIo;
+	Mutex _ioMutex;
 
     int32_t _id;
-    io_service &_io;
-    ip::tcp::socket _socket;
+	io_service &_io;
+	ip::tcp::socket _socket;
 
-    Buffer _readBuffer;
-    Buffer _writeBuffer;
+	Buffer _readBuffer;
+	Buffer _writeBuffer;
+	Mutex _writeMutex;
 
     StateT _state;
 
@@ -91,10 +93,12 @@ private:
     size_t _readBytes;
     size_t _writeBytes;
 
-    ConnectionCallback _connectionCallback;
+	ConnectionCallback _connectionCallback;
     MessageCallback _messageCallback;
     WriteCompleteCallback _writeCompleteCallback;
-    RemoveConnectionCallback _removeConnectionCallback;
+	RemoveConnectionCallback _removeConnectionCallback;
+
+	static const size_t kDefaultSizeToWrite = 8192;
 };
 
 } // namespace net_asio
