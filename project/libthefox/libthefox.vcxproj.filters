@@ -9,16 +9,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\log\Logging.h">
+    <ClInclude Include="..\..\log\log_stdout.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log\logging.h">
       <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\log\log_file.h">
       <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\event_loop.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\inet_address.h">
+    <ClInclude Include="..\..\net\tcp_client.h">
       <Filter>net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\tcp_connection.h">
@@ -27,42 +27,45 @@
     <ClInclude Include="..\..\net\tcp_server.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\buffer.h">
-      <Filter>net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\net\acceptor.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\socket.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\iocp_event.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\net\event.h">
+    <ClInclude Include="..\..\net\buffer.h">
       <Filter>net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\net\callbacks.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\log\log_syslog.h">
-      <Filter>log</Filter>
+    <ClInclude Include="..\..\net\event.h">
+      <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\log\log_stdout.h">
-      <Filter>log</Filter>
+    <ClInclude Include="..\..\net\event_loop.h">
+      <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\net\tcp_client.h">
+    <ClInclude Include="..\..\net\inet_address.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\iocp_event.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\net\socket.h">
       <Filter>net</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\log\Logging.cc">
+    <ClCompile Include="..\..\log\logging.cc">
       <Filter>log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\log\log_file.cc">
       <Filter>log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\event_loop.cc">
+    <ClCompile Include="..\..\log\log_stdout.cc">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\tcp_client.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\net\tcp_connection.cc">
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\tcp_server.cc">
@@ -71,19 +74,13 @@
     <ClCompile Include="..\..\net\acceptor.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\socket.cc">
+    <ClCompile Include="..\..\net\event_loop.cc">
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\net\iocp_event.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\net\tcp_connection.cc">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log\log_syslog.cc">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\net\tcp_client.cc">
+    <ClCompile Include="..\..\net\socket.cc">
       <Filter>net</Filter>
     </ClCompile>
   </ItemGroup>

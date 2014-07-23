@@ -26,6 +26,30 @@ public:
         return (0 == str.length()) ? 0 : static_cast<unsigned int>(atoi(str.c_str()));
     } 
 
+	/// @brief 转换成int64类型
+	static int64_t stoi64(const std::string &str) 
+	{
+		int64_t v = 0;
+#ifdef WIN32
+		sscanf(str.c_str(), "%I64d", &v);
+#else
+		sscanf(str.c_str(), "%lld", &v);
+#endif
+		return v;
+	}
+	
+	/// @brief转换成uint64类型
+	static int64_t stoui64(const std::string &str) 
+	{
+		int64_t v = 0;
+#ifdef WIN32
+		sscanf(str.c_str(), "%I64u", &v);
+#else
+		sscanf(str.c_str(), "%llu", &v);
+#endif
+		return v;
+	}
+	
     /// @brief 转换成long
     static long stol(const string &str) 
     { 

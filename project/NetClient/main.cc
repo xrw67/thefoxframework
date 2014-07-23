@@ -1,65 +1,47 @@
 #include <stdio.h>
-#include <net/callbacks.h>
-#include <net/inet_address.h>
-#include <net/buffer.h>
+#include <net/net_asio.h>
 #include <net/tcp_client.h>
-#include <net/tcp_connection.h>
-#include <net/event_loop.h>
-#include <log/log_stdout.h>
-#include <log/log_file.h>
 
 using namespace thefox;
-using namespace thefox::net;
 
-void onConnection(TcpConnection *conn)
+char text[81920];
+
+void onConnection(const TcpConnectionPtr &conn)
 {
-	switch (conn->state()) {
-	case TcpConnection::kConnected:
-		printf("Connection success connID=%d\r\n", conn->id());
-		conn->send("ping!", strlen("ping!"));
-		break;
-	case TcpConnection::kDisconnected:
-		printf("Connection disconnect connID=%d\r\n", conn->id());
-		break;
-	default:
-		printf("Connection connection state=%d connID=%d\r\n", conn->state(), conn->id());
-		break;
-	}
+	conn->send(text, strlen(text));
 }
 
-void onMessage(TcpConnection *conn, Buffer *buf, Timestamp receiveTime)
+void onClose(const TcpConnectionPtr &conn)
 {
-	printf("收到数据 总共读:%u\r\n", conn->readBytes());
+	printf("Connection close\r\n");
+}
+
+void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp receiveTime)
+{
+	printf("%s Message come, size=%u\r\n", receiveTime.toFormatString().c_str(), buf->readableBytes());
 	conn->send(buf->peek(), buf->readableBytes());
 	buf->retrieveAll();
 }
 
-void onWriteComplete(TcpConnection *conn)
-{
-	printf("写数据完成 总共写:%u\r\n", conn->writeBytes());
-}
-
 int main(int argc, char *argv[])
 {
-	//LogStdout log("tcp_server");
-	LogFile log(".", "iocp");
+	for (int i = 0; i < sizeof(text); ++i ) {
+		text[i] = 'a';
+	}
+	text[sizeof(text)] = '\0';
 
-    WSADATA wsd;
-    WSAStartup(MAKEWORD(2, 2), &wsd);
+	io_service io;
 
-	EventLoop loop;
-	TcpClient *client = new TcpClient(&loop, "MyIocpClientDemo");
-	client->setConnectionCallback(onConnection);
-	client->setMessageCallback(onMessage);
-	client->setWriteCompleteCallback(onWriteComplete);
+	ip::tcp::endpoint serverAddr(ip::address::from_string("127.0.0.1"), 8888);
 
-	loop.start();
-
-	client->open(InetAddress("127.0.0.1", 7901));
+	TcpClient client(io, "fdf");
+	client.setConnectionCallback(onConnection);
+	client.setMessageCallback(onMessage);
+	client.open(serverAddr);
 	
-	loop.join();
-
-	WSACleanup();
-	delete client;
+	//for(;;) {
+		io.run();
+	//}
+	
 	return 0;
 }

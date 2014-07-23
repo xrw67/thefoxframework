@@ -1,14 +1,6 @@
 #include <log/log_file.h>
 #include <base/common.h>
-
-#ifdef WIN32
-#include <direct.h>
-#define getcwd _getcwd
-#else
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#endif
+#include <base/files.h>
 
 using namespace thefox;
 
@@ -93,7 +85,7 @@ LogFile::LogFile(const string &dir, const string& basename, size_t rollSize)
 	, _lastRoll(0)
 	, _file(NULL)
 {
-	makePath(_dir);
+	Files::makePath(_dir);
 	rollFile();
 	thefoxSetLogHandler(logFileAppend);
 }
@@ -172,57 +164,4 @@ string LogFile::getLogFileName(const string &dir, const string& basename, time_t
     filename += ".log";
 
     return filename;
-}
-
-void LogFile::makePath(string &dir)
-{   
-    char filePath[1000] = {0};
-    bool bAbsolutePath = true;
-
-#ifdef WIN32
-	if (string::npos == dir.find(':'))
-        bAbsolutePath = false;
-#else
-    if ('/' != dir[0])
-        bAbsolutePath = false;
-#endif
-    
-    if (!bAbsolutePath) {
-		getcwd(filePath, sizeof(filePath));
-        char cSeparator = filePath[strlen(filePath)];
-        if (!(cSeparator == '/' || cSeparator == '\\'))
-            strcat(filePath, "/");
-        
-		strncat(filePath, dir.c_str(), sizeof(filePath) - strlen(filePath));
-    } else {
-		strncpy(filePath, dir.c_str(), sizeof(filePath));
-	}
-    
-    char *curDir = filePath;
-    
-    while (*curDir != '\0') {
-        if (*curDir == '\\' || *curDir == '/') {
-            *curDir = '\0';
-#ifdef WIN32
-            _mkdir(filePath);
-#else
-	    mkdir(filePath, S_IRWXU);
-#endif
-            *curDir = '/';
-        }
-        ++curDir;
-    }
-#ifdef WIN32
-    _mkdir(filePath);
-#else
-    mkdir(filePath, S_IRWXU);
-#endif 
-    size_t pathLen = strlen(filePath);
-    if ('/' != filePath[pathLen - 1]) {
-        strcat(filePath, "/");
-        ++pathLen;
-    }
-    
-    dir = filePath;
-    return;
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -11,26 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\log\logging.h" />
     <ClInclude Include="..\..\log\log_file.h" />
-    <ClInclude Include="..\..\log\Logging.h" />
     <ClInclude Include="..\..\log\log_stdout.h" />
-    <ClInclude Include="..\..\log\log_syslog.h" />
     <ClInclude Include="..\..\net\acceptor.h" />
     <ClInclude Include="..\..\net\buffer.h" />
     <ClInclude Include="..\..\net\callbacks.h" />
+    <ClInclude Include="..\..\net\event.h" />
     <ClInclude Include="..\..\net\event_loop.h" />
     <ClInclude Include="..\..\net\inet_address.h" />
     <ClInclude Include="..\..\net\iocp_event.h" />
-    <ClInclude Include="..\..\net\event.h" />
     <ClInclude Include="..\..\net\socket.h" />
     <ClInclude Include="..\..\net\tcp_client.h" />
     <ClInclude Include="..\..\net\tcp_connection.h" />
     <ClInclude Include="..\..\net\tcp_server.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\log\logging.cc" />
     <ClCompile Include="..\..\log\log_file.cc" />
-    <ClCompile Include="..\..\log\Logging.cc" />
-    <ClCompile Include="..\..\log\log_syslog.cc" />
+    <ClCompile Include="..\..\log\log_stdout.cc" />
     <ClCompile Include="..\..\net\acceptor.cc" />
     <ClCompile Include="..\..\net\event_loop.cc" />
     <ClCompile Include="..\..\net\iocp_event.cc" />
@@ -48,15 +47,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -69,10 +66,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>../..;$(IncludePath)</IncludePath>
+    <IncludePath>../..;..\..\..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\lib\libboost;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>../..;../../thirdparty/protobuf;$(IncludePath)</IncludePath>
+    <IncludePath>../..;..\..\..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\lib\libboost;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -82,6 +81,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996;4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0502 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -97,6 +97,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0502 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -39,7 +39,6 @@ private:
 
 	static string getLogFileName(const string &dir, const string& basename, time_t* now);
 	void rollFile();
-    void makePath(string &dir);
 
 	string _dir;
 	const string _basename;

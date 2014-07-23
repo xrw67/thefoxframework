@@ -6,7 +6,8 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	thefox::LogFile log("logs","TestLog");
+	THEFOX_SET_LOG_FILE(".\\logs","TestLog");
+
 	int i=100;
 	while (--i)
 	{
