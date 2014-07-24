@@ -1,6 +1,7 @@
 #ifndef _THEFOX_BASE_FILES_H_
 #define _THEFOX_BASE_FILES_H_
 
+#include <string.h>
 #include <base/common.h>
 
 #ifdef WIN32
