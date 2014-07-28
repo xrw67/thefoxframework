@@ -279,6 +279,18 @@ public:
         return true;
     }
 
+	// @brief 是否包含子串，忽略大小写
+	static bool isContainStringIgnoreCase(const string &str1, const string &str2)
+	{
+		string s1(str1);
+		string s2(str2);
+		
+		toUpper(s1);
+		toUpper(s2);
+		
+		return string::npos != str1.find(str2);
+	}
+	
     /// @brief 替换字符串中的文字
     static string replace(string &str, const string &from, const string &to)
     {
