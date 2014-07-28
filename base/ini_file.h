@@ -4,8 +4,7 @@
 #include <Winbase.h>
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class IniFile
 {
@@ -19,7 +18,7 @@ public:
 	int getInt(const char *section, const char *key, int defaultValue)
 	{ 
 		return ::GetPrivateProfileInt(section, key, defaultValue, _fileName.c_str());
-		 }
+	}
 
 	string getString(const char *section, const char *key, const char *defaultValue)
 	{ 

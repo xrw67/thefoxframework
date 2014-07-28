@@ -1,4 +1,5 @@
-/*
+/**
+* @filename mysql_result_set.h
 * @brief libmysql结果集的C++封装类，支持Windows和Linux
 * @author macwe1024 at gmail dot com
 */

@@ -7,8 +7,7 @@
 #include <base/semaphore.h>
 #include <base/thread.h>
 
-namespace thefox
-{
+namespace thefox {
 
 typedef std::function<void()> TaskMethod;
 

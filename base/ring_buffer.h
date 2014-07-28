@@ -1,15 +1,15 @@
-/*
- * @brief 环形缓冲，可实现两个线程无锁并行的读写数据
- * @author macwe1024 at gmail dot com
- */
+/**
+* @author ring_buffer.h
+* @brief 环形缓冲，可实现两个线程无锁并行的读写数据
+* @author macwe1024 at gmail dot com
+*/
 
 #ifndef _THEFOX_BASE_RINGBUFFER_H_
 #define _THEFOX_BASE_RINGBUFFER_H_
 
 #include <base/Types.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class RingBuffer
 {
@@ -80,7 +80,7 @@ private:
 	}
 
 	char *_buffer;
-	unit32_t _size; // ringbuffer的总大小
+	uint32_t _size; // ringbuffer的总大小
 	uint32_t _in; // 写数据的位置
 	uint32_t _out; // 读数据的位置
 };

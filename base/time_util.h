@@ -9,8 +9,7 @@
 #include <sys/time.h>
 #endif
 
-namespace thefox
-{
+namespace thefox {
 
 class TimeUtil
 {

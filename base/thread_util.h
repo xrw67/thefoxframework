@@ -8,8 +8,7 @@
 
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 #ifdef WIN32
 	#define	currentThreadId (uint32_t)::GetCurrentThreadId

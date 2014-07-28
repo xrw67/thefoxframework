@@ -11,8 +11,7 @@
 #include <base/common.h>
 #include <base/time_util.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class Semaphore
 {

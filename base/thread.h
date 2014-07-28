@@ -11,8 +11,7 @@
     #include <pthread.h>
 #endif
 
-namespace thefox
-{
+namespace thefox {
 
 typedef std::function<void()> ThreadCallback;
 

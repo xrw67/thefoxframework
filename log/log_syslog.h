@@ -1,7 +1,6 @@
-/*
+/**
 * @file log_syslog.h
 * @brief log to syslog server
-*
 * @ahthor macwe1024 at gmail dot com
 */
 

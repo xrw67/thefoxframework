@@ -1,16 +1,16 @@
-/*
- * @filename Stack.h
- * @brief 使用数组实现的栈
- * @author macwe1024 at gmail dot com
- */
+/**
+* @filename stack.h
+* @brief 使用数组实现的栈
+* @author macwe1024 at gmail dot com
+*/
+
 #ifndef _THEFOX_BASE_STACK_H_
 #define _THEFOX_BASE_STACK_H_
 
 #include <vector>
 #include <base/mutex.h>
 
-namespace thefox
-{
+namespace thefox {
 
 /// @brief 栈的实现类
 template<typename T>

@@ -4,8 +4,7 @@
 #include <assert.h>
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 template<typename T>
 class Table

@@ -1,5 +1,5 @@
 /*
-* @filename ReadWriteLock.h
+* @filename read_write_lock.h
 * @brief 读写锁
 * @author macwe1024 at gmail dot com
 */
@@ -11,8 +11,7 @@
 #include <base/atomic_integer.h>
 #include <base/mutex.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class ReadWriteLock
 {

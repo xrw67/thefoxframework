@@ -1,7 +1,8 @@
-/*
- * @brief 可存放固定大小元素的内存池
- * @author macwe1024 at gmail dot com
- */
+/**
+* @filename mem_pool.h
+* @brief 可存放固定大小元素的内存池
+* @author macwe1024 at gmail dot com
+*/
 
 #ifndef _THEFOX_BASE_MEM_POOL_H_
 #define _THEFOX_BASE_MEM_POOL_H_
@@ -10,8 +11,7 @@
 #include <base/common.h>
 #include <base/mutex.h>
 
-namespace thefox
-{
+namespace thefox {
 
 template<typename T>
 class MemPool
@@ -55,6 +55,8 @@ public:
         return ret;
     }
     
+    /// @brief delete memory
+    /// @param[in] pointer pointer to delete
     void put(T *pointer)
     {
         MutexGuard lock(_mutex);

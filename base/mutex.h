@@ -1,5 +1,5 @@
 /*
-* @filename Mutex.h
+* @filename mutex.h
 * @brief 互斥量操作类, 支持Windows和Linux
 * @author macwe1024 at gmail dot com
 */
@@ -17,8 +17,7 @@ typedef CRITICAL_SECTION pthread_mutex_t;
 
 #include <base/common.h>
 
-namespace thefox 
-{
+namespace thefox {
 
 class Mutex
 {
@@ -91,7 +90,7 @@ private:
     Mutex &_mutex;
 };
 
-#define MutexGuard(x) error "Missing guard object name"
+#define MutexGuard(x) error "Missing MutexGuard object name"
 
 } // namespace thefox
 

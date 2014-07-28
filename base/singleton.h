@@ -1,13 +1,13 @@
-/*
- * @brief 单例模式
- * @author macwe1024 at gmail dot com
- */
+/**
+* filename singleton.h
+* @brief 单例模式
+* @author macwe1024 at gmail dot com
+*/
 
 #ifndef _THEFOX_BASE_SINGLETION_H_
 #define _THEFOX_BASE_SINGLETION_H_
 
-namespace thefox
-{
+namespace thefox {
 
 template <typename T>
 class singleton : private T

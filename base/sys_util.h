@@ -10,8 +10,7 @@
 
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class SysUtil
 {

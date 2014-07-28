@@ -1,7 +1,6 @@
-/*
+/**
 * @file LogFile.h
 * @brief log to file
-*
 * @ahthor macwe1024 at gmail dot com
 */
 

@@ -1,9 +1,9 @@
-/*
- * @filename xml2json.h
- * @brief convert xml to json string
- *        from http://github.com/cheedoong/xml2json
- *        Copyright (C) 2013 Alan Zhuang (Cheedoong)	Tencent, Inc.
- */
+/**
+* @filename xml2json.h
+* @brief convert xml to json string
+*        from http://github.com/cheedoong/xml2json
+*        Copyright (C) 2013 Alan Zhuang (Cheedoong)	Tencent, Inc.
+*/
 
 #ifndef _THEFOX_BASE_XML2JSON_H_
 #define _THEFOX_BASE_XML2JSON_H_
@@ -23,8 +23,7 @@
 
 #include <string>
 
-namespace thefox
-{
+namespace thefox {
 
 void to_array_form_node(rapidxml::xml_node<> *xmlnode_chd, rapidjson::Value &jsvalue, rapidjson::Value &jsvalue_chd, rapidjson::Document::AllocatorType& allocator)
 {

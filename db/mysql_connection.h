@@ -1,5 +1,5 @@
-/*
-* @filename MySqlConnection.h
+/**
+* @filename mysql_connection.h
 * @brief libmysql连接管理C++封装类，支持Windows和Linux
 * @author macwe1024 at gmail dot com
 */

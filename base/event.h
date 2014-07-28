@@ -1,3 +1,9 @@
+/**
+* @filename event.h
+* @brief 对windows下Event的封装
+* @ author macwe1024 at gmail dot com
+*/
+
 #ifndef _THEFOX_BASE_EVENT_H_
 #define _THEFOX_BASE_EVENT_H_
 
@@ -7,8 +13,7 @@
 
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class Event
 {

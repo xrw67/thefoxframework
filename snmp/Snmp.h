@@ -7,13 +7,12 @@
 #include <memory>
 #include <vector>
 #include <arpa/inet.h>
-//#include "log/log.h"
+//#include <log/logging.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 
 
-namespace thefox
-{
+namespace thefox {
 
 #define SNMP_TYPE_INTEGER 'i'  
 #define SNMP_TYPE_UNSIGNED 'u'  

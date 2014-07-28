@@ -1,7 +1,8 @@
-/*
- * @brief tcp client
- * @author macwe1024 at gmail dot com
- */
+/**
+* @brief tcp_client.h
+* @brief tcp client
+* @author macwe1024 at gmail dot com
+*/
 
 #ifndef _THEFOX_NET_TCPCLIENT_H_
 #define _THEFOX_NET_TCPCLIENT_H_

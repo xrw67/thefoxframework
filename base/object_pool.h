@@ -10,8 +10,7 @@
 #include <new>
 #include <base/mem_pool.h>
 
-namespace thefox
-{
+namespace thefox {
 
 template<typename T>
 class ObjectPool
@@ -65,7 +64,7 @@ public:
     }
     
     /*
-     * @brief recover object
+     * @brief delete object
      */
     void put(T *obj)
     {

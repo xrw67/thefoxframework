@@ -1,7 +1,7 @@
 #ifndef _THEFOX_BASE_UUID_H_
 #define _THEFOX_BASE_UUID_H_
 
-/*
+/**
 * linux: -luuid
 */
 
@@ -11,8 +11,7 @@
 #include <uuid/uuid.h>
 #endif
 
-namespace thefox
-{
+namespace thefox {
 	
 inline string createUuid()
 {

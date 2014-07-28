@@ -1,5 +1,5 @@
-﻿/*
-* @filename MySqlUtil.h
+﻿/**
+* @filename mysql_util.h
 * @brief mysql的一些好用的辅助函数，支持Windows和Linux
 * @author macwe1024 at gmail dot com
 */

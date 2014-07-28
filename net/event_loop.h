@@ -1,4 +1,5 @@
-/*
+/**
+* author event_loop.h
 * @brief 事件循环
 * @author macwe1024 at gmail dot com
 */

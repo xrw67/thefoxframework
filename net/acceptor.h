@@ -1,8 +1,8 @@
-/*
- * @filename acceptor.h
- * @brief tcp acceptor
- * @author macwe1024 at gmail dot com
- */
+/**
+* @filename acceptor.h
+* @brief tcp acceptor
+* @author macwe1024 at gmail dot com
+*/
 
 #ifndef _THEFOX_NET_ACCEPTOR_H_
 #define _THEFOX_NET_ACCEPTOR_H_

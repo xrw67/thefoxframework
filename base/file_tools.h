@@ -1,3 +1,9 @@
+/*
+* @filename file_tools.h
+* @brief 一些文件操作的辅助帮助函数
+* @author macwe1023 at gmail dot com
+*/
+
 #ifndef _THEFOX_BASE_FILES_H_
 #define _THEFOX_BASE_FILES_H_
 
@@ -18,7 +24,7 @@ namespace thefox {
 class Files
 {
 public:
-	/// @biref ����Ŀ¼
+	/// @biref 创建目录
 	static void makePath(string &dir)
 	{   
 		char filePath[1000] = {0};

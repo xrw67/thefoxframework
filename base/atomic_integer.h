@@ -1,5 +1,5 @@
-/*
-* @filename Atomic.h
+/**
+* @filename atomic_integer.h
 * @brief 原子的数字类
 * @author macwe1024 at gmail dot com
 */
@@ -13,8 +13,7 @@
 #include <Winbase.h>
 #endif
 
-namespace thefox
-{
+namespace thefox {
   
 #ifdef WIN32
 inline LONG atomicInc(volatile LONG *value)

@@ -1,3 +1,9 @@
+/**
+* @filename condition.h
+* @brief 对条件变量的封装，只适用于linux
+* @author macwe1024 at gmail dot com
+*/
+
 #ifndef _THEFOX_BASE_CONDITION_H_
 #define _THEFOX_BASE_CONDITION_H_
 
@@ -9,8 +15,7 @@
 #include <base/mutex.h>
 #include <base/time_util.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class Condition
 {

@@ -5,8 +5,7 @@
 #ifndef _THEFOX_BASE_SCOPED_PTR_H_
 #define _THEFOX_BASE_SCOPED_PTR_H_
 
-namespace thefox
-{
+namespace thefox {
 
 
 //  scoped_ptr mimics a built-in pointer except that it guarantees deletion

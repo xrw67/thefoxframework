@@ -1,3 +1,9 @@
+/**
+* @filename string_util.h
+* @brief 字符串处理类
+* @author macwe1024 at gmail dot com
+*/
+
 #ifndef _THEFOX_BASE_STRING_UTIL_H_
 #define _THEFOX_BASE_STRING_UTIL_H_
 
@@ -6,8 +12,7 @@
 #include <vector>
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class StringUtil
 {

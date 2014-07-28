@@ -9,8 +9,7 @@
 
 #include <base/mutex.h>
 
-namespace thefox  
-{
+namespace thefox {
 
 class PtrCounter 
 {

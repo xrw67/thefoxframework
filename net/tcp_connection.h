@@ -1,5 +1,5 @@
 /*
-* @filename TcpConnection.h
+* @filename tcp_connection.h
 * @brief 表示一个客户连接
 * @author macwe1024 at gmail dot com
 */

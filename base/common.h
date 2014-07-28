@@ -1,8 +1,9 @@
-/*
- * @brief 这里放一些最常用的头文件、宏、函数等，需要C++11的支持才行
- * @author macwe1024 at gmail dot com
- *
- */
+/**
+* @filename common.h
+* @brief 这里放一些最常用的头文件、宏、函数等，需要C++11的支持才行
+* @author macwe1024 at gmail dot com
+*
+*/
 
 #ifndef _THEFOX_BASE_COMMON_H_
 #define _THEFOX_BASE_COMMON_H_
@@ -26,8 +27,7 @@
 	#endif
 #endif
 
-namespace thefox 
-{
+namespace thefox {
 
 using std::string;
 using namespace std::placeholders; // for std::bind

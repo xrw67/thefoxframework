@@ -1,5 +1,5 @@
-/*
-* @filename Timestamp.h
+/**
+* @filename timestamp.h
 * @brief 时间戳，精确到1微妙,格式：20131001 08:30:00.0000000
 * @author macwe1024 at gmail dot com
 */
@@ -17,8 +17,7 @@
 #include <time.h>
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 class Timestamp
 {

@@ -3,8 +3,7 @@
 
 #include <base/common.h>
 
-namespace thefox
-{
+namespace thefox {
 
 inline string bgkToUtf8(const string &str)
 {
