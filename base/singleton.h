@@ -1,5 +1,5 @@
 /**
-* filename singleton.h
+* @filename singleton.h
 * @brief 单例模式
 * @author macwe1024 at gmail dot com
 */
