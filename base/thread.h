@@ -1,3 +1,9 @@
+/**
+ * @filename thread.h
+ * @brief 线程类 ，支持Windows和Linux
+ * @author macwe1024 at gmail dot com
+ */
+ 
 #ifndef _THEFOX_BASE_THREAD_H_
 #define _THEFOX_BASE_THREAD_H_
 
@@ -5,7 +11,7 @@
 #include <base/common.h>
 
 #ifdef WIN32
-	#define WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
     #include <Windows.h>
 #else
     #include <pthread.h>
@@ -13,8 +19,10 @@
 
 namespace thefox {
 
+/// @brief 线程的工作函数
 typedef std::function<void()> ThreadCallback;
 
+/// @brief 线程类
 class Thread
 {
 public:
@@ -35,6 +43,8 @@ public:
         _state = kStop;
     }
 
+    /// @brief 启动线程
+    /// @return 成功返回true，失败返回false
     bool start()
     {
         if (kInit != _state) {
@@ -53,6 +63,8 @@ public:
         return result;
     }
     
+    /// @brief 结束线程
+    /// @return 成功返回true，失败返回false
     bool stop()
     {
         if (kStop == _state || kInit == _state) {
@@ -76,6 +88,8 @@ public:
         return result;
     }
 
+    /// @brief 在当前线程中等待该线程结束
+    /// @return 成功返回true，失败返回false
     bool join()
     {
         if (kStart != _state) {
@@ -113,12 +127,12 @@ private:
 #ifdef WIN32
     static DWORD WINAPI threadProc(LPVOID param)
 #else
-	static void *threadProc(void *param)
+    static void *threadProc(void *param)
 #endif
     {
         Thread *pThis = reinterpret_cast<Thread *>(param);
         pThis->_cb();
-		return 0;
+        return 0;
     }
 
     ThreadCallback _cb;
@@ -132,52 +146,60 @@ private:
 #endif
 };
 
-/// @breaf �߳���
+/// @breaf 线程组
 class ThreadGroup
 {
 public:
-	ThreadGroup()
-	{}
-	~ThreadGroup()
-	{
-		for (size_t i = 0; i < _threads.size(); ++i) {
-			delete _threads[i];
-		}
-		
-		_threads.clear();
-	}
-	
-	Thread *createThread(const ThreadCallback &threadfunc)
-	{
-		Thread *thread = new Thread(threadfunc);
-		_threads.push_back(thread);
-		return thread;
-	}
-	
-	void addThread(Thread *thread) 
-	{
-		_threads.push_back(thread);
-	}
-	
-	void startAll()
-	{
-		for (size_t i = 0; i < _threads.size(); ++i) {
-			_threads[i]->start();
-		}
-	}
-	
-	void joinAll()
-	{
-		for (size_t i = 0; i < _threads.size(); ++i) {
-			_threads[i]->join();
-		}
-	}
-	
-	size_t size() const { return _threads.size(); }
-	
+    ThreadGroup()
+    {}
+    ~ThreadGroup()
+    {
+        joinAll();
+        for (size_t i = 0; i < _threads.size(); ++i) {
+            delete _threads[i];
+        }
+        
+        _threads.clear();
+    }
+    
+    Thread *createThread(const ThreadCallback &threadfunc)
+    {
+        Thread *thread = new Thread(threadfunc);
+        _threads.push_back(thread);
+        return thread;
+    }
+    
+    void addThread(Thread *thread) 
+    {
+        _threads.push_back(thread);
+    }
+    
+    void startAll()
+    {
+        for (size_t i = 0; i < _threads.size(); ++i) {
+            _threads[i]->start();
+        }
+    }
+    
+    void joinAll()
+    {
+        for (size_t i = 0; i < _threads.size(); ++i) {
+            _threads[i]->join();
+        }
+    }
+    
+    void stopAll()
+    {
+        for (size_t i = 0; i < _threads.size(); ++i) {
+            _threads[i]->stop();
+        }
+    }
+    
+    size_t size() const { return _threads.size(); }
+    
 private:
-	THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ThreadGroup);
-	std::vector<Thread *> _threads;
+    THEFOX_DISALLOW_EVIL_CONSTRUCTORS(ThreadGroup);
+    std::vector<Thread *> _threads;
 };
 
 } // namespace thefox
